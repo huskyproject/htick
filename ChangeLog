@@ -1,3 +1,8 @@
+So  22 Okt 2000 01:27:24 CEST
+----- cvs ci ------
+tobi (patch from max):
+* don't core dump while write msg to sysop
+
 htick 0.9
 ---------
 (released on Tue Jul 18 23:53:17 MEST 2000)
