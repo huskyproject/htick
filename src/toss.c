@@ -561,7 +561,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
          msg->text = (char *)calloc(300, sizeof(char));
          createKludges(msg->text, config->ReportTo, area->useAka, area->useAka);
       } /* endif */
-      sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName, area->description);
+      sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName, 
+          (area->description) ? area->description : "");
       msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
       strcat(msg->text, buff);
       writeMsgToSysop(msg, config->ReportTo);
