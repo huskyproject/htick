@@ -902,8 +902,13 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     s_message *tmpmsg;
 
-    tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName,
-                         subj, 1,config->filefixKillReports);
+    if (config->areafixFromName == NULL)
+        tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName,
+                             subj, 1,config->filefixKillReports);
+    else
+        tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
+                             config->areafixFromName, msg->fromUserName,
+                             subj, 1,config->filefixKillReports);
     preprocText(report, tmpmsg);
 
     writeNetmail(tmpmsg, config->robotsArea);

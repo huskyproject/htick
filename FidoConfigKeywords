@@ -274,3 +274,7 @@ Flags like k/s loc hld ... that will have announce message
 
 Define permissions for newly created filearea directories (UNIX filesystems 
 	only)
+
+37) AreaFixFromName <string>
+	Use AreaFixFromName when responding to messages for areafix.
+        
