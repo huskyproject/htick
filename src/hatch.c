@@ -94,6 +94,8 @@ void hatch()
     
     tic.origin = tic.from = *filearea->useAka;
     
+    if(filearea->description)
+    tic.areadesc = sstrdup(filearea->description);
     // Adding crc
     tic.crc = filecrc32(hatchfile);
     
