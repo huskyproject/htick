@@ -1,3 +1,8 @@
+2001-05-23 Wednesday 13:49  ml
+
+	* src/fcommon.c (1.28): amiga style outbound suppurt (patch by
+	Serge N. Pokhodyaev)
+
 2001-05-13 Sunday 21:22  wulf.krueger
 
 	* FidoConfigKeywords (1.18), INSTALL (1.4): 
