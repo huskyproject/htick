@@ -1,3 +1,52 @@
+2002-01-26 Saturday 21:55  stas
+
+	* src/htick.c (1.44): Change messages (some messages directed to
+	log, some other writed to stderr alter to stdout).
+
+2002-01-26 Saturday 21:42  stas
+
+	* src/: htick.c (1.43), toss.c (1.126): Close log next remove
+	lockfile (prevent access violation to log file).
+
+2002-01-26 Saturday 21:33  stas
+
+	* src/: htick.c (1.42), toss.c (1.125): Fix closeLog() calls.
+
+2002-01-26 Saturday 21:21  stas
+
+	* h/htick.h (1.3), src/htick.c (1.41): Define log file name in
+	htick.h (#define LogFileName).
+
+2002-01-26 Saturday 21:14  stas
+
+	* h/crc32.h (1.3), h/log.h (1.8), h/recode.h (1.2), src/crc32.c
+	(1.6), src/log.c (1.7), src/recode.c (1.4): Remove obsoleted source
+	files (functions move to fidoconf package).
+
+2002-01-26 Saturday 21:08  stas
+
+	* h/global.h (1.12), src/areafix.c (1.49), src/fcommon.c (1.33),
+	src/global.c (1.12), src/hatch.c (1.39), src/htick.c (1.40),
+	src/toss.c (1.124): New command line option: -q (quiet mode).
+
+2002-01-26 Saturday 20:37  stas
+
+	* os2/makefile.wco (1.11), win32/makefile.bcw (1.6),
+	win32/makefile.wcw (1.14): Fix for '2002-01-25 Friday 11:19' patch
+	(remove log.obj from makefiles).
+
+2002-01-26 Saturday 20:29  stas
+
+	* os2/makefile.wco (1.10), win32/makefile.bcw (1.5),
+	win32/makefile.wcw (1.13): Fix for '2002-01-25 Friday 11:27' patch
+	(remove 'recode.obj' from makefiles)
+
+2002-01-26 Saturday 20:22  stas
+
+	* os2/makefile.wco (1.9), src/hatch.c (1.38), src/toss.c (1.123),
+	win32/makefile.bcw (1.4), win32/makefile.wcw (1.12): 
+	Use crc support functions from fidoconfig package
+
 2002-01-25 Friday 11:38  d.sergienko
 
 	* src/: add_desc.c (1.4), hatch.c (1.37), htick.c (1.39), toss.c
