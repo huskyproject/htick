@@ -328,10 +328,6 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     signed int cmdexit;
     char cmd[256];
 
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-    const char * const *list;
-#endif
-    
     /*  find what unpacker to use */
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
         filehandle = fopen(fileName, "rb");
