@@ -1194,7 +1194,7 @@ int processFileFix(s_message *msg)
 	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
-		return 1;
+		return 2;
 	}
 
 

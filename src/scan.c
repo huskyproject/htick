@@ -167,7 +167,7 @@ void scanNMArea(void)
             convertMsgHeader(xmsg, &filefixmsg);
             convertMsgText(msg, &filefixmsg, config->addr[j]);
             
-            if (processFileFix(&filefixmsg)) {
+            if (processFileFix(&filefixmsg) != 2) {
 		xmsg.attr |= MSGREAD;
 		MsgWriteMsg(msg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 	    }
