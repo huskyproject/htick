@@ -7,15 +7,17 @@ OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
 SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Ih -I$(INCDIR) -Wall -ggdb -O2
+  CFLAGS = $(DEBCFLAGS) -Ih -I$(INCDIR) $(WARNFLAGS)
+  LFLAGS = $(DEBLFLAGS)
 else
-  CFLAGS  = -c -Ih -I$(INCDIR) -Wall -O3 -s
+  CFLAGS = $(OPTCFLAGS) -Ih -I$(INCDIR) $(WARNFLAGS)
+  LFLAGS = $(OPTLFLAGS)
 endif
 
 ifeq ($(SHORTNAME), 1)
-  LFLAGS  = -L$(LIBDIR) -lsmapi -lfidoconf
+  LIBS  = -L$(LIBDIR) -lsmapi -lfidoconf
 else
-  LFLAGS  = -L$(LIBDIR) -lsmapi -lfidoconfig
+  LIBS  = -L$(LIBDIR) -lsmapi -lfidoconfig
 endif
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
@@ -26,7 +28,7 @@ all: $(OBJS) htick$(EXE)
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 htick$(EXE): $(OBJS)
-	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS)
+	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS) $(LIBS)
 
 clean:
 	-$(RM) *$(OBJ)
