@@ -213,7 +213,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
    char *line, *token, *param, *linecut = "";
    s_link *ticSourceLink=NULL;
 
-#ifdef UNIX
+#if defined(UNIX) || defined(__DJGPP__)
    tichandle=fopen(ticfile,"r");
 #else
    // insure that ticfile won't be removed while parsing

@@ -11,7 +11,7 @@ OBJ    =.o
 EXE    =.exe
 RM     =cmd /c del
 DIRSEP =/
-CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -DMSDOS
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -DMSDOS -DNOSEMAPHORES -mcpu=i486
 LFLAGS = $(DEBUG)
 CC     =gcc
 EXENAMEFLAG=-o
