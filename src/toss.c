@@ -761,9 +761,9 @@ int processTic(char *ticfile, e_tossSecurity sec)
          strcpy(fileareapath,config->passFileAreaDir);
       }
    } else {
-      sprintf(logstr,"Cannot open oder create File Area %s",tic.area);
+      sprintf(logstr,"Cannot open or create File Area %s",tic.area);
       writeLogEntry(htick_log,'9',logstr);
-      fprintf(stderr,"Cannot open oder create File Area %s !",tic.area);
+      fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
       disposeTic(&tic);
       return(2);
    } 
