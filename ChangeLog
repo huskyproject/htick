@@ -1,3 +1,13 @@
+2003-02-28 Friday 10:48  mche
+
+	* src/toss.c (1.255): do toss ticks w/o size
+
+2003-02-28 Friday 08:09  stas_degteff
+
+	* win32/: makefile.bcw (1.10), makefile.cyg (1.13), makefile.mgw
+	(1.5), makefile.mvc (1.10), makefile.mvcdll (1.9), makefile.wcw
+	(1.21): Add comments
+
 2003-02-27 Thursday 06:21  sfpavel
 
 	* misc/fileareas (1.3): Fix typo at sample config
