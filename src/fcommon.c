@@ -91,16 +91,14 @@ void exit_htick(char *logstr, int print) {
     w_log(LL_CRIT, logstr);
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
-    /* writeDupeFiles(); */
-    disposeConfig(config);
     doneCharsets();
     w_log(LL_STOP, "Exit");
     closeLog();
-    if (_lockfile) {
-       close(lock_fd);
-       remove(_lockfile);
-       nfree(_lockfile);
+    if (config->lockfile) {
+        close(lock_fd);
+        remove(config->lockfile);
     }
+    disposeConfig(config);
     exit(EX_SOFTWARE);
 }
 

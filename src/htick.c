@@ -317,7 +317,6 @@ void processConfig()
 
 
    if (config->lockfile) {
-      _lockfile = sstrdup(config->lockfile);
       if (config->advisoryLock) {
          if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
             fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);

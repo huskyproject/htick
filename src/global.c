@@ -75,7 +75,6 @@ int       cmAnnNewFileecho = 0;
 char      announcenewfileecho[256];
 
 int       lock_fd;
-char      *_lockfile=NULL;
 
 hs_addr   afixAddr = {0,0,0,0};
 char      *afixCmd = NULL;
