@@ -170,7 +170,7 @@ void cleanPassthroughDir(void)
         }
         closedir(dir);
     }
-    tree_mung(&fileTree, htick_deleteEntry);
+    tree_deinit(&fileTree, htick_deleteEntry);
 
     w_log( LL_FUNC, "cleanPassthroughDir(): end" );
 }
