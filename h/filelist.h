@@ -3,7 +3,9 @@
 
 #include <fidoconfig.h>
 
-void printFileArea(s_filearea area, FILE *f);
+void formatDesc(char **desc, int *count, FILE *f);
+void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, int year, int countdesc, char **desc);
+void printFileArea(char *area_areaName, char *area_pathName, char *area_description, FILE *f, int bbs);
 void filelist();
 
 #endif

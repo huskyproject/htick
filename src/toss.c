@@ -643,7 +643,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    strcpy(ticedfile,ticfile);
    *(strrchr(ticedfile,PATH_DELIM)+1)=0;
-   strcat(ticedfile,tic.file);
+   strcat(ticedfile,strUpper(tic.file));
 
    // Recieve file?
    if (!fexist(ticedfile)) {

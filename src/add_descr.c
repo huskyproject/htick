@@ -132,8 +132,8 @@ int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
 int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
 {
     FILE *f1;
-    char hlp[264] = "", tmp[264], *token;
-    int flag = 0;
+    char hlp[265] = "", tmp[265], *token;
+    int flag = 0, rc = 1;
 
    f1 = fopen (descr_file_name, "r");
    if (f1 == NULL) return 1;
@@ -177,10 +177,11 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
                tic->anzdesc++;
 	    }
 	    flag = 1;
+	    rc = 0;
 	 }
 	 hlp[0] = '\0';
    }
 
    fclose (f1);
-   return 0;
+   return rc;
 }

@@ -770,9 +770,10 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 
 char *resend(s_link *link, s_message *msg, char *cmd)
 {
-    int rc = 0;
+    int rc = 0, i;
     char *line, addline[256], logmsg[256];
     char *report=NULL, *token, filename[100], filearea[100];
+    s_filearea *area = NULL;
 
    report=(char*)calloc(1, sizeof(char));
    line = cmd;
@@ -787,7 +788,14 @@ char *resend(s_link *link, s_message *msg, char *cmd)
          sprintf(addline,"Error in line! Format: %%Resend <file> <filearea>\r");
       else {
          strcpy(filearea,token);
-	 rc = send(filename,filearea,addr2string(&link->hisAka));
+	 rc = 1;
+	 for (i = 0; i<area->downlinkCount;i++) {
+	    if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
+	       rc = 0;
+	 }
+	 area = getFileArea(config,filearea);
+	 if (area != NULL && rc == 1 && area->manual == 1) rc = 5;
+	 else rc = send(filename,filearea,addr2string(&link->hisAka));
 	 switch (rc) {
 	 case 0: sprintf(addline,"Send %s from %s for %s, %s\r",
                          filename,filearea,link->name,addr2string(&link->hisAka));
@@ -802,6 +810,10 @@ char *resend(s_link *link, s_message *msg, char *cmd)
 	         break;
 	 case 3: sprintf(addline,"Error: File %s not found!\r",filename);
 		 sprintf(logmsg,"FileFix %%Resend: File %s not found", filename);
+		 writeLogEntry(htick_log, '8', logmsg);
+	         break;
+	 case 5: sprintf(addline,"Error: You don't have access for filearea %s!\r",filearea);
+		 sprintf(logmsg,"FileFix %%Resend: Link don't have access for filearea %s", filearea);
 		 writeLogEntry(htick_log, '8', logmsg);
 	         break;
 	 }

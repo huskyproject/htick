@@ -6,7 +6,15 @@ Sun Jul 25 21:17:54 NOVST 1999
 max:
 * small bugfix (if no passFileAreaDir in config -> core dump)
 
------ cvs ci ------
+Sun Jul 25 21:11:45 1999
+Georgi:
+* change in "htick filelist"
+
+Sat Jul 24 10:01:25 1999
+Georgi:
+* security check for %resend
+* bugfix if in TIC file write in lowercase
+
 Thu Jul 22 11:39:46 1999
 Georgi:
 * bugfix in move from .htk dir
