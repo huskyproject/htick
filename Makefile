@@ -39,7 +39,6 @@ clean:
 	-$(RM) $(RMOPT) *$(OBJ)
 	-$(RM) $(RMOPT) *~
 	-$(RM) $(RMOPT) core
-	-$(RM) $(RMOPT) htick$(EXE)
 
 distclean: clean
 	-$(RM) $(RMOPT) htick$(EXE)
