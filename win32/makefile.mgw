@@ -2,13 +2,13 @@
 CC=gcc
 RM=del
 
-CDEFS=-D__NT__ -D__MINGW__ -c -I../h -I../..
+CDEFS=-D__NT__ -c -I../h -I../..
 CFLAGS=-Wall
 COPT=-O3
 
 # uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
-# CDEFS=$(CDEFS) -D_WIN32_WINNT=0x0400
-# CDEFS=$(CDEFS) -D_WIN32_WINNT=0x0500
+# CDEFS+= -D_WIN32_WINNT=0x0400
+# CDEFS+= -D_WIN32_WINNT=0x0500
 
 LFLAGS=-L../../smapi -L../../fidoconf
 LIBS=-lfidoconfigmgw -lsmapimgw -luser32
@@ -43,6 +43,6 @@ $(TARGET): $(OBJS)
 clean:
 	-$(RM) *.o
 
-distclean:
+distclean:clean
 	-$(RM) $(TARGET)
 
