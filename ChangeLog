@@ -1,3 +1,8 @@
+2001-09-07 Friday 09:46  ml
+
+	* src/toss.c (1.111): fixed bug with FileFixFSC87Subset printing
+	errors
+
 2001-09-05 Wednesday 10:21  ml
 
 	* src/: add_desc.c (1.3), areafix.c (1.44), crc32.c (1.5),
