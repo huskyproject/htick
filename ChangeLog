@@ -1,3 +1,11 @@
+2003-01-26 Sunday 12:23  mche
+
+	* src/add_desc.c (1.32): fix unpacker detecteion
+
+2003-01-26 Sunday 08:28  stas_degteff
+
+	* src/add_desc.c (1.31): Fix warning
+
 2003-01-23 Thursday 07:11  mche
 
 	* src/add_desc.c (1.30): fix previous patch
