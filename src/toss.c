@@ -742,13 +742,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
    int writeAccess;
    int fileisfound = 0;
    int rc = 0;
+   char *tic_origin;
 
    w_log('6',"Processing Tic-File %s",ticfile);
 
    parseTic(ticfile,&tic);
 
    w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
-         tic.file, tic.size, tic.area, aka2str(tic.from), aka2str(tic.origin));
+         tic.file, tic.size, tic.area, aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
+   nfree(tic_origin);
 
    if (tic.to.zone!=0) {
       if (!isOurAka(config,tic.to)) {
