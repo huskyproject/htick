@@ -1,3 +1,22 @@
+2002-10-24 Thursday 11:49  mche
+
+	* htick.dsp (1.1): Microsoft Developer Studio Project Files added
+
+2002-10-24 Thursday 11:40  stas_degteff
+
+	* src/toss.c (1.228): Prevent memory fault: check parseTic() return
+	value
+
+2002-10-24 Thursday 11:38  stas_degteff
+
+	* src/toss.c (1.227): define mnemonic constants for parseTic()
+	return values
+
+2002-10-24 Thursday 06:39  stas_degteff
+
+	* src/areafix.c (1.97): Cosmetic fix, thanjs to dmitry a. frolov,
+	2:5030/4441
+
 2002-10-23 Wednesday 11:55  mche
 
 	* h/areafix.h (1.13), src/areafix.c (1.96): fix ERROR redefinition
