@@ -1,4 +1,11 @@
 htick 0.01
 ----------
-	
+
+Th 18.03.1999
+  Gabriel Plutzar:
+  Commented out lines with tossgrp in it, in order to let htick compilable
+  with the new fidoconfig version
+
+
+---	
 First Release, there will be many bugs in it

@@ -198,8 +198,8 @@ char *list(s_message *msg, s_link *link) {
         for (i=0; i< config->fileAreaCount; i++) {
 
                 if (config->fileAreas[i].hide==1) continue; // do not display hidden areas..
-		if ((config->fileAreas[i].group!='\060') && (link->TossGrp==NULL)) continue;
-		if ((config->fileAreas[i].group!='\060') && (link->TossGrp!=NULL) && (strchr(link->TossGrp,config->fileAreas[i].group)==NULL)) continue;
+//		if ((config->fileAreas[i].group!='\060') && (link->TossGrp==NULL)) continue;
+// 		if ((config->fileAreas[i].group!='\060') && (link->TossGrp!=NULL) && (strchr(link->TossGrp,config->fileAreas[i].group)==NULL)) continue;
 
 		report=(char*) realloc(report, strlen(report)+strlen(config->fileAreas[i].areaName)+3);
 		rc=subscribeCheck(config->fileAreas[i],msg);
@@ -392,13 +392,13 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                 if ( rc==2 ) continue;
 
 		area = &(config->fileAreas[i]);
-
+/*
 		// link not allowed to subscribe this area (we hide it)
 		if ((area->group!='\060') && (link->TossGrp==NULL)) rc=2;
 		if ((area->group!='\060') && (link->TossGrp!=NULL)) {
 		    if (strchr(link->TossGrp,area->group)==NULL) rc=2;
 		}
-		
+*/		
                 switch (rc) {
                 case 0: sprintf(addline,"you are already linked to area %s\r", area->areaName);
                         break;
@@ -443,12 +443,13 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		if ( rc==2 ) continue;
 		
 		area = &(config->fileAreas[i]);
-
+/*
 		// link don't know about unavilable areas
 		if ((area->group!='\060') && (link->TossGrp==NULL)) rc=2;
 		if ((area->group!='\060') && (link->TossGrp!=NULL)) {
 		    if (strchr(link->TossGrp,area->group)==NULL) rc=2;
 		}
+*/
 		
 		switch (rc) {
 		case 1: 
