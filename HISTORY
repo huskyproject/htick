@@ -22,11 +22,13 @@ This file describe changes between htick-1.0-stable and htick-1.1-current
    - AnnTo : announce message recipient name;
    - AnnSubj : announce message subject;
    - AnnInclude : Array of fileecho names|masks that will be announced in
-     this annAreaTag
+     this annAreaTag;
    - AnnExclude : Array of fileecho names|masks that won't be announced
-     in this annAreaTag
+     in this annAreaTag;
    - AnnMessFlags : announce message flags ("k/s", "loc", "hld", ...);
-   - AnnOrigin : origin for announce messages.
+   - AnnOrigin : origin for announce messages;
+   - AnnFileOrigin : show system address that hatch file in announce;
+   - AnnFileRFrom : show system address which file recived from.
 
 3. IMPORTANT bugfixes:
    - fixed bug with missed files in report;
