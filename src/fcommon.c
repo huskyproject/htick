@@ -29,7 +29,6 @@
  *****************************************************************************/
 
 #include <time.h>
-#include <fcommon.h>
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -42,7 +41,7 @@
 #ifdef __IBMC__
 #include <direct.h>
 #endif
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) || defined(_MSC_VER)
 #include <process.h>
 #endif
 #if defined (__TURBOC__)
@@ -54,16 +53,6 @@
 #include <fcntl.h>
 #include <errno.h>
 
-
-#include <global.h>
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/adcase.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/recode.h>
-
-
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
 #include <smapi/stamp.h>
@@ -71,10 +60,15 @@
 #include <smapi/ffind.h>
 #include <smapi/patmat.h>
 
-#if defined (_MSC_VER)
-#include <process.h>
-#endif
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/dirlayer.h>
+#include <fidoconf/adcase.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/recode.h>
 
+#include <fcommon.h>
+#include <global.h>
 #include <toss.h>
 #include <add_desc.h>
 

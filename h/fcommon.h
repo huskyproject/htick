@@ -98,6 +98,10 @@ int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
  */
 #endif
 
+#if defined(__MINGW32__)
+ int fTruncate( int fd, long length );
+#endif
+
 //int    createLockFile(char *lockFile);
 #endif
 

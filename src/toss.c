@@ -45,44 +45,8 @@
 #if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
 #include <unistd.h>
 #endif
-
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/adcase.h>
-#include <fidoconf/common.h>
-#include <fcommon.h>
-#include <global.h>
-
-#include <toss.h>
-#include <smapi/patmat.h>
-
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/afixcmd.h>
-
-#include <smapi/msgapi.h>
-#include <smapi/typedefs.h>
-#include <smapi/compiler.h>
-#include <pkt.h>
-#include <areafix.h>
-#include <version.h>
-#include <smapi/ffind.h>
-
-#include <smapi/stamp.h>
-#include <smapi/progprot.h>
-
-#include <add_desc.h>
-#include <seenby.h>
-#include <fidoconf/recode.h>
-#include <fidoconf/crc.h>
-#include <filecase.h>
-
-#ifndef OS2
-#ifdef __EMX__
-#include <sys/types.h>
-#ifndef _A_HIDDEN
+#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #define _A_HIDDEN A_HIDDEN
-#endif
-#endif
 #endif
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
@@ -95,6 +59,32 @@
 #define P_WAIT		_P_WAIT
 #endif
 
+#include <smapi/msgapi.h>
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
+#include <smapi/patmat.h>
+#include <smapi/ffind.h>
+#include <smapi/stamp.h>
+#include <smapi/progprot.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/adcase.h>
+#include <fidoconf/common.h>
+#include <fidoconf/dirlayer.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
+#include <fidoconf/recode.h>
+#include <fidoconf/crc.h>
+
+#include <fcommon.h>
+#include <global.h>
+#include <toss.h>
+#include <pkt.h>
+#include <areafix.h>
+#include <version.h>
+#include <add_desc.h>
+#include <seenby.h>
+#include <filecase.h>
 
 s_newfilereport **newFileReport = NULL;
 unsigned newfilesCount = 0;

@@ -45,6 +45,9 @@
 #define INFO    9
 #define RESEND  10
 #define LINKED  11
+#if defined(ERROR)
+#undef ERROR
+#endif
 #define ERROR   255
 
 
