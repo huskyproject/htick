@@ -17,6 +17,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     unsigned int i;
     char *desc_line = NULL;
     char *namefile  = NULL;
+    int descOnNewLine  = 0;
     
     descr_file = fopen (descr_file_name, "a");
     if (descr_file == NULL) return 1;
@@ -24,7 +25,8 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     namefile = sstrdup(file_name);
     
     MakeProperCase(namefile);
-    fprintf (descr_file, "%-12s", namefile);
+    xscatprintf(&desc_line, "%-12s",namefile);
+    //fprintf (descr_file, "%-12s", namefile);
     if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10) {
         char dlc[10];
         dlc[0] = ' ';
@@ -32,18 +34,29 @@ int add_description (char *descr_file_name, char *file_name, char **description,
         for(i = 1; i <= config->DLCDigits; i++) dlc[i+1] = '0';
         dlc[i+1] = ']';
         dlc[i+2] = '\x00';
-        fprintf (descr_file, "%s", dlc);
+        //fprintf (descr_file, "%s", dlc);
+        xstrscat(&desc_line, " ", dlc, NULL);
     }
-    for (i=0;i<count_desc;i++) {
+    if(strlen(desc_line) + strlen(description[0]) < 80 && count_desc == 1)
+    {
+        fprintf (descr_file, "%s",desc_line);
+    }
+    else
+    {
+        fprintf (descr_file, "%s\n",desc_line);
+        descOnNewLine = 1;
+    }
+    for ( i = 0; i < count_desc; i++ ) {
         desc_line = sstrdup(description[i]);
         if (config->intab != NULL) recodeToInternalCharset(desc_line);
-        if (i==0)
+        if (descOnNewLine == 0) {
             fprintf(descr_file," %s\n",desc_line);
-        else {
-            if (config->fileDescPos == 0 )
-                config->fileDescPos = 1;
+            descOnNewLine = 1;
+        } else {
+            if (config->fileDescPos == 0 ) config->fileDescPos = 1;
             fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '), 
                 (config->fileLDescString == NULL) ? " " : config->fileLDescString, desc_line);
+            
         }
         nfree(desc_line);
     }
@@ -173,7 +186,7 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
     if (f1 == NULL) return 1;
     
     while (!feof(f1)) {
-        fgets(hlp,sizeof hlp,f1);
+        fgets(hlp,sizeof(hlp),f1);
         
         if (hlp[0]==0 || hlp[0]==10 || hlp[0]==13)
             continue;

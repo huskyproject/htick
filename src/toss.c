@@ -1754,19 +1754,19 @@ char *formDescStr(char *desc)
 
 char *formDesc(char **desc, int count)
 {
-	char *buff=NULL, *tmp;
-	int i;
-
-	for (i = 0; i < count; i++ ) {
-		tmp = formDescStr(desc[i]);
-		if (i == 0) {
-			xstrscat(&buff, tmp , "\r", NULL);
-		} else {
-			xstrscat(&buff, print_ch(24, ' '), tmp, "\r", NULL);
-		}
-		nfree(tmp);
-	}
-	return buff;
+    char *buff=NULL, *tmp;
+    int i;
+    
+    for (i = 0; i < count; i++ ) {
+        tmp = formDescStr(desc[i]);
+        if (i == 0) {
+            xstrscat(&buff, tmp , "\r", NULL);
+        } else {
+            xstrscat(&buff, print_ch(24, ' '), tmp, "\r", NULL);
+        }
+        nfree(tmp);
+    }
+    return buff;
 }
 
 void freeFReport(s_newfilereport *report)
@@ -1811,10 +1811,9 @@ void reportNewFiles()
    unsigned  int i, c;
    UINT32    fileSize;
    s_message *msg;
-   char      buff[256], *tmp;
+   char      buff[256], *tmp=NULL;
    FILE      *echotosslog;
    char      *annArea;
-   int       areaLen;
 
    if (cmAnnounce) annArea = announceArea;
    else if (config->ReportTo != NULL && (!cmAnnFile)) annArea = config->ReportTo;
@@ -1853,28 +1852,28 @@ void reportNewFiles()
                   } /* endif */
                   xstrcat(&(msg->text), "\001FLAGS NPD\r");
                } /* endif */
-
                fileCount = fileSize = 0;
-               areaLen = strlen(newFileReport[i]->areaName);
-               sprintf(buff, "\r>Area : %s%s", newFileReport[i]->areaName,
-                                               print_ch(((areaLen<=15) ? 25 : areaLen+10), ' '));
-               sprintf(buff+((areaLen<=15) ? 25 : areaLen+10), "Desc : %s\r %s\r",
-                    (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
-                    print_ch(77, '-'));
-               msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
-               strcat(msg->text, buff);
-               sprintf(buff, " %s%s", strUpper(newFileReport[i]->fileName), print_ch(25, ' '));
+
+               xscatprintf(&(msg->text), "\r>Area : %-15s Desc : %s\r %s\r", 
+                   newFileReport[i]->areaName,
+                   (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
+                   print_ch(77, '-'));
+               xscatprintf(&tmp," %-12s %9ld ", strUpper(newFileReport[i]->fileName), 
+                   newFileReport[i]->fileSize);
+
+               if(strlen(tmp) > 24)
+                   xscatprintf(&(msg->text),"%s\r",tmp);
+               else
+                   xstrcat(&(msg->text),tmp);
+               nfree(tmp);
                tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
-               sprintf(buff+14, "% 9i", newFileReport[i]->fileSize);
-               msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
-               sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
+               xstrcat(&(msg->text),tmp);
                if (config->originInAnnounce) {
-                  msg->text = (char*)srealloc(msg->text, strlen(msg->text)+75);
-                  sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                          newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
-                          newFileReport[i]->origin.node,newFileReport[i]->origin.point);
+                   xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                       newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
+                       newFileReport[i]->origin.node,newFileReport[i]->origin.point);
                }
-               if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
+               if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
                nfree(tmp);
                fileCount++;
                fileSize += newFileReport[i]->fileSize;
@@ -1883,18 +1882,23 @@ void reportNewFiles()
                       newFileReport[b]->useAka == &(config->addr[c]) &&
                       stricmp(newFileReport[i]->areaName,
                       newFileReport[b]->areaName) == 0) {
-                      sprintf(buff, " %s%s", strUpper(newFileReport[b]->fileName), print_ch(25, ' '));
-                      tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
-                      sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
-                      msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
-                      sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
+                      xscatprintf(&tmp," %-12s %9ld ", strUpper(newFileReport[i]->fileName), 
+                          newFileReport[i]->fileSize);
+                      if(strlen(tmp) > 24)
+                          xscatprintf(&(msg->text),"%s\r",tmp);
+                      else
+                          xstrcat(&(msg->text),tmp);
+                      nfree(tmp);
+                      
+                      tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
+                      
+                      xstrcat(&(msg->text),tmp);
                       if (config->originInAnnounce) {
-                         msg->text = (char*)srealloc(msg->text, strlen(msg->text)+75);
-                         sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                                 newFileReport[b]->origin.zone,newFileReport[b]->origin.net,
-                                 newFileReport[b]->origin.node,newFileReport[b]->origin.point);
+                          xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                              newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
+                              newFileReport[i]->origin.node,newFileReport[i]->origin.point);
                       }
-                      if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
+                      if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
                       nfree(tmp);
                       fileCount++;
                       fileSize += newFileReport[b]->fileSize;
