@@ -25,23 +25,19 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-
-#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
-#include <dos.h>
 #include <process.h>
+
+#include <smapi/compiler.h>
+
+#ifdef HAS_DOS_H
+#include <dos.h>
 #endif
 
-#include <smapi/progprot.h>
-
-#if !defined(__TURBOC__) && !defined(__MSVC__)
+#if HAS_UNISTD_H
 #include <unistd.h>
 #endif
 
-
-#if defined(__MSVC__)
-#include <process.h>
-#define P_WAIT		_P_WAIT
-#endif
+#include <smapi/progprot.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -366,22 +362,11 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         }
         else
         {
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-            list = mk_lst(cmd);
-            cmdexit = spawnvp(P_WAIT, cmd, list);
-            free((char **)list);
-            if (cmdexit != 0) {
-                w_log( LL_ERROR, "exec failed: %s, return code: %d", strerror(errno), cmdexit);
-                chdir(buffer);
-                return 3;
-            }
-#else
-            if ((cmdexit = system(cmd)) != 0) {
+            if ((cmdexit = cmdcall(cmd)) != 0) {
                 w_log( LL_ERROR, "exec failed, code %d", cmdexit);
                 chdir(buffer);
                 return 3;
             }
-#endif
         }
         chdir(buffer);
 
