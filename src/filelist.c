@@ -58,7 +58,7 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
     memset(&bs,0,sizeof(BigSize));
     IncBigSize(&bs, (ULONG)size);
     fprintf(f,"%-12s",filename);
-    fprintf(f,"% 8s ",PrintBigSize(&bs));
+    fprintf(f,"%8s ",PrintBigSize(&bs));
     fprintf(f, "%02u-", day);
 
     switch (month) {
@@ -138,6 +138,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         nfree(filename);
         xstrscat(&filename,fileareapath,file,NULL);
         if (stricmp(filename, fbbsname) == 0) continue;
+        if (direxist(filename)) continue;
         if (!flag) {
             if (bbs) fprintf(f,"BbsArea: %s", area_areaName);
             else fprintf(f,"FileArea: %s", area_areaName);
@@ -219,7 +220,7 @@ void filelist()
     w_log( LL_INFO, "Start filelist...");
     
     if (flistfile == NULL) {
-        w_log('6',"Not found output file");
+        w_log('6',"Could not find output file");
         return;
     }
     
