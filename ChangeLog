@@ -1,3 +1,12 @@
+2002-05-07 Tuesday 15:28  mche
+
+	* src/: add_desc.c (1.6), areafix.c (1.58): strncasesearch changed
+	for strncasecmp pointer initialization added
+
+2002-05-07 Tuesday 11:40  mche
+
+	* src/toss.c (1.151): minor bugfix on previous revision
+
 2002-05-06 Monday 14:10  pavel.gulchouck
 
 	* src/: areafix.c (1.57), toss.c (1.150): Added kludge "FLAGS NPD"
