@@ -13,7 +13,7 @@ following form and post report by one of these ways:
 Operation system version ____________________________________
 
 Program version _____________________________________________
-(the 1st line from `htick -h` output)
+(the 1st line from `htick` output)
 
 Bug description _____________________________________________
 _____________________________________________________________
@@ -24,7 +24,7 @@ _____________________________________________________________
 Can bug be repeated? [ ]yes  [ ]no
 
 Debugging log
-(using `Loglevels 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ`):
+(using `Loglevels 0-9A-Za-z`):
 _____________________________________________________________
 _____________________________________________________________
 _____________________________________________________________
