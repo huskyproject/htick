@@ -264,6 +264,7 @@ char *list(s_message *msg, s_link *link) {
    }
 
    xscatprintf(&report, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
+   if (link->ffixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->ffixEchoLimit);
 
    w_log( LL_AREAFIX, "FileFix: list sent to %s", aka2str(link->hisAka));
 
@@ -308,6 +309,7 @@ char *linked(s_message *msg, s_link *link, int action)
         xscatprintf(&report, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
     else
         xscatprintf(&report, "\r%u areas linked\r", n);
+    if (link->ffixEchoLimit) xscatprintf(&report, "\rYour limit is %u areas for subscribe\r", link->ffixEchoLimit);
     return report;
 }
 
@@ -572,6 +574,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	for (i=0; i<config->fileAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->fileAreas[i]),msg,line, link);
 		if (rc == 4) continue;
+ 		if (rc!=0 && limitCheck(link,msg)) rc = 6; /* areas limit exceed for link */
 		
 		area = &(config->fileAreas[i]);
 		
@@ -598,12 +601,15 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                 xscatprintf(&report, "%s Link is not possible\r", area->areaName);
                 w_log( LL_AREAFIX, "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
                 break;
+            case 6:
+ 		break;
             default :
                 xscatprintf(&report, "%s No access\r", area->areaName);
                 w_log( LL_AREAFIX, "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
                 continue;
 		}
     }
+    if (rc!=0 && limitCheck(link,msg)) rc = 6; /* areas limit exceed for link */
     if(rc == 4 && link->denyFRA==0 && !found)
     {
         // try to forward request
@@ -616,6 +622,10 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
             w_log( LL_AREAFIX, "Filefix: %s - request forwarded", line);
         }
     }
+    if (rc == 6) {   /* areas limit exceed for link */
+    	xscatprintf(&report," %s - no access (full limit)\r",line);
+	w_log( LL_AREAFIX,"Filefix: %s - no access (full limit)",line);
+    }        
     if (*report == '\0') {
         xscatprintf(&report,"%s Not found\r",line);
         w_log( LL_AREAFIX, "FileFix: filearea %s is not found",line);
@@ -1278,3 +1288,25 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     
     return 0;
 }
+ 
+/* test link for areas quantity limit exceed
+ * return 0 if not limit exceed
+ * else return not zero
+ */
+int limitCheck(s_link *link, s_message *msg) {
+ register unsigned int i,n;
+
+ w_log(LL_FUNC,"areafix.c::limitCheck()");
+
+ if (link->ffixEchoLimit==0) return 0;
+
+ for (i=n=0; i<config->fileAreaCount; i++)
+	if (0==subscribeCheck(config->fileAreas[i], msg, link))	
+	    n++;
+
+ i = n >= link->ffixEchoLimit ;
+
+ w_log(LL_FUNC,"areafix.c::limitCheck() rc=%u", i);
+ return i;
+}
+

@@ -146,6 +146,10 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     List of available file-areas from this link
 
+    m) FileFixEchoLimit <number>
+ 
+    Area subscribe limit
+
 9) SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>
 
 <DirToSaveTic> - where put TIC for fileecho[es] <FileEchoMask>
