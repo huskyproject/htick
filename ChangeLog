@@ -1,3 +1,8 @@
+2002-03-05 Tuesday 01:27  joerg.jaspert
+
+	* debian/: changelog (1.6), control (1.5), huskymak.cfg (1.6): New
+	Debian Package built
+
 2002-02-28 Thursday 09:57  mche
 
 	* src/toss.c (1.128): added sorting of report
