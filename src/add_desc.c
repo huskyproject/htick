@@ -324,7 +324,7 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         fclose(filehandle);
     }
 
-    if ((found = 0)) {
+    if (found == 0) {
         w_log( LL_ALERT, "file %s: cannot find unpacker", fileName);
         return 3;
     }
