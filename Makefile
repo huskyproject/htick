@@ -8,9 +8,9 @@ else
 include ../huskymak.cfg
 endif
 
-OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
-          scan$(OBJ) areafix$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
-	  hatch$(OBJ) filelist$(OBJ) filecase$(OBJ) report$(OBJ) clean$(OBJ)
+OBJS    = htick$(_OBJ) global$(_OBJ) toss$(_OBJ) fcommon$(_OBJ) \
+          scan$(_OBJ) areafix$(_OBJ) add_desc$(_OBJ) seenby$(_OBJ) \
+	  hatch$(_OBJ) filelist$(_OBJ) filecase$(_OBJ) report$(_OBJ) clean$(_OBJ)
 MAN1PAGE = man/htick.1
 MAN1DIR  = $(MANDIR)$(DIRSEP)man1
 SRC_DIR = src/
@@ -37,14 +37,14 @@ CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
 all: $(OBJS) htick$(EXE)
 
-%$(OBJ): $(SRC_DIR)%.c
+%$(_OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 htick$(EXE): $(OBJS)
 	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS) $(LIBS)
 
 clean:
-	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) *$(_OBJ)
 	-$(RM) $(RMOPT) core
 
 distclean: clean

@@ -41,7 +41,6 @@
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
-#include <huskylib/adcase.h>
 #include <fidoconf/common.h>
 #include <huskylib/dirlayer.h>
 #include <huskylib/xstr.h>
