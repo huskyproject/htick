@@ -73,8 +73,11 @@ void addFileToTree(char* dir, char *filename)
         xstrscat(&ticfile,dir,filename,NULL);
         memset(&tic,0,sizeof(tic));
         parseTic(ticfile,&tic);
-        if(tic.file)
-        tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
+        if(tic.file) {
+	    if (!fileTree)
+		tree_init(&fileTree, 1);
+    	    tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
+	}
         disposeTic(&tic);
         nfree(ticfile);
     }
@@ -170,7 +173,7 @@ void cleanPassthroughDir(void)
         }
         closedir(dir);
     }
-    tree_deinit(&fileTree, htick_deleteEntry);
+    tree_mung(&fileTree, htick_deleteEntry);
 
     w_log( LL_FUNC, "cleanPassthroughDir(): end" );
 }
