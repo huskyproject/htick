@@ -1,3 +1,7 @@
+2002-09-19 Thursday 08:45  sfpavel
+
+	* dos/makefile.djg (1.6), src/toss.c (1.210): Fix DJGPP build
+
 2002-09-18 Wednesday 15:02  mche
 
 	* src/add_desc.c (1.18), h/add_desc.h (1.5), h/global.h (1.17),
