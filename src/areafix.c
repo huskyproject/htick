@@ -74,6 +74,97 @@ char *errorRQ(char *line)
 }
 
 
+int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
+
+    /*  rc == '\x0000' access o'k */
+    /*  rc == '\x0001' no access group */
+    /*  rc == '\x0002' no access level */
+    /*  rc == '\x0003' no access export */
+    /*  rc == '\x0004' not linked */
+
+    unsigned i, rc = 0;
+    unsigned Pause = echo->areaType;
+    /* check for OurAka */
+    if(!isOurAka(config,link->hisAka))
+    {
+        for (i=0; i<echo->downlinkCount; i++) {
+            if (link == echo->downlinks[i]->link) break;
+        }
+        if (i == echo->downlinkCount) return 4;
+    } else if ( echo->msgbType  == MSGTYPE_PASSTHROUGH ) {
+        return 4;
+    }
+    /*  pause */
+    if (((link->Pause & Pause) == Pause) && echo->noPause==0) return 3;
+
+    if (echo->group) {
+		if (link->numAccessGrp) {
+			if (config->numPublicGroup) {
+				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
+					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
+					rc = 1;
+			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) rc = 1;
+		} else if (config->numPublicGroup) {
+			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) rc = 1;
+		} else if (link->numOptGrp==0) return 1;
+		
+		if (link->numOptGrp) {
+			if (grpInArray(echo->group,link->optGrp,link->numOptGrp)) {
+				if (link->export==0) return 3; else rc = 0;
+			}
+		}
+	}
+	
+    if (echo->levelread > link->level) return 2;
+
+    return rc;
+}
+
+int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
+
+    /*  rc == '\x0000' access o'k */
+    /*  rc == '\x0001' no access group */
+    /*  rc == '\x0002' no access level */
+    /*  rc == '\x0003' no access import */
+    /*  rc == '\x0004' not linked */
+
+    unsigned int i, rc = 0;
+    /* check for OurAka */
+    if(!isOurAka(config,link->hisAka))
+    {
+        for (i=0; i<echo->downlinkCount; i++) {
+            if (link == echo->downlinks[i]->link) break;
+        }
+        if (i == echo->downlinkCount) return 4;
+    } else if ( echo->msgbType  == MSGTYPE_PASSTHROUGH ) {
+        return 4;
+    }
+
+    if (echo->group) {
+		if (link->numAccessGrp) {
+			if (config->numPublicGroup) {
+				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
+					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
+					rc = 1;
+			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) rc = 1;
+		} else if (config->numPublicGroup) {
+			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) rc = 1;
+		} else if (link->numOptGrp==0) return 1;
+
+		if (link->numOptGrp) {
+			if (grpInArray(echo->group,link->optGrp,link->numOptGrp)) {
+				if (link->import==0) return 3; else rc = 0;
+			}
+		}
+    }
+	
+    if (echo->levelwrite > link->level) return 2;
+
+    return rc;
+}
+
+
+
 int unsubscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
 	int rc=4;
 	
