@@ -430,10 +430,12 @@ int forwardRequestToLink( char *areatag,  char *descr,
         msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop,
             uplink->RemoteFileRobotName ? uplink->RemoteFileRobotName : "filefix",
             uplink->fileFixPwd ? uplink->fileFixPwd : "\x00", 1,
-            config->filefixKillReports);
+            config->filefixReportsAttr);
         msg->text = createKludges(config, NULL,
             uplink->ourAka, &(uplink->hisAka),
             versionStr);
+	if (config->filefixReportsFlags)
+	    xstrscat(&(msg->text), "\001FLAGS ", config->filefixReportsFlags, "\r", NULL);
         uplink->msg = msg;
     } else msg = uplink->msg;
 
@@ -838,12 +840,13 @@ char *areastatus(char *preport, char *text)
     return tmp;
 }
 
-void preprocText(char *preport, s_message *msg)
+void preprocText(char *preport, s_message *msg, char *flags)
 {
     msg->text = createKludges(config,
                               NULL, &msg->origAddr, &msg->destAddr,
                               versionStr);
-    xstrcat(&msg->text, "\001FLAGS NPD\r");
+    if (flags)
+	xstrscat(&msg->text, "\001FLAGS ", flags, "\r");
     xstrcat(&msg->text, preport);
     xscatprintf(&msg->text, " \r--- %s FileFix\r", versionStr);
     msg->textLength=(int)strlen(msg->text);
@@ -864,12 +867,12 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 
     if (config->filefixFromName == NULL)
         tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName,
-                             subj, 1,config->filefixKillReports);
+                             subj, 1,config->filefixReportsAttr);
     else
         tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
                              config->filefixFromName, msg->fromUserName,
-                             subj, 1,config->filefixKillReports);
-    preprocText(report, tmpmsg);
+                             subj, 1,config->filefixReportsAttr);
+    preprocText(report, tmpmsg, config->filefixReportsFlags);
 
     writeNetmail(tmpmsg, config->robotsArea);
 
@@ -1050,7 +1053,7 @@ void ffix(hs_addr addr, char *cmd)
 				 link->RemoteRobotName : "Filefix",
 				 link->fileFixPwd ?
 				 link->fileFixPwd : "", 1,
-                 config->areafixKillReports);
+                 config->areafixReportsAttr);
 	    tmpmsg->text = cmd;
         processFileFix(tmpmsg);
 	    tmpmsg->text=NULL;
@@ -1215,17 +1218,19 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
                 versionStr,
                 config->sysop,
                 "Created new fileareas", 1,
-                config->filefixKillReports);
+                config->filefixReportsAttr);
             msg->text = createKludges(config, NULL, area->useAka, area->useAka, versionStr);
         } else {
             msg = makeMessage(area->useAka,
                 area->useAka,
                 versionStr,
                 "All", "Created new fileareas", 0,
-                config->filefixKillReports);
+                config->filefixReportsAttr);
             msg->text = createKludges(config, config->ReportTo, area->useAka, area->useAka, versionStr);
         } /* endif */
-        xstrscat(&msg->text, "\001FLAGS NPD\r" "\r \rNew filearea: ",
+	if (config->filefixReportsFlags)
+	    xstrscat(&(msg->text), "\001FLAGS ", config->filefixReportsFlags, "\r", NULL);
+        xstrscat(&msg->text, "\r\rNew filearea: ",
                  area->areaName, "\r\rDescription : ",
                  area->description ? area->description : "", "\r", NULL);
         writeMsgToSysop(msg, config->ReportTo, NULL);
