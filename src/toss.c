@@ -457,6 +457,61 @@ int parseTic(char *ticfile,s_ticfile *tic)
   return(1);
 }
 
+                                /* we do NOT check for a dosish ':' here
+                                   because mkdir "C:" is nonsense */
+#define my_isdirsep(x) (((x) == '/') || ((x) == '\\'))
+
+                                /* makes sure subdirectories in the pathname
+                                   exist. the last part of the argument is only
+                                   treated as a subdir if the argument ends
+                                   with '/' (or '\\'). rv: 1=ok, 0=error
+                                   basedir is not checked, filename is
+                                   checked. basedir must end in separator. */
+
+static int makealldirs(const char *basedir, const char *filename)
+{
+    char *buffer, *cpd;
+    const char *cps = filename;
+    size_t l;
+
+    l = strlen(basedir);
+    if (!(*filename)) return 1;
+    if ((buffer = malloc(l + strlen(filename) + 1)) == NULL) return 0;
+
+    memcpy(buffer, basedir, l);
+    cpd = buffer + l;
+  
+    do
+    {
+        while ((!my_isdirsep(*cps)) && (*cps))
+        {
+            *cpd++ = *cps++;
+        }
+        
+        if (my_isdirsep(*cps))
+        {
+            if (!direxist(buffer))
+            {
+                *cpd = '\0';
+                mymkdir(buffer); /* we can't check mkdir return code for
+                                    portability reasons, so we do this: */
+                if (!direxist(buffer))
+                {
+                    free(buffer);
+                    return 0;
+                }
+            }
+            *cpd++ = *cps++;
+        }
+    } while (*cps);
+
+    free(buffer);
+    return 1;
+}
+    
+#undef my_isdirsep
+
+
 int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 {
    FILE *f;
@@ -474,10 +529,25 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    fileechoFileName = (char *) malloc(strlen(c_area)+1);
    strcpy(fileechoFileName, c_area);
 
+   creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+
    /* translating path of the area to lowercase, much better imho. */
    while (*fileechoFileName != '\0') {
       *fileechoFileName=tolower(*fileechoFileName);
       if ((*fileechoFileName=='/') || (*fileechoFileName=='\\')) *fileechoFileName = '_'; /* convert any path elimiters to _ */
+      if (creatingLink->autoFileCreateSubdirs && *fileechoFileName == '.')
+      {
+                                /* technically, a / does for EACH AND EVRY
+                                   FUCKING OS, but DOS users tend to be
+                                   confused by it, soe we do them a favour */
+#if defined(MSDOS) || defined(WINNT) || defined(OS2) || defined(__NT__) \
+          || defined(DOS) || defined(__OS2__) || defined(__WINNT__)
+          *fileechoFileName = '\\';
+#else          
+          *fileechoFileName = '/';
+#endif          
+      }
+          
       fileechoFileName++;
       i++;
    }
@@ -487,7 +557,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       i--;
    }
 
-   creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+   if (creatingLink->autoFileCreateSubdirs &&
+       stricmp(config->fileAreaBaseDir,"Passthrough"))
+   {
+       if (!makealldirs(config->fileAreaBaseDir,fileechoFileName))
+       {
+           fprintf(stderr, "cannot make all subdirectories for %s\n",
+                   fileechoFileName);
+           return 1;
+       }
+   }
+
 
    fileName = creatingLink->autoFileCreateFile;
    if (fileName == NULL) fileName = getConfigFileName();

@@ -90,6 +90,13 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     Defaults for File Area Autocreate
 
+    e) AutoFileCreateSubdirs on|off
+
+    Whether to autocreate areas like /filebase/gfd.app.edit (off) or
+    /filebase/gfd/app/edit (on). If you want to configure this globally
+    instead of on per-link basis, set this in the deflink section. For more
+    information see doc about AutoAreaCreateSubdirs in the hpt manual.
+
     e) delNotRecievedTIC
 
     If file not recieved, then remove TIC
@@ -157,5 +164,3 @@ All options are possible, except areatag and path. Different setting in
 filearea definition overrides default.
 See also echoAreaDefaults.
 Defaults are switched off with empty 'fileAreaDefaults'.
-
-
