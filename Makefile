@@ -9,6 +9,8 @@ endif
 OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
           scan$(OBJ) areafix$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
 	  hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
+MAN1PAGE = man/htick.1
+MAN1DIR  = $(MANDIR)$(DIRSEP)man1
 SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)
@@ -47,7 +49,9 @@ distclean: clean
 
 install: htick$(EXE)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(BINDIR)
+	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(MAN1DIR)
 
 uninstall:
 	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)htick$(EXE)
+	$(RM) $(RMOPT) $(MAN1DIR)$(DIRSEP)$(MAN1PAGE)
 
