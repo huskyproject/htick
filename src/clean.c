@@ -190,7 +190,7 @@ void purgeFileEchos()
                 continue;
             }
             w_log(LL_INFO,  "Deleting file %s that is %d days old", file->d_name,(tnow-st.st_mtime)/86400);
-            remove(filename);
+            removeFileMask(config->fileAreas[i].pathName, file->d_name);
             nfree(filename);
         }
         closedir(dir);
