@@ -51,9 +51,9 @@
 #include <areafix.h>
 #include <hatch.h>
 
-extern char *curconfname;
-extern long curconfpos;
-extern FILE *hcfg;
+//extern char *curconfname;
+//extern long curconfpos;
+//extern FILE *hcfg;
 
 unsigned char RetFix;
 
@@ -186,7 +186,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
     char *buff, *sbuff, *ptr, *tmp, *line;
 	
-    fseek(f, curconfpos, SEEK_SET);
+    fseek(f, getCurConfPos(), SEEK_SET);
     curpos = ftell(f);
     buff = readLine(f);
     buff = trimLine(buff);
@@ -613,8 +613,8 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 			if (stricmp(token, "filearea")==0) {
 				token = strseparate(&line, " \t"); 
 				if (stricmp(token, areaName)==0) {
-					fileName = sstrdup(curconfname);
-					pos = ftell(hcfg);
+					fileName = sstrdup(getCurConfName());
+					pos = get_hcfgPos();
 					break;
 				}
 			}
@@ -867,8 +867,8 @@ linkline:
 			token = strseparate(&line, " \t");
 			if (token && testAddr(token, link->hisAka)) {
 				nfree(cfgline);
-				curpos = ftell(hcfg);
-				confName = sstrdup(curconfname);
+				curpos = get_hcfgPos();
+				confName = sstrdup(getCurConfName());
 				close_conf();
 				f_conf = fopen(confName, "r+");
 				if (f_conf == NULL) {
@@ -989,9 +989,9 @@ linkliner:
 		}
 		// remove line
 		nfree(cfgline);
-		remstr = ftell(hcfg);
-		curpos = curconfpos;
-		confName = sstrdup(curconfname);
+		remstr = get_hcfgPos();
+		curpos = getCurConfPos();
+		confName = sstrdup(getCurConfName());
 		close_conf();
 		if ((f_conf=fopen(confName,"r+")) == NULL)
 		{
