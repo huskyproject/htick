@@ -1,3 +1,8 @@
+2002-04-04 Thursday 09:09  ml
+
+	* src/fcommon.c (1.41): fix compilation and create hard links under
+	*nix [path by Pavel Andreew]
+
 2002-04-03 Wednesday 09:57  mche
 
 	* src/toss.c (1.137): core fixed in cleanPassthroughDir
