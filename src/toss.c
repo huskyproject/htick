@@ -86,12 +86,13 @@
 #include <global.h>
 #include <toss.h>
 #include <areafix.h>
-#include <version.h>
 #include <add_desc.h>
 #include <seenby.h>
 #include <filecase.h>
 #include "hatch.h"
 #include "report.h"
+
+char *versionStr;
 
 /* tic keywords calculated crc */
 #define CRC_CREATED     0x4EC6

@@ -75,8 +75,7 @@
 /* htick */
 #include <htick.h>
 #include <global.h>
-#include <cvsdate.h>
-#include <version.h>
+#include "version.h"
 #include <toss.h>
 #include <scan.h>
 #include <hatch.h>
@@ -156,7 +155,7 @@ int processHatchParams(int i, int argc, char **argv)
 }
 
 void start_help(void) {
-        printf("%s",versionStr);
+        printf("%s\n",versionStr);
         printf(
             "\nUsage: htick [options] <command>\n"
             "Options: -q              Quiet mode (display only urgent messages to console)\n"
@@ -360,7 +359,7 @@ int main(int argc, char **argv)
 {
    struct _minf m;
 
-   versionStr = GenVersionStr( "HTick", VER_MAJOR, VER_MINOR, VER_PATCH,
+   versionStr = GenVersionStr( "htick", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
 
 

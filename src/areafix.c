@@ -56,12 +56,13 @@
 /* htick */
 #include <fcommon.h>
 #include <global.h>
-#include <version.h>
 #include <toss.h>
 #include <areafix.h>
 #include <hatch.h>
 #include <scan.h>
 #include <add_desc.h>
+
+char *versionStr;
 
 unsigned char RetFix;
 

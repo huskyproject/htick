@@ -31,7 +31,7 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include <fidoconf/version.h>
+#include "cvsdate.h"
 
 /* basic version number */
 #define VER_MAJOR 1

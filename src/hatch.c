@@ -51,13 +51,13 @@
 /*  htick  */
 #include <filecase.h>
 #include <seenby.h>
-#include <version.h>
 #include <add_desc.h>
 #include <hatch.h>
 #include <global.h>
 #include <fcommon.h>
 #include <toss.h>
 
+char *versionStr;
 
 typedef enum _descrMacro {BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;
 

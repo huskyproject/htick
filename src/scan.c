@@ -46,10 +46,10 @@
 #include <fcommon.h>
 #include <scan.h>
 #include <global.h>
-#include <version.h>
 #include <areafix.h>
 #include <toss.h>
 
+char *versionStr;
 
 void convertMsgHeader(XMSG xmsg, s_message *msg)
 {

@@ -43,7 +43,8 @@
 #include "toss.h"
 #include "global.h"
 #include "report.h"
-#include "version.h"
+
+char *versionStr;
 
 typedef struct {
     s_area *farea;

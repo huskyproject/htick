@@ -41,7 +41,6 @@
 
 #include "add_desc.h"
 #include "global.h"
-#include "version.h"
 #include "fcommon.h"
 #include "filelist.h"
 #include "toss.h"
