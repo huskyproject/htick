@@ -468,6 +468,7 @@ MsgBaseDir.
 
 @item -c
 копировать файлы из директории файлобласти в <DirToSaveTic>
+@end table
 
 @item <DaysToKeepTics>
 параметр <DaysToKeepTics> является опциональным. Если он определен, TIC'и, сохраненные в
