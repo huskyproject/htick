@@ -614,7 +614,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
             w_log( LL_AREAFIX, "Filefix: %s - request forwarded", line);
         }
     }
-    if (!report) {
+    if (*report == '\0') {
         xscatprintf(&report,"%s Not found\r",line);
         w_log( LL_AREAFIX, "FileFix: filearea %s is not found",line);
     }
