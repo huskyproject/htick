@@ -44,5 +44,6 @@ This file describe changes between htick-0.9 and htick-1.0
    - fix problem with autocreating;
    - fix hatching from fileechodir: don't delete file;
    - areadesc set into TIC at 'htick hatch'.
+   - set 'Loc' flag on messages from FileFix;
 
 $Id$
