@@ -1,7 +1,31 @@
+2002-08-27 Tuesday 10:40  sfpavel
+
+	* debian/changelog, debian/dirs, debian/rules, misc/README
+	(htick-1_0-stable.[8,2,3,1]): New debian package
+
+2002-08-27 Tuesday 10:18  sfpavel
+
+	* misc/purge_fileecho (htick-1_0-stable.1): Add misc/purge_fileecho
+	from hpt
+
+2002-08-27 Tuesday 09:17  mche
+
+	* src/hatch.c (htick-1_0-stable.1): fix memoryleak that makes htick
+	coredump
+
+2002-08-27 Tuesday 09:16  mche
+
+	* src/toss.c (htick-1_0-stable.1): process keyword 'replace' only
+	for tossing
+
 2002-08-26 Monday 06:14  sfpavel
 
 	* debian/: changelog, control, copyright
 	(htick-1_0-stable.[7,3,2]): Update http location
+
+2002-08-22 Thursday 07:19  sfpavel
+
+	* misc/purge_fileecho (1.1): Add misc/purge_fileecho from hpt
 
 2002-08-22 Thursday 06:22  sfpavel
 
