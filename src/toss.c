@@ -878,7 +878,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
-         tic.file, tic.size, tic.area, aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
+         tic.file?tic.file:"", tic.size, tic.area?tic.area:"", aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
    nfree(tic_origin);
 
    if (tic.to.zone!=0) {
