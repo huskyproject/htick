@@ -1,3 +1,7 @@
+2002-07-24 Wednesday 09:45  pavel.gulchouck
+
+	* src/fcommon.c (1.52.2.1): segfault on remove files fixed
+
 2002-07-17 Wednesday 16:00  stas
 
 	* HISTORY (1.2.2.2): Update documentation
