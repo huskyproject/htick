@@ -1,6 +1,16 @@
-htick 0.02
+htick 0.03
 ----------
 
+
+
+htick 0.02
+(released on Tue Nov 09 09:23:00 CEST 1999)
+----------
+
+----- cvs ci ------
+Sun Nov 07 15:30:00 1999
+georgi:
++ Added support fowrardPkts for TIC
 
 ----- cvs ci ------
 Thu Oct 16 13:40:00 MET DST 1999
