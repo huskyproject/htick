@@ -53,23 +53,26 @@ static int dosallowin83(int c)
 
 int isDOSLikeName(char *name)
 {
-	int nl,el,ec,uc,lc,f;
-	char *p = name;
-    nl=el=ec=uc=lc=0;
-    f=1;
-    while(*p) {
-    	if(!dosallowin83(*p)) {
-    		f=0;
-    		break;
-    	}
-    	if('.'==*p) ec++;
-    	else {
-			if(!ec) nl++; else el++;
-			if(isalpha(*p))
-				if(isupper(*p)) uc++;
-				else lc++;
-		}
-    	p++;
+   int nl,el,ec,uc,lc,f;
+   char *p = name;
+
+   nl=el=ec=uc=lc=0;
+   f=1;
+   while (*p) {
+      if(!dosallowin83(*p)) {
+         f=0;
+         break;
+      }
+      if('.'==*p)
+         ec++;
+      else {
+         if (!ec) nl++;
+         else el++;
+         if(isalpha(*p))
+           if(isupper(*p)) uc++;
+           else lc++;
+      }
+      p++;
     }
     return (f && ec < 2 && el < 4 && nl < 9 && (!lc || !uc));
 }

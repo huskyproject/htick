@@ -527,7 +527,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        fileName[0]='\0';
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
        fileName++;
-       fileName=strrchr(fileName,'\"')+1;
+       fileName=strrchr(fileName,'\"')+1; //"
        strcat(tmp,fileName);
        free(NewAutoCreate);
        NewAutoCreate=tmp;
@@ -775,33 +775,316 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
    return;
 }
 
-int processTic(char *ticfile, e_tossSecurity sec)                     
+int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
+                char *filename)
+/*
+   if isToss == 1 - tossing
+   else           - hatching
+*/
 {
-   s_ticfile tic;
    int i, z;
-   size_t j;
-   FILE *flohandle;
-
-   char ticedfile[256],fileareapath[256],
-        newticedfile[256],linkfilepath[256],descr_file_name[256];
-   char *newticfile;
-   s_filearea *filearea;
+   char descr_file_name[256], newticedfile[256], fileareapath[256],
+        linkfilepath[256];
    char hlp[100],timestr[40];
    time_t acttime;
-   s_link *from_link, *to_link;
    s_addr *old_seenby = NULL;
    s_addr old_from, old_to;
    int old_anzseenby = 0;
-   int busy;
-   unsigned long crc;
-   struct stat stbuf;
-   int writeAccess, readAccess;
+   int readAccess;
    int cmdexit;
    char *comm;
    char *p;
+   int busy;
+   char *newticfile;
+   FILE *flohandle;
+   int minLinkCount;
 
 
-/*   printf("Ticfile %s\n",ticfile); */
+   if (isToss) minLinkCount = 2; // uplink and downlink
+   else minLinkCount = 1;        // only downlink
+
+   if (!filearea->pass && !filearea->sendorig)
+      strcpy(fileareapath,filearea->pathName);
+   else
+      strcpy(fileareapath,config->passFileAreaDir);
+   p = strrchr(fileareapath,PATH_DELIM); 
+   if(p) strLower(p+1);
+
+   createDirectoryTree(fileareapath);
+
+   if (tic.replaces && !filearea->pass ) {
+      /* Delete old file */
+      /* TODO: File Masks */
+      strcpy(newticedfile,fileareapath);
+      strcat(newticedfile,tic.replaces);
+      adaptcase(newticedfile);
+
+      if (remove(newticedfile)==0) {
+         writeLogEntry(htick_log,'6',"Removed file %s one request",newticedfile);
+      }
+   }
+
+   if (!filearea->pass || (filearea->pass && filearea->downlinkCount>=minLinkCount)) {
+
+      strcpy(newticedfile,fileareapath);
+      p = strrchr(newticedfile,PATH_DELIM); 
+      if(p) strLower(p+1);
+      strcat(newticedfile,MakeProperCase(tic.file));
+
+      if (isToss)
+         if (move_file(filename,newticedfile)!=0) {
+             writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+             disposeTic(&tic);
+             return(2);
+         } else {
+             writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
+         }
+      else
+         if (copy_file(filename,newticedfile)!=0) {
+            writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+            disposeTic(&tic);
+            return(2);
+         } else {
+            writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
+         }
+   }
+
+   if (!filearea->pass) {
+      strcpy(descr_file_name, filearea->pathName);
+      strcat(descr_file_name, "files.bbs");
+      adaptcase(descr_file_name);
+      removeDesc(descr_file_name,tic.file);
+      if (tic.anzldesc>0)
+         add_description (descr_file_name, tic.file, tic.ldesc, tic.anzldesc);
+      else
+         add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
+   }
+
+   if (cmAnnFile && !filearea->hide)
+   {
+      if (tic.anzldesc>0)
+         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
+      else
+         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
+   }
+
+   if (filearea->downlinkCount>=minLinkCount) {
+      /* Adding path & seenbys */
+      time(&acttime);
+      strcpy(timestr,asctime(gmtime(&acttime)));
+      timestr[strlen(timestr)-1]=0;
+      if (timestr[8]==' ') timestr[8]='0';
+
+      sprintf(hlp,"%s %lu %s UTC %s",
+              addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
+
+      tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
+      tic.path[tic.anzpath]=strdup(hlp);
+      tic.anzpath++;
+
+      if (isToss) {
+         /* Save seenby structure */
+         old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
+         memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
+         old_anzseenby = tic.anzseenby;
+         memcpy(&old_from,&tic.from,sizeof(s_addr));
+         memcpy(&old_to,&tic.to,sizeof(s_addr));
+      }
+   }
+
+   for (i=0;i<filearea->downlinkCount;i++) {
+      if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
+            (isToss && addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0) &&
+            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0 &&
+            seenbyComp (tic.seenby, tic.anzseenby,
+            filearea->downlinks[i]->link->hisAka) != 0) {
+         /* Adding Downlink to Seen-By */
+         tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
+         memcpy(&tic.seenby[tic.anzseenby],
+            &filearea->downlinks[i]->link->hisAka,
+            sizeof(s_addr));
+         tic.anzseenby++;
+      }
+   }
+
+   /* Checking to whom I shall forward */
+   for (i=0;i<filearea->downlinkCount;i++) {
+      if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 && 
+            addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
+            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0) {
+         /* Forward file to */
+
+         readAccess = readCheck(filearea, filearea->downlinks[i]->link);
+         switch (readAccess) {
+         case 0: break;
+         case 5:
+            writeLogEntry(htick_log,'7',"Link %s paused",
+                    addr2string(&filearea->downlinks[i]->link->hisAka));
+            break;
+         case 4:
+            writeLogEntry(htick_log,'7',"Link %s not subscribe to File Area %s",
+                    addr2string(&old_from), tic.area);
+	    break;
+         case 3:
+            writeLogEntry(htick_log,'7',"Not export to link %s",
+                    addr2string(&filearea->downlinks[i]->link->hisAka));
+	    break;
+         case 2:
+            writeLogEntry(htick_log,'7',"Link %s no access level",
+            addr2string(&filearea->downlinks[i]->link->hisAka));
+	    break;
+         case 1:
+            writeLogEntry(htick_log,'7',"Link %s no access group",
+            addr2string(&filearea->downlinks[i]->link->hisAka));
+	    break;
+         }
+
+         if (readAccess == 0) {
+            if (isToss && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
+               writeLogEntry(htick_log,'7',"File %s already seenby %s",
+                       tic.file,
+                       addr2string(&filearea->downlinks[i]->link->hisAka));
+            } else {
+               memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
+               memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
+                      sizeof(s_addr));
+               if (filearea->downlinks[i]->link->ticPwd!=NULL)
+                  strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
+
+               busy = 0;
+
+               if (createOutboundFileName(filearea->downlinks[i]->link,
+                   cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
+                   FLOFILE)==1)
+                  busy = 1;
+
+               if (busy) {
+                  writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
+                  /* Create temporary directory */
+                  strcpy(linkfilepath,config->busyFileDir);
+               } else {
+                  if (config->separateBundles) {
+                     strcpy(linkfilepath, filearea->downlinks[i]->link->floFile);
+                     sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
+                  } else {
+                     strcpy(linkfilepath, config->passFileAreaDir);
+                  }
+	       }
+               createDirectoryTree(linkfilepath);
+
+	       /* Don't create TICs for everybody */
+	       if (!filearea->downlinks[i]->link->noTIC || busy) {
+                 newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+                 writeTic(newticfile,&tic);   
+	       } else newticfile = NULL;
+
+               if (!busy) {
+                  flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
+                  fprintf(flohandle,"%s\n",newticedfile);
+	       
+	          if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
+
+                  fclose(flohandle);
+
+                  remove(filearea->downlinks[i]->link->bsyFile);
+
+                  writeLogEntry(htick_log,'6',"Forwarding %s for %s",
+                          tic.file,
+                          addr2string(&filearea->downlinks[i]->link->hisAka));
+               }
+               free(filearea->downlinks[i]->link->bsyFile);
+	       filearea->downlinks[i]->link->bsyFile=NULL;
+               free(filearea->downlinks[i]->link->floFile);
+	       filearea->downlinks[i]->link->floFile=NULL;
+            } /* if Seenby */
+         } /* if readAccess == 0 */
+      } /* Forward file */
+   }
+
+   if (!filearea->hide) {
+   /* report about new files - if filearea not hidden */
+      newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
+      newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
+      newFileReport[newfilesCount]->useAka = filearea->useAka;
+      newFileReport[newfilesCount]->areaName = filearea->areaName;
+      newFileReport[newfilesCount]->areaDesc = filearea->description;
+      newFileReport[newfilesCount]->fileName = strdup(tic.file);
+      if (config->originInAnnounce) {
+         newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
+         newFileReport[newfilesCount]->origin.net = tic.origin.net;
+         newFileReport[newfilesCount]->origin.node = tic.origin.node;
+         newFileReport[newfilesCount]->origin.point = tic.origin.point;
+      }
+
+      if (tic.anzldesc>0) {
+         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
+         for (i = 0; i < tic.anzldesc; i++) {
+            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
+            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
+         } /* endfor */
+         newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
+      } else {
+         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
+         for (i = 0; i < tic.anzdesc; i++) {
+            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
+         } /* endfor */
+         newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+      }
+
+      newFileReport[newfilesCount]->fileSize = tic.size;
+
+      newfilesCount++;
+   }
+
+   if (!isToss) reportNewFiles();
+
+   /* execute external program */
+   for (z = 0; z < config->execonfileCount; z++) {
+     if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
+       if (patimat(tic.file,config->execonfile[z].filename) == 0) continue;
+       else {
+         comm = (char *) malloc(strlen(config->execonfile[z].command)+1
+                                +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
+                                +strlen(tic.file)+1);
+         if (comm == NULL) {
+            writeLogEntry(htick_log, '9', "Exec failed - not enough memory");
+            continue;
+         }
+         sprintf(comm,"%s %s%s",config->execonfile[z].command,
+                                (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
+                                tic.file);
+         writeLogEntry(htick_log, '6', "Executing %s", comm);
+         if ((cmdexit = system(comm)) != 0) {
+           writeLogEntry(htick_log, '9', "Exec failed, code %d", cmdexit);
+         }
+         free(comm);
+       }                                         
+   }
+
+   if (isToss) free(old_seenby);
+   return(0);
+}
+
+int processTic(char *ticfile, e_tossSecurity sec)                     
+{
+   s_ticfile tic;
+   size_t j;
+   FILE *flohandle;
+
+   char ticedfile[256], linkfilepath[256];
+   char *newticfile;
+   s_filearea *filearea;
+   s_link *from_link, *to_link;
+   int busy;
+   unsigned long crc;
+   struct stat stbuf;
+   int writeAccess;
+
+
+#ifdef DEBUG_HPT
+   printf("Ticfile %s\n",ticfile);
+#endif
 
    writeLogEntry(htick_log,'6',"Processing Tic-File %s",ticfile);
 
@@ -895,13 +1178,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       filearea=getFileArea(config,tic.area);
    }
 
-   if (filearea!=NULL) {
-      if (filearea->pass != 1 && !filearea->sendorig) {
-         strcpy(fileareapath,filearea->pathName);
-      } else {
-         strcpy(fileareapath,config->passFileAreaDir);
-      }
-   } else {
+   if (filearea == NULL) {
       writeLogEntry(htick_log,'9',"Cannot open or create File Area %s",tic.area);
       fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
       disposeTic(&tic);
@@ -943,304 +1220,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(3);
    }
 
-   /*--- Lev Serebryakov BEGIN */
-   /* Why we lower fileareapath?! It is stupid.
-      Imagine, we have path /var/FIDO/File.Echoes/...
-      It is BAD idea to lower whole path
-   */
-   /* strLower(fileareapath); */
-   p = strrchr(fileareapath,PATH_DELIM); 
-   if(p) strLower(p+1);
-   /*--- Lev Serebryakov END */
+   sendToLinks(1, filearea, tic, ticedfile);
 
-   createDirectoryTree(fileareapath);
-
-   if (tic.replaces[0]!=0 && filearea->pass !=1 ) {
-      /* Delete old file */
-      strcpy(newticedfile,fileareapath);
-      strcat(newticedfile,tic.replaces);
-      adaptcase(newticedfile);
-
-      if (remove(newticedfile)==0) {
-         writeLogEntry(htick_log,'6',"Removed file %s one request",newticedfile);
-      }
-   }
-
-   if (filearea->pass != 1 || (filearea->pass == 1 && filearea->downlinkCount>0)) {
-
-/* if sendorig */
-      if (filearea->pass != 1 && filearea->sendorig) {
-/* if no will forward */
-         if (!(filearea->downlinkCount==1 &&
-             addrComp(tic.from,filearea->downlinks[0]->link->hisAka)==0)) {
-
-            /*--- Lev Serebryakov BEGIN */
-            /* It is BAD idea to make file downcase, even on UNIX.
-               Standards want to have NODELIST.XXX and NODEDIFF.XXX, for example
-               Now sysop could select case of files.
-                 convertLongNames {Upper|Lower|DontTouch}
-                 convertShortNames {Upper|Lower|DontTouch}
-               Short name is DOS-like name -- 8.3, in one case
-            */
-            /***************************************
-            strcpy(newticedfile,filearea->pathName);
-            strcat(newticedfile,tic.file);
-#ifdef UNIX
-            strLower(newticedfile);
-            strLower(tic.file);
-#endif
-            ****************************************/
-            strcpy(newticedfile,filearea->pathName);
-            p = strrchr(newticedfile,PATH_DELIM); 
-            if(p) strLower(p+1);
-            strcat(newticedfile,MakeProperCase(tic.file));
-            /*--- Lev Serebryakov END */
-
-            if (copy_file(ticedfile,newticedfile)!=0) {
-                writeLogEntry(htick_log,'9',"File %s not found or copyable",ticedfile);
-                disposeTic(&tic);
-                return(2);
-            } else {
-                writeLogEntry(htick_log,'6',"Copied %s to %s",ticedfile,newticedfile);
-            }
-         } else {
-            strcpy(fileareapath,filearea->pathName);
-         }
-      }
-      /*--- Lev Serebryakov BEGIN */
-      /* It is BAD idea to make file downcase, even on UNIX. */
-      /***************************************
-      strcpy(newticedfile,fileareapath);
-      strcat(newticedfile,tic.file);
-#ifdef UNIX
-      strLower(newticedfile);
-      strLower(tic.file);
-#endif
-      ****************************************/
-      strcpy(newticedfile,fileareapath);
-      p = strrchr(newticedfile,PATH_DELIM); 
-      if(p) strLower(p+1);
-      strcat(newticedfile,MakeProperCase(tic.file));
-      /*--- Lev Serebryakov END */
-
-      if (move_file(ticedfile,newticedfile)!=0) {
-          writeLogEntry(htick_log,'9',"File %s not found or moveable",ticedfile);
-          disposeTic(&tic);
-          return(2);
-      } else {
-          writeLogEntry(htick_log,'6',"Moved %s to %s",ticedfile,newticedfile);
-      }
-   }
-
-   if (filearea->pass != 1) {
-      strcpy(descr_file_name, filearea->pathName);
-      strcat(descr_file_name, "files.bbs");
-      adaptcase(descr_file_name);
-      removeDesc(descr_file_name,tic.file);
-      if (tic.anzldesc>0)
-         add_description (descr_file_name, tic.file, tic.ldesc, tic.anzldesc);
-      else
-         add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
-   }
-
-   if (cmAnnFile && !filearea->hide)
-   {
-      if (tic.anzldesc>0)
-         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
-      else
-         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
-   }
-
-   if (filearea->downlinkCount>0) {
-      /* Adding path & seenbys */
-      time(&acttime);
-      strcpy(timestr,asctime(gmtime(&acttime)));
-      timestr[strlen(timestr)-1]=0;
-      if (timestr[8]==' ') timestr[8]='0';
-
-      sprintf(hlp,"%s %lu %s UTC %s",
-              addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
-
-      tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
-      tic.path[tic.anzpath]=strdup(hlp);
-      tic.anzpath++;
-
-      /* Save seenby structure */
-      old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
-      memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
-      old_anzseenby = tic.anzseenby;
-      memcpy(&old_from,&tic.from,sizeof(s_addr));
-      memcpy(&old_to,&tic.to,sizeof(s_addr));
-   }
-
-   for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0 &&
-            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-            seenbyComp (tic.seenby, tic.anzseenby,
-            filearea->downlinks[i]->link->hisAka) != 0) {
-         /* Adding Downlink to Seen-By */
-         tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
-         memcpy(&tic.seenby[tic.anzseenby],
-            &filearea->downlinks[i]->link->hisAka,
-            sizeof(s_addr));
-         tic.anzseenby++;
-      }
-   }
-
-   /* Checking to whom I shall forward */
-   for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
-            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0) {
-         /* Forward file to */
-
-         readAccess = readCheck(filearea, filearea->downlinks[i]->link);
-         switch (readAccess) {
-         case 0: break;
-         case 5:
-            writeLogEntry(htick_log,'7',"Link %s paused",
-                    addr2string(&filearea->downlinks[i]->link->hisAka));
-            break;
-         case 4:
-            writeLogEntry(htick_log,'7',"Link %s not subscribe to File Area %s",
-                    addr2string(&old_from), tic.area);
-	    break;
-         case 3:
-            writeLogEntry(htick_log,'7',"Not export to link %s",
-                    addr2string(&filearea->downlinks[i]->link->hisAka));
-	    break;
-         case 2:
-            writeLogEntry(htick_log,'7',"Link %s no access level",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
-	    break;
-         case 1:
-            writeLogEntry(htick_log,'7',"Link %s no access group",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
-	    break;
-         }
-
-         if (readAccess == 0) {
-            if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
-               writeLogEntry(htick_log,'7',"File %s already seenby %s",
-                       tic.file,
-                       addr2string(&filearea->downlinks[i]->link->hisAka));
-            } else {
-               memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
-               memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
-                      sizeof(s_addr));
-               strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
-
-               busy = 0;
-
-               if (createOutboundFileName(filearea->downlinks[i]->link,
-                   cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
-                   FLOFILE)==1)
-                  busy = 1;
-
-               if (busy) {
-                  writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
-                  /* Create temporary directory */
-                  strcpy(linkfilepath,config->busyFileDir);
-               } else {
-                  if (config->separateBundles) {
-                     strcpy(linkfilepath, filearea->downlinks[i]->link->floFile);
-                     sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
-                  } else {
-                     strcpy(linkfilepath, config->passFileAreaDir);
-                  }
-	       }
-           createDirectoryTree(linkfilepath);
-
-	       /* Don't create TICs for everybody */
-	       if (!filearea->downlinks[i]->link->noTIC) {
-                 newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-                 writeTic(newticfile,&tic);   
-	       } else newticfile = NULL;
-
-               if (!busy) {
-                  flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
-                  fprintf(flohandle,"%s\n",newticedfile);
-	       
-	          if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
-
-                  fclose(flohandle);
-
-                  remove(filearea->downlinks[i]->link->bsyFile);
-
-                  writeLogEntry(htick_log,'6',"Forwarding %s for %s",
-                          tic.file,
-                          addr2string(&filearea->downlinks[i]->link->hisAka));
-               }
-               free(filearea->downlinks[i]->link->bsyFile);
-	       filearea->downlinks[i]->link->bsyFile=NULL;
-               free(filearea->downlinks[i]->link->floFile);
-	       filearea->downlinks[i]->link->floFile=NULL;
-            } /* if Seenby */
-         } /* if readAccess == 0 */
-      } /* Forward file */
-   }
-
-   if (!filearea->hide) {
-   /* report about new files - if filearea not hidden */
-      newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
-      newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
-      newFileReport[newfilesCount]->useAka = filearea->useAka;
-      newFileReport[newfilesCount]->areaName = filearea->areaName;
-      newFileReport[newfilesCount]->areaDesc = filearea->description;
-      newFileReport[newfilesCount]->fileName = strdup(tic.file);
-      if (config->originInAnnounce) {
-         newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
-         newFileReport[newfilesCount]->origin.net = tic.origin.net;
-         newFileReport[newfilesCount]->origin.node = tic.origin.node;
-         newFileReport[newfilesCount]->origin.point = tic.origin.point;
-      }
-
-      if (tic.anzldesc>0) {
-         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
-         for (i = 0; i < tic.anzldesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
-            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
-         } /* endfor */
-         newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
-      } else {
-         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
-         for (i = 0; i < tic.anzdesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
-            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
-         } /* endfor */
-         newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
-      }
-
-      newFileReport[newfilesCount]->fileSize = tic.size;
-
-      newfilesCount++;
-   }
-
-   /* execute external program */
-   for (z = 0; z < config->execonfileCount; z++) {
-     if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
-       if (patimat(tic.file,config->execonfile[z].filename) == 0) continue;
-       else {
-         comm = (char *) malloc(strlen(config->execonfile[z].command)+1
-                                +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
-                                +strlen(tic.file)+1);
-         if (comm == NULL) {
-            writeLogEntry(htick_log, '1', "Exec failed - not enough memory");
-            continue;
-         }
-         sprintf(comm,"%s %s%s",config->execonfile[z].command,
-                                (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
-                                tic.file);
-         writeLogEntry(htick_log, '1', "Executing %s", comm);
-         if ((cmdexit = system(comm)) != 0) {
-           writeLogEntry(htick_log, '1', "Exec failed, code %d", cmdexit);
-         }
-         free(comm);
-       }                                         
-   }
-
-   free(old_seenby);
    doSaveTic(ticfile,&tic);
    disposeTic(&tic);
    return(0);
@@ -1307,59 +1288,63 @@ void checkTmpDir(void)
     s_ticfile tic;
     s_filearea *filearea;
     FILE *flohandle;
+    int error = 0;
 
-    writeLogEntry(htick_log,'6',"Checking tmp dir");
-    strcpy(tmpdir, config->busyFileDir);
-    dir = opendir(tmpdir);
-    if (dir == NULL) return;
+   writeLogEntry(htick_log,'6',"Checking tmp dir");
+   strcpy(tmpdir, config->busyFileDir);
+   dir = opendir(tmpdir);
+   if (dir == NULL) return;
 
-    while ((file = readdir(dir)) != NULL) {
-       if (strlen(file->d_name) != 12) continue;
-       ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
-       strcpy(ticfile, tmpdir);
-       strcat(ticfile, file->d_name);
-       if (stricmp(file->d_name+8, ".TIC") == 0) {
-          memset(&tic,0,sizeof(tic));
-          parseTic(ticfile,&tic);
-          link = getLinkFromAddr(*config, tic.to);
-          if (createFlo(link, cvtFlavour2Prio(link->fileEchoFlavour))==0) {
+   while ((file = readdir(dir)) != NULL) {
+      if (strlen(file->d_name) != 12) continue;
+      ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
+      strcpy(ticfile, tmpdir);
+      strcat(ticfile, file->d_name);
+      if (stricmp(file->d_name+8, ".TIC") == 0) {
+         memset(&tic,0,sizeof(tic));
+         parseTic(ticfile,&tic);
+         link = getLinkFromAddr(*config, tic.to);
+         if (createFlo(link, cvtFlavour2Prio(link->fileEchoFlavour))==0) {
             filearea=getFileArea(config,tic.area);
             if (filearea!=NULL) {
-               if (filearea->pass != 1 && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
+               if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
                else strcpy(newticedfile,config->passFileAreaDir);
                strcat(newticedfile,tic.file);
                adaptcase(newticedfile);
-               adaptcase(tic.file);
-               if (config->separateBundles) {
-                  strcpy(newticfile,link->floFile);
-                  sprintf(strrchr(newticfile, '.'), ".sep%c", PATH_DELIM);
-               } else {
-                  strcpy(newticfile,config->passFileAreaDir);
-               }
-               createDirectoryTree(newticfile);
-               strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
-               if (move_file(ticfile,newticfile)!=0) {
-                  writeLogEntry(htick_log,'9',"File %s not found or moveable",ticfile);
-               } else {
+               if (!link->noTIC) {
+                  if (config->separateBundles) {
+                     strcpy(newticfile,link->floFile);
+                     sprintf(strrchr(newticfile, '.'), ".sep%c", PATH_DELIM);
+                  } else {
+                     strcpy(newticfile,config->passFileAreaDir);
+                  }
+                  createDirectoryTree(newticfile);
+                  strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
+                  if (move_file(ticfile,newticfile)!=0) {
+                     writeLogEntry(htick_log,'9',"File %s not found or moveable",ticfile);
+		     error = 1;
+		  }
+               } else remove(ticfile);
+	       if (!error) {
                   flohandle=fopen(link->floFile,"a");
                   fprintf(flohandle,"%s\n",newticedfile);
-                  fprintf(flohandle,"^%s\n",newticfile);
+                  if (!link->noTIC)
+                     fprintf(flohandle,"^%s\n",newticfile);
                   fclose(flohandle);
 
                   writeLogEntry(htick_log,'6',"Forwarding save file %s for %s",
-                          tic.file,
-                          addr2string(&link->hisAka));
+                     tic.file, addr2string(&link->hisAka));
                }
-	    }
-          } /* if */
-          remove(link->bsyFile);
-          free(link->bsyFile);
-          free(link->floFile);
-       }
-       disposeTic(&tic);
-       free(ticfile);
-    } /* while */
-    closedir(dir);
+            } /* if filearea */
+         } /* if createFlo */
+         remove(link->bsyFile);
+         free(link->bsyFile);
+         free(link->floFile);
+      } /* if ".TIC" */
+      disposeTic(&tic);
+      free(ticfile);
+   } /* while */
+   closedir(dir);
 }
 
 int foundInArray(char **filesInTic, unsigned int filesCount, char *name)

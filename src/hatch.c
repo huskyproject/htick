@@ -21,17 +21,10 @@ void hatch()
 {
    s_ticfile tic;
    s_filearea *filearea;
-   FILE *flohandle;
-   char filename[256], fileareapath[256], descr_file_name[256],
-         linkfilepath[256];
    char *newticfile;
-   time_t acttime;
-   char tmp[100],timestr[40];
-   int i, busy;
    struct stat stbuf;
    extern s_newfilereport **newFileReport;
    extern int newfilesCount;
-   int readAccess;
 
    newFileReport = NULL;
    newfilesCount = 0;
@@ -51,17 +44,7 @@ void hatch()
    if (newticfile) strcpy(tic.file, newticfile+1);
    else strcpy(tic.file,hatchfile);
 
-   /*--- Lev Serebryakov BEGIN */
-   /* It is BAD idea to make file downcase, even on UNIX.
-      Standards want to have NODELIST.XXX and NODEDIFF.XXX, for example
-   */
-   /***************************************
-#ifdef UNIX
-   strLower(tic.file); *//* Finally, we want it in lower case *//*
-#endif
-   ***************************************/
    MakeProperCase(tic.file);
-   /*--- Lev Serebryakov END */
 
    strcpy(tic.area,hatcharea);
    filearea=getFileArea(config,tic.area);
@@ -92,210 +75,7 @@ void hatch()
    // Adding crc
    tic.crc = filecrc32(hatchfile);
 
-   if (filearea->pass != 1) {
-      char *p;
-
-      strcpy(fileareapath,filearea->pathName);
-
-      /*--- Lev Serebryakov BEGIN */
-      /* Why we lower fileareapath?! It is stupid.
-         Imagine, we have path /var/FIDO/File.Echoes/...
-         It is BAD idea to lower whole path
-      */
-      /* strLower(fileareapath); */
-      p = strrchr(fileareapath,PATH_DELIM);
-      if(p) strLower(p+1);
-      /*--- Lev Serebryakov END */
-
-      createDirectoryTree(fileareapath);
-      strcpy(filename,fileareapath);
-      strcat(filename,tic.file);
-      /*--- Lev Serebryakov BEGIN */
-      /* We already have PROPER case! */
-      /* strLower(filename); */
-      /*--- Lev Serebryakov END */
-      if (copy_file(hatchfile,filename)!=0) {
-         writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
-         disposeTic(&tic);
-         return;
-      } else {
-         writeLogEntry(htick_log,'6',"Put %s to %s",hatchfile,filename);
-      }
-   } 
-
-   if (filearea->sendorig || filearea->pass) {
-      char *p;
-
-      strcpy(fileareapath,config->passFileAreaDir);
-
-      /*--- Lev Serebryakov BEGIN */
-      /* Why we lower fileareapath?! It is stupid.
-         Imagine, we have path /var/FIDO/File.Echoes/...
-         It is BAD idea to lower whole path
-      */
-      /* strLower(fileareapath); */
-      p = strrchr(fileareapath,PATH_DELIM);
-      if(p) strLower(p+1);
-      /*--- Lev Serebryakov END */
-
-      createDirectoryTree(fileareapath);
-      strcpy(filename,fileareapath);
-      strcat(filename,tic.file);
-
-      /*--- Lev Serebryakov BEGIN */
-      /* We already have PROPER case! */
-      /* strLower(filename); */
-      /*--- Lev Serebryakov END */
-
-      if (copy_file(hatchfile,filename)!=0) {
-         writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
-         disposeTic(&tic);
-         return;
-      } else {
-         writeLogEntry(htick_log,'6',"Put %s to %s",hatchfile,filename);
-      }
-   }
-
-   if (filearea->pass != 1) {
-      strcpy(descr_file_name, fileareapath);
-      strcat(descr_file_name, "files.bbs");
-      adaptcase(descr_file_name);
-      removeDesc(descr_file_name,tic.file);
-      add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
-   }
-
-   if (cmAnnFile) announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
-
-   if (filearea->downlinkCount > 0) {
-
-      // Adding path
-      time(&acttime);
-      strcpy(timestr,asctime(gmtime(&acttime)));
-      timestr[strlen(timestr)-1]=0;
-      if (timestr[8]==' ') timestr[8]='0';
-      sprintf(tmp,"%s %lu %s UTC %s",
-              addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
-      tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
-      tic.path[tic.anzpath]=strdup(tmp);
-      tic.anzpath++;
-
-      for (i=0;i<filearea->downlinkCount;i++) { 
-         // Adding Downlink to Seen-By
-         tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
-         memcpy(&tic.seenby[tic.anzseenby],
-                &filearea->downlinks[i]->link->hisAka,
-                sizeof(s_addr));
-         tic.anzseenby++;
-      }
-
-      // Checking to whom I shall forward
-      for (i=0;i<filearea->downlinkCount;i++) { 
-         // Forward file to
-
-         readAccess = readCheck(filearea, filearea->downlinks[i]->link);
-         switch (readAccess) {
-         case 0: break;
-         case 3:
-            writeLogEntry(htick_log,'7',"Not export to link %s",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
-	    break;
-         case 2:
-            writeLogEntry(htick_log,'7',"Link %s no access level",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
-	    break;
-         case 1:
-            writeLogEntry(htick_log,'7',"Link %s no access group",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
-	    break;
-         }
-
-         if (readAccess == 0) {
-
-            memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
-            memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
-                   sizeof(s_addr));
-            if (filearea->downlinks[i]->link->ticPwd!=NULL)
-		strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
-
-            busy = 0;
-
-            if (createOutboundFileName(filearea->downlinks[i]->link,
-                cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
-                FLOFILE)==1)
-               busy = 1;
-
-            if (busy) {
-               writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
-               //Create temporary directory
-               strcpy(linkfilepath,config->busyFileDir);
-	    } else {
-               if (config->separateBundles) {
-                  strcpy(linkfilepath, filearea->downlinks[i]->link->floFile);
-                  sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
-               } else {
-                  strcpy(linkfilepath, config->passFileAreaDir);
-               }
-	    }
-            createDirectoryTree(linkfilepath);
-
-	    /* Don't create TICs for everybody */
-	    if (!filearea->downlinks[i]->link->noTIC) {
-              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-              writeTic(newticfile,&tic);   
-	    } 
-	    else newticfile = NULL;
-
-            if (!busy) {
-	       flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
-               fprintf(flohandle,"%s\n",filename);
-	       
-	       if (newticfile != NULL)
-                  fprintf(flohandle,"^%s\n",newticfile);
-
-               fclose(flohandle);
-
-               remove(filearea->downlinks[i]->link->bsyFile);
-
-               writeLogEntry(htick_log,'6',"Forwarding %s for %s",
-                       tic.file,
-                       addr2string(&filearea->downlinks[i]->link->hisAka));
-	    }
-	    free(filearea->downlinks[i]->link->bsyFile);
-	    filearea->downlinks[i]->link->bsyFile=NULL;
-	    free(filearea->downlinks[i]->link->floFile);
-	    filearea->downlinks[i]->link->floFile=NULL;
-         } // if readAccess == 0
-      } // Forward file
-
-   }
-   // report about new files - if not hidden
-   if (!filearea->hide) {
-      newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
-      newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
-      newFileReport[newfilesCount]->useAka = filearea->useAka;
-      newFileReport[newfilesCount]->areaName = filearea->areaName;
-      newFileReport[newfilesCount]->areaDesc = filearea->description;
-      newFileReport[newfilesCount]->fileName = strdup(tic.file);
-      if (config->originInAnnounce) {
-         newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
-         newFileReport[newfilesCount]->origin.net = tic.origin.net;
-         newFileReport[newfilesCount]->origin.node = tic.origin.node;
-         newFileReport[newfilesCount]->origin.point = tic.origin.point;
-      }
-
-      newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
-      for (i = 0; i < tic.anzdesc; i++) {
-         newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
-         if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
-      } /* endfor */
-      newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
-
-      newFileReport[newfilesCount]->fileSize = tic.size;
-
-      newfilesCount++;
-
-      reportNewFiles();
-   }
+   sendToLinks(0, filearea, tic, hatchfile);
 
    disposeTic(&tic);
 }

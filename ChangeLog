@@ -3,6 +3,14 @@ htick 0.9
 (released on Mon May 22 14:58:56 CEST 2000)
 
 ----- cvs ci ------
+Sun May 28 17:35:00 SAMST 2000
+Georgi:
+* change some code toss and hatch
+  Warning! Non tested
+* in hatch now work replace and ExecOnFile
+* fixed bug - if noTIC and busy
+
+----- cvs ci ------
 Sun May 28 17:35:00 IZH 2000
 Georgi (patch from Lev Serebryakov, 2:5030/661):
 * htick now creates DLC, if addDLC is set and DLCDigits is between 1 and 20.
