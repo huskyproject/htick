@@ -1,3 +1,22 @@
+2002-06-05 Wednesday 17:16  mche
+
+	* src/fcommon.c (1.50), win32/makefile.cyg (1.4): some defines for
+	anable hardlinks in htick for cygwin
+
+2002-06-05 Wednesday 15:44  mche
+
+	* win32/: makefile.mvc (1.5), makefile.mvcdll (1.3): some defines
+	for anable hardlinks in htick
+
+2002-06-05 Wednesday 14:37  mche
+
+	* src/: areafix.c (1.61), global.c (1.16), htick.c (1.57), scan.c
+	(1.20), toss.c (1.179): filefix from command line
+
+2002-06-05 Wednesday 14:33  mche
+
+	* h/: areafix.h (1.9), global.h (1.14): filefix from command line
+
 2002-06-02 Sunday 11:27  mche
 
 	* src/toss.c (1.178): get f-echo description from config if it
