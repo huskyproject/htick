@@ -207,6 +207,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         nfree(filename);
         xstrscat(&filename,fileareapath,file->d_name,NULL);
         if (stricmp(filename, fbbsname) == 0) continue;
+        if (direxist(filename)) continue;
         if (!flag) {
             if (bbs) fprintf(f,"BbsArea: %s", area_areaName);
             else fprintf(f,"FileArea: %s", area_areaName);
