@@ -1,3 +1,7 @@
+2003-01-19 Sunday 15:12  mche
+
+	* src/htick.c (1.86): reduce screen output
+
 2003-01-18 Saturday 17:03  gerritkuehn
 
 	* src/: fcommon.c (1.62), toss.c (1.244): Make use of defines in
