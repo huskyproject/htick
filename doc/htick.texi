@@ -63,7 +63,7 @@ Features of @value{HTICK}:
 @item pause and autopause for links
 @item groups & levels for personal and public access to file areas
 @item security check of tossgroup
-@item dupe checking
+@c @item dupe checking
 @item link defaults
 @item much, much more :)
 @end enumerate
