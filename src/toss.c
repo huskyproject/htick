@@ -525,7 +525,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
               w_log(LL_ERROR,"File %s not found",filename);
            strcpy(newticedfile,config->passFileAreaDir);
            strcat(newticedfile,MakeProperCase(tic->file));
-           if( fexist(newticedfile) ){
+           if( fexist(filename) ){
              unlink(newticedfile);
              if (move_file(filename,newticedfile)!=0) {
                w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
@@ -537,7 +537,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
               w_log(LL_ERROR,"File %s not found",filename);
        }
    } else if (strcasecmp(filename,newticedfile) != 0){
-       if( fexist(newticedfile) ){
+       if( fexist(filename) ){
          unlink(newticedfile);
          if (copy_file(filename,newticedfile)!=0) {
                w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
