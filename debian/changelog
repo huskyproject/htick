@@ -1,3 +1,13 @@
+htick (1.0.0-20020626-1) unstable; urgency=low
+
+  * NMU. Joerg, big thanks for Debian packages! But we don't see you now
+    :-(
+  * Change scheme of versions numbers: include CVS date
+  * Update Standards - 3.5.6 now
+  * Setuid/setgid htick binary for user 'ftn'
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Sun, 30 Jun 2002 04:57:16 +0600
+
 htick (0.9-4) unstable; urgency=low
 
   * Hey, im back. New package.
