@@ -1,3 +1,9 @@
+2002-08-01 Thursday 08:27  stas
+
+	* debian/: changelog (1.6.2.4), control (1.5.2.2), copyright
+	(1.2.2.1), docs (1.2.2.2): Debian package patch from Pavel Andreew
+	<pavel@collage.etel.ru>
+
 2002-07-24 Wednesday 09:45  pavel.gulchouck
 
 	* src/fcommon.c (1.52.2.1): segfault on remove files fixed
