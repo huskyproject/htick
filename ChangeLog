@@ -1,3 +1,18 @@
+2002-05-30 Thursday 16:26  stas
+
+	* src/: add_desc.c (1.11), areafix.c (1.60), fcommon.c (1.49),
+	filecase.c (1.5), filelist.c (1.27), global.c (1.15), hatch.c
+	(1.52), htick.c (1.56), scan.c (1.19), seenby.c (1.7), toss.c
+	(1.176): Add comments into begin of each file (with revision ID).
+
+2002-05-30 Thursday 16:02  stas
+
+	* src/toss.c (1.175): Fix: seg.fault when bad .TIC processing.
+
+2002-05-30 Thursday 12:48  mche
+
+	* src/: hatch.c (1.51), toss.c (1.174): some memory leaks fixed
+
 2002-05-29 Wednesday 16:55  mche
 
 	* src/add_desc.c (1.10): write description of file on new line only
