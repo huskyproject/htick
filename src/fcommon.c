@@ -101,50 +101,6 @@ void exit_htick(char *logstr, int print) {
     exit(EX_SOFTWARE);
 }
 
-#if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <io.h>
-#include <fcntl.h>
-#endif
-
-#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
-
-int truncate(const char *fileName, long length)
-{
-   int fd = open(fileName, O_RDWR | O_BINARY);
-   if (fd != -1) {
-          lseek(fd, length, SEEK_SET);
-          chsize(fd, tell(fd));
-          close(fd);
-          return 1;
-   };
-   return 0;
-}
-
-int fTruncate( int fd, long length )
-{
-   if( fd != -1 )
-   {
-      lseek(fd, length, SEEK_SET);
-      chsize(fd, tell(fd) );
-      return 1;
-   }
-   return 0;
-}
-
-#endif
-
-#ifdef __MINGW32__
-int fTruncate (int fd, long length)
-{
-   if( fd != -1 )
-   {
-      lseek(fd, length, SEEK_SET);
-      chsize(fd, tell(fd) );
-      return 1;
-   }
-   return 0;
-}
-#endif
 int fileNameAlreadyUsed(char *pktName, char *packName) {
    unsigned int i;
 

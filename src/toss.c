@@ -824,8 +824,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        w_log('6',"Put %s to %s",filename,newticedfile);
    }
 
-   if (tic->anzldesc==0)
-      if (config->fileDescName)
+   if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz)
          parseFileDesc(newticedfile, tic);
 
    if (!filearea->pass) {
