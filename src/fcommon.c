@@ -206,10 +206,137 @@ int removeFileMask(char *directory, char *mask)
 int link_file(const char *from, const char *to)
 {
    int rc = FALSE;
-#if (_WIN32_WINNT >= 0x0500)
+
+#if   _WIN32_WINNT >= 0x0500
+
    rc = CreateHardLink(to, from, NULL);
+
+#elif _WIN32_WINNT == 0x0400
+   
+   WCHAR  FileLink[ MAX_PATH + 1 ];
+   WCHAR  wto[ MAX_PATH + 1 ];
+   LPWSTR FilePart;
+
+   HANDLE hFileSource;
+
+   WIN32_STREAM_ID StreamId;
+   DWORD dwBytesWritten;
+   LPVOID lpContext;
+   DWORD cbPathLen;
+   DWORD StreamHeaderSize;
+
+   BOOL bSuccess;
+   // 
+   // open existing file that we link to
+   // 
+   hFileSource = CreateFile(
+                           from,
+                           FILE_WRITE_ATTRIBUTES,
+                           FILE_SHARE_READ | FILE_SHARE_WRITE
+                           | FILE_SHARE_DELETE,
+                           NULL, // sa
+                           OPEN_EXISTING,
+                           0,
+                           NULL
+                           );
+
+   if (hFileSource == INVALID_HANDLE_VALUE)
+   {
+      return rc;
+   }
+
+   // 
+   // validate and sanitize supplied link path and use the result
+   // the full path MUST be Unicode for BackupWrite
+   // 
+   MultiByteToWideChar( CP_ACP, 0, to,
+       strlen(to)+1, wto,   
+       sizeof(wto)/sizeof(wto[0]) );
+   
+   cbPathLen = GetFullPathNameW( wto, MAX_PATH, FileLink, &FilePart);
+
+   if (cbPathLen == 0)
+   {
+      return rc;
+   }
+
+   cbPathLen = (cbPathLen + 1) * sizeof(WCHAR); // adjust for byte count
+
+   // 
+   // it might also be a good idea to verify the existence of the link,
+   // (and possibly bail), as the file specified in FileLink will be
+   // overwritten if it already exists
+   // 
+
+   // 
+   // prepare and write the WIN32_STREAM_ID out
+   // 
+   lpContext = NULL;
+
+   StreamId.dwStreamId = BACKUP_LINK;
+   StreamId.dwStreamAttributes = 0;
+   StreamId.dwStreamNameSize = 0;
+   StreamId.Size.HighPart = 0;
+   StreamId.Size.LowPart = cbPathLen;
+
+   // 
+   // compute length of variable size WIN32_STREAM_ID
+   // 
+   StreamHeaderSize = (LPBYTE)&StreamId.cStreamName - (LPBYTE)&
+                      StreamId+ StreamId.dwStreamNameSize ;
+
+   bSuccess = BackupWrite(
+                         hFileSource,
+                         (LPBYTE)&StreamId,  // buffer to write
+                         StreamHeaderSize,   // number of bytes to write
+                         &dwBytesWritten,
+                         FALSE,              // don't abort yet
+                         FALSE,              // don't process security
+                         &lpContext
+                         );
+
+   if (bSuccess)
+   {
+
+      // 
+      // write out the buffer containing the path
+      // 
+      bSuccess = BackupWrite(
+                            hFileSource,
+                            (LPBYTE)FileLink,   // buffer to write
+                            cbPathLen,          // number of bytes to write
+                            &dwBytesWritten,
+                            FALSE,              // don't abort yet
+                            FALSE,              // don't process security
+                            &lpContext
+                            );
+
+      // 
+      // free context
+      // 
+      BackupWrite(
+                 hFileSource,
+                 NULL,               // buffer to write
+                 0,                  // number of bytes to write
+                 &dwBytesWritten,
+                 TRUE,               // abort
+                 FALSE,              // don't process security
+                 &lpContext
+                 );
+   }
+
+   CloseHandle( hFileSource );
+
+   if (!bSuccess)
+   {
+      return rc;
+   }
+   return TRUE;
+
 #elif defined (_UNISTD_H) && !defined(OS2)
+
    rc = (link(from, to) == 0);
+
 #endif
    return rc;
 }

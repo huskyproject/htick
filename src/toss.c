@@ -335,7 +335,7 @@ void *mk_lst(char *a) {
 int parseFileDesc(char *fileName,s_ticfile *tic)
 {
    FILE *filehandle, *dizhandle = NULL;
-   char *line, *dizfile;
+   char *line, *dizfile = NULL;
    int  j, found;
    unsigned int  i;
    signed int cmdexit;
