@@ -1,3 +1,17 @@
+2002-09-18 Wednesday 14:33  sfpavel
+
+	* debian/changelog (htick-1_0-stable.11): Correct release date
+
+2002-09-18 Wednesday 10:17  sfpavel
+
+	* debian/changelog, win32/makefile.mgw (htick-1_0-stable.[10,1]):
+	New debian package
+
+2002-09-18 Wednesday 08:03  sfpavel
+
+	* src/toss.c (htick-1_0-stable.4): insure that ticfile won't be
+	removed while parsing [fix from current 2002-07-04 11:03 by mche]
+
 2002-09-17 Tuesday 19:04  d_sergienko
 
 	* HISTORY (htick-1_0-stable.3): added info about 'Loc' flag
@@ -21,6 +35,10 @@
 
 	* src/toss.c (htick-1_0-stable.2): Test for opened file succesfully
 	(parsetic())
+
+2002-08-30 Friday 12:14  mche
+
+	* win32/makefile.mgw (1.2): minGW makefiles corrected
 
 2002-08-30 Friday 07:28  sfpavel
 
@@ -63,6 +81,10 @@
 
 	* debian/: changelog, control, copyright
 	(htick-1_0-stable.[7,3,2]): Update http location
+
+2002-08-22 Thursday 12:39  mche
+
+	* win32/makefile.mgw (1.1): no message
 
 2002-08-22 Thursday 07:19  sfpavel
 
