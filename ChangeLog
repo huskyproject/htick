@@ -1,3 +1,8 @@
+2002-07-04 Thursday 07:52  stas
+
+	* debian/: changelog (1.6.2.3), docs (1.2.2.1), postinst (1.1.2.3):
+	update debian stuff [patch from Pavel Andreew]
+
 2002-07-02 Tuesday 16:16  stas
 
 	* TODO (1.1.2.1): Remove TODO from -stable
