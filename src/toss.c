@@ -740,7 +740,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    unsigned int i, z;
    char descr_file_name[256], newticedfile[256], fileareapath[256];
    char *linkfilepath=NULL;
-   char hlp[100],timestr[40];
+   char timestr[40];
    time_t acttime;
    s_addr *old_seenby = NULL;
    s_addr old_from, old_to;
@@ -848,11 +848,11 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       timestr[strlen(timestr)-1]=0;
       if (timestr[8]==' ') timestr[8]='0';
 
-      sprintf(hlp,"%s %lu %s UTC %s",
-              aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
 
       tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
-      tic->path[tic->anzpath]=sstrdup(hlp);
+      tic->path[tic->anzpath] = NULL;
+      xscatprintf(&tic->path[tic->anzpath],"%s %lu %s UTC %s",
+          aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
       tic->anzpath++;
    }
 

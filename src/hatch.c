@@ -174,6 +174,7 @@ int send(char *filename, char *area, char *addr)
     timestr[strlen(timestr)-1]=0;
     if (timestr[8]==' ') timestr[8]='0';
     tic.path=srealloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
+    tic.path[tic.anzpath] = NULL;
     xscatprintf(&tic.path[tic.anzpath],"%s %lu %s UTC %s",
         aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
     tic.anzpath++;
