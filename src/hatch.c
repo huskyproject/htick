@@ -242,8 +242,10 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
         xstrcat(&linkfilepath,config->busyFileDir);
     } else {
         if (config->separateBundles) {
-            xstrcat(&linkfilepath, downlink->floFile);
-            sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
+            char *point = strrchr(downlink->floFile, '.');
+            *point = '\0';
+            xscatprintf(&linkfilepath, "%s.sep%c", downlink->floFile,PATH_DELIM);
+            *point = '.';
         } else {
             xstrcat(&linkfilepath, config->ticOutbound);
         }
