@@ -1,3 +1,7 @@
+2003-08-17 Sunday 06:20  d_sergienko
+
+	* src/filelist.c (1.43): do not add directories to filelist
+
 2003-06-25 Wednesday 07:30  andr_lukyanov
 
 	* win32/makefile.mvcdll (1.13): Add internal zip (hptzip) support
