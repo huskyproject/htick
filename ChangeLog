@@ -1,3 +1,7 @@
+2002-10-14 Monday 06:31  sfpavel
+
+	* src/fcommon.c (htick-1_0-stable.2): Fix OS/2 EMX build
+
 2002-10-04 Friday 05:21  stas_degteff
 
 	* src/: hatch.c, htick.c (htick-1_0-stable.[2,2]): Additional to
