@@ -123,95 +123,6 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    }
 }
 
-XMSG createXMSG(s_message *msg)
-{
-        XMSG  msgHeader;
-        struct tm *date;
-        time_t    currentTime;
-        union stamp_combo dosdate;
-        unsigned int i,remapit;
-        char *subject;
-
-        if (msg->netMail == 1) {
-                /* attributes of netmail must be fixed */
-                msgHeader.attr = msg->attributes;
-
-                if (isOurAka(config,msg->destAddr)==0) {
-                        msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGLOCAL | MSGHOLD
-                          | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); /* kill these flags */
-                        msgHeader.attr |= MSGPRIVATE; /* set this flags */
-                } /*else if (header!=NULL) msgHeader.attr |= MSGFWD; */ /* set TRS flag, if the mail is not to us */
-
-      /* Check if we must remap */
-      remapit=0;
-
-      for (i=0;i<config->remapCount;i++)
-          if ((config->remaps[i].toname==NULL ||
-               stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
-              (config->remaps[i].oldaddr.zone==0 ||
-               (config->remaps[i].oldaddr.zone==msg->destAddr.zone &&
-                config->remaps[i].oldaddr.net==msg->destAddr.net &&
-                config->remaps[i].oldaddr.node==msg->destAddr.node &&
-                config->remaps[i].oldaddr.point==msg->destAddr.point) ) )
-             {
-             remapit=1;
-             break;
-             }
-
-      if (remapit)
-         {
-         msg->destAddr.zone=config->remaps[i].newaddr.zone;
-         msg->destAddr.net=config->remaps[i].newaddr.net;
-         msg->destAddr.node=config->remaps[i].newaddr.node;
-         msg->destAddr.point=config->remaps[i].newaddr.point;
-         }
-
-   }
-   else
-     {
-       msgHeader.attr = msg->attributes;
-       msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); /* kill these flags */
-       msgHeader.attr |= MSGLOCAL;
-     }
-
-   strcpy((char *) msgHeader.from,msg->fromUserName);
-   strcpy((char *) msgHeader.to, msg->toUserName);
-   subject=msg->subjectLine;
-   if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)) {
-     int size=strlen(msg->subjectLine)+strlen(config->inbound)+1;
-     if (size < XMSG_SUBJ_SIZE) {
-       subject = (char *) smalloc (size);
-       sprintf (subject,"%s%s",config->inbound,msg->subjectLine);
-     }
-   }
-   strcpy((char *) msgHeader.subj,subject);
-   if (subject != msg->subjectLine)
-     free(subject);
-
-   msgHeader.orig.zone  = (word)msg->origAddr.zone;
-   msgHeader.orig.node  = (word)msg->origAddr.node;
-   msgHeader.orig.net   = (word)msg->origAddr.net;
-   msgHeader.orig.point = (word)msg->origAddr.point;
-   msgHeader.dest.zone  = (word)msg->destAddr.zone;
-   msgHeader.dest.node  = (word)msg->destAddr.node;
-   msgHeader.dest.net   = (word)msg->destAddr.net;
-   msgHeader.dest.point = (word)msg->destAddr.point;
-
-   memset(&(msgHeader.date_written), 0, 8);    /* date to 0 */
-
-   msgHeader.utc_ofs = 0;
-   msgHeader.replyto = 0;
-   memset(msgHeader.replies, 0, MAX_REPLY * sizeof(UMSGID));   /* no replies */
-   strcpy((char *) msgHeader.__ftsc_date, msg->datetime);
-   ASCII_Date_To_Binary(msg->datetime, (union stamp_combo *) &(msgHeader.date_written));
-
-   currentTime = time(NULL);
-   date = localtime(&currentTime);
-   TmDate_to_DosDate(date, &dosdate);
-   msgHeader.date_arrived = dosdate.msg_st;
-
-   return msgHeader;
-}
 
 void writeNetmail(s_message *msg, char *areaName)
 {
@@ -225,7 +136,7 @@ void writeNetmail(s_message *msg, char *areaName)
 
    if ((nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
 
-   netmail = MsgOpenArea((unsigned char *) nmarea->fileName, MSGAREA_CRIFNEC, nmarea->msgbType);
+   netmail = MsgOpenArea((UCHAR *) nmarea->fileName, MSGAREA_CRIFNEC, (word)nmarea->msgbType);
 
    if (netmail != NULL) {
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
@@ -238,7 +149,7 @@ void writeNetmail(s_message *msg, char *areaName)
             recodeToInternalCharset(msg->subjectLine);
          }
 */
-         msgHeader = createXMSG(msg);
+         msgHeader = createXMSG(config,msg,NULL,0,NULL);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */
@@ -1756,7 +1667,9 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
    int rc = 0;
 
 
-   harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
+   harea = MsgOpenArea((UCHAR *) echo->fileName, 
+                        MSGAREA_CRIFNEC, 
+                       (word)(echo->msgbType | MSGTYPE_ECHO));
    if (harea != NULL) {
       hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
       if (hmsg != NULL) {
@@ -1782,7 +1695,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
                                               (UCHAR **) &textStart,
                                               &textLength);
          /* textStart is a pointer to the first non-kludge line */
-         xmsg = createXMSG(msg);
+         xmsg = createXMSG(config,msg,NULL,0,NULL);
 
          MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
