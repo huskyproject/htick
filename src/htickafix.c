@@ -545,16 +545,10 @@ int init_htickafix(void) {
   af_send_notify = cmNotifyLink;
   af_pause = FILEAREA;
   /* callbacks and hooks */
-//  call_sstrdup  = &safe_strdup;
-//  call_smalloc  = &safe_malloc;
-//  call_srealloc = &safe_realloc;
-
   call_sendMsg  = &afSendMsg;
   call_writeMsgToSysop = &afWriteMsgToSysop;
   call_getLinkRobot = &getLinkRobot;
-//  hook_onDeleteArea = &afDeleteArea;
-//  hook_onRescanArea = &afRescanArea;
   hook_onAutoCreate = &afReportAutoCreate;
-  robot = getRobot(config, "areafix", 0); /* !!! val: change this later !!! */
+  robot = getRobot(config, "filefix", 0); /* !!! val: change this later !!! */
   return init_areafix("filefix");
 }
