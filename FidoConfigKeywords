@@ -113,6 +113,14 @@ Execute some command on receiving file. Command get full filepath as parameter.
     htick stop processing that file.
     If you don't know what all this is about set FileFixFSC87Subset to
     ON for all your links. It won't hurt.
+   
+    g) TickerPackToBox on|off 
+    
+    If link has file box - toss files and tics there
+
+    h) LinkFileFaseDir 
+    
+    Where autocreated file echos will be placed (may be "passthrough")
 
 9) SaveTic <FileEchoMask> <DirToSaveTic>
 

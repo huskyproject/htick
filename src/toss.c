@@ -427,6 +427,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    FILE *f;
    char *NewAutoCreate;
    char *fileName;
+   char *bDir = NULL;
 
    char *fileechoFileName = NULL;
    char buff[255], myaddr[20], hisaddr[20];
@@ -448,22 +449,26 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
     if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
     else strLower(fileechoFileName);
 
-    if (creatingLink->autoFileCreateSubdirs)
-    {
-        char *cp;
-        for (cp = fileechoFileName; *cp; cp++)
-        {
-            if (*cp == '.')
-            {
-                *cp = PATH_DELIM;
-            }
-        }
-    }
+    bDir = (creatingLink->fileBaseDir) ? 
+        creatingLink->fileBaseDir : config->fileAreaBaseDir;
+
 
    if (creatingLink->autoFileCreateSubdirs &&
-       stricmp(config->fileAreaBaseDir,"Passthrough"))
+       strcasecmp(bDir,"passthrough"))
    {
-       sprintf(buff,"%s%s",config->fileAreaBaseDir,fileechoFileName);
+       if (creatingLink->autoFileCreateSubdirs)
+       {
+           char *cp;
+           for (cp = fileechoFileName; *cp; cp++)
+           {
+               if (*cp == '.')
+               {
+                   *cp = PATH_DELIM;
+               }
+           }
+       }
+
+       sprintf(buff,"%s%s",bDir,fileechoFileName);
        if (_createDirectoryTree(buff))
        {
            if (!quiet) fprintf(stderr, "cannot make all subdirectories for %s\n",
@@ -497,18 +502,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    if (creatingLink->LinkGrp)
    {
      sprintf(buff, "FileArea %s %s%s -a %s -g %s ",
-	     c_area,
-	     config->fileAreaBaseDir,
-	     (stricmp(config->fileAreaBaseDir,"Passthrough") == 0) ? "" : fileechoFileName,
+	     c_area,  bDir,
+	     (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
 	     myaddr,
 	     creatingLink->LinkGrp);
    }
    else
    {
      sprintf(buff, "FileArea %s %s%s -a %s ",
-	     c_area,
-	     config->fileAreaBaseDir,
-	     (stricmp(config->fileAreaBaseDir,"Passthrough") == 0) ? "" : fileechoFileName,
+	     c_area, bDir,
+	     (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
 	     myaddr);
    }
 
@@ -935,7 +938,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                   busy = 1;
 
                if (busy) {
-                   w_log( '7', "Save TIC in temporary dir");
+                   w_log( LL_LINK, "link %s is busy",aka2str(downlink->hisAka));
                    /* Create temporary directory */
                    xstrcat(&linkfilepath,config->busyFileDir);
                } else {
@@ -949,6 +952,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
                // fileBoxes support
                if (needUseFileBoxForLink(config,downlink)) {
+                   nfree(linkfilepath);
                    if (!downlink->fileBox) 
                        downlink->fileBox = makeFileBoxName (config,downlink);
                    xstrcat(&linkfilepath, downlink->fileBox);
@@ -979,14 +983,17 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                    fprintf(flohandle,"%s\n",newticedfile);
                    if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
                    fclose(flohandle);
-                   w_log('6',"Forwarding %s for %s",
-                       tic->file,
-                       aka2str(downlink->hisAka));
-                   
                }
-               if (!busy) {                   
-                   remove(downlink->bsyFile);
+               if (!busy || needUseFileBoxForLink(config,downlink)) {                   
+
+                   w_log(LL_LINK,"Forwarding: %s", tic->file);
+                   if (newticfile != NULL) 
+                   w_log(LL_LINK,"  with tic: %s", GetFilenameFromPathname(newticfile));
+                   w_log(LL_LINK,"       for: %s", aka2str(downlink->hisAka));
+                   if (!busy)
+                    remove(downlink->bsyFile);
                }
+               
                nfree(downlink->bsyFile);
                nfree(downlink->floFile);
                nfree(linkfilepath);
@@ -1014,14 +1021,12 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzldesc, sizeof(char*));
          for (i = 0; i < tic->anzldesc; i++) {
             newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->ldesc[i]);
-            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
          newFileReport[newfilesCount]->filedescCount = tic->anzldesc;
       } else {
          newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzdesc, sizeof(char*));
          for (i = 0; i < (unsigned int)tic->anzdesc; i++) {
             newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->desc[i]);
-            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
          newFileReport[newfilesCount]->filedescCount = tic->anzdesc;
       }
@@ -1753,7 +1758,6 @@ void writeMsgToSysop(s_message *msg, char *areaName)
       echo = getArea(config, areaName);
       if (echo != &(config->badArea)) {
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            msg->recode = 1;
             putMsgInArea(echo, msg,1,MSGLOCAL);
             echo->imported = 1;  /* area has got new messages */
             w_log( '7', "Post report message to %s area", echo->areaName);
@@ -1916,7 +1920,7 @@ void reportNewFiles()
 
 
                if(strlen(newFileReport[i]->fileName) > 12)
-                   xscatprintf(&(msg->text),"% s\r%23ld ",
+                   xscatprintf(&(msg->text)," %s\r%23ld ",
                                  strUpper(newFileReport[i]->fileName),
                                  newFileReport[i]->fileSize
                                );
@@ -1943,7 +1947,7 @@ void reportNewFiles()
                       stricmp(newFileReport[i]->areaName,
                       newFileReport[b]->areaName) == 0) {
                       if(strlen(newFileReport[b]->fileName) > 12)
-                          xscatprintf(&(msg->text),"% s\r%23ld ",
+                          xscatprintf(&(msg->text)," %s\r%23ld ",
                           strUpper(newFileReport[b]->fileName),
                           newFileReport[b]->fileSize
                           );
