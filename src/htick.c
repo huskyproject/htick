@@ -158,8 +158,9 @@ int processHatchParams(int i, int argc, char **argv)
 void start_help(void) {
         printf("%s",versionStr);
         printf(
-            "\nUsage: htick [-q] <command>\n"
+            "\nUsage: htick [options] <command>\n"
             "\n"
+            "Options:\n"
             " -q                      Quiet mode (display only urgent messages to console)\n"
             " -c config-file          Specify alternate config file\n"
             "\n"
@@ -171,6 +172,13 @@ void start_help(void) {
             "                         Hatch file into Area, using Description for file,\n"
             "                         if exist \"replace\", then fill replace field in TIC;\n"
             "                         if not exist <filemask>, then put <file> in field\n"
+            "                         desc's parameters may be:\n"
+            "                           @BBS to load from Files.Bbs\n"
+            "                           @DIZ to load from the contained File_Id.Diz\n"
+            "                           @<file> to load from <file>\n"
+            "                           @@BBS to use first line from Files.Bbs\n"
+            "                           @@DIZ to use 1st line from the contained File_Id.Diz\n"
+            "                           @@<file> to use first line from <file>\n"
             " filelist <file> [<dirlist>]\n"
             "                         Generate filelist which includes all files in base\n"
             "                         <dirlist> - list of paths to files from filelist\n"
