@@ -37,6 +37,8 @@
 #include <errno.h>
 #if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200)) ) && (!defined(__TURBOC__)))
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
 #endif
 
 #include <fidoconf/fidoconf.h>
