@@ -500,11 +500,23 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    /* write new line in config file */
 
-   sprintf(buff, "FileArea %s %s%s -a %s ",
-           c_area,
-           config->fileAreaBaseDir,
-           (stricmp(config->fileAreaBaseDir,"Passthrough") == 0) ? "" : fileechoFileName,
-           myaddr);
+   if (creatingLink->LinkGrp)
+   {
+     sprintf(buff, "FileArea %s %s%s -a %s -g %s ",
+	     c_area,
+	     config->fileAreaBaseDir,
+	     (stricmp(config->fileAreaBaseDir,"Passthrough") == 0) ? "" : fileechoFileName,
+	     myaddr,
+	     creatingLink->LinkGrp);
+   }
+   else
+   {
+     sprintf(buff, "FileArea %s %s%s -a %s ",
+	     c_area,
+	     config->fileAreaBaseDir,
+	     (stricmp(config->fileAreaBaseDir,"Passthrough") == 0) ? "" : fileechoFileName,
+	     myaddr);
+   }
 
    if (creatingLink->autoFileCreateDefaults) {
       NewAutoCreate=(char *) calloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));

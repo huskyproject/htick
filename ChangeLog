@@ -1,4 +1,8 @@
 ----- cvs ci ------
+Sun Aug 27 01:03:03 UTC 2000
+* setting group of autocreated areas to LinkGrp of creating node (if set)
+
+----- cvs ci ------
 Sun Aug 27 00:42:24 UTC 2000
 * using ourAka from link definition as From-address in TIC instead of address
   from area definition (needed for host and hub systems)
