@@ -6,7 +6,7 @@ CC      = bcc
 OBJ=.obj
 OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
           scan$(OBJ) areafix$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
-          hatch$(OBJ) filelist$(OBJ) filecase$(OBJ) report$(OBJ)
+          hatch$(OBJ) filelist$(OBJ) filecase$(OBJ) report$(OBJ) clean$(OBJ)
 
 SRC_DIR = ..\src
 

@@ -40,7 +40,7 @@ void disposeTic(s_ticfile *tic);
 void writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
 void cleanPassthroughDir(void);
-int foundInArray(char **filesInTic, unsigned int filesCount, char *name);
+//int foundInArray(char **filesInTic, unsigned int filesCount, char *name);
 void processTmpDir(void);
 void toss(void);
 void writeNetmail(s_message *msg, char *areaName);

@@ -11,7 +11,8 @@ OBJS    = global.obj \
           filelist.obj\
           filecase.obj\
           report.obj\
-	  htick.obj
+          htick.obj\
+          clean.obj
 
 SRC_DIR = ..\src
 

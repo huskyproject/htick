@@ -6,7 +6,7 @@ CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
 
 # uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
 # CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
+CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
 
 COPT=   -O2
 TLIB=   lib -nologo
@@ -25,7 +25,8 @@ OBJS    = global.obj \
           hatch.obj \
           filelist.obj\
           filecase.obj\
-          report.obj
+          report.obj\
+			 clean.obj
 
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<

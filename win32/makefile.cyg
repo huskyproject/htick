@@ -1,7 +1,7 @@
 CC      = gcc
 DEBUG   = 0
 
-OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o report.o
+OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o report.o clean.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)

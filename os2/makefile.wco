@@ -3,7 +3,7 @@
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = htick.obj global.obj toss.obj fcommon.obj scan.obj areafix.obj add_desc.obj seenby.obj hatch.obj filelist.obj filecase.obj report.obj
+OBJS    = htick.obj global.obj toss.obj fcommon.obj scan.obj areafix.obj add_desc.obj seenby.obj hatch.obj filelist.obj filecase.obj report.obj clean.o
 SRC_DIR = ..\src
 
 CFLAGS  = -zq -wx -bt=os2v2 -j -i=..\..;..\h -oneatx -5 -DOS2
