@@ -1155,70 +1155,71 @@ void checkTmpDir(void)
     s_filearea *filearea=NULL;
     FILE *flohandle=NULL;
     int error = 0;
-
-   w_log('6',"Checking tmp dir");
-   strcpy(tmpdir, config->busyFileDir);
-   dir = opendir(tmpdir);
-   if (dir == NULL) return;
-
-   while ((file = readdir(dir)) != NULL) {
-      if (strlen(file->d_name) != 12) continue;
-      /* if (!file->d_size) continue; */
-      ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
-      strcpy(ticfile, tmpdir);
-      strcat(ticfile, file->d_name);
-      if (stricmp(file->d_name+8, ".TIC") == 0) {
-         memset(&tic,0,sizeof(tic));
-         parseTic(ticfile,&tic);
-         link = getLinkFromAddr(config, tic.to);
-	 /*  createFlo doesn't  support ASO!!! */
-         /* if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) { */
-        if (createOutboundFileNameAka(link, link->fileEchoFlavour, FLOFILE, SelectPackAka(link))==0) {
-	     filearea=getFileArea(tic.area);
-	     if (filearea!=NULL) {
-               if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
-               else strcpy(newticedfile,config->passFileAreaDir);
-               strcat(newticedfile,tic.file);
-               adaptcase(newticedfile);
-               if (!link->noTIC) {
-                  if (config->separateBundles) {
-                     strcpy(newticfile,link->floFile);
-                     sprintf(strrchr(newticfile, '.'), ".sep%c", PATH_DELIM);
-                  } else {
-                     strcpy(newticfile,config->ticOutbound);
-                  }
-                  _createDirectoryTree(newticfile);
-                  strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
-                  if( !fexist(ticfile) )
-                     w_log(LL_ERROR,"File %s not found",ticfile);
-                  else if (move_file(ticfile,newticfile,1)!=0) { /* overwrite existing file if not same */
-                     w_log( LL_ERROR, "File %s not moveable to %s: %s",
-                            ticfile, newticfile, strerror(errno) );
-                     error = 1;
-                  }
-               } else remove(ticfile);
-               if (!error) {
-                  flohandle=fopen(link->floFile,"a");
-                  fprintf(flohandle,"%s\n",newticedfile);
-                  if (!link->noTIC)
-                     fprintf(flohandle,"^%s\n",newticfile);
-                  fclose(flohandle);
-
-                  w_log('6',"Forwarding save file %s for %s",
-                     tic.file, aka2str(link->hisAka));
-               }
-            } /* if filearea */
-         } /* if createFlo */
-         if( link->bsyFile){
-           remove(link->bsyFile);
-           nfree(link->bsyFile);
-         }
-         nfree(link->floFile);
-         disposeTic(&tic);
-      } /* if ".TIC" */
-      nfree(ticfile);
-   } /* while */
-   closedir(dir);
+    
+    w_log('6',"Checking tmp dir");
+    strcpy(tmpdir, config->busyFileDir);
+    dir = opendir(tmpdir);
+    if (dir == NULL) return;
+    
+    while ((file = readdir(dir)) != NULL) {
+        if (strlen(file->d_name) != 12) continue;
+        /* if (!file->d_size) continue; */
+        ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
+        strcpy(ticfile, tmpdir);
+        strcat(ticfile, file->d_name);
+        if (stricmp(file->d_name+8, ".TIC") == 0) {
+            memset(&tic,0,sizeof(tic));
+            parseTic(ticfile,&tic);
+            link = getLinkFromAddr(config, tic.to);
+            if(!link) continue;
+            /*  createFlo doesn't  support ASO!!! */
+            /* if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) { */
+            if (createOutboundFileNameAka(link, link->fileEchoFlavour, FLOFILE, SelectPackAka(link))==0) {
+                filearea=getFileArea(tic.area);
+                if (filearea!=NULL) {
+                    if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
+                    else strcpy(newticedfile,config->passFileAreaDir);
+                    strcat(newticedfile,tic.file);
+                    adaptcase(newticedfile);
+                    if (!link->noTIC) {
+                        if (config->separateBundles) {
+                            strcpy(newticfile,link->floFile);
+                            sprintf(strrchr(newticfile, '.'), ".sep%c", PATH_DELIM);
+                        } else {
+                            strcpy(newticfile,config->ticOutbound);
+                        }
+                        _createDirectoryTree(newticfile);
+                        strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
+                        if( !fexist(ticfile) )
+                            w_log(LL_ERROR,"File %s not found",ticfile);
+                        else if (move_file(ticfile,newticfile,1)!=0) { /* overwrite existing file if not same */
+                            w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                                ticfile, newticfile, strerror(errno) );
+                            error = 1;
+                        }
+                    } else remove(ticfile);
+                    if (!error) {
+                        flohandle=fopen(link->floFile,"a");
+                        fprintf(flohandle,"%s\n",newticedfile);
+                        if (!link->noTIC)
+                            fprintf(flohandle,"^%s\n",newticfile);
+                        fclose(flohandle);
+                        
+                        w_log('6',"Forwarding save file %s for %s",
+                            tic.file, aka2str(link->hisAka));
+                    }
+                } /* if filearea */
+            } /* if createFlo */
+            if( link->bsyFile){
+                remove(link->bsyFile);
+                nfree(link->bsyFile);
+            }
+            nfree(link->floFile);
+            disposeTic(&tic);
+        } /* if ".TIC" */
+        nfree(ticfile);
+    } /* while */
+    closedir(dir);
 }
 
 
