@@ -355,43 +355,43 @@ char *available(s_link *link) {
 }                                                                               
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
-	FILE *f_conf;
-	char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL;
+    FILE *f_conf;
+    char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL, *tmpPtr =NULL;
     long endpos, cfglen;
     long strbeg = 0, strend = -1;
-
-	areaName = area->areaName;
-
-	if (init_conf(fileName))
-		return 1;
-
-	while ((cfgline = configline()) != NULL) {
+    
+    areaName = area->areaName;
+    
+    if (init_conf(fileName))
+        return 1;
+    
+    while ((cfgline = configline()) != NULL) {
         line = sstrdup(cfgline);
-		line = trimLine(line);
-		line = stripComment(line);
-		if (line[0] != 0) {
-			line = shell_expand(line);
-			token = strseparate(&line, " \t");
-			if (stricmp(token, "filearea")==0) {
-				token = strseparate(&line, " \t"); 
-				if (stricmp(token, areaName)==0) {
-					fileName = sstrdup(getCurConfName());
-					strend = get_hcfgPos();
-					break;
-				}
-			}
-		}
+        line = trimLine(line);
+        line = stripComment(line);
+        if (line[0] != 0) {
+            tmpPtr = line = shell_expand(line);
+            token = strseparate(&tmpPtr, " \t");
+            if (stricmp(token, "filearea")==0) {
+                token = strseparate(&tmpPtr, " \t"); 
+                if (stricmp(token, areaName)==0) {
+                    fileName = sstrdup(getCurConfName());
+                    strend = get_hcfgPos();
+                    break;
+                }
+            }
+        }
         strbeg = get_hcfgPos();
-		nfree(cfgline);
-        nfree(line);
-	}
-	close_conf();
-    nfree(line);
-	if (strend == -1) {
         nfree(cfgline);
-		return 1; // impossible
-	}
-	
+        nfree(line);
+    }
+    close_conf();
+    nfree(line);
+    if (strend == -1) {
+        nfree(cfgline);
+        return 1; // impossible
+    }
+    
     if ((f_conf=fopen(fileName,"r+b")) == NULL)
     {
         if (!quiet) fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
@@ -410,21 +410,21 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     line[cfglen]='\0';
     fseek(f_conf, strbeg, SEEK_SET);
     setfsize( fileno(f_conf), strbeg );
-
-	switch (action) {
-	    case 0: 
-            xstrscat(&cfgline, " ", aka2str(link->hisAka), NULL);
-		break;
- 	    case 1:
-            DelLinkFromString(cfgline, link->hisAka);
-		break;
-	    default: break;
-	}
+    
+    switch (action) {
+    case 0: 
+        xstrscat(&cfgline, " ", aka2str(link->hisAka), NULL);
+        break;
+    case 1:
+        DelLinkFromString(cfgline, link->hisAka);
+        break;
+    default: break;
+    }
     fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
-	fclose(f_conf);
-	nfree(line);
+    fclose(f_conf);
+    nfree(line);
     nfree(cfgline);
-	return 0;
+    return 0;
 }
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
