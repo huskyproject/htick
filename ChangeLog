@@ -1,3 +1,8 @@
+2003-02-04 Tuesday 19:18  stas_degteff
+
+	* src/areafix.c (htick-1_0-stable.5): Fix after 2003-01-27 Monday
+	19:21
+
 2003-01-27 Monday 19:21  stas_degteff
 
 	* src/areafix.c (htick-1_0-stable.4): Fix forward subscribe (Patch
