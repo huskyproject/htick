@@ -1,6 +1,10 @@
 htick 0.01
 ----------
 
+Thu Apr 29, 1999
+Gabriel Plutzar:
+ + Downlinks who get files are now added to the Seen By List
+
 Sat Apr 24  
 By Alex Erzin, checked in by Gabriel
  + files.bbs files supported

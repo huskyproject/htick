@@ -646,10 +646,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
      add_description (descr_file_name, tic.file, tic.desc);
 
     // Adding path & seenbys
-//    tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
-//    string2addr(param,&tic->seenby[tic->anzseenby]);
-//            tic->anzseenby++;
-
       time(&acttime);
       strcpy(timestr,asctime(localtime(&acttime)));
       timestr[strlen(timestr)-1]=0;
@@ -661,6 +657,19 @@ int processTic(char *ticfile, e_tossSecurity sec)
       tic.path[tic.anzpath]=strdup(hlp);
       tic.anzpath++;
 
+    for (i=0;i<filearea->downlinkCount;i++)
+        if (addrComp(tic.from,filearea->downlinks[i]->hisAka)!=0 && 
+            addrComp(tic.to,filearea->downlinks[i]->hisAka)!=0 &&
+            addrComp(tic.origin,filearea->downlinks[i]->hisAka)!=0 &&
+	    addrComp(tic.to, *filearea->downlinks[i]->ourAka)!=0 &&
+            seenbyComp (&tic, filearea->downlinks[i]->hisAka) != 0)
+           { // Adding Downlink to Seen-By
+           tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
+           memcpy(&tic.seenby[tic.anzseenby],
+                  &filearea->downlinks[i]->hisAka,
+                  sizeof(s_addr));
+           tic.anzseenby++;
+           }
 
 
     // Checking to whom I shall forward
