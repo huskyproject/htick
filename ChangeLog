@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Dec 18 19:26:50 1999 
+Georgi (patch from Alex Semenyaka, 2:461/640):
+* fixed bug in AreaFix (%HELP)
+
+----- cvs ci ------
 Sat Dec 12 22:51:00 1999 
 mrd:
 * fixed bug with removing files from passthrough fileechos
