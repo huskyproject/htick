@@ -7,7 +7,9 @@ This file describe changes between htick-1.0-stable and htick-1.1-current
    - purging for file echos with deleting description from files.bbs;
    - New command line option: "-c config-file" - specify alternate config file
      (optional);
-   - Change statistics information in log file.
+   - Change statistics information in log file;
+   - Allow unconditional forward subscribe when forwardFileRequestsFile for
+     link not defined in config.
 
 2. CONFIG changes:
    - area definition options -manual & -mandatory are different:

@@ -421,7 +421,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
     nfree(fileName);
-    
+
     return 0;
 }
 
@@ -491,8 +491,8 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
         grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1)
     {
+        char *descr = NULL;
         if (uplink->forwardFileRequestFile!=NULL) {
-            char *descr = NULL;
             /* first try to find the areatag in forwardRequestFile */
             if (IsAreaAvailable(areatag,uplink->forwardFileRequestFile,&descr,1))
             {
@@ -503,9 +503,10 @@ int forwardRequest(char *areatag, s_link *dwlink) {
             { rc = 2; }/* found link with freqfile, but there is no areatag */
             nfree(descr);
         } else {
-            rc = 1;   /* link is anabled for forward requests but 
-                         has no forwardFileRequestFile defined 
-                      */
+            /*rc = 1;*/   /* link is enabled for forward requests but
+                             has no forwardFileRequestFile defined */
+                forwardRequestToLink(areatag,descr,uplink,dwlink,0);
+                rc = 0;
         }/* (uplink->forwardRequestFile!=NULL) */
         if (rc==0) {
             nfree(Indexes);
@@ -584,7 +585,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     if (rc == 6) {   /* areas limit exceed for link */
     	xscatprintf(&report," %s - no access (full limit)\r",line);
 	w_log( LL_AREAFIX,"Filefix: %s - no access (full limit)",line);
-    }        
+    }
     if (*report == '\0') {
         xscatprintf(&report,"%s Not found\r",line);
         w_log( LL_AREAFIX, "FileFix: filearea %s is not found",line);
@@ -1078,7 +1079,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     char *NewAutoCreate = NULL;
     char *fileName = NULL;
     char *bDir = NULL;
-    
+
     char *fileechoFileName = NULL;
     char *buff= NULL;
     char CR;
@@ -1089,22 +1090,22 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     size_t configlen=0;
 
     w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
-    
+
     creatingLink = getLinkFromAddr(config, *pktOrigAddr);
-    
+
     fileechoFileName = makeMsgbFileName(config, c_area);
-    
+
     /*  translating name of the area to lowercase/uppercase */
     if (config->createAreasCase == eUpper) strUpper(c_area);
     else strLower(c_area);
-    
+
     /*  translating filename of the area to lowercase/uppercase */
     if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
     else strLower(fileechoFileName);
-    
+
     bDir = (creatingLink->fileBaseDir) ?
         creatingLink->fileBaseDir : config->fileAreaBaseDir;
-    
+
     if( strcasecmp(bDir,"passthrough") )
     {
         if (creatingLink->autoFileCreateSubdirs)
@@ -1134,32 +1135,32 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
 #endif
         nfree(buff);
     }
-    
+
 
     fileName = creatingLink->autoFileCreateFile ? creatingLink->autoFileCreateFile : getConfigFileName();
-    
+
     f = fopen(fileName, "a+b");
     if (f == NULL) {
         w_log( LL_ERR,"autocreate: cannot open config file %s", fileName);
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
         return 1;
     }
-    
+
     /* write new line in config file */
-    
+
     xscatprintf(&buff, "FileArea %s %s%s -a %s ",
         c_area, bDir,
         (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
         aka2str(*(creatingLink->ourAka))
         );
-    
+
     if ( creatingLink->LinkGrp &&
         !( creatingLink->autoFileCreateDefaults && fc_stristr(creatingLink->autoFileCreateDefaults, "-g ") )
         )
     {
         xscatprintf(&buff,"-g %s ",creatingLink->LinkGrp);
     }
-    
+
     if (creatingLink->autoFileCreateDefaults) {
         NewAutoCreate = sstrdup(creatingLink->autoFileCreateDefaults);
         if ((fileName=strstr(NewAutoCreate,"-d ")) !=NULL ) {
@@ -1170,7 +1171,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
                 xstrcat(&buff, NewAutoCreate);
             }
         } else {
-            if (descr) 
+            if (descr)
                 xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
             else
                 xstrcat(&buff, NewAutoCreate);
@@ -1184,17 +1185,17 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     if(!isOurAka(config,*pktOrigAddr))
     {
         xscatprintf(&buff," %s",aka2str(*pktOrigAddr));
-    }    
-    if(dwLink && !isOurAka(config,*dwLink)) 
+    }
+    if(dwLink && !isOurAka(config,*dwLink))
     {
         xscatprintf(&buff," %s",aka2str(*dwLink));
     }
-    
+
     /* add new created echo to config in memory */
     parseLine(buff,config);
     RebuildFileAreaTree(config);
 
-    if( fseek (f, -2L, SEEK_END) == 0) 
+    if( fseek (f, -2L, SEEK_END) == 0)
     {
         CR = getc (f); /*   may be it is CR aka '\r'  */
         if (getc(f) != '\n') {
@@ -1216,7 +1217,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     }
 
     /*  add line to config */
-    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0) 
+    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0)
     {
         w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
             c_area, strerror(errno));
@@ -1227,7 +1228,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     nfree(buff);
 
     w_log( '8', "FileArea '%s' autocreated by %s", c_area, aka2str(*pktOrigAddr));
-    
+
     /* report about new filearea */
     if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(c_area)) != NULL) {
         if (getNetMailArea(config, config->ReportTo) != NULL) {
@@ -1260,7 +1261,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
             fclose(echotosslog);
         }
     }
-    
+
     if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, aka2str(*pktOrigAddr));
 
     if (config->afcFlag) {
@@ -1276,7 +1277,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     w_log( LL_FUNC, "%s::autoCreate() rc=0", __FILE__ );
     return 0;
 }
- 
+
 /* test link for areas quantity limit exceed
  * return 0 if not limit exceed
  * else return not zero
