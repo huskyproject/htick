@@ -1,3 +1,7 @@
+2003-01-20 Monday 07:30  stas_degteff
+
+	* FidoConfigKeywords (htick-1_0-stable.3): Update documentation
+
 2003-01-10 Friday 14:57  stas_degteff
 
 	* bsd/makefile.bsd (htick-1_0-stable.1): Compile without semaphores
