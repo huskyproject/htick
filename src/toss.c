@@ -1529,8 +1529,9 @@ void reportNewFiles()
                fileCount = fileSize = 0;
                sprintf(buff, "\r Area : %s%s", newFileReport[i]->areaName,
                                                print_ch(25, ' '));
-               sprintf(buff+25, "Desc : %s\r %s\r", newFileReport[i]->areaDesc,
-                                                    print_ch(77, '-'));
+               sprintf(buff+25, "Desc : %s\r %s\r",
+	    	    (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
+            	    print_ch(77, '-'));
                msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
                strcat(msg->text, buff);
                sprintf(buff, " %s%s", newFileReport[i]->fileName, print_ch(25, ' '));
