@@ -137,7 +137,7 @@ void scanNMArea(void)
    // int from_us;
    s_message       filefixmsg;
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_NORMAL, config->netMailArea.msgbType);
+   netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_NORMAL, config->netMailAreas[0].msgbType);
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);

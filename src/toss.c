@@ -239,23 +239,23 @@ void writeNetmail(s_message *msg)
 #endif
 
    // create Directory Tree if necessary
-   if (config->netMailArea.msgbType == MSGTYPE_SDM)
-      createDirectoryTree(config->netMailArea.fileName);
+   if (config->netMailAreas[0].msgbType == MSGTYPE_SDM)
+      createDirectoryTree(config->netMailAreas[0].fileName);
    else {
       // squish area
-      slash = strrchr(config->netMailArea.fileName, limiter);
+      slash = strrchr(config->netMailAreas[0].fileName, limiter);
       *slash = '\0';
-      createDirectoryTree(config->netMailArea.fileName);
+      createDirectoryTree(config->netMailAreas[0].fileName);
       *slash = limiter;
    }
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailArea.fileName, MSGAREA_CRIFNEC, config->netMailArea.msgbType);
+   netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_CRIFNEC, config->netMailAreas[0].msgbType);
 
    if (netmail != NULL) {
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
 
       if (msgHandle != NULL) {
-         config->netMailArea.imported = 1; // area has got new messages
+         config->netMailAreas[0].imported = 1; // area has got new messages
 /*
          if (config->intab != NULL) {
             recodeToInternalCharset(msg->text);
@@ -274,13 +274,13 @@ void writeNetmail(s_message *msg)
                  msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
          writeLogEntry(htick_log, '6', buff);
       } else {
-         writeLogEntry(htick_log, '9', "Could not write message to NetmailArea");
+         writeLogEntry(htick_log, '9', "Could not write message to netMailAreas[0]");
       } /* endif */
 
       MsgCloseArea(netmail);
    } else {
 //      printf("%u\n", msgapierr);
-      writeLogEntry(htick_log, '9', "Could not open NetmailArea");
+      writeLogEntry(htick_log, '9', "Could not open netMailAreas[0]");
    } /* endif */
 }
 
@@ -951,10 +951,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
                strcat(linkfilepath,".htk");
                createDirectoryTree(linkfilepath);
             } else {
-	       if (filearea->pass != 1)
-		  *(strrchr(linkfilepath,PATH_DELIM))=0;
-	       else
-	          strcpy(linkfilepath,config->passFileAreaDir);
+		if (filearea->pass != 0) strcpy(linkfilepath,config->passFileAreaDir);
+		*(strrchr(linkfilepath,PATH_DELIM))=0;
 	    }
 
             // separate bundles
