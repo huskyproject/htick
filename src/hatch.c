@@ -62,7 +62,7 @@ void hatch()
 */
    if (filearea == NULL) {
       writeLogEntry(htick_log,'9',"Cannot open or create File Area %s",tic.area);
-      fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
+      if (!quiet) fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
       disposeTic(&tic);
       return;
    } 
@@ -101,18 +101,18 @@ int send(char *filename, char *area, char *addr)
 
    filearea=getFileArea(config,area);
    if (filearea == NULL) {
-      fprintf(stderr,"Error: Filearea not found\n");
+      if (!quiet) fprintf(stderr,"Error: Filearea not found\n");
       return 2;
    }
    if (filearea->pass == 1) {
-      fprintf(stderr,"Error: Passthrough filearea\n");
+      if (!quiet) fprintf(stderr,"Error: Passthrough filearea\n");
       return 1;
    }
 
    string2addr(addr, &address);
    link = getLinkFromAddr(config, address);
    if (link == NULL) {
-      fprintf(stderr,"Error: Link not found\n");
+      if (!quiet) fprintf(stderr,"Error: Link not found\n");
       return 4;
    }
 
@@ -126,7 +126,7 @@ int send(char *filename, char *area, char *addr)
    // Exist file?
    adaptcase(sendfile);
    if (!fexist(sendfile)) {
-         fprintf(stderr,"Error: File not found\n");
+         if (!quiet) fprintf(stderr,"Error: File not found\n");
          writeLogEntry(htick_log,'6',"File %s, not found",sendfile);
          disposeTic(&tic);
          return 3;

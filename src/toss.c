@@ -736,7 +736,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    {
        if (!makealldirs(config->fileAreaBaseDir,fileechoFileName))
        {
-           fprintf(stderr, "cannot make all subdirectories for %s\n",
+           if (!quiet) fprintf(stderr, "cannot make all subdirectories for %s\n",
                    fileechoFileName);
            return 1;
        }
@@ -751,7 +751,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       f = fopen(getConfigFileName(), "a");
       if (f == NULL)
          {
-            fprintf(stderr,"autocreate: cannot open config file\n");
+            if (!quiet) fprintf(stderr,"autocreate: cannot open config file\n");
             return 1;
          }
    }
@@ -1009,7 +1009,7 @@ int createFlo(s_link *link, e_prio prio)
       return 1;
    } else {
       if ((f=fopen(link->bsyFile,"a")) == NULL) {
-         fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
+         if (!quiet) fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
          remove(link->bsyFile);
          nfree(link->bsyFile);
          nfree(link->floFile);
@@ -1549,7 +1549,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    if (filearea == NULL) {
       writeLogEntry(htick_log,'9',"Cannot open or create File Area %s",tic.area);
-      fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
+      if (!quiet) fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
       disposeTic(&tic);
       return(2);
    }

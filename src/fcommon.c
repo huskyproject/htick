@@ -78,7 +78,7 @@ int createLockFile(char *lockfile) {
 
         if ((f=fopen(lockfile,"a")) == NULL)
            {
-                   fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
+                   if (!quiet) fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
                    writeLogEntry(htick_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
@@ -397,7 +397,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
            if ((f=fopen(link->bsyFile,"a")) == NULL)
                    {
-                           fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
+                           if (!quiet) fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
 			   remove(link->bsyFile);
                            free(link->bsyFile);
                            link->bsyFile=NULL;

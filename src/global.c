@@ -33,6 +33,7 @@
 
 s_log     *htick_log;
 s_fidoconfig *config;
+unsigned char quiet=0;
 
 char *print_ch(int len, char ch)
 {

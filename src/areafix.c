@@ -533,7 +533,7 @@ char *help(s_link *link) {
 	if (config->filefixhelp!=NULL) {
 		if ((f=fopen(config->filefixhelp,"r")) == NULL)
 			{
-				fprintf(stderr,"FileFix: cannot open help file \"%s\"\n",
+				if (!quiet) fprintf(stderr,"FileFix: cannot open help file \"%s\"\n",
 						config->filefixhelp);
 				return NULL;
 			}
@@ -570,7 +570,7 @@ char *available(s_link *link) {
         if (config->available!=NULL) {                                          
                 if ((f=fopen(config->available,"r")) == NULL)                   
                         {                                                       
-                                fprintf(stderr,"FileFix: cannot open Available Areas file \"%s\"\n",
+                                if (!quiet) fprintf(stderr,"FileFix: cannot open Available Areas file \"%s\"\n",
                                                 config->available);
                                 return NULL;                                    
                         }                                                       
@@ -629,7 +629,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 
 	if ((f=fopen(fileName,"r+b")) == NULL)
 		{
-			fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
+			if (!quiet) fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
 			nfree(fileName);
 			return 1;
 		}
@@ -872,7 +872,7 @@ linkline:
 				close_conf();
 				f_conf = fopen(confName, "r+");
 				if (f_conf == NULL) {
-					fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
+					if (!quiet) fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
 					nfree(confName);
 					return 0;
 				}
@@ -995,7 +995,7 @@ linkliner:
 		close_conf();
 		if ((f_conf=fopen(confName,"r+")) == NULL)
 		{
-			fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
+			if (!quiet) fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
 			nfree(confName);
 			return 0;
 		}

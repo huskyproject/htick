@@ -85,7 +85,9 @@ int processCommandLine(int argc, char **argv)
 
    if (argc == 1) {
       printf(
-"\nUsage: htick <command>\n"
+"\nUsage: htick [-q] <command>\n"
+"\n"
+" -q                      Quiet mode (display only urgent messages to console)\n"
 "\n"
 "Commands:\n"
 " toss                    Reading *.tic and tossing files\n"
@@ -109,6 +111,10 @@ int processCommandLine(int argc, char **argv)
 
    while (i < argc-1) {
       i++;
+      if ( !strcmp(argv[i], "-q") ) {
+         quiet=1;
+         continue;
+      }
       if (0 == stricmp(argv[i], "toss")) {
          cmToss = 1;
          continue;
@@ -260,6 +266,7 @@ void processConfig()
        htick_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
 */
      htick_log = openLog(buff, versionStr, config);
+     if (htick_log && quiet) htick_log->logEcho = 0;
 
    } else
        printf("You have no logFileDir in your config, there will be no log created");
@@ -316,9 +323,8 @@ int main(int argc, char **argv)
 #endif
 
 
-   printf("Husky Tick v%u.%02u%s%s by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR, VER_SERVICE, VER_BRANCH);
-
    if (processCommandLine(argc, argv) == 0) exit(1);
+   if (!quiet) printf("Husky Tick v%u.%u%s%s by Gabriel Plutzar\n", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
    processConfig();
 
    // init SMAPI
