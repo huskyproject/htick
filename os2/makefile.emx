@@ -1,0 +1,48 @@
+# OS/2 EMX A.OUT STYLE MAKEFILE
+# no support for the husky build environment
+
+DEBUG=-s
+# set to -g for debugging
+
+.SUFFIXES:
+.SUFFIXES: .c .o
+
+OBJ    =.o
+EXE    =.exe
+RM     =cmd /c del
+DIRSEP =/
+CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -DOS2
+LFLAGS =-Zcrtdll $(DEBUG)
+CDEFS  =-DOS2
+CC     =gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+LIBS   =../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
+
+
+OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
+          scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
+          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
+
+SRC_DIR = ../src/
+
+
+all: $(OBJS) \
+     htick.exe
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+htick.exe: $(OBJS)
+	$(CC) $(LFLAGS) -o htick.exe $(OBJS) $(LIBS)
+
+clean:
+	-del *.o 
+	-del *.bak
+
+distclean: clean
+	-del *.exe
+
+
+
+
