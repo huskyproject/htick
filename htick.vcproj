@@ -60,8 +60,9 @@
 				Name="VCPostBuildEventTool"
 				CommandLine="echo Building documentation
 set PATH=%PATH%;F:\compilation\cyg\bin
-bash -c &apos;makeinfo --html --no-split --force doc/htick.texi&apos;
-move /Y  htick.html $(OutDir)"/>
+sh -c &apos;makeinfo --html --no-split --force doc/htick.texi&apos;
+move /Y  htick.html $(OutDir)
+"/>
 			<Tool
 				Name="VCPreBuildEventTool"/>
 			<Tool
