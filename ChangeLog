@@ -1,3 +1,23 @@
+2002-07-01 Monday 14:39  stas
+
+	* debian/postinst (1.1.2.1): Add file from Pavel Andreew
+	<pavel@collage.etel.ru>, 2:5080/59
+
+2002-07-01 Monday 14:39  stas
+
+	* debian/postinst (1.1): file postinst was initially added on
+	branch htick-1_0-stable.
+
+2002-07-01 Monday 14:38  stas
+
+	* debian/changelog (1.6.2.2): Fix doc.
+
+2002-07-01 Monday 14:36  stas
+
+	* debian/: changelog (1.6.2.1), control (1.5.2.1), dirs (1.1.2.1),
+	rules (1.4.2.1): Change debian package control files. (Patch from
+	Pavel Andreew <pavel@collage.etel.ru>, 2:5080/59)
+
 2002-06-26 Wednesday 07:26  mche
 
 	* src/htick.c (1.59.2.1): version string reduced
