@@ -195,7 +195,7 @@ void purgeFileEchos()
         if(config->fileAreas[i].purge == 0)
             continue;
         w_log(LL_INFO,  "Cleaning %s ...", config->fileAreas[i].areaName);
-        dir = opendir(config->fileAreas[i].pathName);
+        dir = opendir(config->fileAreas[i].fileName);
         if (dir == NULL) 
             continue;
 
@@ -203,7 +203,7 @@ void purgeFileEchos()
             if (patimat(file->d_name, "*.BBS") == 1)
                 continue;
 
-            xstrscat(&filename,config->fileAreas[i].pathName,file->d_name,NULL);
+            xstrscat(&filename,config->fileAreas[i].fileName,file->d_name,NULL);
             if (direxist(filename)) { /*  do not touch dirs */
                 nfree(filename);
                 continue;
@@ -215,7 +215,7 @@ void purgeFileEchos()
                 continue;
             }
             w_log(LL_INFO,  "Deleting file %s that is %d days old", file->d_name,(tnow-st.st_mtime)/86400);
-            removeFileMask(config->fileAreas[i].pathName, file->d_name);
+            removeFileMask(config->fileAreas[i].fileName, file->d_name);
             nfree(filename);
         }
         closedir(dir);

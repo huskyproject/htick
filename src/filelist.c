@@ -303,10 +303,10 @@ void filelist()
         }
     }
     for (i=0; i<config->fileAreaCount; i++) {
-        if (config->fileAreas[i].pass != 1 && !(config->fileAreas[i].hide))
+        if (config->fileAreas[i].msgbType != MSGTYPE_PASSTHROUGH && !(config->fileAreas[i].hide))
         {
-            printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].pathName, config->fileAreas[i].description, f, 0);
-            if(d) fprintf(d, "%s\n",config->fileAreas[i].pathName);
+            printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].fileName, config->fileAreas[i].description, f, 0);
+            if(d) fprintf(d, "%s\n",config->fileAreas[i].fileName);
         }
     }
     

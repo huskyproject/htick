@@ -78,7 +78,7 @@ char *errorRQ(char *line)
    return report;
 }
 
-int subscribeCheck(s_filearea area, s_message *msg, s_link *link)
+int subscribeCheck(s_area area, s_message *msg, s_link *link)
 {
   unsigned int i;
   int found = 0;
@@ -110,7 +110,7 @@ int subscribeCheck(s_filearea area, s_message *msg, s_link *link)
 }
 
 
-int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link *link) {
+int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
 	int rc=4;
 	
 	if (!areaname) return rc;
@@ -127,7 +127,7 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 	return rc;
 }
 
-int unsubscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link *link) {
+int unsubscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
 	int rc=4;
 	
 	if (!areaname) return rc;
@@ -148,7 +148,7 @@ char *unlinked(s_message *msg, s_link *link)
 {
     unsigned int i, rc, n;
     char *report=NULL;
-    s_filearea *area;
+    s_area *area;
 
     area=config->fileAreas;
 
@@ -194,8 +194,8 @@ char *list(s_message *msg, s_link *link) {
            desclen=0;
 
          if (rc==0) {
-            readdeny = readCheck(&config->fileAreas[i], link);
-            writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
+            readdeny =  e_readCheck(config, &config->fileAreas[i], link);
+            writedeny = e_writeCheck(config, &config->fileAreas[i],link);
             if (!readdeny && !writedeny)
                xstrcat(&report,"& ");
             else if (writedeny)
@@ -235,7 +235,7 @@ char *linked(s_message *msg, s_link *link, int action)
     char *report=NULL;
     int readdeny, writedeny;
 
-    if ((link->Pause & FPAUSE) == FPAUSE)
+    if ((link->Pause & FILEAREA) == FILEAREA)
         xscatprintf(&report, "\rPassive fileareas on %s\r\r", aka2str(link->hisAka));
     else
         xscatprintf(&report, "\rActive fileareas on %s\r\r", aka2str(link->hisAka));
@@ -245,8 +245,8 @@ char *linked(s_message *msg, s_link *link, int action)
 	rc=subscribeCheck(config->fileAreas[i], msg, link);
 	if (rc==0) {
         if (action == 1) {
-            readdeny = readCheck(&config->fileAreas[i], link);
-            writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
+            readdeny =  e_readCheck(config, &config->fileAreas[i], link);
+            writedeny = e_writeCheck(config,&config->fileAreas[i], link);
             if (!readdeny && !writedeny)
                 xstrcat(&report,"& ");
             else if (writedeny)
@@ -372,7 +372,7 @@ char *available(s_link *link) {
     return report;
 }
 
-int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
+int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL, *tmpPtr =NULL;
     long strbeg = 0, strend = -1;
 
@@ -524,7 +524,7 @@ int forwardRequest(char *areatag, s_link *dwlink) {
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	unsigned int i, c, rc=4,found=0;
 	char *line, *report = NULL;
-	s_filearea *area;
+	s_area *area;
 
 	line = cmd;
 	
@@ -553,7 +553,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     			break;
 		    case 1:
                 changeconfig (getConfigFileName(), area, link, 0);
-                Addlink(link, NULL, area);
+                Addlink(config, link, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
                 if(cmNotifyLink)
@@ -599,7 +599,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	unsigned int i, c, rc = 2;
 	char *line;
 	char *report=NULL;
-	s_filearea *area;
+	s_area *area;
 	
 	line = cmd;
 	
@@ -620,7 +620,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		}
 		
 		switch (rc) {
-        case 0: RemoveLink(link, NULL, area);
+        case 0: RemoveLink(link, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
 			xscatprintf(&report, "%s Unlinked\r",area->areaName);
 			w_log( '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
@@ -651,7 +651,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
     unsigned int rc, i;
     char *line;
     char *report=NULL, *token = NULL, *filename=NULL, *filearea=NULL;
-    s_filearea *area = NULL;
+    s_area *area = NULL;
 
     line = cmd;
     line=stripLeadingChars(line, " \t");
@@ -711,8 +711,8 @@ char *pause_link(s_message *msg, s_link *link)
     char *tmp = NULL;
     char *report=NULL;
 
-    if ((link->Pause & FPAUSE) != FPAUSE) {
-        if (Changepause(getConfigFileName(), link,0,FPAUSE) == 0)
+    if ((link->Pause & FILEAREA) != FILEAREA) {
+        if (Changepause(getConfigFileName(), link,0,FILEAREA) == 0)
             return NULL;
     }
     xstrcat(&report, " System switched to passive\r");
@@ -727,8 +727,8 @@ char *resume_link(s_message *msg, s_link *link)
 {
     char *tmp = NULL, *report=NULL;
 
-    if ((link->Pause & FPAUSE) == FPAUSE) {
-       if (Changepause(getConfigFileName(), link,0,FPAUSE) == 0)
+    if ((link->Pause & FILEAREA) == FILEAREA) {
+       if (Changepause(getConfigFileName(), link,0,FILEAREA) == 0)
           return NULL;
     }
     xstrcat(&report, " System switched to active\r");
@@ -1089,7 +1089,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     char CR;
     s_link *creatingLink;
     s_message *msg;
-    s_filearea *area;
+    s_area *area;
     FILE *echotosslog;
     size_t configlen=0;
 

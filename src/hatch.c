@@ -298,7 +298,7 @@ recode:
 
 void hatch()
 {
-    s_filearea *filearea;
+    s_area *filearea;
     struct stat stbuf;
     char *hatchedFile = NULL;
     char buffer[256]="";
@@ -367,7 +367,7 @@ int send(char *filename, char *area, char *addr)
 {
     s_ticfile tic;
     s_link *link = NULL;
-    s_filearea *filearea;
+    s_area *filearea;
     char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
     char timestr[40];
     struct stat stbuf;
@@ -389,10 +389,10 @@ int send(char *filename, char *area, char *addr)
     
     memset(&tic,0,sizeof(tic));
     
-    if (filearea->pass == 1)
+    if (filearea->msgbType == MSGTYPE_PASSTHROUGH)
         sendfile = sstrdup(config->passFileAreaDir);
     else
-        sendfile = sstrdup(filearea->pathName);
+        sendfile = sstrdup(filearea->fileName);
     
     strLower(sendfile);
     _createDirectoryTree(sendfile);
@@ -441,7 +441,7 @@ int send(char *filename, char *area, char *addr)
     /*  Adding crc */
     tic.crc = filecrc32(sendfile);
     
-    xstrscat(&descr_file_name, filearea->pathName,"files.bbs",NULL);
+    xstrscat(&descr_file_name, filearea->fileName,"files.bbs",NULL);
     adaptcase(descr_file_name);
     
     GetDescFormBbsFile(descr_file_name, tic.file, &tic);

@@ -46,7 +46,7 @@
 #include "version.h"
 
 typedef struct {
-    s_filearea *farea;
+    s_area *farea;
     UINT        begin; 
     UINT32      fSize;
     UINT        fCount;
@@ -180,7 +180,7 @@ void getReportInfo()
 void buildAccessList()
 {
     UINT i = 0;
-    s_filearea *currFArea = NULL;    
+    s_area *currFArea = NULL;    
 
     for (i = 0; i < rCount; i++) {
         if( currFArea == NULL || stricmp(Report[i].area, currFArea->areaName))

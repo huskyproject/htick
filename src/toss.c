@@ -174,7 +174,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
     unsigned int i;
-    s_filearea *filearea = NULL;
+    s_area *filearea = NULL;
 
     tichandle=fopen(ticfile,"wb");
 
@@ -384,103 +384,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 }
 
 
-int readCheck(s_filearea *echo, s_link *link)
-{
-
-  /* rc == '\x0000' access o'k
-   rc == '\x0001' no access group
-   rc == '\x0002' no access level
-   rc == '\x0003' no access export
-   rc == '\x0004' not linked
-   rc == '\x0005' pause
-   */
-
-  unsigned int i;
-
-  for (i=0; i<echo->downlinkCount; i++)
-  {
-    if (link == echo->downlinks[i]->link) break;
-  }
-
-  if (i == echo->downlinkCount) return 4;
-
-  /* pause */
-  if ((link->Pause & FPAUSE) == FPAUSE && !echo->noPause) return 5;
-
-/* Do not check for groupaccess here, use groups only (!) for Filefix */
-/*  if (strcmp(echo->group,"0")) {
-      if (link->numAccessGrp) {
-          if (config->numPublicGroup) {
-              if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
-                  !grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
-                  return 1;
-          } else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
-      } else if (config->numPublicGroup) {
-          if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
-      } else return 1;
-  }*/
-
-  if (echo->levelread > link->level) return 2;
-
-  if (i < echo->downlinkCount)
-  {
-    if (echo->downlinks[i]->export == 0) return 3;
-  }
-
-  return 0;
-}
-
-int writeCheck(s_filearea *echo, ps_addr aka)
-{
-
-  /* rc == '\x0000' access o'k
-   rc == '\x0001' no access group
-   rc == '\x0002' no access level
-   rc == '\x0003' no access import
-   rc == '\x0004' not linked
-   */
-
-  unsigned int i;
-
-  s_link *link;
-
-  if (!addrComp(*aka,*echo->useAka)) return 0;
-
-  link = getLinkForFileArea (config, aka2str(*aka), echo);
-  if (link == NULL) return 4;
-
-  for (i=0; i<echo->downlinkCount; i++)
-  {
-    if (link == echo->downlinks[i]->link) break;
-  }
-  if (i == echo->downlinkCount) return 4;
-
-/* Do not check for groupaccess here, use groups only (!) for Filefix */
-/*  if (strcmp(echo->group,"0")) {
-      if (link->numAccessGrp) {
-         if (config->numPublicGroup) {
-            if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
-                !grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
-               return 1;
-         } else
-            if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
-      } else
-         if (config->numPublicGroup) {
-            if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
-         } else return 1;
-   }*/
-
-  if (echo->levelwrite > link->level) return 2;
-
-  if (i < echo->downlinkCount)
-  {
-    if (link->import == 0) return 3;
-  }
-
-  return 0;
-}
-
-void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
+void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
 {
     char *filename = NULL;
     unsigned int i;
@@ -499,10 +403,10 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
                 w_log(LL_ERROR,"File %s not found or not moveable",ticfile);
             };
             if( filearea &&
-               !filearea->pass && !filearea->sendorig && savetic->fileAction)
+               filearea->msgbType != MSGTYPE_PASSTHROUGH && !filearea->sendorig && savetic->fileAction)
             {
                 char *from = NULL, *to = NULL;
-                xstrscat(&from, filearea->pathName, tic->file, NULL);
+                xstrscat(&from, filearea->fileName, tic->file, NULL);
                 xstrscat(&to,   savetic->pathName, tic->file, NULL);
                 if( savetic->fileAction == 1)
                    copy_file(from,to,1); /* overwrite existing file if not same */
@@ -518,7 +422,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
     return;
 }
 
-int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
+int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                 const char *filename)
                 /*
                 isToss == 1 - tossing
@@ -547,8 +451,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         return TIC_NotRecvd;
     }
     
-    if (!filearea->pass)
-        strcpy(fileareapath,filearea->pathName);
+    if (filearea->msgbType != MSGTYPE_PASSTHROUGH)
+        strcpy(fileareapath,filearea->fileName);
     else
         strcpy(fileareapath,config->passFileAreaDir);
     p = strrchr(fileareapath,PATH_DELIM);
@@ -556,7 +460,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     
     _createDirectoryTree(fileareapath);
     
-    if (isToss == 1 && tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
+    if (isToss == 1 && tic->replaces!=NULL && filearea->msgbType != MSGTYPE_PASSTHROUGH && !filearea->noreplace) {
         /* Delete old file[s] */
         int num_files;
         char *repl;
@@ -574,7 +478,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     strcpy(newticedfile,fileareapath);
     strcat(newticedfile,MakeProperCase(tic->file));
     
-    if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
+    if(filearea->msgbType != MSGTYPE_PASSTHROUGH && filearea->noreplace && fexist(newticedfile)) {
         w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
         return(3);
     }
@@ -638,8 +542,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     if (config->announceSpool) doSaveTic4Report(tic);
     
     
-    if (!filearea->pass) {
-        strcpy(descr_file_name, filearea->pathName);
+    if (filearea->msgbType != MSGTYPE_PASSTHROUGH) {
+        strcpy(descr_file_name, filearea->fileName);
         strcat(descr_file_name, "files.bbs");
         adaptcase(descr_file_name);
         removeDesc(descr_file_name,tic->file);
@@ -676,7 +580,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
         if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
-            (readCheck(filearea, downlink) == 0)
+            (e_readCheck(config, filearea, downlink) == 0)
             )
         {  /*  if link is not in seen-by list & */
             /*  if link can recive files from filearea */
@@ -701,7 +605,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         {
             /* Forward file to */
             
-            readAccess = readCheck(filearea, downlink);
+            readAccess = e_readCheck(config, filearea, downlink);
             switch (readAccess) {
             case 0: break;
             case 5:
@@ -744,14 +648,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         if (patimat(tic->file,config->execonfile[z].filename) == 0) continue;
         else {
             comm = (char *) smalloc(strlen(config->execonfile[z].command)+1
-                +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
+                +(filearea->msgbType != MSGTYPE_PASSTHROUGH ? strlen(filearea->fileName) : strlen(config->passFileAreaDir))
                 +strlen(tic->file)+1);
             if (comm == NULL) {
                 w_log( LL_ERROR, "Exec failed - not enough memory");
                 continue;
             }
             sprintf(comm,"%s %s%s",config->execonfile[z].command,
-                (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
+                (filearea->msgbType != MSGTYPE_PASSTHROUGH ? filearea->fileName : config->passFileAreaDir),
                 tic->file);
             w_log( LL_EXEC, "Executing %s", comm);
             if ((cmdexit = system(comm)) != 0) {
@@ -831,7 +735,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    char ticedfile[256], linkfilepath[256];
    char dirname[256], *realfile, *findfile, *pos;
    char *newticfile;
-   s_filearea *filearea;
+   s_area *filearea;
    s_link *from_link, *to_link;
    int busy;
    unsigned long crc;
@@ -1056,7 +960,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return TIC_NotRecvd;
    }
 
-   writeAccess = writeCheck(filearea,&tic.from);
+   writeAccess = e_writeCheck(config,filearea,getLinkFromAddr(config,tic.from));
 
    switch (writeAccess) {
    case 0: break;
@@ -1154,7 +1058,7 @@ void checkTmpDir(void)
     char           *ticfile=NULL;
     s_link         *link=NULL;
     s_ticfile      tic;
-    s_filearea *filearea=NULL;
+    s_area *filearea=NULL;
     FILE *flohandle=NULL;
     int error = 0;
     
@@ -1179,7 +1083,7 @@ void checkTmpDir(void)
             if (createOutboundFileNameAka(link, link->fileEchoFlavour, FLOFILE, SelectPackAka(link))==0) {
                 filearea=getFileArea(tic.area);
                 if (filearea!=NULL) {
-                    if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
+                    if (filearea->msgbType != MSGTYPE_PASSTHROUGH && !filearea->sendorig) strcpy(newticedfile,filearea->fileName);
                     else strcpy(newticedfile,config->passFileAreaDir);
                     strcat(newticedfile,tic.file);
                     adaptcase(newticedfile);
