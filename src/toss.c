@@ -664,6 +664,77 @@ int writeCheck(s_filearea *echo, s_addr *aka) {
     return 0;
 }
 
+int createFlo(s_link *link, e_prio prio)
+{
+
+    FILE *f; // bsy file for current link
+    char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
+
+   if (link->hisAka.point != 0) {
+      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, PATH_DELIM);
+      sprintf(name, "%08x.flo", link->hisAka.point);
+   } else {
+      pntDir[0] = 0;
+      sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
+   }
+
+   if (link->hisAka.zone != config->addr[0].zone) {
+      // add suffix for other zones
+      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
+   } else {
+      zoneSuffix[0] = 0;
+   }
+
+   switch (prio) {
+      case CRASH :    name[9] = 'c';
+                      break;
+      case HOLD  :    name[9] = 'h';
+                      break;
+      case DIRECT:    name[9] = 'd';
+                      break;
+      case IMMEDIATE: name[9] = 'i';
+                      break;
+      case NORMAL:    break;
+   }
+
+   // create floFile
+   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   strcpy(link->floFile, config->outbound);
+   if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
+   strcat(link->floFile, pntDir);
+   createDirectoryTree(link->floFile); // create directoryTree if necessary
+   strcpy(link->bsyFile, link->floFile);
+   strcat(link->floFile, name);
+
+   // create bsyFile
+   strcpy(bsyname, name);
+   bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
+   strcat(link->bsyFile, bsyname);
+
+   // maybe we have session with this link?
+   if (fexist(link->bsyFile)) {
+      free (link->bsyFile); link->bsyFile = NULL;
+      return 1;
+   } else {
+      if ((f=fopen(link->bsyFile,"a")) == NULL) {
+         fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
+         remove(link->bsyFile);
+         free(link->bsyFile);
+         link->bsyFile=NULL;
+         free(link->floFile);
+         if (config->lockfile != NULL) remove(config->lockfile);
+         writeLogEntry(htick_log, '9', "cannot create *.bsy file");
+         writeLogEntry(htick_log, '1', "End");
+         closeLog(htick_log);
+         disposeConfig(config);
+         exit(1);
+      }
+      fclose(f);
+   }
+   return 0;
+}
+
 int processTic(char *ticfile, e_tossSecurity sec)                     
 {
    s_ticfile tic;
@@ -678,7 +749,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    s_filearea *filearea;
    char hlp[100],timestr[40];
    time_t acttime;
-   s_link *from_link;
+   s_link *from_link, *to_link;
    s_addr *old_seenby = NULL;
    s_addr old_from, old_to;
    int old_anzseenby = 0;
@@ -715,6 +786,39 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    if (tic.to.zone!=0) {
       if (to_us(tic.to)) {
+         //Forwarding tic and file to other link?
+         to_link=getLinkFromAddr(*config,tic.to);
+         if ( (to_link != NULL) && (to_link->forwardPkts != fOff) ) {
+	    if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
+	    else { //Forwarding
+	       busy = 0;
+               if (createFlo(to_link, cvtFlavour2Prio(to_link->echoMailFlavour))==0) {
+        	  strcpy(linkfilepath,to_link->floFile);
+        	  if (!busy) {
+		     *(strrchr(linkfilepath,PATH_DELIM))=0;
+                     newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+                     if (move_file(ticfile,newticfile)==0) {
+                        strcpy(ticedfile,ticfile);
+                        *(strrchr(ticedfile,PATH_DELIM)+1)=0;
+                        j = strlen(ticedfile);
+                        strcat(ticedfile,tic.file);
+                        adaptcase(ticedfile);
+                        strcpy(tic.file, ticedfile + j);
+                        flohandle=fopen(to_link->floFile,"a");
+                        fprintf(flohandle,"^%s\n",ticedfile);
+                        fprintf(flohandle,"^%s\n",newticfile);
+                        fclose(flohandle);
+                        remove(to_link->bsyFile);
+                        free(to_link->bsyFile);
+                        free(to_link->floFile);
+		     }
+		  }
+	       }
+               disposeTic(&tic);
+               return(0);
+	    }
+	 }
+	 //not to us and no forward
          sprintf(logstr,"Tic File adressed to %s, not to us",
                  addr2string(&tic.to));
          writeLogEntry(htick_log,'9',logstr);
@@ -905,23 +1009,26 @@ int processTic(char *ticfile, e_tossSecurity sec)
             sprintf(logstr,"Link %s not subscribe to File Area %s",
                     addr2string(&old_from), tic.area);
             writeLogEntry(htick_log,'9',logstr);
+	    break;
          case 3:
             sprintf(logstr,"Not export to link %s, %s",
                     filearea->downlinks[i]->link->name,
                     addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
+	    break;
          case 2:
             sprintf(logstr,"Link %s, %s no access level",
             filearea->downlinks[i]->link->name,
             addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
+	    break;
          case 1:
             sprintf(logstr,"Link %s, %s no access group",
             filearea->downlinks[i]->link->name,
             addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
+	    break;
          }
-
 
          if (readAccess == 0)
          if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
@@ -1083,77 +1190,6 @@ void processDir(char *directory, e_tossSecurity sec)
    }                                                 
    closedir(dir);                                    
 }                                                    
-
-int createFlo(s_link *link, e_prio prio)
-{
-
-    FILE *f; // bsy file for current link
-    char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
-
-   if (link->hisAka.point != 0) {
-      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, PATH_DELIM);
-      sprintf(name, "%08x.flo", link->hisAka.point);
-   } else {
-      pntDir[0] = 0;
-      sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
-   }
-
-   if (link->hisAka.zone != config->addr[0].zone) {
-      // add suffix for other zones
-      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-   } else {
-      zoneSuffix[0] = 0;
-   }
-
-   switch (prio) {
-      case CRASH :    name[9] = 'c';
-                      break;
-      case HOLD  :    name[9] = 'h';
-                      break;
-      case DIRECT:    name[9] = 'd';
-                      break;
-      case IMMEDIATE: name[9] = 'i';
-                      break;
-      case NORMAL:    break;
-   }
-
-   // create floFile
-   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   strcpy(link->floFile, config->outbound);
-   if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
-   strcat(link->floFile, pntDir);
-   createDirectoryTree(link->floFile); // create directoryTree if necessary
-   strcpy(link->bsyFile, link->floFile);
-   strcat(link->floFile, name);
-
-   // create bsyFile
-   strcpy(bsyname, name);
-   bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
-   strcat(link->bsyFile, bsyname);
-
-   // maybe we have session with this link?
-   if (fexist(link->bsyFile)) {
-      free (link->bsyFile); link->bsyFile = NULL;
-      return 1;
-   } else {
-      if ((f=fopen(link->bsyFile,"a")) == NULL) {
-         fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
-         remove(link->bsyFile);
-         free(link->bsyFile);
-         link->bsyFile=NULL;
-         free(link->floFile);
-         if (config->lockfile != NULL) remove(config->lockfile);
-         writeLogEntry(htick_log, '9', "cannot create *.bsy file");
-         writeLogEntry(htick_log, '1', "End");
-         closeLog(htick_log);
-         disposeConfig(config);
-         exit(1);
-      }
-      fclose(f);
-   }
-   return 0;
-}
 
 void checkTmpDir(s_link link)
 {
