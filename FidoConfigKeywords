@@ -80,7 +80,7 @@ Same as EchoArea, most options are valid:
 	
     Do not try to get description from <fileDescName>
 
-    o) -p <integer> 
+    o) -p <integer>
 
     Purge after n days. if 0 purging is disabled.
 
@@ -225,20 +225,20 @@ If no LDESC defined in tic file, use <name> file from archive fill it.
 
 Name of remote file (tic) robot (need for FileForwardRequest)
 
-25) AnnounceSpool (path)
+25) AnnounceSpool <path>
 
 Place for accumulating report information
 
-26) AnnAreaTag
+26) AnnAreaTag <AREATAG>
 
 Name of area when annouce will be placed
 Begins new announce difenition section
 
-27) AnnInclude
+27) AnnInclude <fileecho mask list>
 
 Array of fileecho names|masks that will be announced in this annAreaTag
 
-28) AnnExclude
+28) AnnExclude <fileecho mask list>
 
 Array of fileecho names|masks that won't be announced in this annAreaTag
 
@@ -269,4 +269,3 @@ Origin in announce message
 35) AnnMessFlags <string>
 
 Flags like k/s loc hld ... that will have announce message
-
