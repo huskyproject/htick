@@ -33,7 +33,7 @@ _EXE	  = .exe
 ## programs ##
 CFLAGS	= -nologo -MD -Zp1
 CINCL	= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI)
-CDEFS	= -D__NT__ -DNT -DWINNT -D_CONSOLE $(HPTZIPD)
+CDEFS	= -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL $(HPTZIPD)
 COPT	= -Ob2
 
 # Uncomment one of these lines if you want to enable hardlinking
@@ -61,7 +61,7 @@ programs: $(PROGRAMS)
 
 $(PROGRAMS): $(OBJS)
 	@echo Create $(PROGRAMS)...
-	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $**  $(LIBS) $(EXEFLAGS)
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS) $(EXEFLAGS)
 
 man:
 
