@@ -51,10 +51,10 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 @node Overview, Installation, Top, Top
 @chapter An Overview of @value{HTICK}
 
-@value{HTICK} is a Fidonet file areas tosser with filefix. Now project
+@value{HTICK} is a Fidonet file areas tosser with filefix. Now project is
 supported by Husky Development Team (see @url{http://husk.sf.net/team.html}).
 
-Features of @value{HTICK}:
+@value{HTICK} features:
 @enumerate
 @item Tossing file areas.
 @item Filefix (on the fly, from command line, limit for areas...).
@@ -71,8 +71,8 @@ Features of @value{HTICK}:
 Wildcards in file area tags allow easy configuration of
 multiple announcement areas for different groups of file
 areas.
-@item Save announces on disk, so you are protected from
-losing announcements in critical @value{HTICK} termination
+@item Save announcements to disk, so you are protected from
+losing announcements because of critical @value{HTICK} termination
 (insufficient disk space, ^Break pressed, power off etc).
 @item much, much more :)
 @end enumerate
@@ -122,7 +122,7 @@ groups for @code{FileEchoAreas})
 
 1. The smapi and fidoconf packages are required for htick.
 
-2. Put the fidoconfig ans smapi packages to the directory where the
+2. Put the fidoconfig and smapi packages to the directory where the
    other packages of fido linux reside:
 
 @table @asis
@@ -445,7 +445,8 @@ This statement cannot be repeated.
 @code{ConvertLongNames DontTouch}
 @end table
 
-What to do with long names when toss or hatch. Long name is name with mixed case or more than 8.3
+What to do with long names when toss or hatch. 
+Term "long name" treat as a mixed cased name or a name longer than 8.3
 
 This statement cannot be repeated.
 
@@ -459,7 +460,8 @@ This statement cannot be repeated.
 @code{ConvertShortNames DontTouch}
 @end table
 
-What to do with short names when toss or hatch. Short name is DOS-like name, 8.3, without mixed case.
+What to do with short names when toss or hatch.
+Short name is a DOS-like name: 8.3, without mixed case.
 
 This statement cannot be repeated.
 
@@ -558,14 +560,14 @@ This statement cannot be repeated.
 @code{fileDescName file_id.diz}
 @end table
 
-If no LDESC defined in tic file, use <name> file from archive to fill it
+If LDESC is not defined in tic file, use <name> file from archive to fill it
 (usually file_id.diz).
 
 This statement cannot be repeated.
 
 @subsection Note
 @code{unpack} action should be defined for archive and contain @option{$f} parameter
-(@option{$f} replaces with file name on unpacking time).
+(@option{$f} is replaced with file name while unpacking).
 
 Examples:
 @example
@@ -646,7 +648,7 @@ This statement cannot be repeated.
 * AutoFileCreateDefaults::  Specifies the new filearea defaults.
 * AutoFileCreateSubdirs::   Whether to autocreate areas like /fils/gfd.app.edit
                             (off) or /files/gfd/app/edit (on).
-* delNotRecievedTIC::       If file not received, then remove TIC.
+* delNotReceivedTIC::       If file not received, then remove TIC.
 * FileFixFSC87Subset::      This boolean switch will change on a per link basis
                             how TIC files are processed.
 * TickerPackToBox::         If link has file box - toss files and tics there.
@@ -701,7 +703,7 @@ This statement can only be repeated for different links.
 @code{RemoteFileRobotName allfix}
 @end table
 
-Name of remote filefix robot (need for FileForwardRequest)
+Name of remote filefix robot (needed for FileForwardRequest)
 
 This statement can only be repeated for different links.
 
@@ -761,7 +763,7 @@ Specifies the new filearea defaults.
 
 This statement can only be repeated for different links.
 
-@node AutoFileCreateSubdirs, delNotRecievedTIC, AutoFileCreateDefaults, Link Keywords
+@node AutoFileCreateSubdirs, delNotReceivedTIC, AutoFileCreateDefaults, Link Keywords
 @subsection AutoFileCreateSubdirs
 @findex AutoFileCreateSubdirs
 @table @asis
@@ -777,21 +779,21 @@ section. For more information see 'AutoAreaCreateSubdirs' in the hpt manual.
 
 This statement can only be repeated for different links.
 
-@node delNotRecievedTIC, FileFixFSC87Subset, AutoFileCreateSubdirs, Link Keywords
-@subsection delNotRecievedTIC
-@findex delNotRecievedTIC
+@node delNotReceivedTIC, FileFixFSC87Subset, AutoFileCreateSubdirs, Link Keywords
+@subsection delNotReceivedTIC
+@findex delNotReceivedTIC
 @table @asis
 @item Syntax:
-@code{delNotRecievedTIC <on|off>}
+@code{delNotReceivedTIC <on|off>}
 @item Example:
-@code{delNotRecievedTIC on}
+@code{delNotReceivedTIC on}
 @end table
 
-If file not received, then remove TIC
+Remove TIC if file was not received
 
 This statement can only be repeated for different links.
 
-@node FileFixFSC87Subset, TickerPackToBox, delNotRecievedTIC, Link Keywords
+@node FileFixFSC87Subset, TickerPackToBox, delNotReceivedTIC, Link Keywords
 @subsection FileFixFSC87Subset
 @findex FileFixFSC87Subset
 @table @asis
@@ -834,7 +836,7 @@ This statement can only be repeated for different links.
 @code{LinkFileBaseDir /usr/local/fido/fileareas/2.5097.64.0}
 @end table
 
-Where autocreated fileareas will be placed (may be "passthrough")
+Where autocreated fileareas will be placed to (may be "passthrough")
 
 This statement can only be repeated for different links.
 
@@ -848,7 +850,7 @@ This statement can only be repeated for different links.
 @code{ForwardFileRequests on}
 @end table
 
-Allow file areas subscribe requests forward to this link.
+Allow fileareas forward-requests to this link.
 
 This statement can only be repeated for different links.
 
@@ -924,7 +926,7 @@ Description for this filearea.
 Group for this filearea.
 
 @item -h
-Hide area (non visible in %LIST and in announce).
+Hide area (don't show in %LIST and in an announcement).
 
 @item -lr <number>
 "Read level": Min link level for sending files from this filearea to this link.
@@ -962,35 +964,37 @@ Send files from PassFileAreaDir for non passthrough areas.
 @node Announce System, AnnounceSpool, FileArea, Configuration Reference
 @section Announce System
 
-Htick announces is selective, its may be difference for several fileareas.
-Token @code{AnnAreaTag} start new section of announce definition, other tokens
-defines file areas lists to include into announce and describes announce message.
+Htick announcements are selective, they can be different for different
+fileareas.
+Token @code{AnnAreaTag} starts a new section of announce definition,
+other tokens define lists of fileareas included into announcement
+and describe announce message.
 
-To post announces run @code{htick announce}.
+To post announcements run @code{htick announce}.
 
-You may turn announces off: for this comment out or remove @code{AnnounceSpool}
+You may turn announcements off: just remove @code{AnnounceSpool}
 definition from config.
 
 
 @menu
-* AnnounceSpool::      Directory for accumulating report information.
-* AnnAreaTag::         Name of area of file where annouce will be placed.
-* AnnInclude::         Array of fileecho masks that will be announced in this
-                       annAreaTag.
-* AnnExclude::         Array of filearea masks that won't be announced in this
-                       annAreaTag.
-* AnnTo::              Announce message destination name.
-* AnnFrom::            Announce message originator name.
-* AnnSubj::            Announce message subject.
-* AnnAddrTo::          Announce message destination address (use for netmail
-                       area only)
-* AnnAddrFrom::        Announce message originate address.
-* AnnOrigin::          Origin line in announce message.
-* AnnMessFlags::       Announce message attributes (k/s loc hld ...).
-* AnnFileRFrom::       Show in announce: address of system which file received
-                       from
-* AnnFileOrigin::      Show in announce: address of system who hatched file.
-* Announces example::  Example for understanding announces (from real config).
+* AnnounceSpool::         Directory for accumulating report information.
+* AnnAreaTag::            Name of area of file where annouce will be placed.
+* AnnInclude::            Array of fileecho masks that will be announced in
+                          this annAreaTag.
+* AnnExclude::            Array of filearea masks that won't be announced in
+                          this annAreaTag.
+* AnnTo::                 Announce message destination name.
+* AnnFrom::               Announce message originator name.
+* AnnSubj::               Announce message subject.
+* AnnAddrTo::             Announce message destination address (use for netmail
+                          area only)
+* AnnAddrFrom::           Announce message originate address.
+* AnnOrigin::             Origin line in announce message.
+* AnnMessFlags::          Announce message attributes (k/s loc hld ...).
+* AnnFileRFrom::          Show in announcement: address of system which file
+                          received from
+* AnnFileOrigin::         Show in announce: address of system who hatched file.
+* Announcements example:: Example for understanding announces (from real config)
 @end menu
 
 @node AnnounceSpool, AnnAreaTag, Announce System, Announce System
@@ -1017,10 +1021,11 @@ This statement cannot be repeated.
 @code{AnnounceSpool local.announce}
 @end table
 
-Begins new announce definition section. <AREATAG> is name of area where annouce will be placed
-<@@filename> is filename with leading '@@' where annouce will be placed. Begins new announce
-definition section.
+Begins new announce definition section. <AREATAG> is name of an area
+where annoucement will be placed to <@@filename> is filename with leading
+'@@' where annoucement will be placed to.
 
+This statement can be repeated.
 
 
 @node AnnInclude, AnnExclude, AnnAreaTag, Announce System
@@ -1173,7 +1178,7 @@ This statement can be repeated only for different AnnAreaTag.
 @code{AnnFileOrigin on}
 @end table
 
-Show in announce: address of system who hatched file
+Show in announce: address of system that hatched file
 
 This statement can be repeated only for different AnnAreaTag.
 
@@ -1182,7 +1187,7 @@ This statement can be repeated only for different AnnAreaTag.
 @subsection Announces example
 @findex Announces example
 
-The following text is taken from a real confige file.
+The following text is taken from a real config file.
 
 @example
 #= Announces definitions =====================================
