@@ -1,3 +1,22 @@
+2004-03-18 Thursday 18:51  stas_degteff
+
+	* src/toss.c (htick-1_4-stable.9): Fix crc32 values
+
+2004-03-09 Tuesday 10:04  sfpavel
+
+	* h/global.h, win32/makefile.wcw (htick-1_4-stable.[1,1]): Fix
+	compiling (patch from sir)
+
+2004-03-09 Tuesday 10:04  sfpavel
+
+	* src/filelist.c (htick-1_4-stable.1): Fix filelist building (patch
+	from sir)
+
+2004-03-09 Tuesday 10:02  sfpavel
+
+	* src/toss.c (htick-1_4-stable.8): Fix CRC32 calculation for SUNOS
+	(patch from sir)
+
 2004-01-08 Thursday 00:23  d_sergienko
 
 	* HISTORY, h/toss.h, src/hatch.c (htick-1_4-stable.[5,2,2]):
