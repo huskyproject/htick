@@ -234,22 +234,22 @@ Array of fileecho names|masks that will be announced in this annAreaTag
 
 Array of fileecho names|masks that won't be announced in this annAreaTag
 
-29) Annto;
+29) Annto <string>
 
 Field TONAME  : in announce message
 
-30) Annfrom   
+30) Annfrom <string>
 
 Field FROMNAME: in announce message
 
-31) Annsubj
+31) Annsubj <string>
 
 Field SUBJ:     in announce message         
 
-32) Annadrto
+32) Annadrto  <addres>
 
 Field ADRTO:    in announce message  (must be present if AnnAreaTag is netmail area)
 
-33) Annadrfrom
+33) Annadrfrom  <addres>
 
 Field ADRFROM:  in announce message    
