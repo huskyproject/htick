@@ -1,3 +1,11 @@
+2003-04-21 Monday 08:40  mche
+
+	* src/add_desc.c (1.36), htick.vcproj (1.1), htickWithZlib.vcproj
+	(1.1): Now it is possible using internal zip compression to switch
+	it on define this packer
+	
+	pack zip zipInternal unpack zipInternal 0 504b0304
+
 2003-04-14 Monday 01:31  andr_lukyanov
 
 	* win32/: makefile.bcw (1.12), makefile.cyg (1.16), makefile.mgw
