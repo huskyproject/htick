@@ -132,7 +132,7 @@ int processHatchParams(int i, int argc, char **argv)
         }
         i++;
     }
-    if( argc-i < 2 && (stricmp(argv[i], "desc") != 0))
+    if( argc-i < 2 || (stricmp(argv[i], "desc") != 0))
     {
         return 1;
     }
