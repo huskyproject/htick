@@ -546,7 +546,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    writeLogEntry(htick_log, '8', buff);
 
    // report about new filearea
-   if (config->ReportTo && (area = getFileArea(config, c_area)) != NULL) {
+   if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
       if (stricmp(config->ReportTo, "netmail")==0) {
          msg = makeMessage(area->useAka, area->useAka, versionStr, config->sysop, "Created new fileareas", 1);
          msg->text = (char *)calloc(300, sizeof(char));
@@ -1526,7 +1526,7 @@ void reportNewFiles()
    char      *annArea;
 
    if (cmAnnounce) annArea = announceArea;
-   else if (config->ReportTo != NULL) annArea = config->ReportTo;
+   else if ((config->ReportTo!=NULL) && (!cmAnnFile)) annArea = config->ReportTo;
         else return;
 
    // post report about new files to annArea
