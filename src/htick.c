@@ -45,11 +45,15 @@
 #include <fidoconf.h>
 #endif
 
+#include <progprot.h>
 #include <htick.h>
 #include <global.h>
 
 #include <toss.h>
 #include <scan.h>
+#include <hatch.h>
+#include <filelist.h>
+#include <recode.h>
 
 void processCommandLine(int argc, char **argv)
 {
@@ -61,10 +65,12 @@ void processCommandLine(int argc, char **argv)
 "\n"
 "Commands:\n"
 " toss [announce <area>]  Reading *.tic and tossing files, announce it in area\n"
+" annfile <file>          Announce new files in text file (toss and hatch)\n"
+" annfecho <file>         Announce new fileecho in text file\n"
 " scan                    Scanning Netmail area for mails to filefix\n"
 " hatch <file> <area>\n" 
 "       <description>     Hatch file into Area, using Description for file\n"
-" filelist                Generate filelist which includes all files in base\n"
+" filelist <file>         Generate filelist which includes all files in base\n"
 " purge <days>            Purge files older than <days> days\n"
 " send <Adress> <file>    Send file to Adress\n"
 " request <Adress> <file> Request file from adress\n"
@@ -80,6 +86,28 @@ void processCommandLine(int argc, char **argv)
          continue;
       } else if (stricmp(argv[i], "scan") == 0) {
          cmScan = 1;
+         continue;
+      } else if (stricmp(argv[i], "hatch") == 0) {
+         cmHatch = 1;
+         i++;
+         strcpy(hatchfile, argv[i++]);
+         strcpy(hatcharea, argv[i++]);
+         strcpy(hatchdesc, argv[i]);
+         continue;
+      } else if (stricmp(argv[i], "filelist") == 0) {
+         cmFlist = 1;
+         i++;
+         strcpy(flistfile, argv[i]);
+         continue;
+      } else if (stricmp(argv[i], "annfile") == 0) {
+         i++;
+         cmAnnFile = 1;
+         strcpy(announcefile, argv[i]);
+         continue;
+      } else if (stricmp(argv[i], "annfecho") == 0) {
+         i++;
+         cmAnnNewFileecho = 1;
+         strcpy(announcenewfileecho, argv[i]);
          continue;
       } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
 
@@ -97,13 +125,12 @@ void processConfig()
    };
    
    // lock...
- /*  if (config->lockfile!=NULL && fexist(config->lockfile)) {
+   if (config->lockfile!=NULL && fexist(config->lockfile)) {
            printf("lock file found! exit...\n");
            disposeConfig(config);
            exit(1);
    } 
    else if (config->lockfile!=NULL) createLockFile(config->lockfile);
-   */
 
    // open Logfile
    htick_log = NULL;
@@ -159,13 +186,21 @@ int main(int argc, char **argv)
       exit(1);
    } /*endif */
 
+   // load recoding tables
+   if (config->intab != NULL) getctab(intab, config->intab);
+   if (config->outtab != NULL) getctab(outtab, config->outtab);
+
+   processTmpDir();
+
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
+   if (cmHatch == 1) hatch();
+   if (cmFlist == 1) filelist();
 
    // deinit SMAPI
    MsgCloseApi();
 
-//   if (config->lockfile != NULL) remove(config->lockfile);
+   if (config->lockfile != NULL) remove(config->lockfile);
    writeLogEntry(htick_log, '1', "End");
    closeLog(htick_log);
    disposeConfig(config);
