@@ -721,6 +721,7 @@ This statement cannot be repeated.
 * fileAreaDefaults::        Set defaults for filearea definitions that follow.
 * RemoteFileRobotName::     Name of remote filefix robot (need for
                             FileForwardRequest).
+* FileFix::                 filefix access for this link
 * FileFixEchoLimit::        Area subscription limit.
 * noTIC::                   Disable TIC file creation.
 * autoFileCreate::          Allow or deny autocreating fileechos received from
@@ -950,7 +951,7 @@ Priority in uplinks order for filearea subscribing forward-requests
 
 This statement can only be repeated for different links.
 
-@node ForwardFileRequestFile, FileFixEchoLimit, ForwardFilePriority, Link Keywords
+@node ForwardFileRequestFile, FileFix, ForwardFilePriority, Link Keywords
 @subsection ForwardFileRequestFile
 @findex ForwardFileRequestFile
 @table @asis
@@ -964,7 +965,23 @@ List of available fileareas from this link
 
 This statement can only be repeated for different links.
 
-@node FileFixEchoLimit, FileArea Definition, ForwardFileRequestFile, Link Keywords
+
+@node FileFix, FileFixEchoLimit, ForwardFileRequestFile, Link Keywords
+@subsection FileFix
+@findex FileFixEcho
+@table @asis
+@item Syntax:
+@code{filefix <bool>}
+@item Example:
+@code{filefix off}
+@end table
+
+By default filefix is "on". You can turn off using of filefix by this link.
+
+This statement can only be repeated for different links.
+
+
+@node FileFixEchoLimit, FileArea Definition, FileFix, Link Keywords
 @subsection FileFixEchoLimit
 @findex FileFixEchoLimit
 @table @asis
