@@ -354,8 +354,22 @@ int processFileFix(s_message *msg)
     } else security=1;
 
 	if (!security) {
+        /*  remove kluges */
+        char *tmp = msg->text;
+        token = strseparate (&tmp,"\n\r");
 
-		textBuff = msg->text;
+        while(token != NULL) {
+            if( !strcmp(token,"---") || !strncmp(token,"--- ",4) )
+                /*  stop on tearline ("---" or "--- text") */
+                break;
+            if( token[0] != '\001' )
+                xstrscat(&textBuff,token,"\r",NULL);
+            token = strseparate (&tmp,"\n\r");
+        }
+        nfree(msg->text);
+        msg->text = textBuff;
+
+    	textBuff = sstrdup(msg->text);
 		token = strseparate (&textBuff, "\n\r");
 
 		while(token != NULL) {
@@ -400,6 +414,7 @@ int processFileFix(s_message *msg)
 			}
 			token = strseparate (&textBuff, "\n\r");
 		}
+        nfree(textBuff);
 		
 	} else {
 		
