@@ -231,6 +231,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
         fprintf(tichandle,"Pw %s\r\n",tic->password);
 
     fclose(tichandle);
+    return 1;
 }
 
 void disposeTic(s_ticfile *tic)
