@@ -1,3 +1,9 @@
+2001-11-10 Saturday 13:50  ml
+
+	* src/toss.c (1.114): 1. Fix: if tic password of downlink is empty,
+	in tic file written unlink's tic password. 2. Replace strcpy to
+	srtncpy. [patch by Stas Degteff]
+
 2001-11-08 Thursday 15:26  ml
 
 	* src/toss.c (1.113): Check HIDDEN attributes for .tic and file on
