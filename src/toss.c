@@ -825,7 +825,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          return(3);
       }
 
-      if (isToss == 1)
+      if (isToss == 1) {
          if (move_file(filename,newticedfile)!=0) {
              writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
              //disposeTic(tic);
@@ -833,7 +833,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          } else {
              writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
          }
-      else
+      } else
          if (copy_file(filename,newticedfile)!=0) {
             writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
             //disposeTic(tic);

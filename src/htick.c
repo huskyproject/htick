@@ -42,6 +42,15 @@
 #include <sys/stat.h>
 #endif
 
+#ifdef OS2
+#define INCL_DOSPROCESS
+#define INCL_DOSERRORS
+#include <os2.h>
+#ifndef __OS2__
+#define __OS2__
+#endif
+#endif
+
 #include <smapi/msgapi.h>
 
 #include <version.h>
@@ -58,15 +67,6 @@
 #include <scan.h>
 #include <hatch.h>
 #include <filelist.h>
-
-#ifdef OS2
-#define INCL_DOSPROCESS
-#define INCL_DOSERRORS
-#include <os2.h>
-#ifndef __OS2__
-#define __OS2__
-#endif
-#endif
 
 int processCommandLine(int argc, char **argv)
 {
