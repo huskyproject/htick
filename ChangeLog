@@ -1,3 +1,15 @@
+2002-06-11 Tuesday 18:04  mche
+
+	* FidoConfigKeywords (1.25): RemoteFileRobotName
+
+2002-06-11 Tuesday 13:14  mche
+
+	* src/areafix.c (1.68): fix filefix name, pwd, origin
+
+2002-06-11 Tuesday 07:54  mche
+
+	* src/areafix.c (1.67): <errno.h> included
+
 2002-06-10 Monday 16:22  mche
 
 	* src/areafix.c (1.66), h/areafix.h (1.12), misc/filefix.hlp (1.7):
