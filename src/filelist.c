@@ -160,6 +160,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
    createDirectoryTree(fileareapath);
    strcpy(fbbsname,fileareapath);
    strcat(fbbsname,"files.bbs");
+   adaptcase(fbbsname);
 
    dir = opendir(fileareapath);
    if (dir == NULL) return;
@@ -218,9 +219,9 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
          if (token==NULL)
             continue;
 
-	 strLower(token);
          strcpy(filename,fileareapath);
          strcat(filename,token);
+         adaptcase(filename);
 	 if (!fexist(filename)) {
             removeFiles = realloc(removeFiles, sizeof(char *)*(removeCount+1));
 	    removeFiles[removeCount] = (char *) malloc(strlen(strrchr(filename,PATH_DELIM)+1)+1);
