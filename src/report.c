@@ -30,6 +30,8 @@
  * $Id$
  */
 
+#include <stdlib.h>
+#include <string.h>
 #include <fidoconf/log.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
@@ -56,10 +58,10 @@ void doSaveTic4Report(s_ticfile *tic)
     tichandle = fopen(rpTicName,"wb");
     
     if(tichandle == NULL){
-        w_log(LL_CRIT, "Can't create file %s",rpTicName);
+        w_log(LL_CRIT, "Can't create file %s for file %s",rpTicName,tic->file);
         return;
     } else {
-        w_log(LL_CREAT, "Report file %s created  ",rpTicName);
+        w_log(LL_CREAT, "Report file %s created for file %s",rpTicName,tic->file);
     }
     
     fprintf(tichandle,"File %s\r\n",tic->file);
@@ -101,7 +103,6 @@ void getReportInfo()
 {
     DIR            *dir;
     struct dirent  *file;
-    s_ticfile *tic = NULL;
     char* fname = NULL;
 
     dir = opendir(config->announceSpool);
@@ -111,11 +112,13 @@ void getReportInfo()
             continue;
         xstrscat(&fname,config->announceSpool,file->d_name,NULL);
         Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
+        w_log(LL_DEBUG, "Parsing Report file %s",file->d_name);
         parseTic( fname, &(Report[rCount]) );
         rCount++;
         nfree(fname);
     }
     closedir(dir);
+    w_log(LL_DEBUG, "Sortin report information. number of entries: %d",rCount);
     qsort( (void*)Report, rCount, sizeof(s_ticfile), cmp_reportEntry ); 
 }
 
@@ -186,7 +189,7 @@ void freeReportInfo()
     struct dirent *file;
     char* fname   = NULL;
 
-    for(i; i < rCount; i++)
+    for(i = 0; i < rCount; i++)
         disposeTic(&(Report[i]));
     nfree(Report);
     
@@ -197,7 +200,7 @@ void freeReportInfo()
             continue;
         xstrscat(&fname,config->announceSpool,file->d_name,NULL);
         remove(fname);
-        w_log('6',"Removed file: %s",fname);
+        w_log(LL_DELETE,"Removed file: %s",fname);
         nfree(fname);
     }
     closedir(dir);
@@ -205,121 +208,99 @@ void freeReportInfo()
 
 void reportNewFiles()
 {
-   unsigned  int b,  fileCount = 0;
-   unsigned  int i;
-   UINT32    fileSize = 0;
-   s_message *msg = NULL;
-   char      *tmp = NULL;
-   FILE      *echotosslog;
-   char      *annArea;
-   int netmail = 0;
+    unsigned  int fileCount = 0,fileCountTotal = 0;
+    unsigned  int i;
+    UINT32    fileSize = 0,fileSizeTotal = 0;
+    s_message *msg = NULL;
+    char      *tmp = NULL;
+    FILE      *echotosslog;
+    char      *annArea;
+    s_filearea *currFArea = NULL;    
+    int netmail = 0;
+    
+    if (config->ReportTo == NULL)
+        return;
+    annArea = config->ReportTo;
+    
+    if (config->ReportTo) {
+        if (stricmp(annArea,"netmail")==0)                netmail=1;
+        else if (getNetMailArea(config, annArea) != NULL) netmail=1;
+    } else netmail=1;
+    
+    msg = makeMessage(&(config->addr[0]),&(config->addr[0]), 
+        versionStr, 
+        netmail ? config->sysop : "All", "New Files", 
+        netmail,
+        config->filefixKillReports);
+    
+    msg->text = createKludges(  config->disableTID,
+        netmail ? NULL : config->ReportTo, 
+        &(config->addr[0]), &(config->addr[0]),
+        versionStr);
+    
+    xstrcat(&(msg->text), "\001FLAGS NPD\r");
+    
+    for (i = 0; i <= rCount; i++) {
+        if( currFArea == NULL || i == rCount || stricmp(Report[i].area,currFArea->areaName) )
+        {
+            if(currFArea) {
+                fileCountTotal += fileCount;
+                fileSizeTotal  += fileSize;
+                xscatprintf(&(msg->text), " %s\r", print_ch(77, '-'));
+                xscatprintf(&(msg->text), " %u bytes in %u file(s)\r", fileSize, fileCount);
+                if(i == rCount) break;
+            }
+            currFArea = getFileArea(config,Report[i].area);
+            fileCount = 0;
+            fileSize  = 0;
+            xscatprintf(&(msg->text), "\r>Area : %s",strUpper(Report[i].area));
+            if(currFArea && currFArea->description)
+                xscatprintf(&(msg->text), " : %s", currFArea->description);
+            xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
+        }
+        if(strlen(Report[i].file) > 12)
+            xscatprintf(&(msg->text)," %s\r%23ld ",
+            Report[i].file,
+            Report[i].size
+            );
+        else
+            xscatprintf(&(msg->text)," %-12s %9ld ",
+            Report[i].file,  
+            Report[i].size
+            );
+        
+        if (Report[i].anzldesc > 0) {
+            tmp = formDesc(Report[i].ldesc, Report[i].anzldesc); 
+        } else { 
+            tmp = formDesc(Report[i].desc, Report[i].anzdesc); 
+        }
+        xstrcat(&(msg->text),tmp);
+        if (config->originInAnnounce) {
+            xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                Report[i].origin.zone,Report[i].origin.net,
+                Report[i].origin.node,Report[i].origin.point);
+        }
+        if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
+        nfree(tmp);
+        fileCount++;
+        fileSize += Report[i].size;
+    }
 
-   
-   if (config->ReportTo == NULL)
-       return;
-   annArea = config->ReportTo;
+    xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
+    xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r", fileSizeTotal, fileCountTotal);
 
-   if (config->ReportTo) {
-       if (stricmp(annArea,"netmail")==0)                netmail=1;
-       else if (getNetMailArea(config, annArea) != NULL) netmail=1;
-   } else netmail=1;
-
-   msg = makeMessage(&(config->addr[0]),&(config->addr[0]), 
-       versionStr, 
-       netmail ? config->sysop : "All", "New Files", 
-       netmail,
-       config->filefixKillReports);
-
-   msg->text = createKludges(  config->disableTID,
-       netmail ? NULL : config->ReportTo, 
-       &(config->addr[0]), &(config->addr[0]),
-       versionStr);
-   
-   xstrcat(&(msg->text), "\001FLAGS NPD\r");
-   
-   
-   for (i = 0; i < rCount; i++) {
-       s_filearea *currFArea = getFileArea(config,Report[i].area);
-       fileCount = 0;
-       xscatprintf(&(msg->text), "\r>Area : %s",strUpper(Report[i].area));
-       if(currFArea && currFArea->description)
-           xscatprintf(&(msg->text), " : %s", currFArea->description);
-       xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
-       
-       if(strlen(Report[i].file) > 12)
-           xscatprintf(&(msg->text)," %s\r%23ld ",
-           Report[i].file,
-           Report[i].size
-           );
-       else
-           xscatprintf(&(msg->text)," %-12s %9ld ",
-           Report[i].file, 
-           Report[i].size
-           );
-       
-       if (Report[i].anzldesc > 0) {
-           tmp = formDesc(Report[i].ldesc, Report[i].anzldesc); 
-       } else {
-           tmp = formDesc(Report[i].desc, Report[i].anzdesc); 
-       }
-       xstrcat(&(msg->text),tmp);
-       if (config->originInAnnounce) {
-           xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-               Report[i].origin.zone,Report[i].origin.net,
-               Report[i].origin.node,Report[i].origin.point);
-       }
-       if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
-       nfree(tmp);
-       fileCount++;
-       fileSize += Report[i].size;
-       for (b = i+1; b < rCount; b++) {
-           if (stricmp(Report[i].area,Report[b].area) == 0) {
-               if(strlen(Report[b].file) > 12)
-                   xscatprintf(&(msg->text)," %s\r%23ld ",
-                   Report[b].file,
-                   Report[b].size
-                   );
-               else
-                   xscatprintf(&(msg->text)," %-12s %9ld ",
-                   Report[b].file, 
-                   Report[b].size
-                   );
-               
-               if (Report[b].anzldesc > 0) {
-                   tmp = formDesc(Report[b].ldesc, Report[b].anzldesc); 
-               } else {
-                   tmp = formDesc(Report[b].desc, Report[b].anzdesc); 
-               }
-               xstrcat(&(msg->text),tmp);
-               if (config->originInAnnounce) {
-                   xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                       Report[b].origin.zone,Report[b].origin.net,
-                       Report[b].origin.node,Report[b].origin.point);
-               }
-               if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
-               nfree(tmp);
-               fileCount++;
-               fileSize += Report[b].size;
-           } else {
-               break;
-           } /* endif */
-       } /* endfor */
-       i = b;
-       xscatprintf(&(msg->text), " %s\r", print_ch(77, '-'));
-       xscatprintf(&(msg->text), " %u bytes in %u file(s)\r", fileSize, fileCount);
-   } /* endfor */
-   if (msg) {
-       writeMsgToSysop(msg, annArea);
-       freeMsgBuffers(msg);
-       nfree(msg);
-       if (config->echotosslog != NULL) {
-           echotosslog = fopen (config->echotosslog, "a");
-           if (echotosslog != NULL) {
-               fprintf(echotosslog,"%s\n",annArea);
-               fclose(echotosslog);
-           }
-       }
-   }
+    if (msg) {
+        writeMsgToSysop(msg, annArea);
+        freeMsgBuffers(msg);
+        nfree(msg);
+        if (config->echotosslog != NULL) {
+            echotosslog = fopen (config->echotosslog, "a");
+            if (echotosslog != NULL) {
+                fprintf(echotosslog,"%s\n",annArea);
+                fclose(echotosslog);
+            }
+        }
+    }
 }
 
 
