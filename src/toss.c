@@ -888,9 +888,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            (isToss == 1 && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) &&
+            (addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) &&
             addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-            (isToss == 1 && seenbyComp (tic->seenby, tic->anzseenby,
+            (seenbyComp (tic->seenby, tic->anzseenby,
                filearea->downlinks[i]->link->hisAka) != 0)) {
          /* Adding Downlink to Seen-By */
          tic->seenby=realloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
