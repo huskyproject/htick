@@ -10,6 +10,8 @@ export DH_COMPAT=3
 export DEBIAN=1
 export PACKAGE=htick
 export VERSION=0.9
+# Next Line to build debug-versions !
+export DEB_BUILD_OPTIONS=nostrip
 
 configure: configure-stamp
 configure-stamp:
