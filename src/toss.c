@@ -273,7 +273,6 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
 
   if(!tic->size){
     w_log(LL_ALERT,"File size not presents in TIC %s", ticfilename);
-    nRet++;
   }
 
   if(!tic->to.zone && !tic->to.net && !tic->to.node){
