@@ -35,7 +35,9 @@
 #include <os2.h>
 #endif
 
-#include <io.h>
+#if !defined(UNIX) && !defined(SASC)
+#  include <io.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #ifndef UNIX
@@ -44,9 +46,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
-#ifdef __EMX__
 #include <sys/types.h>
-#endif
 #include <sys/stat.h>
 #if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
 #include <unistd.h>
