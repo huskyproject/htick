@@ -735,7 +735,7 @@ int tellcmd(char *cmd) {
 	switch (line[0]) {
 	case '%':
 		line++;
-		if (*line == 0) return ERROR;
+		if (*line == 0) return FFERROR;
 		if (stricmp(line,"list")==0) return LIST;
 		if (stricmp(line,"help")==0) return HELP;
 		if (stricmp(line,"unlinked")==0) return UNLINK;
@@ -747,11 +747,11 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"info")==0) return INFO;
 		if (strncasecmp(line, "resend", 6)==0)
 		   if (line[6] != 0) return RESEND;
-		return ERROR;
+		return FFERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
 	case '-'  : return DEL;
-	case '+': line++; if (line[0]=='\000') return ERROR;
+	case '+': line++; if (line[0]=='\000') return FFERROR;
 	default: return ADD;
 	}
 	
@@ -799,8 +799,8 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	case RESEND: report = resend(link, msg, line+7);
 		RetFix=RESEND;
 		break;
-	case ERROR: report = errorRQ(line);
-		RetFix=ERROR;
+	case FFERROR: report = errorRQ(line);
+		RetFix=FFERROR;
 		break;
 	default: return NULL;
 	}
@@ -970,7 +970,7 @@ int processFileFix(s_message *msg)
 				case RESEND:
 					RetMsg(msg, link, preport, "FileFix reply: resend request");
  					break;
-				case ERROR:
+				case FFERROR:
 					if (report == NULL) report = textHead();
 					report = areastatus(preport, report);
 					break;
