@@ -98,9 +98,8 @@ void hatch()
     // Adding crc
     tic.crc = filecrc32(hatchfile);
     
-    doSaveTic4Report(&tic);
     sendToLinks(0, filearea, &tic, hatchfile);
-    
+   
     disposeTic(&tic);
 }
 

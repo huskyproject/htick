@@ -749,6 +749,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          } /* if readAccess == 0 */
       } /* Forward file */
    }
+   doSaveTic4Report(tic);
 
 //   if (!filearea->hide) {
    // report about new files - if filearea not hidden 
@@ -1077,7 +1078,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
 
-   doSaveTic4Report(&tic);
    doSaveTic(ticfile,&tic,filearea);
    disposeTic(&tic);
    return(rc);
