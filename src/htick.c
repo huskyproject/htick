@@ -77,6 +77,7 @@
 /* we can't include windows.h for several reasons ... */
 #ifdef __MINGW32__
 int __stdcall CharToOemA(char *, char *);
+int __stdcall SetFileApisToOEM(void);
 #endif
 #define CharToOem CharToOemA
 #endif
@@ -340,6 +341,9 @@ int main(int argc, char **argv)
    initCharsets();
    if (config->intab != NULL) getctab(intab, (unsigned char*) config->intab);
    if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
+#ifdef __NT__
+   SetFileApisToOEM();
+#endif
 
    checkTmpDir();
 
