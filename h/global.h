@@ -43,5 +43,16 @@ extern s_fidoconfig *config;
 
 extern int       cmToss;
 extern int       cmScan;
+extern int       cmHatch;
+extern int       cmFlist;
+extern int       cmAnnFile;
+extern int       cmAnnNewFileecho;
+
+extern char      flistfile[256];
+extern char      hatchfile[256];
+extern char      hatcharea[256];
+extern char      hatchdesc[256];
+extern char      announcefile[256];
+extern char      announcenewfileecho[256];
 
 #endif
