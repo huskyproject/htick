@@ -1,3 +1,13 @@
+2002-06-08 Saturday 19:29  d.sergienko
+
+	* src/: hatch.c (1.53), toss.c (1.182): 
+	better output for grepping htick log
+
+2002-06-08 Saturday 10:29  mche
+
+	* src/areafix.c (1.62): changeconfig() crashes patch by [Anthony
+	Antonov  2:5010/77.77]
+
 2002-06-07 Friday 18:54  mche
 
 	* src/toss.c (1.181): fixed origin in announce
