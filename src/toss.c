@@ -204,6 +204,9 @@ void disposeTic(s_ticfile *tic)
    nfree(tic->ldesc);
 }
 
+/* Read tic-file and store values into 2nd parameter.
+ * Return 1 if success and 0 if error
+ */
 int parseTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;
@@ -211,6 +214,11 @@ int parseTic(char *ticfile,s_ticfile *tic)
    s_link *ticSourceLink=NULL;
 
    tichandle=fopen(ticfile,"r");
+   if(!tichandle){
+     w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
+     return 0;
+   }
+
    memset(tic,'\0',sizeof(s_ticfile));
 
    while ((line = readLine(tichandle)) != NULL) {
@@ -393,7 +401,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
 #endif
     }
     chdir(buffer);
-   
+
     } else {
         w_log( '9', "file %s: cannot find unpacker", fileName);
         return 3;
@@ -526,7 +534,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
     char *filename = NULL;
     unsigned int i;
     s_savetic *savetic;
-    
+
     for (i = 0; i< config->saveTicCount; i++)
     {
         savetic = &(config->saveTic[i]);
@@ -539,7 +547,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
             if (copy_file(ticfile,filename)!=0) {
                 w_log('9',"File %s not found or not moveable",ticfile);
             };
-            if( filearea && 
+            if( filearea &&
                !filearea->pass && !filearea->sendorig && savetic->fileAction)
             {
                 char *from = NULL, *to = NULL;
@@ -553,7 +561,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
             }
             break;
         };
-        
+
     };
     nfree(filename);
     return;
@@ -591,12 +599,12 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    if(p) strLower(p+1);
 
    _createDirectoryTree(fileareapath);
-   
+
    if (isToss == 1 && tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
        /* Delete old file[s] */
        int num_files;
        char *repl;
-       
+
        repl = strrchr(tic->replaces,PATH_DELIM);
        if (repl==NULL) repl = tic->replaces;
        else repl++;
@@ -606,15 +614,15 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        }
    }
 
-   
+
    strcpy(newticedfile,fileareapath);
    strcat(newticedfile,MakeProperCase(tic->file));
-   
+
    if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
        w_log('9',"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
        return(3);
    }
-   
+
    if (isToss == 1) {
        if (!filearea->sendorig) {
            if (move_file(filename,newticedfile)!=0) {
@@ -639,7 +647,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                w_log('6',"Moved %s to %s",filename,newticedfile);
            }
        }
-   } else if (strcasecmp(filename,newticedfile) != 0 && 
+   } else if (strcasecmp(filename,newticedfile) != 0 &&
               copy_file(filename,newticedfile)!=0) {
        w_log('9',"File %s not found or not moveable",filename);
        return(2);
@@ -698,7 +706,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       if ( addrComp(tic->from,downlink->hisAka)!=0 &&
            ( (isToss==1 && addrComp(tic->to,downlink->hisAka)!=0) || isToss==0 ) &&
            addrComp(tic->origin,downlink->hisAka)!=0 &&
-           ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka)!=0) || isToss==0) 
+           ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka)!=0) || isToss==0)
          ) {
          /* Adding Downlink to Seen-By */
          tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
@@ -748,7 +756,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                        aka2str(downlink->hisAka));
             } else {
                PutFileOnLink(newticedfile, tic,  downlink);
-            } 
+            }
          } /* if readAccess == 0 */
       } /* Forward file */
    }
@@ -1022,14 +1030,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
               findfile = pos+1;
               pos = strrchr(findfile, '.');
               if (pos) {
-                  
+
                   *(++pos) = 0;
                   strcat(findfile, "*");
 #ifdef DEBUG_HPT
                   printf("NoCRC! dirname = %s, findfile = %s\n", dirname, findfile);
 #endif
                   dir = opendir(dirname);
-                  
+
                   if (dir) {
                       while ((file = readdir(dir)) != NULL) {
                           if (patimat(file->d_name, findfile)) {
@@ -1042,7 +1050,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                                       break;
                                   }
                               }
-                              
+
                           }
                       }
                       closedir(dir);
@@ -1312,7 +1320,7 @@ void cleanPassthroughDir(void)
    /* check separateBundles dirs (does anybody use this?) */
    if (config->separateBundles) {
       for (i = 0; i < config->linkCount; i++) {
-         
+
          if (createOutboundFileName(&(config->links[i]), normal, FLOFILE) == 0)  {
 
          strcpy(tmpdir, config->links[i].floFile);
@@ -1430,7 +1438,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
         w_log('9', "Can't put message to passthrough area %s!", echo->areaName);
         return rc;
     }
-      
+
     if (!msg->netMail) {
 	msg->destAddr.zone  = echo->useAka->zone;
 	msg->destAddr.net   = echo->useAka->net;
@@ -1438,7 +1446,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	msg->destAddr.point = echo->useAka->point;
     }
 
-	harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
+	harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC,
 			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
     if (harea!= NULL) {
 	    hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
@@ -1485,7 +1493,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		}
 	    }
 
-	   
+	
 	    ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
 						 (UCHAR **) &textStart,
 						 &textLength);
@@ -1494,7 +1502,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 
 	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 			    textLength, (dword) textLength,
-			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
+			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0)
 		w_log('9', "Could not write msg in %s!", echo->fileName);
 	    else rc = 1; // normal exit
 
@@ -1503,7 +1511,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		rc = 0;
 	    }
 	    nfree(ctrlBuff);
-       
+
 	} else w_log('9', "Could not create new msg in %s!", echo->fileName);
 	/* endif */
     MsgCloseArea(harea);
