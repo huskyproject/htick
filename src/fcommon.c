@@ -75,7 +75,7 @@
 #include <toss.h>
 #include <add_desc.h>
 
-/*
+
 void exit_htick(char *logstr, int print) {
 
     w_log(LL_FUNC,"exit_htick()");
@@ -95,7 +95,7 @@ void exit_htick(char *logstr, int print) {
     exit(EX_SOFTWARE);
 }
 
-
+/*
 int createLockFile(char *lockfile) {
         FILE *f;
 

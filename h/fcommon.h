@@ -69,6 +69,15 @@ typedef enum type e_type;
 
 /* common functions */
 
+void exit_htick(char *logstr, int print);
+/*DOC
+  exit to shell with errorlevel 1.
+  print logstr to log file
+  print logstr to stderr if print!=0
+  closed log file, removed lockfile, disposed config
+*/
+
+
 e_prio cvtFlavour2Prio(e_flavour flavour);
 /*DOC
   Input:  a fidoconfig flavour

@@ -368,11 +368,7 @@ int main(int argc, char **argv)
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
-      w_log( '9', "MsgApiOpen Error, exit.");
-      closeLog();
-      if (config->lockfile != NULL) remove(config->lockfile);
-      disposeConfig(config);
-      exit(1);
+      exit_htick("MsgApiOpen Error",1);
    } /*endif */
 
    // load recoding tables
