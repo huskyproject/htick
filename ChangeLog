@@ -1,3 +1,16 @@
+2002-07-02 Tuesday 16:16  stas
+
+	* TODO (1.1.2.1): Remove TODO from -stable
+
+2002-07-02 Tuesday 16:04  stas
+
+	* debian/: README.Debian (1.2.2.1), huskymak.cfg (1.6.2.1),
+	postinst (1.1.2.2), rules (1.4.2.2): Change debian control files
+
+2002-07-02 Tuesday 11:23  mche
+
+	* src/areafix.c (1.70.2.1): report if subscribed area not found
+
 2002-07-01 Monday 14:39  stas
 
 	* debian/postinst (1.1.2.1): Add file from Pavel Andreew
