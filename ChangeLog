@@ -1,671 +1,671 @@
-2002-08-14 Wednesday 23:56  sfpavel
+2002-08-15 Thursday 06:56  sfpavel
 
 	* debian/docs (htick-1_0-stable.3): Fix debian/docs
 
-2002-07-31 Wednesday 23:27  stas
+2002-08-01 Thursday 06:27  stas
 
 	* debian/: changelog, control, copyright, docs
 	(htick-1_0-stable.[4,2,1,2]): Debian package patch from Pavel
 	Andreew <pavel@collage.etel.ru>
 
-2002-07-24 Wednesday 00:45  pavel.gulchouck
+2002-07-24 Wednesday 07:45  pavel.gulchouck
 
 	* src/fcommon.c (htick-1_0-stable.1): segfault on remove files
 	fixed
 
-2002-07-17 Wednesday 07:00  stas
+2002-07-17 Wednesday 14:00  stas
 
 	* HISTORY (htick-1_0-stable.2): Update documentation
 
-2002-07-17 Wednesday 05:20  stas
+2002-07-17 Wednesday 12:20  stas
 
 	* HISTORY (htick-1_0-stable.1): File with major things that change
 	between versions
 
-2002-07-17 Wednesday 05:00  stas
+2002-07-17 Wednesday 12:00  stas
 
 	* HISTORY (1.2): update documentation
 
-2002-07-16 Tuesday 12:31  stas
+2002-07-16 Tuesday 19:31  stas
 
 	* HISTORY (1.1): Add user-attention file
 
-2002-07-05 Friday 01:22  mche
+2002-07-05 Friday 08:22  mche
 
 	* src/areafix.c (htick-1_0-stable.2): fix problem with autocreating
 
-2002-07-03 Wednesday 22:52  stas
+2002-07-04 Thursday 05:52  stas
 
 	* debian/: changelog, docs, postinst (htick-1_0-stable.[3,1,3]):
 	update debian stuff [patch from Pavel Andreew]
 
-2002-07-02 Tuesday 07:16  stas
+2002-07-02 Tuesday 14:16  stas
 
 	* TODO (htick-1_0-stable.1): Remove TODO from -stable
 
-2002-07-02 Tuesday 07:04  stas
+2002-07-02 Tuesday 14:04  stas
 
 	* debian/: README.Debian, huskymak.cfg, postinst, rules
 	(htick-1_0-stable.[1,1,2,2]): Change debian control files
 
-2002-07-02 Tuesday 02:23  mche
+2002-07-02 Tuesday 09:23  mche
 
 	* src/areafix.c (htick-1_0-stable.1): report if subscribed area not
 	found
 
-2002-07-01 Monday 05:39  stas
+2002-07-01 Monday 12:39  stas
 
 	* debian/postinst (htick-1_0-stable.1): Add file from Pavel Andreew
 	<pavel@collage.etel.ru>, 2:5080/59
 
-2002-07-01 Monday 05:39  stas
+2002-07-01 Monday 12:39  stas
 
 	* debian/postinst (1.1): file postinst was initially added on
 	branch htick-1_0-stable.
 
-2002-07-01 Monday 05:38  stas
+2002-07-01 Monday 12:38  stas
 
 	* debian/changelog (htick-1_0-stable.2): Fix doc.
 
-2002-07-01 Monday 05:36  stas
+2002-07-01 Monday 12:36  stas
 
 	* debian/: changelog, control, dirs, rules
 	(htick-1_0-stable.[1,1,1,1]): Change debian package control files.
 	(Patch from Pavel Andreew <pavel@collage.etel.ru>, 2:5080/59)
 
-2002-06-25 Tuesday 22:26  mche
+2002-06-26 Wednesday 05:26  mche
 
 	* src/htick.c (htick-1_0-stable.1): version string reduced
 
-2002-06-25 Tuesday 22:21  mche
+2002-06-26 Wednesday 05:21  mche
 
 	* src/global.c (htick-1_0-stable.1): version changed
 
-2002-06-25 Tuesday 08:11  stas
+2002-06-25 Tuesday 15:11  stas
 
 	* BUG-REPORTING, BUGS, BUGS.rus, INSTALL, Makefile, README, VERSION
 	(htick-1_0-stable.[1,1,1,1,1,1,1]): Update documentation (set to
 	-stable)
 
-2002-06-24 Monday 06:44  stas
+2002-06-24 Monday 13:44  stas
 
 	* Makefile (1.10): Install & uninstall man page
 
-2002-06-16 Sunday 04:04  mche
+2002-06-16 Sunday 11:04  mche
 
 	* src/areafix.c (1.70): "no access" reporting
 
-2002-06-14 Friday 03:37  mche
+2002-06-14 Friday 10:37  mche
 
 	* src/: areafix.c (1.69), toss.c (1.188): fix hatching from
 	filechodir
 
-2002-06-13 Thursday 00:36  stas
+2002-06-13 Thursday 07:36  stas
 
 	* misc/: README (1.1), filefix.866 (1.1), filefix.hlp (1.8),
 	st_htick.pl (1.1): Add thick statistic generator; translate filefix
 	help to russian; change example for filefix help.
 
-2002-06-12 Wednesday 05:55  mche
+2002-06-12 Wednesday 12:55  mche
 
 	* src/htick.c (1.59): trace MaxTicLineLength
 
-2002-06-11 Tuesday 23:20  mche
+2002-06-12 Wednesday 06:20  mche
 
 	* src/scan.c (1.23): fix filefix scan
 
-2002-06-11 Tuesday 09:04  mche
+2002-06-11 Tuesday 16:04  mche
 
 	* FidoConfigKeywords (1.25): RemoteFileRobotName
 
-2002-06-11 Tuesday 04:14  mche
+2002-06-11 Tuesday 11:14  mche
 
 	* src/areafix.c (1.68): fix filefix name, pwd, origin
 
-2002-06-10 Monday 22:54  mche
+2002-06-11 Tuesday 05:54  mche
 
 	* src/areafix.c (1.67): <errno.h> included
 
-2002-06-10 Monday 07:22  mche
+2002-06-10 Monday 14:22  mche
 
 	* src/areafix.c (1.66), h/areafix.h (1.12), misc/filefix.hlp (1.7):
 	added %avail  command to filefix
 
-2002-06-10 Monday 05:12  mche
+2002-06-10 Monday 12:12  mche
 
 	* BUGS.rus (1.2), src/global.c (1.18): version was updated
 
-2002-06-09 Sunday 23:05  mche
+2002-06-10 Monday 06:05  mche
 
 	* src/hatch.c (1.55): add areadesc when hatch
 
-2002-06-09 Sunday 22:37  mche
+2002-06-10 Monday 05:37  mche
 
 	* src/filelist.c (1.30): fix filelist generation
 
-2002-06-09 Sunday 22:26  mche
+2002-06-10 Monday 05:26  mche
 
 	* FidoConfigKeywords (1.24): forwardrequests added
 
-2002-06-09 Sunday 05:28  mche
+2002-06-09 Sunday 12:28  mche
 
 	* win32/makefile.cyg (1.5), src/add_desc.c (1.12), src/scan.c
 	(1.22), src/toss.c (1.187): remove cygwin warnings
 
-2002-06-09 Sunday 05:16  mche
+2002-06-09 Sunday 12:16  mche
 
 	* src/areafix.c (1.65), src/toss.c (1.186), h/areafix.h (1.11):
 	forwardrequests added
 
-2002-06-09 Sunday 02:08  mche
+2002-06-09 Sunday 09:08  mche
 
 	* src/areafix.c (1.64), src/toss.c (1.185), h/areafix.h (1.10):
 	autoCreate() moved to areafix.c from toss.c
 
-2002-06-09 Sunday 01:53  mche
+2002-06-09 Sunday 08:53  mche
 
 	* src/filelist.c (1.29), src/hatch.c (1.54), src/toss.c (1.184),
 	h/toss.h (1.14): report postin moved to filelist.c from toss.c
 
-2002-06-09 Sunday 01:30  mche
+2002-06-09 Sunday 08:30  mche
 
 	* src/areafix.c (1.63), src/scan.c (1.21), src/toss.c (1.183),
 	h/toss.h (1.13): pkt.h removed form project
 
-2002-06-08 Saturday 10:29  d.sergienko
+2002-06-08 Saturday 17:29  d.sergienko
 
 	* src/: hatch.c (1.53), toss.c (1.182): 
 	better output for grepping htick log
 
-2002-06-08 Saturday 01:29  mche
+2002-06-08 Saturday 08:29  mche
 
 	* src/areafix.c (1.62): changeconfig() crashes patch by [Anthony
 	Antonov  2:5010/77.77]
 
-2002-06-07 Friday 09:54  mche
+2002-06-07 Friday 16:54  mche
 
 	* src/toss.c (1.181): fixed origin in announce
 
-2002-06-07 Friday 02:06  mche
+2002-06-07 Friday 09:06  mche
 
 	* src/: fcommon.c (1.52), toss.c (1.180): filearea option added:
 	-nodiz Do not try to get description from <fileDescName>
 
-2002-06-06 Thursday 07:41  mche
+2002-06-06 Thursday 14:41  mche
 
 	* h/fcommon.h (1.17): filearea option added: -nodiz Do not try to
 	get description from <fileDescName>
 
-2002-06-06 Thursday 07:35  mche
+2002-06-06 Thursday 14:35  mche
 
 	* FidoConfigKeywords (1.23): filearea option added: -nodiz Do not
 	try to get description from <fileDescName>
 
-2002-06-06 Thursday 06:39  mche
+2002-06-06 Thursday 13:39  mche
 
 	* src/filelist.c (1.28), src/global.c (1.17), src/htick.c (1.58),
 	h/global.h (1.15): added generation of dirlist
 
-2002-06-06 Thursday 06:38  mche
+2002-06-06 Thursday 13:38  mche
 
 	* src/fcommon.c (1.51): some defines for anable hardlinks in htick
 	for cygwin
 
-2002-06-05 Wednesday 08:16  mche
+2002-06-05 Wednesday 15:16  mche
 
 	* src/fcommon.c (1.50), win32/makefile.cyg (1.4): some defines for
 	anable hardlinks in htick for cygwin
 
-2002-06-05 Wednesday 06:44  mche
+2002-06-05 Wednesday 13:44  mche
 
 	* win32/: makefile.mvc (1.5), makefile.mvcdll (1.3): some defines
 	for anable hardlinks in htick
 
-2002-06-05 Wednesday 05:37  mche
+2002-06-05 Wednesday 12:37  mche
 
 	* src/: areafix.c (1.61), global.c (1.16), htick.c (1.57), scan.c
 	(1.20), toss.c (1.179): filefix from command line
 
-2002-06-05 Wednesday 05:33  mche
+2002-06-05 Wednesday 12:33  mche
 
 	* h/: areafix.h (1.9), global.h (1.14): filefix from command line
 
-2002-06-02 Sunday 02:27  mche
+2002-06-02 Sunday 09:27  mche
 
 	* src/toss.c (1.178): get f-echo description from config if it
 	wasn't in tic-file
 
-2002-06-01 Saturday 05:36  mche
+2002-06-01 Saturday 12:36  mche
 
 	* FidoConfigKeywords (1.22): token SaveTic expanded
 
-2002-06-01 Saturday 05:22  mche
+2002-06-01 Saturday 12:22  mche
 
 	* src/toss.c (1.177): token SaveTic expanded
 
-2002-05-30 Thursday 07:26  stas
+2002-05-30 Thursday 14:26  stas
 
 	* src/: add_desc.c (1.11), areafix.c (1.60), fcommon.c (1.49),
 	filecase.c (1.5), filelist.c (1.27), global.c (1.15), hatch.c
 	(1.52), htick.c (1.56), scan.c (1.19), seenby.c (1.7), toss.c
 	(1.176): Add comments into begin of each file (with revision ID).
 
-2002-05-30 Thursday 07:02  stas
+2002-05-30 Thursday 14:02  stas
 
 	* src/toss.c (1.175): Fix: seg.fault when bad .TIC processing.
 
-2002-05-30 Thursday 03:48  mche
+2002-05-30 Thursday 10:48  mche
 
 	* src/: hatch.c (1.51), toss.c (1.174): some memory leaks fixed
 
-2002-05-29 Wednesday 07:55  mche
+2002-05-29 Wednesday 14:55  mche
 
 	* src/add_desc.c (1.10): write description of file on new line only
 	for long filenames
 
-2002-05-27 Monday 07:28  mche
+2002-05-27 Monday 14:28  mche
 
 	* src/add_desc.c (1.9): DLCDigits position moved back
 
-2002-05-27 Monday 04:48  mche
+2002-05-27 Monday 11:48  mche
 
 	* src/toss.c (1.173): loging size of recived file
 
-2002-05-22 Wednesday 04:21  mche
+2002-05-22 Wednesday 11:21  mche
 
 	* src/areafix.c (1.59): new version of DelLinkFromString() moved
 	from hpt to fidoconfig for common use in hpt & htick
 
-2002-05-20 Monday 05:35  mche
+2002-05-20 Monday 12:35  mche
 
 	* src/: fcommon.c (1.48), toss.c (1.172): hardlinks on WinNT 4.0
 
-2002-05-20 Monday 03:03  mche
+2002-05-20 Monday 10:03  mche
 
 	* src/: hatch.c (1.50), toss.c (1.171): getting file_id.diz
 	improved
 
-2002-05-18 Saturday 08:04  mche
+2002-05-18 Saturday 15:04  mche
 
 	* src/add_desc.c (1.8): added log message for getDesc() loglevel
 	'O'
 
-2002-05-18 Saturday 03:05  mche
+2002-05-18 Saturday 10:05  mche
 
 	* src/hatch.c (1.49), src/toss.c (1.170), h/hatch.h (1.5): some
 	code improvement
 
-2002-05-17 Friday 08:18  mche
+2002-05-17 Friday 15:18  mche
 
 	* FidoConfigKeywords (1.21): no message
 
-2002-05-17 Friday 05:28  mche
+2002-05-17 Friday 12:28  mche
 
 	* src/toss.c (1.169): report new files in original case
 
-2002-05-16 Thursday 22:59  mche
+2002-05-17 Friday 05:59  mche
 
 	* FidoConfigKeywords (1.20), src/scan.c (1.18), src/toss.c (1.168):
 	new token for link  "LinkFileFaseDir" Where autocreated file echos
 	will be placed (may be "passthrough")
 
-2002-05-16 Thursday 02:54  pavel.gulchouck
+2002-05-16 Thursday 09:54  pavel.gulchouck
 
 	* src/fcommon.c (1.47): Do not try to use hardlinks under OS/2
 
-2002-05-15 Wednesday 23:32  mche
+2002-05-16 Thursday 06:32  mche
 
 	* src/fcommon.c (1.46):  #include <stdio.h>
 
-2002-05-15 Wednesday 10:23  mche
+2002-05-15 Wednesday 17:23  mche
 
 	* src/toss.c (1.167): fix cygwin compilation
 
-2002-05-15 Wednesday 04:00  mche
+2002-05-15 Wednesday 11:00  mche
 
 	* src/: fcommon.c (1.45), toss.c (1.166): fix msvc compilation
 
-2002-05-14 Tuesday 07:18  pavel.gulchouck
+2002-05-14 Tuesday 14:18  pavel.gulchouck
 
 	* h/areafix.h (1.8), h/fcommon.h (1.16), src/fcommon.c (1.44),
 	src/toss.c (1.165): mingw32 compilation fix
 
-2002-05-14 Tuesday 05:50  mche
+2002-05-14 Tuesday 12:50  mche
 
 	* src/toss.c (1.164): if link is busy save tic to busyfiledir or
 	put files in fileboxes if it exist for link
 
-2002-05-14 Tuesday 05:42  stas
+2002-05-14 Tuesday 12:42  stas
 
 	* src/toss.c (1.163): Bugfix: memory leak prevent.
 
-2002-05-14 Tuesday 05:16  mche
+2002-05-14 Tuesday 12:16  mche
 
 	* src/filelist.c (1.26), h/filelist.h (1.8): fix file date if
 	stat() returns wrong date
 
-2002-05-14 Tuesday 02:14  mche
+2002-05-14 Tuesday 09:14  mche
 
 	* src/toss.c (1.162): set MSGLOCAL on messages posted by htick
 
-2002-05-14 Tuesday 00:52  mche
+2002-05-14 Tuesday 07:52  mche
 
 	* src/toss.c (1.161): report generation fixed
 
-2002-05-13 Monday 03:25  mche
+2002-05-13 Monday 10:25  mche
 
 	* src/toss.c (1.160): feature: if "SaveTic" defined htick will try
 	to create hardlink to ticked file in "DirToSaveTic"
 
-2002-05-12 Sunday 04:08  mche
+2002-05-12 Sunday 11:08  mche
 
 	* src/hatch.c (1.48): fixed %resend command
 
-2002-05-12 Sunday 04:05  d.sergienko
+2002-05-12 Sunday 11:05  d.sergienko
 
 	* src/toss.c (1.159): fixed compilation
 
-2002-05-12 Sunday 02:53  pavel.gulchouck
+2002-05-12 Sunday 09:53  pavel.gulchouck
 
 	* src/toss.c (1.158): Do not try to remove directories from
 	passFileAreaDir
 
-2002-05-11 Saturday 07:02  mche
+2002-05-11 Saturday 14:02  mche
 
 	* src/toss.c (1.157): long filenames in reports
 
-2002-05-11 Saturday 06:26  mche
+2002-05-11 Saturday 13:26  mche
 
 	* src/: toss.c (1.156), add_desc.c (1.7): long filenames in reports
 
-2002-05-11 Saturday 03:15  mche
+2002-05-11 Saturday 10:15  mche
 
 	* src/toss.c (1.155): changeFileSuffix() moved to fidoconfig for
 	common use in hpt, htick
 
-2002-05-11 Saturday 02:51  mche
+2002-05-11 Saturday 09:51  mche
 
 	* src/toss.c (1.154): system() calls changed for spawnvp for msvc
 
-2002-05-11 Saturday 02:22  mche
+2002-05-11 Saturday 09:22  mche
 
 	* src/toss.c (1.153): createXMSG() moved to fidoconfig for common
 	use in hpt, htick
 
-2002-05-10 Friday 08:32  pavel.gulchouck
+2002-05-10 Friday 15:32  pavel.gulchouck
 
 	* src/toss.c (1.152): bugfix
 
-2002-05-10 Friday 05:38  pavel.gulchouck
+2002-05-10 Friday 12:38  pavel.gulchouck
 
 	* src/htick.c (1.55): added SetFileApisToOEM() call
 
-2002-05-07 Tuesday 06:28  mche
+2002-05-07 Tuesday 13:28  mche
 
 	* src/: add_desc.c (1.6), areafix.c (1.58): strncasesearch changed
 	for strncasecmp pointer initialization added
 
-2002-05-07 Tuesday 02:40  mche
+2002-05-07 Tuesday 09:40  mche
 
 	* src/toss.c (1.151): minor bugfix on previous revision
 
-2002-05-06 Monday 05:10  pavel.gulchouck
+2002-05-06 Monday 12:10  pavel.gulchouck
 
 	* src/: areafix.c (1.57), toss.c (1.150): Added kludge "FLAGS NPD"
 	when needed
 
-2002-05-06 Monday 04:18  pavel.gulchouck
+2002-05-06 Monday 11:18  pavel.gulchouck
 
 	* src/toss.c (1.149): minor bugfix in doSaveTic
 
-2002-05-05 Sunday 00:25  pavel.gulchouck
+2002-05-05 Sunday 07:25  pavel.gulchouck
 
 	* src/toss.c (1.148): fileFixKillReports fixed
 
-2002-05-04 Saturday 04:49  mche
+2002-05-04 Saturday 11:49  mche
 
 	* src/add_desc.c (1.5), src/areafix.c (1.56), src/fcommon.c (1.43),
 	src/filelist.c (1.25), src/hatch.c (1.47), src/toss.c (1.147),
 	h/add_desc.h (1.3), h/areafix.h (1.7): A lot of fixed-length
 	strings bugfixs
 
-2002-05-03 Friday 05:32  mche
+2002-05-03 Friday 12:32  mche
 
 	* src/: areafix.c (1.55), toss.c (1.146): createKludgesmoved to
 	fidoconfig for common use in hpt htick txt2pkt
 
-2002-05-03 Friday 00:51  mche
+2002-05-03 Friday 07:51  mche
 
 	* src/toss.c (1.145): more fixed-length strings bugfixs
 
-2002-04-30 Tuesday 05:11  mche
+2002-04-30 Tuesday 12:11  mche
 
 	* src/hatch.c (1.46), src/toss.c (1.144), h/fcommon.h (1.15):
 	fixed-length strings removed
 
-2002-04-26 Friday 08:18  mche
+2002-04-26 Friday 15:18  mche
 
 	* src/: areafix.c (1.54), toss.c (1.143): fillCmdStatement moved to
 	fidoconfig for common use in hpt htick nltools
 
-2002-04-23 Tuesday 12:40  pavel.gulchouck
+2002-04-23 Tuesday 19:40  pavel.gulchouck
 
 	* src/areafix.c (1.53): strftime() changed to fts_time()
 
-2002-04-23 Tuesday 09:21  mche
+2002-04-23 Tuesday 16:21  mche
 
 	* src/toss.c (1.142): fixed bug with creation subdirs
 
-2002-04-22 Monday 06:48  mche
+2002-04-22 Monday 13:48  mche
 
 	* src/hatch.c (1.45): resend files from passFileAreaDir let's try
 	to catch it :)
 
-2002-04-19 Friday 07:21  mche
+2002-04-19 Friday 14:21  mche
 
 	* src/: areafix.c (1.52), toss.c (1.141): pause statement expanded
 	to: Pause ON Pause OFF Pause FAREA Pause EAREA
 
-2002-04-13 Saturday 07:51  mche
+2002-04-13 Saturday 14:51  mche
 
 	* src/toss.c (1.140): filebox support improved
 
-2002-04-13 Saturday 07:47  mche
+2002-04-13 Saturday 14:47  mche
 
 	* src/htick.c (1.54): Some internal features added.  Now we can set
 	application that use fidoconfig
 
-2002-04-11 Thursday 07:36  mche
+2002-04-11 Thursday 14:36  mche
 
 	* src/toss.c (1.139): filebox support reduced
 
-2002-04-11 Thursday 00:22  pavel.gulchouck
+2002-04-11 Thursday 07:22  pavel.gulchouck
 
 	* src/toss.c (1.138): unused variable removed
 
-2002-04-05 Friday 03:03  ml
+2002-04-05 Friday 11:03  ml
 
 	* src/fcommon.c (1.42): work again on wcw (case insensitive
 	CreateOutboundFileName function calls of Watcom C)
 
-2002-04-03 Wednesday 23:09  ml
+2002-04-04 Thursday 07:09  ml
 
 	* src/fcommon.c (1.41): fix compilation and create hard links under
 	*nix [path by Pavel Andreew]
 
-2002-04-02 Tuesday 23:57  mche
+2002-04-03 Wednesday 07:57  mche
 
 	* src/toss.c (1.137): core fixed in cleanPassthroughDir
 
-2002-03-29 Friday 01:00  mche
+2002-03-29 Friday 09:00  mche
 
 	* src/fcommon.c (1.40), src/toss.c (1.136), h/fcommon.h (1.14):
 	hardlink support for coping files under  WinNT 5.0
 
-2002-03-28 Thursday 06:20  mche
+2002-03-28 Thursday 14:20  mche
 
 	* src/toss.c (1.135): fileboxes support
 
-2002-03-28 Thursday 06:17  mche
+2002-03-28 Thursday 14:17  mche
 
 	* src/hatch.c (1.44): functions chanched: to_us to isOurAka,
 	addres2string to aka2str
 
-2002-03-27 Wednesday 07:02  mche
+2002-03-27 Wednesday 15:02  mche
 
 	* src/areafix.c (1.51): functions chanched: to_us to isOurAka,
 	addres2string to aka2str
 
-2002-03-27 Wednesday 05:45  mche
+2002-03-27 Wednesday 13:45  mche
 
 	* src/toss.c (1.134), h/toss.h (1.12): functions chanched: to_us to
 	isOurAka, addres2string to aka2str
 
-2002-03-27 Wednesday 02:25  mche
+2002-03-27 Wednesday 10:25  mche
 
 	* src/fcommon.c (1.39), src/hatch.c (1.43), src/toss.c (1.133),
 	h/fcommon.h (1.13): function createOutboundFileName moved to
 	fidoconfig
 
-2002-03-26 Tuesday 07:14  mche
+2002-03-26 Tuesday 15:14  mche
 
 	* src/fcommon.c (1.38), src/htick.c (1.53), h/fcommon.h (1.12):
 	exit_htick function added
 
-2002-03-26 Tuesday 02:57  mche
+2002-03-26 Tuesday 10:57  mche
 
 	* src/htick.c (1.52): fixed bug with deletin' lick file
 
-2002-03-26 Tuesday 02:19  d.sergienko
+2002-03-26 Tuesday 10:19  d.sergienko
 
 	* src/htick.c (1.51): added sys/stat.h & fcntl.h for all compilers,
 	not only MSVC.
 
-2002-03-25 Monday 07:03  mche
+2002-03-25 Monday 15:03  mche
 
 	* src/fcommon.c (1.37), src/global.c (1.14), src/htick.c (1.50),
 	h/fcommon.h (1.11), h/global.h (1.13): creatin' lock file chanched
 	to hpt-style
 
-2002-03-20 Wednesday 08:20  mche
+2002-03-20 Wednesday 16:20  mche
 
 	* src/fcommon.c (1.36), src/filelist.c (1.24), src/hatch.c (1.42),
 	src/toss.c (1.132), h/fcommon.h (1.10): function makeMsgbFileName
 	is removed from htick  and hpt to fidoconfig function
 	createDirectoryTree changed to _createDirectoryTree from smapi
 
-2002-03-20 Wednesday 06:53  mche
+2002-03-20 Wednesday 14:53  mche
 
 	* src/: areafix.c (1.50), fcommon.c (1.35), filelist.c (1.23),
 	hatch.c (1.41), htick.c (1.49), scan.c (1.17), toss.c (1.131):
 	function writeLogEntry are removed
 
-2002-03-15 Friday 03:28  mche
+2002-03-15 Friday 11:28  mche
 
 	* src/global.c (1.13), src/htick.c (1.48), h/version.h (1.3):
 	changed version enumeration
 
-2002-03-14 Thursday 23:37  mche
+2002-03-15 Friday 07:37  mche
 
 	* src/toss.c (1.130): autocreate code improvenent
 
-2002-03-14 Thursday 07:21  mche
+2002-03-14 Thursday 15:21  mche
 
 	* src/fcommon.c (1.34), h/fcommon.h (1.9): added: makeMsgbFileName
 
-2002-03-11 Monday 07:42  mche
+2002-03-11 Monday 15:42  mche
 
 	* src/toss.c (1.129): report cosmetic bugfix
 
-2002-03-04 Monday 16:27  joerg.jaspert
+2002-03-05 Tuesday 00:27  joerg.jaspert
 
 	* debian/: changelog (1.6), control (1.5), huskymak.cfg (1.6): New
 	Debian Package built
 
-2002-02-28 Thursday 00:57  mche
+2002-02-28 Thursday 08:57  mche
 
 	* src/toss.c (1.128): added sorting of report
 
-2002-02-06 Wednesday 20:39  stas
+2002-02-07 Thursday 04:39  stas
 
 	* src/htick.c (1.47): Fix memory fault (initCharsets() &
 	doneCharsets() calls).
 
-2002-01-31 Thursday 13:08  nestyurkin.nikolay
+2002-01-31 Thursday 21:08  nestyurkin.nikolay
 
 	* src/htick.c (1.46): sign specifier mismatch fix
 
-2002-01-29 Tuesday 22:16  stas
+2002-01-30 Wednesday 06:16  stas
 
 	* Makefile (1.9): Remove binary in 'distclean' Makefile tag only,
 	not 'clean' tag.
 
-2002-01-29 Tuesday 20:45  stas
+2002-01-30 Wednesday 04:45  stas
 
 	* os2/makefile.wco (1.12), win32/makefile.bcw (1.7),
 	win32/makefile.wcw (1.15): Makefiles fix for Borland & Watcom
 	compilers (remove strsep.* from makefiles).
 
-2002-01-27 Sunday 12:55  stas
+2002-01-27 Sunday 20:55  stas
 
 	* src/: filelist.c (1.22), hatch.c (1.40), htick.c (1.45), scan.c
 	(1.16), toss.c (1.127): Change & add new log messages. Do filefix
 	before toss.
 
-2002-01-26 Saturday 12:55  stas
+2002-01-26 Saturday 20:55  stas
 
 	* src/htick.c (1.44): Change messages (some messages directed to
 	log, some other writed to stderr alter to stdout).
 
-2002-01-26 Saturday 12:42  stas
+2002-01-26 Saturday 20:42  stas
 
 	* src/: htick.c (1.43), toss.c (1.126): Close log next remove
 	lockfile (prevent access violation to log file).
 
-2002-01-26 Saturday 12:33  stas
+2002-01-26 Saturday 20:33  stas
 
 	* src/: htick.c (1.42), toss.c (1.125): Fix closeLog() calls.
 
-2002-01-26 Saturday 12:21  stas
+2002-01-26 Saturday 20:21  stas
 
 	* h/htick.h (1.3), src/htick.c (1.41): Define log file name in
 	htick.h (#define LogFileName).
 
-2002-01-26 Saturday 12:08  stas
+2002-01-26 Saturday 20:08  stas
 
 	* h/global.h (1.12), src/areafix.c (1.49), src/fcommon.c (1.33),
 	src/global.c (1.12), src/hatch.c (1.39), src/htick.c (1.40),
 	src/toss.c (1.124): New command line option: -q (quiet mode).
 
-2002-01-26 Saturday 11:37  stas
+2002-01-26 Saturday 19:37  stas
 
 	* os2/makefile.wco (1.11), win32/makefile.bcw (1.6),
 	win32/makefile.wcw (1.14): Fix for '2002-01-25 Friday 11:19' patch
 	(remove log.obj from makefiles).
 
-2002-01-26 Saturday 11:29  stas
+2002-01-26 Saturday 19:29  stas
 
 	* os2/makefile.wco (1.10), win32/makefile.bcw (1.5),
 	win32/makefile.wcw (1.13): Fix for '2002-01-25 Friday 11:27' patch
 	(remove 'recode.obj' from makefiles)
 
-2002-01-26 Saturday 11:22  stas
+2002-01-26 Saturday 19:22  stas
 
 	* os2/makefile.wco (1.9), src/hatch.c (1.38), src/toss.c (1.123),
 	win32/makefile.bcw (1.4), win32/makefile.wcw (1.12): 
 	Use crc support functions from fidoconfig package
 
-2002-01-25 Friday 02:38  d.sergienko
+2002-01-25 Friday 10:38  d.sergienko
 
 	* src/: add_desc.c (1.4), hatch.c (1.37), htick.c (1.39), toss.c
 	(1.122): the same for recode
 
-2002-01-25 Friday 02:37  d.sergienko
+2002-01-25 Friday 10:37  d.sergienko
 
 	* src/: areafix.c (1.48), scan.c (1.15): moved strseparate from
 	htick to fidoconfig.
 
-2002-01-25 Friday 02:27  d.sergienko
+2002-01-25 Friday 10:27  d.sergienko
 
 	* beos/makefile.be (1.3), bsd/makefile.bsd (1.3), dos/makefile.bcd
 	(1.3), dos/makefile.djg (1.3), linux/makefile.lnx (1.6),
@@ -675,90 +675,90 @@
 	win32/makefile.mvc (1.4), win32/makefile.mvcdll (1.2),
 	win32/makefile.wcw (1.11): adapted all other makefiles
 
-2002-01-25 Friday 02:19  d.sergienko
+2002-01-25 Friday 10:19  d.sergienko
 
 	* Makefile (1.8), h/global.h (1.11), src/filelist.c (1.21),
 	src/hatch.c (1.36), src/htick.c (1.38), src/scan.c (1.14): adapted
 	to new fidoconfig (logfile routines has moved to fidoconfig); fixed
 	segfault when no args for send command passed
 
-2002-01-22 Tuesday 06:02  mche
+2002-01-22 Tuesday 14:02  mche
 
 	* src/: areafix.c (1.47), hatch.c (1.35), toss.c (1.121): code
 	improvement canged passing arguments by value to passing by
 	pointers
 
-2002-01-19 Saturday 05:43  yagodkin
+2002-01-19 Saturday 13:43  yagodkin
 
 	* src/toss.c (1.120): Updated WATCOM port
 
-2002-01-11 Friday 02:45  yagodkin
+2002-01-11 Friday 10:45  yagodkin
 
 	* src/toss.c (1.119): some fixes
 
-2002-01-11 Friday 02:35  yagodkin
+2002-01-11 Friday 10:35  yagodkin
 
 	* FidoConfigKeywords (1.19), src/toss.c (1.118), win32/makefile.cyg
 	(1.2): added support for fileDescName
 
-2002-01-05 Saturday 04:37  mche
+2002-01-05 Saturday 12:37  mche
 
 	* win32/makefile.mvcdll (1.1): build htick with dlls
 
-2002-01-05 Saturday 04:36  mche
+2002-01-05 Saturday 12:36  mche
 
 	* src/areafix.c (1.46): changed external varibles to external
 	functions
 
-2002-01-05 Saturday 03:05  mche
+2002-01-05 Saturday 11:05  mche
 
 	* src/fcommon.c (1.32): add defenition of getpid for MSVC compiler
 
-2002-01-05 Saturday 03:03  mche
+2002-01-05 Saturday 11:03  mche
 
 	* h/fcommon.h (1.8): add defenition of truncate for MSVC compiler
 
-2002-01-02 Wednesday 04:17  ml
+2002-01-02 Wednesday 12:17  ml
 
 	* src/areafix.c (1.45), src/fcommon.c (1.31), src/htick.c (1.37),
 	win32/makefile.cyg (1.1): cygwin port
 
-2001-12-12 Wednesday 02:28  ml
+2001-12-12 Wednesday 10:28  ml
 
 	* src/toss.c (1.117): compiling hidden() on win32 [patch by Serguei
 	Revtov]
 
-2001-12-06 Thursday 06:49  tobi
+2001-12-06 Thursday 14:49  tobi
 
 	* src/toss.c (1.116): impemented hidden() for os/2
 
-2001-11-20 Tuesday 21:25  ml
+2001-11-21 Wednesday 05:25  ml
 
 	* src/toss.c (1.115): fixed inbound file searching according to fsc
 	[patch by Fedor Lizunkov]
 
-2001-11-10 Saturday 04:50  ml
+2001-11-10 Saturday 12:50  ml
 
 	* src/toss.c (1.114): 1. Fix: if tic password of downlink is empty,
 	in tic file written unlink's tic password. 2. Replace strcpy to
 	srtncpy. [patch by Stas Degteff]
 
-2001-11-08 Thursday 06:26  ml
+2001-11-08 Thursday 14:26  ml
 
 	* src/toss.c (1.113): Check HIDDEN attributes for .tic and file on
 	tossing for non-unix version [patch by S.R.]
 
-2001-10-26 Friday 03:26  ml
+2001-10-26 Friday 10:26  ml
 
 	* src/toss.c (1.112): memory allocation error at toss.c [patch by
 	Pavel Andreew]
 
-2001-09-07 Friday 00:46  ml
+2001-09-07 Friday 07:46  ml
 
 	* src/toss.c (1.111): fixed bug with FileFixFSC87Subset printing
 	errors
 
-2001-09-05 Wednesday 01:21  ml
+2001-09-05 Wednesday 08:21  ml
 
 	* src/: add_desc.c (1.3), areafix.c (1.44), fcommon.c (1.30),
 	filelist.c (1.20), hatch.c (1.34), htick.c (1.36), scan.c (1.13),
@@ -767,42 +767,42 @@
 	link is busy; fixed another bug with freeing tic structure (if
 	there is not .tic file in busy.htk dir)
 
-2001-08-09 Thursday 16:03  joerg.jaspert
+2001-08-09 Thursday 23:03  joerg.jaspert
 
 	* debian/: changelog (1.5), control (1.4), huskymak.cfg (1.5):
 	Changed section to contrib.
 
-2001-07-05 Thursday 13:43  joerg.jaspert
+2001-07-05 Thursday 20:43  joerg.jaspert
 
 	* debian/: README.Debian (1.2), changelog (1.4), control (1.3),
 	copyright (1.2), docs (1.2), huskymak.cfg (1.4), manpages (1.1),
 	rules (1.4): And now, htick rebuild.
 
-2001-05-29 Tuesday 07:09  ml
+2001-05-29 Tuesday 14:09  ml
 
 	* src/fcommon.c (1.29): fix outbound handling (last patch) [Alex
 	Bronin]
 
-2001-05-23 Wednesday 04:49  ml
+2001-05-23 Wednesday 11:49  ml
 
 	* src/fcommon.c (1.28): amiga style outbound suppurt (patch by
 	Serge N. Pokhodyaev)
 
-2001-05-13 Sunday 12:22  wulf.krueger
+2001-05-13 Sunday 19:22  wulf.krueger
 
 	* FidoConfigKeywords (1.18), INSTALL (1.4): 
 	Modified Files: 	FidoConfigKeywords INSTALL
 	-------------------------------------------------------------------
 	--- - Added description for keyword "FileFixFSC87Subset"
 
-2001-05-13 Sunday 12:21  wulf.krueger
+2001-05-13 Sunday 19:21  wulf.krueger
 
 	* .cvs2cl (1.1): 
 	Modified Files: 	ChangeLog Added Files:		.cvs2cl
 	-------------------------------------------------------------------
 	--
 
-2001-05-11 Friday 10:09  wulf.krueger
+2001-05-11 Friday 17:09  wulf.krueger
 
 	* src/toss.c (1.109): 
 	Modified Files: 	src/toss.c
@@ -811,150 +811,150 @@
 	works: This keyword enables processing tics with unknown keywords
 	and makes htick ignore any non-FSC87-compliant keywords.
 
-2001-04-21 Saturday 08:24  joerg.jaspert
+2001-04-21 Saturday 15:24  joerg.jaspert
 
 	* debian/: changelog (1.3), control (1.2), huskymak.cfg (1.3),
 	rules (1.3): Turned debug on
 
-2001-04-18 Wednesday 14:47  tobi
+2001-04-18 Wednesday 21:47  tobi
 
 	* FidoConfigKeywords (1.17), src/toss.c (1.108): ----- cvs ci
 	------ Wed Apr 18 23:24:50 CEST 2001 tobi: * new keywords:
 	autofilecreatesubdirs and autoareacreatesubdirs   for creating
 	/filebase/gfd/app/comm/ instead of /filebase/gdb.app.comm/
 
-2001-04-14 Saturday 07:59  joerg.jaspert
+2001-04-14 Saturday 14:59  joerg.jaspert
 
 	* debian/rules (1.2): Some rules changed
 
-2001-04-14 Saturday 07:58  joerg.jaspert
+2001-04-14 Saturday 14:58  joerg.jaspert
 
 	* debian/huskymak.cfg (1.2): ONE huskymak in every debian-dir
 
-2001-04-14 Saturday 07:58  joerg.jaspert
+2001-04-14 Saturday 14:58  joerg.jaspert
 
 	* debian/changelog (1.2): smapi-change, htick-recompile
 
-2001-04-11 Wednesday 13:27  joerg.jaspert
+2001-04-11 Wednesday 20:27  joerg.jaspert
 
 	* debian/: README.Debian (1.1), changelog (1.1), control (1.1),
 	copyright (1.1), dirs (1.1), docs (1.1), huskymak.cfg (1.1), rules
 	(1.1): Files needed to build Debian-Package
 
-2001-04-11 Wednesday 13:26  joerg.jaspert
+2001-04-11 Wednesday 20:26  joerg.jaspert
 
 	* Makefile (1.7): Modified for Debian (Location of huskymak,
 	included in ifeq)
 
-2001-04-05 Thursday 05:08  joerg.jaspert
+2001-04-05 Thursday 12:08  joerg.jaspert
 
 	* man/: README (1.1), htick.1 (1.1): Small manpage for htick.
 	Please check for errors.
 
-2000-12-08 Friday 23:47  ml
+2000-12-09 Saturday 07:47  ml
 
 	* src/toss.c (1.101): yet another fix crash if no desc in tic
 
-2000-12-03 Sunday 09:59  sms
+2000-12-03 Sunday 17:59  sms
 
 	* Makefile (1.6): using RMOPT from huskymak.cfg
 
-2000-11-27 Monday 21:28  ml
+2000-11-28 Tuesday 05:28  ml
 
 	* src/toss.c (1.100): fix crash if no desc in tic
 
-2000-11-10 Friday 07:54  georgi
+2000-11-10 Friday 15:54  georgi
 
 	* src/areafix.c (1.40): fixed bug in unsubscribe
 
-2000-10-17 Tuesday 00:00  ml
+2000-10-17 Tuesday 07:00  ml
 
 	* src/toss.c (1.97): don't core dump while write msg to sysop
 
-2000-09-19 Tuesday 06:19  ml
+2000-09-19 Tuesday 13:19  ml
 
 	* src/toss.c (1.95): select right link (useAka==ourAka) for
 	filearea when toss .tic files
 
-2000-08-28 Monday 04:07  sms
+2000-08-28 Monday 11:07  sms
 
 	* src/toss.c (1.94): fix for From-address-change
 
-2000-08-26 Saturday 18:04  sms
+2000-08-27 Sunday 01:04  sms
 
 	* src/toss.c (1.93): setting group of autocreated areas to LinkGrp
 	of creating node (if set)
 
-2000-08-26 Saturday 17:44  sms
+2000-08-27 Sunday 00:44  sms
 
 	* src/toss.c (1.92): using ourAka from link definition as
 	From-address in TIC instead of address from area definition (needed
 	for host and hub systems)
 
-2000-08-21 Monday 06:15  sms
+2000-08-21 Monday 13:15  sms
 
 	* Makefile (1.5): added target uninstall
 
-2000-08-15 Tuesday 10:52  sms
+2000-08-15 Tuesday 17:52  sms
 
 	* src/toss.c (1.91): fixed segfault in autoCreate
 
-2000-08-10 Thursday 22:07  ml
+2000-08-11 Friday 05:07  ml
 
 	* src/toss.c (1.88): msgid patch
 
-2000-08-07 Monday 16:03  tobi
+2000-08-07 Monday 23:03  tobi
 
 	* h/version.h (1.2), src/global.c (1.11): htick now compiles again.
 	sorry guys.
 
-2000-08-06 Sunday 13:51  tobi
+2000-08-06 Sunday 20:51  tobi
 
 	* beos/makefile.be (1.2), src/htick.c (1.34): beos adaptions from
 	stable
 
-2000-08-06 Sunday 13:35  tobi
+2000-08-06 Sunday 20:35  tobi
 
 	* beos/makefile.be (1.1): file makefile.be was initially added on
 	branch htick-0_9.
 
-2000-07-14 Friday 06:39  sms
+2000-07-14 Friday 13:39  sms
 
 	* src/fcommon.c (1.27): changed add_descr.h to add_desc.h in
 	fcommon.c
 
-2000-07-13 Thursday 15:55  tobi
+2000-07-13 Thursday 22:55  tobi
 
 	* VERSION (1.1): file VERSION was initially added on branch
 	htick-0_9.
 
-2000-07-13 Thursday 14:59  tobi
+2000-07-13 Thursday 21:59  tobi
 
 	* bsd/makefile.bsd (1.2): bsd makefile fix
 
-2000-07-13 Thursday 14:58  tobi
+2000-07-13 Thursday 21:58  tobi
 
 	* bsd/makefile.bsd (1.1): file makefile.bsd was initially added on
 	branch htick-0_9.
 
-2000-07-13 Thursday 14:19  tobi
+2000-07-13 Thursday 21:19  tobi
 
 	* linux/makefile.lnx (1.5): makefile fixes
 
-2000-07-13 Thursday 14:18  tobi
+2000-07-13 Thursday 21:18  tobi
 
 	* dos/: makefile.bcd (1.2), makefile.djg (1.2): dos makefile fixes
 
-2000-07-13 Thursday 14:17  tobi
+2000-07-13 Thursday 21:17  tobi
 
 	* dos/makefile.djg (1.1): file makefile.djg was initially added on
 	branch htick-0_9.
 
-2000-07-13 Thursday 13:58  tobi
+2000-07-13 Thursday 20:58  tobi
 
 	* dos/makefile.bcd (1.1): added dos makefile
 
-2000-07-13 Thursday 13:20  tobi
+2000-07-13 Thursday 20:20  tobi
 
 	* Makefile (1.4), h/add_desc.h (1.2), linux/makefile.lnx (1.4),
 	os2/makefile.bco (1.2), os2/makefile.emo (1.7), os2/makefile.emx
@@ -964,102 +964,102 @@
 	win32/makefile.wcw (1.10): renamed add_descr.* -> add_desc.* (8.3
 	...)
 
-2000-07-13 Thursday 13:16  tobi
+2000-07-13 Thursday 20:16  tobi
 
 	* src/add_desc.c (1.1): file add_desc.c was initially added on
 	branch htick-0_9.
 
-2000-07-13 Thursday 13:16  tobi
+2000-07-13 Thursday 20:16  tobi
 
 	* h/add_desc.h (1.1): file add_desc.h was initially added on branch
 	htick-0_9.
 
-2000-07-13 Thursday 11:43  tobi
+2000-07-13 Thursday 18:43  tobi
 
 	* os2/makefile.wco (1.6): migrated fix from stable
 
-2000-07-12 Wednesday 15:20  tobi
+2000-07-12 Wednesday 22:20  tobi
 
 	* src/toss.c (1.84): fixed sigsegv if echotosslog directory did not
 	exist
 
-2000-07-12 Wednesday 13:13  tobi
+2000-07-12 Wednesday 20:13  tobi
 
 	* Makefile (1.3): Fixed order of libs in Makefile
 
-2000-07-12 Wednesday 04:14  tobi
+2000-07-12 Wednesday 11:14  tobi
 
 	* INSTALL (1.3): merged fix from stable
 
-2000-06-17 Saturday 11:51  tobi
+2000-06-17 Saturday 18:51  tobi
 
 	* src/areafix.c (1.38, htick-0_9a-release), src/fcommon.c (1.25,
 	htick-0_9a-release), src/htick.c (1.30), win32/makefile.bcw (1.1):
 	Modifications for Borland C for Win32
 
-2000-06-04 Sunday 14:41  tobi
+2000-06-04 Sunday 21:41  tobi
 
 	* h/filelist.h (1.7, htick-0_9a-release), src/filelist.c (1.17):
 	Some modifications for DOS
 
-2000-06-04 Sunday 14:34  tobi
+2000-06-04 Sunday 21:34  tobi
 
 	* h/filelist.h (1.6), src/areafix.c (1.37), src/fcommon.c (1.21),
 	src/htick.c (1.27), src/toss.c (1.76): Fixes for Borland C
 
-2000-06-04 Sunday 14:34  tobi
+2000-06-04 Sunday 21:34  tobi
 
 	* os2/makefile.bco (1.1): OS/2 makefiles
 
-2000-06-04 Sunday 14:24  tobi
+2000-06-04 Sunday 21:24  tobi
 
 	* os2/makefile.emx (1.1): OS/2 makefile
 
-2000-06-04 Sunday 10:58  tobi
+2000-06-04 Sunday 17:58  tobi
 
 	* os2/makefile.emo (1.5): makefile fixes
 
-2000-06-04 Sunday 10:50  tobi
+2000-06-04 Sunday 17:50  tobi
 
 	* src/htick.c (1.26), os2/makefile.emo (1.4), src/fcommon.c (1.20):
 	OS/2 fixes
 
-2000-06-04 Sunday 09:27  tobi
+2000-06-04 Sunday 16:27  tobi
 
 	* src/filecase.c (1.3, htick-0_9a-release): removed trivial warning
 
-2000-05-22 Monday 05:54  mt
+2000-05-22 Monday 12:54  mt
 
 	* src/global.c (1.10): changed version number
 
-2000-04-30 Sunday 16:50  nestyurkin.nikolay
+2000-04-30 Sunday 23:50  nestyurkin.nikolay
 
 	* src/fcommon.c (1.15): changed htick code according to new
 	writeLogEntry
 
-2000-04-30 Sunday 16:35  nestyurkin.nikolay
+2000-04-30 Sunday 23:35  nestyurkin.nikolay
 
 	* src/: areafix.c (1.33), fcommon.c (1.14), filelist.c (1.16),
 	hatch.c (1.26), toss.c (1.66): changed htick code according to new
 	writeLogEntry
 
-2000-04-28 Friday 15:37  nestyurkin.nikolay
+2000-04-28 Friday 22:37  nestyurkin.nikolay
 
 	* src/toss.c (1.65): announce & execonfile fix
 
-2000-04-24 Monday 11:33  sms
+2000-04-24 Monday 18:33  sms
 
 	* Makefile (1.1): renamed makefile.husky to Makefile
 
-2000-04-17 Monday 08:40  tobi
+2000-04-17 Monday 15:40  tobi
 
 	* sun/makefile (1.3): patches by serguei
 
-2000-04-16 Sunday 14:41  nestyurkin.nikolay
+2000-04-16 Sunday 21:41  nestyurkin.nikolay
 
 	* win32/makefile.wcw (1.7): path fix
 
-2000-04-15 Saturday 11:09  tobi
+2000-04-15 Saturday 18:09  tobi
 
 	* h/fcommon.h (1.6), h/filelist.h (1.5), h/global.h (1.9),
 	h/hatch.h (1.4, htick-0_9a-release), h/scan.h (1.3,
@@ -1070,16 +1070,16 @@
 	src/toss.c (1.64): fixed include statements to match new 8.3
 	filenames
 
-2000-04-14 Friday 04:57  nestyurkin.nikolay
+2000-04-14 Friday 11:57  nestyurkin.nikolay
 
 	* win32/makefile.wcw (1.6): -zp=1 remove
 
-2000-04-09 Sunday 08:50  hjk
+2000-04-09 Sunday 15:50  hjk
 
 	* src/toss.c (1.63): * removed check of groupaccess on import and
 	export of files
 
-2000-03-09 Thursday 08:27  sms
+2000-03-09 Thursday 16:27  sms
 
 	* h/fcommon.h (1.5), h/filelist.h (1.4), h/global.h (1.8),
 	h/hatch.h (1.3), h/scan.h (1.2), h/seenby.h (1.4), src/areafix.c
@@ -1088,356 +1088,356 @@
 	src/toss.c (1.62): moved smapi and fidoconfig headers to
 	INCDIR/smapi and INCDIR/fidoconfig
 
-2000-02-21 Monday 13:43  henk-jan.krueger
+2000-02-21 Monday 21:43  henk-jan.krueger
 
 	* src/toss.c (1.57): no message
 
-2000-02-21 Monday 13:40  henk-jan.krueger
+2000-02-21 Monday 21:40  henk-jan.krueger
 
 	* src/toss.c (1.56): * Changed group checking
 
-2000-02-10 Thursday 04:46  simon.soltek
+2000-02-10 Thursday 12:46  simon.soltek
 
 	* src/toss.c (1.50): changed CRC checking behaviour: if noCRC is
 	requested, the tic.crc value is adjusted to the real file CRC32
 	value (instead of leaving it alone).
 
-2000-02-10 Thursday 04:36  simon.soltek
+2000-02-10 Thursday 12:36  simon.soltek
 
 	* FidoConfigKeywords (1.6): final noCRC, noTIC keywords
 	implementation
 
-2000-02-10 Thursday 04:35  simon.soltek
+2000-02-10 Thursday 12:35  simon.soltek
 
 	* src/toss.c (1.49): final noTIC, noCRC keyword implementation
 
-2000-01-28 Friday 12:42  sms
+2000-01-28 Friday 20:42  sms
 
 	* src/: areafix.c (1.27), toss.c (1.45): changed groups from chars
 	to strings
 
-2000-01-28 Friday 05:57  sms
+2000-01-28 Friday 13:57  sms
 
 	* linux/makefile.lnx (1.2): removed huskymak.cfg dependency from
 	makefile.lnx, created/updated makefile.husky for pascal programs
 
-2000-01-18 Tuesday 13:21  sms
+2000-01-18 Tuesday 21:21  sms
 
 	* INSTALL (1.2): Added reference to husky-common-package to INSTALL
 
-2000-01-02 Sunday 13:21  tobi
+2000-01-02 Sunday 21:21  tobi
 
 	* src/toss.c (1.42): toss.c now compiles again re-indented
 	checkTmpDir
 
-2000-01-01 Saturday 13:19  tobi
+2000-01-01 Saturday 21:19  tobi
 
 	* src/: areafix.c (1.23), toss.c (1.41): Romved some warnings.
 
-1999-12-18 Saturday 08:56  georgi
+1999-12-18 Saturday 16:56  georgi
 
 	* src/areafix.c (1.22): bugfix for %HELP
 
-1999-12-12 Sunday 11:53  paul.merdin
+1999-12-12 Sunday 19:53  paul.merdin
 
 	* src/toss.c (1.40): mrd:  ! Fixed bug with removing files from
 	fileecho's while holding    it for busy link.
 
-1999-12-06 Monday 05:59  tobi
+1999-12-06 Monday 13:59  tobi
 
 	* osf/makefile (1.2), src/filelist.c (1.11), src/toss.c (1.38):
 	Adapted dirlayer.h and fixed osf makefile
 
-1999-12-03 Friday 02:34  mt
+1999-12-03 Friday 10:34  mt
 
 	* h/toss.h (1.4), src/toss.c (1.36): removed  strLower
 
-1999-11-30 Tuesday 13:16  sms
+1999-11-30 Tuesday 21:16  sms
 
 	* src/areafix.c (1.21): fixed some misuses of ++ in areafix.c
 
-1999-11-09 Tuesday 02:29  georgi
+1999-11-09 Tuesday 10:29  georgi
 
 	* src/global.c (1.6): ver 0.03
 
-1999-11-09 Tuesday 02:20  georgi
+1999-11-09 Tuesday 10:20  georgi
 
 	* src/toss.c (1.35): Added support forwardPkts
 
-1999-10-14 Thursday 09:07  sms
+1999-10-14 Thursday 16:07  sms
 
 	* linux/makefile.lnx (1.1): reorganized Makefiles, read
 	husky-common/README.Makefiles \!\!\!
 
-1999-10-14 Thursday 08:40  sms
+1999-10-14 Thursday 15:40  sms
 
 	* os2/makefile.emo (1.2), os2/makefile.wco (1.4),
 	win32/makefile.wcw (1.2): reorganized Makefiles, read
 	husky-common/README.Makefiles \!\!\!
 
-1999-10-13 Wednesday 00:43  mt
+1999-10-13 Wednesday 07:43  mt
 
 	* src/filelist.c (1.10): fixed typo
 
-1999-10-10 Sunday 14:18  henk-jan.krueger
+1999-10-10 Sunday 21:18  henk-jan.krueger
 
 	* src/: filelist.c (1.9), hatch.c (1.15): * Hide area's now also
 	for allfileslist en announcements
 
-1999-09-30 Thursday 05:03  tobi
+1999-09-30 Thursday 12:03  tobi
 
 	* src/hatch.c (1.13): Fixed data corruption.
 
-1999-09-30 Thursday 05:00  tobi
+1999-09-30 Thursday 12:00  tobi
 
 	* src/hatch.c (1.12): Fixed data corruption in hatch.c !?!
 
-1999-09-30 Thursday 04:56  tobi
+1999-09-30 Thursday 11:56  tobi
 
 	* src/toss.c (1.32): Fixed data corruption in toss.c !?!
 
-1999-09-30 Thursday 04:38  tobi
+1999-09-30 Thursday 11:38  tobi
 
 	* src/: filelist.c (1.7), hatch.c (1.11), toss.c (1.31): * Fixed
 	case sensitivity problems.  Now all files are found no matter	how
 	they are spelled, but new files are always created with lower case.
 	 * Added FreeBSD port
 
-1999-09-03 Friday 13:53  tobi
+1999-09-03 Friday 20:53  tobi
 
 	* src/: areafix.c (1.20), scan.c (1.7): Now I finally got it right.
 	Sorry for the confusion.
 
-1999-09-03 Friday 13:50  tobi
+1999-09-03 Friday 20:50  tobi
 
 	* src/scan.c (1.6): Oups ...
 
-1999-09-03 Friday 13:28  tobi
+1999-09-03 Friday 20:28  tobi
 
 	* src/areafix.c (1.19): Language bugfix :-)
 
-1999-09-03 Friday 13:24  tobi
+1999-09-03 Friday 20:24  tobi
 
 	* src/areafix.c (1.18): Migrated the changes from hpt areafix.c,
 	1.53 -> 1.54 (concerning return codes of ProcessAreafix) to htick.
 
-1999-09-03 Friday 13:17  tobi
+1999-09-03 Friday 20:17  tobi
 
 	* osf/makefile (1.1): Added Makefile for OSF/1 (DEC Unix, Tru64
 	Unix)
 
-1999-09-03 Friday 13:01  tobi
+1999-09-03 Friday 20:01  tobi
 
 	* src/htick.c (1.10): You can now leave out the description when
 	hatching without creating a core dump.
 
-1999-09-03 Friday 12:25  tobi
+1999-09-03 Friday 19:25  tobi
 
 	* src/: hatch.c (1.10), toss.c (1.30): Language bugfix ;-)
 
-1999-09-03 Friday 12:23  tobi
+1999-09-03 Friday 19:23  tobi
 
 	* src/: fcommon.c (1.9), hatch.c (1.9), toss.c (1.29): 64 Bit
 	patches
 
-1999-08-05 Thursday 03:14  georgi
+1999-08-05 Thursday 10:14  georgi
 
 	* src/areafix.c (1.16): bugfix in %resend
 
-1999-07-22 Thursday 23:27  georgi
+1999-07-23 Friday 06:27  georgi
 
 	* src/toss.c (1.26): fixed bug in checkTmpDir
 
-1999-07-22 Thursday 23:25  georgi
+1999-07-23 Friday 06:25  georgi
 
 	* FidoConfigKeywords (1.2): added PassFileAreaDir
 
-1999-07-21 Wednesday 00:41  georgi
+1999-07-21 Wednesday 07:41  georgi
 
 	* src/toss.c (1.25): bugfix and support Passthrough fileareas
 
-1999-07-21 Wednesday 00:39  georgi
+1999-07-21 Wednesday 07:39  georgi
 
 	* src/htick.c (1.8): support "htick send"
 
-1999-07-21 Wednesday 00:38  georgi
+1999-07-21 Wednesday 07:38  georgi
 
 	* src/hatch.c (1.7): added "htick send" and %resend
 
-1999-07-21 Wednesday 00:36  georgi
+1999-07-21 Wednesday 07:36  georgi
 
 	* src/global.c (1.5): support "htick send"
 
-1999-07-21 Wednesday 00:34  georgi
+1999-07-21 Wednesday 07:34  georgi
 
 	* src/filelist.c (1.4): bugfix, if need remove desc
 
-1999-07-21 Wednesday 00:33  georgi
+1999-07-21 Wednesday 07:33  georgi
 
 	* src/fcommon.c (1.7): small change in createOutboundFileName
 
-1999-07-21 Wednesday 00:28  georgi
+1999-07-21 Wednesday 07:28  georgi
 
 	* misc/filefix.hlp (1.6, htick-0_9a-release), src/areafix.c (1.13):
 	%resend
 
-1999-07-21 Wednesday 00:27  georgi
+1999-07-21 Wednesday 07:27  georgi
 
 	* h/hatch.h (1.2): int send
 
-1999-07-21 Wednesday 00:26  georgi
+1999-07-21 Wednesday 07:26  georgi
 
 	* h/global.h (1.5): support "htick send"
 
-1999-07-17 Saturday 04:47  georgi
+1999-07-17 Saturday 11:47  georgi
 
 	* src/areafix.c (1.11): FileFix now support mask
 
-1999-07-15 Thursday 22:43  georgi
+1999-07-16 Friday 05:43  georgi
 
 	* src/toss.c (1.23): fixed bug (tic.from and tic.to)
 
-1999-07-15 Thursday 22:35  georgi
+1999-07-16 Friday 05:35  georgi
 
 	* src/areafix.c (1.10): small change in %QUERY
 
-1999-07-14 Wednesday 23:48  georgi
+1999-07-15 Thursday 06:48  georgi
 
 	* h/areafix.h (1.4): support for %QUERY and %LINKED
 
-1999-07-11 Sunday 21:28  georgi
+1999-07-12 Monday 04:28  georgi
 
 	* misc/filefix.hlp (1.3): change help
 
-1999-07-11 Sunday 21:26  georgi
+1999-07-12 Monday 04:26  georgi
 
 	* h/global.h (1.4): Added: cmAnnounce announceArea
 
-1999-07-06 Tuesday 21:58  georgi
+1999-07-07 Wednesday 04:58  georgi
 
 	* src/toss.c (1.20): Ldesc in announce;
 
-1999-07-04 Sunday 23:34  georgi
+1999-07-05 Monday 06:34  georgi
 
 	* src/toss.c (1.19): fixed \r\n in tic
 
-1999-07-01 Thursday 03:31  georgi
+1999-07-01 Thursday 10:31  georgi
 
 	* src/hatch.c (1.3): recoding areaDesc
 
-1999-07-01 Thursday 03:29  georgi
+1999-07-01 Thursday 10:29  georgi
 
 	* src/toss.c (1.18): fixed bug with Seenby; recoding areaDesc
 
-1999-06-28 Monday 04:43  georgi
+1999-06-28 Monday 11:43  georgi
 
 	* src/toss.c (1.16): translating path of the area to lowercase
 
-1999-06-23 Wednesday 04:06  georgi
+1999-06-23 Wednesday 11:06  georgi
 
 	* src/toss.c (1.14): many change for "htick toss"
 
-1999-06-23 Wednesday 04:05  georgi
+1999-06-23 Wednesday 11:05  georgi
 
 	* src/seenby.c (1.4): some little change
 
-1999-06-23 Wednesday 04:04  georgi
+1999-06-23 Wednesday 11:04  georgi
 
 	* src/scan.c (1.4): adding "AllFix" robot name
 
-1999-06-23 Wednesday 04:02  georgi
+1999-06-23 Wednesday 11:02  georgi
 
 	* src/htick.c (1.4): change command line
 
-1999-06-23 Wednesday 04:01  georgi
+1999-06-23 Wednesday 11:01  georgi
 
 	* src/hatch.c (1.1): htick hatch
 
-1999-06-23 Wednesday 04:00  georgi
+1999-06-23 Wednesday 11:00  georgi
 
 	* src/global.c (1.3): change version (0.02); support for hatch,
 	filelist, announce
 
-1999-06-23 Wednesday 03:59  georgi
+1999-06-23 Wednesday 10:59  georgi
 
 	* src/filelist.c (1.1): htick filelist
 
-1999-06-23 Wednesday 03:58  georgi
+1999-06-23 Wednesday 10:58  georgi
 
 	* src/fcommon.c (1.3): don't free "flo" file name
 
-1999-06-23 Wednesday 03:52  georgi
+1999-06-23 Wednesday 10:52  georgi
 
 	* h/toss.h (1.2): adding header some function
 
-1999-06-23 Wednesday 03:51  georgi
+1999-06-23 Wednesday 10:51  georgi
 
 	* h/seenby.h (1.3): change seenbyComp
 
-1999-06-23 Wednesday 03:48  georgi
+1999-06-23 Wednesday 10:48  georgi
 
 	* h/hatch.h (1.1): support for "htick hatch"
 
-1999-06-23 Wednesday 03:47  georgi
+1999-06-23 Wednesday 10:47  georgi
 
 	* h/global.h (1.3): support for hatch, filelist and announce in
 	file
 
-1999-06-23 Wednesday 03:46  georgi
+1999-06-23 Wednesday 10:46  georgi
 
 	* h/filelist.h (1.1): support for "htick filelist"
 
-1999-06-23 Wednesday 03:45  georgi
+1999-06-23 Wednesday 10:45  georgi
 
 	* h/fcommon.h (1.2): adding multi line Desc in TIC (for Region 50
 	fidonet); change type CRC (unsigned long)
 
-1999-05-11 Tuesday 12:00  mt
+1999-05-11 Tuesday 19:00  mt
 
 	* h/global.h (1.2), src/areafix.c (1.4), src/fcommon.c (1.2),
 	src/global.c (1.2), src/htick.c (1.3), src/scan.c (1.2), src/toss.c
 	(1.9), os2/makefile.emo (1.1): new patches from oleg
 
-1999-04-29 Thursday 00:09  gabriel
+1999-04-29 Thursday 07:09  gabriel
 
 	* src/toss.c (1.8): Downlinks who get files are now added to the
 	Seen By List
 
-1999-04-24 Saturday 09:01  gabriel
+1999-04-24 Saturday 16:01  gabriel
 
 	* src/: seenby.c (1.2), toss.c (1.7): bugs in seenby removed
 
-1999-04-24 Saturday 08:54  gabriel
+1999-04-24 Saturday 15:54  gabriel
 
 	* h/seenby.h (1.1), src/seenby.c (1.1): forgotten seenby files
 
-1999-04-24 Saturday 08:50  gabriel
+1999-04-24 Saturday 15:50  gabriel
 
 	* CREDITS (1.2), src/htick.c (1.2), src/toss.c (1.6):  + seenbys
 	added
 
-1999-04-24 Saturday 05:01  gabriel
+1999-04-24 Saturday 12:01  gabriel
 
 	* src/toss.c (1.5): By Alex Erzin, checked in by Gabriel  +
 	files.bbs files supported
 
-1999-04-11 Sunday 08:52  antonio.perez
+1999-04-11 Sunday 15:52  antonio.perez
 
 	* src/toss.c (1.4): Antonio: + htic supports filearea description.
 	Not tested!. Bugs, corrections and   comments are wellcome.
 
-1999-03-22 Monday 04:31  gabriel
+1999-03-22 Monday 12:31  gabriel
 
 	* src/toss.c (1.3):   + Support for Magic Tag
 
-1999-03-21 Sunday 11:17  gabriel
+1999-03-21 Sunday 19:17  gabriel
 
 	* src/: areafix.c (1.3), toss.c (1.2): Su 21.03.1999   + Areafix
 	now writes mails to the right sender name   + As the to Field in
 	tic file is not necessarily needed as FSC says,     it is now
 	checked only if it exists, as some Prozessors don't generate	 it
 
-1999-03-18 Thursday 04:04  gabriel
+1999-03-18 Thursday 12:04  gabriel
 
 	* src/areafix.c (1.2):	 Gabriel Plutzar:
 	  Commented out lines with tossgrp in it, in order to let htick
