@@ -261,7 +261,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
     s_link *ticSourceLink=NULL;
     UINT16 key;
     hs_addr Aka;
-    int fh = 0;
 
     memset(tic,'\0',sizeof(s_ticfile));
 
