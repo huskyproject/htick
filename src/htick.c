@@ -193,6 +193,7 @@ void processConfig()
 
    FILE *f;
 
+   setvar("module", "htick");
    config = readConfig(NULL);
    if (NULL == config) {
       printf("Config not found\n");

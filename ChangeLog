@@ -2,6 +2,11 @@ htick 0.9
 ---------
 (released on Mon May 22 14:58:56 CEST 2000)
 
+Tue Jul 25 22:09:07 NOVST 2000
+max (patch from Pavel Gulchouk):
+* module=htick
+* filefix changes
+
 Tue Jul 11 21:05:00 SAMST 2000
 Georgi:
 * remove description for file[s] (field 'replace' in TIC)

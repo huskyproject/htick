@@ -55,6 +55,10 @@
 #include <areafix.h>
 #include <hatch.h>
 
+extern char *curconfname;
+extern long curconfpos;
+extern FILE *hcfg;
+
 unsigned char RetFix;
 
 void freeMsgBuff(s_message *msg)
@@ -246,7 +250,6 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 }
 
 // add string to file
-// add string to file
 int addstring(FILE *f, char *aka) {
 	char *cfg;
 	long areapos,endpos,cfglen,len;
@@ -309,11 +312,11 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	// storing end of file...
 	cfg=(char*) calloc((size_t) cfglen+1,sizeof(char));
 	fseek(f,-cfglen-1,SEEK_END);
-	fread(cfg,sizeof(char),(size_t) (cfglen+1),f);
+	cfglen = fread(cfg,sizeof(char),(size_t) (cfglen+1),f);
 	
 	// write config
 	fseek(f,-cfglen-al-1-before_str,SEEK_END);
-	fputs(cfg,f);
+	fwrite(cfg, sizeof(char), cfglen, f);
 
 	truncate(fileName,endpos-al-before_str);
 	
@@ -538,7 +541,7 @@ char *help(s_link *link) {
 		help=(char*) calloc((size_t) endpos + 1,sizeof(char));
 
 		fseek(f,0l,SEEK_SET);
-		fread(help,1,(size_t) endpos,f);
+		endpos = fread(help,1,(size_t) endpos,f);
 		
 		for (i=0; i<endpos; i++) {
 		   if (help[i]=='\r' && (i+1)<endpos && help[i+1]=='\n') help[i]=' ';
@@ -564,8 +567,8 @@ char *available(s_link *link) {
         if (config->available!=NULL) {                                          
                 if ((f=fopen(config->available,"r")) == NULL)                   
                         {                                                       
-                                fprintf(stderr,"areafix: cannot open Available Areas file \"%s\"\n",                                                            
-                                                config->areafixhelp);           
+                                fprintf(stderr,"FileFix: cannot open Available Areas file \"%s\"\n",
+                                                config->available);
                                 return NULL;                                    
                         }                                                       
 
@@ -575,12 +578,12 @@ char *available(s_link *link) {
                 avail=(char*) calloc((size_t) endpos,sizeof(char*));            
 
                 fseek(f,0l,SEEK_SET);                                           
-                fread(avail,1,(size_t) endpos,f);                               
+                endpos = fread(avail,1,(size_t) endpos,f);                               
                 for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';     
 
                 fclose(f);                                                      
 
-                writeLogEntry(htick_log, '8', "areafix: Available Area List sent to %s",link->name);
+                writeLogEntry(htick_log, '8', "FileFix: Available Area List sent to %s",link->name);
                                    
                 return avail;                                                   
         }                                                                       
@@ -590,52 +593,56 @@ char *available(s_link *link) {
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 	FILE *f;
-	char *cfgline, *token, *running, *areaName, work=1;
-	long pos;
-	
+	char *cfgline, *line, *token, *areaName;
+	long pos=-1;
+
 	areaName = area->areaName;
 
-	if ((f=fopen(fileName,"r+")) == NULL)
-		{
-			fprintf(stderr,"FileFix: cannot open config file %s \n", fileName);
-			return 1;
-		}
-	
-	while (work) {
-		pos = ftell(f);
-		if ((cfgline = readLine(f)) == NULL) break;
+	if (init_conf(fileName))
+		return 1;
+
+	while ((cfgline = configline()) != NULL) {
 		cfgline = trimLine(cfgline);
-		if ((cfgline[0] != '#') && (cfgline[0] != 0)) {
-			
-			running = cfgline;
-			token = strseparate(&running, " \t");
-			
-			if (stricmp(token, "include")==0) {
-				while (*running=='\t') running++;
-				token=strseparate(&running, " \t");
-				changeconfig(token, area, link, action);
-			}			
-			else if (stricmp(token, "filearea")==0) {
-				token = strseparate(&running, " \t"); 
+		cfgline = stripComment(cfgline);
+		if (cfgline[0] != 0) {
+			line = cfgline = shell_expand(cfgline);
+			token = strseparate(&line, " \t");
+			if (stricmp(token, "filearea")==0) {
+				token = strseparate(&line, " \t"); 
 				if (stricmp(token, areaName)==0) {
-				    switch 	(action) {
-				    case 0: 
-					addstring(f,aka2str(link->hisAka));
+					fileName = strdup(curconfname);
+					pos = ftell(hcfg);
 					break;
- 				    case 1:	fseek(f, pos, SEEK_SET);
-					delLinkFromArea(f, fileName, aka2str(link->hisAka));
-					break;
-				    default: break;
-				    }
-				    work = 0;
 				}
 			}
-			
 		}
-		free(cfgline);
+		nfree(cfgline);
 	}
-	
+	close_conf();
+	if (pos == -1) {
+		return 1; // impossible
+	}
+	nfree(cfgline);
+
+	if ((f=fopen(fileName,"r+b")) == NULL)
+		{
+			fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
+			nfree(fileName);
+			return 1;
+		}
+	fseek(f, pos, SEEK_SET);
+
+	switch (action) {
+	    case 0: 
+		addstring(f, aka2str(link->hisAka));
+		break;
+ 	    case 1:
+		delLinkFromArea(f, fileName, aka2str(link->hisAka));
+		break;
+	    default: break;
+	}
 	fclose(f);
+	nfree(fileName);
 	return 0;
 }
 
@@ -821,75 +828,76 @@ int changepause(char *confName, s_link *link)
     char *cfgline, *token;
     char *line;
     long curpos, endpos, cfglen;
-    int rc;
     FILE *f_conf;
     
-	if ((f_conf=fopen(confName,"r+")) == NULL)
-		{
-			fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
-			return 1;
-		}
-	
-    while ((cfgline = readLine(f_conf)) != NULL) {
+	if (init_conf(confName))
+		return 0;
+
+	while ((cfgline = configline()) != NULL) {
 		cfgline = trimLine(cfgline);
-		if (*cfgline == 0 || *cfgline == '#') continue;
+		cfgline = stripComment(cfgline);
+		cfgline = shell_expand(cfgline);
 		line = cfgline;
 		token = strseparate(&line, " \t");
-		if (stricmp(token, "include")==0) {
-			while (*line=='\t') line++;
-			token=strseparate(&line, " \t");
-			changepause(token, link);
-		}			
-		if (stricmp(token, "link") == 0) {
-			free(cfgline);
-			for (rc = 0; rc == 0; ) {
-				fseek(f_conf, 0L, SEEK_CUR);
-				curpos = ftell(f_conf);
-				if ((cfgline = readLine(f_conf)) == NULL) { 
-					rc = 2;
-					break;
+		if (token && stricmp(token, "link") == 0) {
+linkline:
+			nfree(cfgline);
+			for (;;) {
+				if ((cfgline = configline()) == NULL) { 
+					close_conf();
+					return 0;
 				}
 				cfgline = trimLine(cfgline);
-				if (!*cfgline || *cfgline == '#') continue;
+				cfgline = stripComment(cfgline);
+				cfgline = shell_expand(cfgline);
+				if (!*cfgline || *cfgline == '#') {
+					nfree(cfgline);
+					continue;
+				}
 				line = cfgline;
 				token = strseparate(&line, " \t");
-				if (stricmp(token, "link") == 0) {
-					fseek(f_conf, curpos, SEEK_SET);
-					rc = 1;
-				}
-				if (stricmp(token, "aka") == 0) break;
-				free(cfgline);
+				if (token && stricmp(token, "link") == 0)
+					goto linkline;
+				if (token && stricmp(token, "aka") == 0) break;
+				nfree(cfgline);
 			}
-			if (rc == 2) return 0;
-			if (rc == 1) continue;
 			token = strseparate(&line, " \t");
-			if (testAddr(token, link->hisAka)) {
-				
-				curpos = ftell(f_conf);
-				
+			if (token && testAddr(token, link->hisAka)) {
+				nfree(cfgline);
+				curpos = ftell(hcfg);
+				confName = strdup(curconfname);
+				close_conf();
+				f_conf = fopen(confName, "r+");
+				if (f_conf == NULL) {
+					fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
+					nfree(confName);
+					return 0;
+				}
+				nfree(confName);
 				fseek(f_conf, 0L, SEEK_END);
 				endpos = ftell(f_conf);
-				
+
 				cfglen=endpos-curpos;
 				
-				line = (char*)calloc(cfglen+1, sizeof(char));
+				line = (char*) malloc((size_t) cfglen+1);
 				fseek(f_conf, curpos, SEEK_SET);
-				fread(line, sizeof(char), cfglen, f_conf);
+				cfglen = fread(line, sizeof(char), cfglen, f_conf);
+				line[cfglen]='\0';
 		
 				fseek(f_conf, curpos, SEEK_SET);
 				fputs("Pause\n", f_conf);
 				fputs(line, f_conf);
-				free(line);
-				free(cfgline);
+				fclose(f_conf);
+				nfree(line);
 				link->Pause = 1;
 				writeLogEntry(htick_log, '8', "FileFix: system %s set passive", aka2str(link->hisAka));
-				break;
+				return 1;
 			}
 		}
-		free(cfgline);
-    }
-    fclose(f_conf);
-    return 1;
+		nfree(cfgline);
+	}
+	close_conf();
+	return 0;
 }
 
 char *pause_link(s_message *msg, s_link *link)
@@ -912,104 +920,107 @@ char *pause_link(s_message *msg, s_link *link)
 
 int changeresume(char *confName, s_link *link)
 {
+    char *cfgline, *token;
+    char *line;
+    long curpos, endpos, cfglen, remstr;
     FILE *f_conf;
-    char *cfgline, *line, *token;
-    int rc=0;
-    long curpos, remstr, endpos, cfglen;
     
-	if ((f_conf=fopen(confName,"r+")) == NULL)
-		{
-			fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
-			return 1;
-		}
-    
-    while ((cfgline = readLine(f_conf)) != NULL) {
+	if (init_conf(confName))
+		return 0;
+
+	while ((cfgline = configline()) != NULL) {
 		cfgline = trimLine(cfgline);
-		if (*cfgline == 0 || *cfgline == '#') continue;
+		cfgline = stripComment(cfgline);
+		cfgline = shell_expand(cfgline);
 		line = cfgline;
 		token = strseparate(&line, " \t");
-		if (stricmp(token, "include")==0) {
-			while (*line=='\t') line++;
-			token=strseparate(&line, " \t");
-			changeresume(token, link);
-		}			
-		if (stricmp(token, "link") == 0) {
-			free(cfgline);
-			for (rc = 0; rc == 0; ) {
-				fseek(f_conf, 0L, SEEK_CUR);
-				curpos = ftell(f_conf);
-				if ((cfgline = readLine(f_conf)) == NULL) { 
-					rc = 2;
-					break;
-				}
-				if (*cfgline == 0 || *cfgline == '#') continue;
-				line = cfgline;
-				token = strseparate(&line, " \t");
-				if (stricmp(token, "link") == 0) {
-					fseek(f_conf, curpos, SEEK_SET);
-					rc = 1;
-				}
-				if (stricmp(token, "aka") == 0) break;
-				free(cfgline);
-			}
-			if (rc == 2) break;
-			if (rc == 1) continue;
-			token = strseparate(&line, " \t");
-			if (testAddr(token, link->hisAka)) {
-				free(cfgline);
-				for (rc = 0; rc == 0; ) {
-					fseek(f_conf, 0L, SEEK_CUR);
-					curpos = ftell(f_conf);
-					if ((cfgline = readLine(f_conf)) == NULL) {
-						rc = 1;
-						break;
-					}
-					cfgline = trimLine(cfgline);
-					if (*cfgline == 0 || *cfgline == '#') continue;
-					line = cfgline;
-					token = strseparate(&line, " \t");
-					if (stricmp(token, "link") == 0) {
-						rc = 1;
-						break;
-					}
-					if (stricmp(token, "pause") == 0) break;
-					free(cfgline);
-				}
-				if (rc) break;
-				
-				remstr = ftell(f_conf);
-				
-				fseek(f_conf, 0L, SEEK_END);
-				endpos = ftell(f_conf);
-				
-				cfglen=endpos-remstr;
-				
-				line = (char*)calloc(cfglen+1, sizeof(char));
-				fseek(f_conf, remstr, SEEK_SET);
-				cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
-				
-				fseek(f_conf, curpos, SEEK_SET);
-//				fputs(line, f_conf);
-				fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
-#ifdef __WATCOMC__
-				fflush( f_conf );
-				fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
-				fflush( f_conf );
-#else
-				truncate(confName, endpos-(remstr-curpos));
-#endif
-				free(line);
-				free(cfgline);
-				link->Pause = 0;
-				writeLogEntry(htick_log, '8', "FileFix: system %s set active",	aka2str(link->hisAka));
-				break;
-    	    }
+		if (!token || stricmp(token, "link")) {
+			nfree(cfgline);
+			continue;
 		}
-		free(cfgline);
-    }
-    fclose(f_conf);
-    if (rc) return 0;
-    return 1;
+linkliner:
+		nfree(cfgline);
+		for (;;) {
+			if ((cfgline = configline()) == NULL) { 
+				close_conf();
+				return 0;
+			}
+			cfgline = trimLine(cfgline);
+			cfgline = stripComment(cfgline);
+			cfgline = shell_expand(cfgline);
+			if (!*cfgline || *cfgline == '#') {
+				nfree(cfgline);
+				continue;
+			}
+			line = cfgline;
+			token = strseparate(&line, " \t");
+			if (token && stricmp(token, "link") == 0)
+				goto linkliner;
+			if (token && stricmp(token, "aka") == 0) break;
+			nfree(cfgline);
+		}
+		token = strseparate(&line, " \t");
+		if (!token || testAddr(token, link->hisAka) == 0) {
+			nfree(cfgline);
+			continue;
+		}
+		nfree(cfgline);
+		for (;;) {
+			if ((cfgline = configline()) == NULL) { 
+				close_conf();
+				return 0;
+			}
+			cfgline = trimLine(cfgline);
+			cfgline = stripComment(cfgline);
+			cfgline = shell_expand(cfgline);
+			if (!*cfgline || *cfgline == '#') {
+				nfree(cfgline);
+				continue;
+			}
+			line = cfgline;
+			token = strseparate(&line, " \t");
+			if (token && stricmp(token, "link") == 0)
+				goto linkliner;
+			if (token && stricmp(token, "pause") == 0) break;
+			nfree(cfgline);
+		}
+		// remove line
+		nfree(cfgline);
+		remstr = ftell(hcfg);
+		curpos = curconfpos;
+		confName = strdup(curconfname);
+		close_conf();
+		if ((f_conf=fopen(confName,"r+")) == NULL)
+		{
+			fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
+			nfree(confName);
+			return 0;
+		}
+		fseek(f_conf, 0, SEEK_END);
+		endpos = ftell(f_conf);
+		cfglen=endpos-remstr;
+
+		line = (char*) malloc((size_t) cfglen+1);
+		fseek(f_conf, remstr, SEEK_SET);
+		cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
+				
+		fseek(f_conf, curpos, SEEK_SET);
+		fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
+#if defined(__WATCOMC__) || defined(__MINGW32__)
+		fflush( f_conf );
+		fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
+		fflush( f_conf );
+#else
+		truncate(confName, endpos-(remstr-curpos));
+#endif
+		nfree(line);
+		nfree(confName);
+		link->Pause = 0;
+		writeLogEntry(htick_log, '8', "FileFix: system %s set active", aka2str(link->hisAka));
+		return 1;
+	}
+	close_conf();
+	return 0;
 }
 
 char *resume_link(s_message *msg, s_link *link)

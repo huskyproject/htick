@@ -118,20 +118,20 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
    if (area != NULL)
       sprintf(buff + strlen(buff), "AREA:%s\r", area);
    else {
-      if (ourAka->point) sprintf(buff + strlen(buff), "\1FMPT %d\r",
+      if (ourAka->point) sprintf(buff + strlen(buff), "\001FMPT %d\r",
           ourAka->point);
-      if (destAka->point) sprintf(buff + strlen(buff), "\1TOPT %d\r",
+      if (destAka->point) sprintf(buff + strlen(buff), "\001TOPT %d\r",
           destAka->point);
    };
 
    if (ourAka->point)
-      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u.%u %08lx\r",
+      sprintf(buff + strlen(buff),"\001MSGID: %u:%u/%u.%u %08lx\r",
           ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) time(NULL));
    else
-      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u %08lx\r",
+      sprintf(buff + strlen(buff),"\001MSGID: %u:%u/%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,(unsigned long) time(NULL));
 
-   sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);
+   sprintf(buff + strlen(buff), "\001PID: %s\r", versionStr);
 }
 
 
