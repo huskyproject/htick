@@ -97,7 +97,10 @@ void processCommandLine(int argc, char **argv)
          i++;
          strcpy(hatchfile, argv[i++]);
          strcpy(hatcharea, argv[i++]);
-         strcpy(hatchdesc, argv[i]);
+         if (i < argc)
+           strcpy(hatchdesc, argv[i]);
+         else
+           strcpy(hatchdesc, "-- description missing --");
          continue;
       } else if (stricmp(argv[i], "send") == 0) {
          cmSend = 1;
