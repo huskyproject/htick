@@ -1182,36 +1182,40 @@ void processDir(char *directory, e_tossSecurity sec)
    closedir(dir);                                    
 }                                                    
 
-void checkTmpDir(s_link link)
+void checkTmpDir(s_link link,char ***filesInTic,unsigned int *filesCount)
 {
     char tmpdir[256], newticedfile[256], newticfile[256];
     char logstr[200];
+    char buff[200];
+
     DIR            *dir;
     struct dirent  *file;
     char           *ticfile;
     s_ticfile tic;
     s_filearea *filearea;
     FILE *flohandle;
+    int	busy;
 
-   if (createFlo(&link, cvtFlavour2Prio(link.fileEchoFlavour))==0) {
-      strcpy(tmpdir,link.floFile);
-      *(strrchr(tmpdir,'.'))=0;
-      sprintf(tmpdir+strlen(tmpdir), ".htk%c", PATH_DELIM);
+    busy=createFlo(&link, cvtFlavour2Prio(link.fileEchoFlavour));
+    strcpy(tmpdir,link.floFile);
+    *(strrchr(tmpdir,'.'))=0;
+    sprintf(tmpdir+strlen(tmpdir), ".htk%c", PATH_DELIM);
 
-      dir = opendir(tmpdir);
-      if (dir == NULL) {
+    dir = opendir(tmpdir);
+    if (dir == NULL) {
          remove(link.bsyFile);
          return;
-      }
+    }
 
-      while ((file = readdir(dir)) != NULL) {
-         if (strlen(file->d_name) != 12) continue;
-         ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
-         strcpy(ticfile, tmpdir);
-         strcat(ticfile, file->d_name);
-         if (stricmp(file->d_name+8, ".TIC") == 0) {
-            memset(&tic,0,sizeof(tic));
-            parseTic(ticfile,&tic);
+    while ((file = readdir(dir)) != NULL) {
+	if (strlen(file->d_name) != 12) continue;
+        ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
+        strcpy(ticfile, tmpdir);
+        strcat(ticfile, file->d_name);
+        if (stricmp(file->d_name+8, ".TIC") == 0) {
+          memset(&tic,0,sizeof(tic));
+          parseTic(ticfile,&tic);
+	  if (busy==0) {
             filearea=getFileArea(config,tic.area);
             if (filearea!=NULL) {
                if (filearea->pass != 1) strcpy(newticedfile,filearea->pathName);
@@ -1245,6 +1249,16 @@ void checkTmpDir(s_link link)
 
                writeLogEntry(htick_log,'6',logstr);
 	    }
+	  } else {
+            if (*filesCount == 0 || (*filesCount > 0 && !foundInArray(*filesInTic,*filesCount,tic.file))) {
+		*filesInTic = realloc(*filesInTic, sizeof(char *)*(*filesCount+1));
+		(*filesInTic)[*filesCount] = (char *) malloc(strlen(tic.file)+1);
+        	strcpy((*filesInTic)[*filesCount], tic.file);
+		(*filesCount)++;
+                sprintf(buff, "Adding %s to hold list, %d files holded", tic.file,*filesCount);
+                writeLogEntry(htick_log, '9', buff);		
+	    }
+	  }
 	 }
 	 disposeTic(&tic);
          free(ticfile);
@@ -1256,14 +1270,13 @@ void checkTmpDir(s_link link)
          tmpdir[strlen(tmpdir)-1] = 0;
       } /* endif */
       rmdir(tmpdir);
-   } // if
+    // if
    free(link.floFile);
 }
 
 int foundInArray(char **filesInTic, unsigned int filesCount, char *name)
 {
     unsigned int i, rc = 0;
-
    for (i = 0; i < filesCount; i++)
       if (patimat(filesInTic[i],name) == 1) {
          rc = 1;
@@ -1272,14 +1285,13 @@ int foundInArray(char **filesInTic, unsigned int filesCount, char *name)
    return rc;
 }
 
-void checkPassthroughDir()
+void checkPassthroughDir(char ***filesInTic,unsigned int *filesCount)
 {
     DIR            *dir;
     struct dirent  *file;
     char           *ticfile;
     s_ticfile tic;
-    char **filesInTic = NULL;
-    unsigned int filesCount = 0, i;
+    unsigned int i;
     char logstr[200];
 
    dir = opendir(config->passFileAreaDir);
@@ -1293,11 +1305,11 @@ void checkPassthroughDir()
       if (patimat(file->d_name, "*.TIC") == 1) {
          memset(&tic,0,sizeof(tic));
          parseTic(ticfile,&tic);
-         if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
-	    filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
-	    filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
-            strcpy(filesInTic[filesCount], tic.file);
-	    filesCount++;
+         if (*filesCount == 0 || (*filesCount > 0 && !foundInArray(*filesInTic,*filesCount,tic.file))) {
+	    *filesInTic = realloc(*filesInTic, sizeof(char *)*(*filesCount+1));
+	    (*filesInTic)[*filesCount] = (char *) malloc(strlen(tic.file)+1);
+            strcpy((*filesInTic)[*filesCount], tic.file);
+	    (*filesCount)++;
 	 }
 	 disposeTic(&tic);
       }
@@ -1314,14 +1326,14 @@ void checkPassthroughDir()
       strcpy(ticfile, config->passFileAreaDir);
       strcat(ticfile, file->d_name);
       if (patimat(file->d_name, "*.TIC") != 1) {
-         if (filesCount == 0) {
+         if (*filesCount == 0) {
             sprintf(logstr,"Remove file %s from passthrough dir", ticfile);
             writeLogEntry(htick_log,'6',logstr);
             remove(ticfile);
 	    free(ticfile);
 	    continue;
          }
-         if (!foundInArray(filesInTic,filesCount,file->d_name)) {
+         if (!foundInArray(*filesInTic,*filesCount,file->d_name)) {
             sprintf(logstr,"Remove file %s from passthrough dir", ticfile);
             writeLogEntry(htick_log,'6',logstr);
             remove(ticfile);
@@ -1331,19 +1343,21 @@ void checkPassthroughDir()
    }
    closedir(dir);
 
-   if (filesCount > 0) {
-      for (i=0; i<filesCount; i++)
-	free(filesInTic[i]);
-      free(filesInTic);
+   if (*filesCount > 0) {
+      for (i=0; i<*filesCount; i++)
+	free((*filesInTic)[i]);
+      free(*filesInTic);
    }
 }
 
 void processTmpDir()
 {
     int i;
-
-   for (i = 0; i < config->linkCount; i++) checkTmpDir(config->links[i]);
-   checkPassthroughDir();
+    char **filesInTic = NULL;
+    unsigned int filesCount = 0;
+    
+   for (i = 0; i < config->linkCount; i++) checkTmpDir(config->links[i],&filesInTic,&filesCount);
+   checkPassthroughDir(&filesInTic,&filesCount);
 }
 
 int putMsgInArea(s_area *echo, s_message *msg, int strip)
@@ -1526,7 +1540,7 @@ void reportNewFiles()
    char      *annArea;
 
    if (cmAnnounce) annArea = announceArea;
-   else if ((config->ReportTo!=NULL) && (!cmAnnFile)) annArea = config->ReportTo;
+   else if (config->ReportTo != NULL && (!cmAnnFile)) annArea = config->ReportTo;
         else return;
 
    // post report about new files to annArea
