@@ -1,14 +1,14 @@
 /*****************************************************************************
- * HTICK --- FTN Ticker / Request Processor
+ * AreaFix for HTICK (FTN Ticker / Request Processor)
  *****************************************************************************
- * Copyright (C) 1999 by
+ * Copyright (C) 1998-2000
  *
- * Gabriel Plutzar
+ * Max Levenkov
  *
- * Fido:     2:31/1
- * Internet: gabriel@hit.priv.at
+ * Fido:     2:5000/117
+ * Internet: sackett@mail.ru
  *
- * Vienna, Austria, Europe
+ * Novosibirsk, West Siberia, Russia
  *
  * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
@@ -170,7 +170,7 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 		// 1 - need subscribe
 		// 2 - no access group
 		// 3 - area is hidden
-		if (area->manual) rc = 2;
+		if (area->mandatory) rc = 2;
 	} else rc = 4; // this is another area
 	
 	return rc;
@@ -771,7 +771,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
 	    for (i = 0; i<area->downlinkCount;i++)
 	       if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
 	          rc = 0;
-	    if (rc == 1 && area->manual == 1) rc = 5;
+	    if (rc == 1 && area->mandatory == 1) rc = 5;
 	    else rc = send(filename,filearea,addr2string(&link->hisAka));
 	    switch (rc) {
 	    case 0: sprintf(addline,"Send %s from %s for %s, %s\r",
