@@ -233,14 +233,57 @@ Name of remote file (tic) robot (need for FileForwardRequest)
 
 Place for accumulating report information
 
-26) AnnAreaTag <AREATAG>
+26) AnnAreaTag <AREATAG> or <@filename>
 
-Name of area when annouce will be placed
-Begins new announce difenition section
+<AREATAG>
+	Name of area where annouce will be placed
+	Begins new announce difenition section
+
+<@filename>
+	FileName with leading '@' where annouce will be placed
+	Begins new announce difenition section
+
+---------------------------------------
+EXAMPLE of config:
+
+AnnounceSpool   E:\FIDO\EXCH\report
+
+AnnAreaTag  @e:\fido\rep.txt  # report all arived files to file e:\fido\rep.txt
+AnnFileOrigin on
+
+AnnAreaTag  seumbieky.news    # report to area 'seumbieky.news'
+AnnInclude  union.*           # files posted to 'union.*' group of fileechos
+AnnSubj     New mp3's arrives
+AnnTo       United mp3 fans
+AnnFrom     Fullfeed Distribution Site
+AnnOrigin   *** seumbieky forever ***
+AnnFileOrigin on
+AnnFileRfrom on
+
+AnnAreaTag  seumbieky.news
+AnnInclude  uue.*            # report 'uue.*' group of fileechos
+
+AnnAreaTag  seumbieky.news
+AnnExclude  uue.* union.*    # report all other exept of 'uue.* union.*' group of fileechos
+
+AnnAreaTag  netmail          # report via netmail to  defined address
+AnnInclude  union.*
+AnnSubj     New mp3's arrives
+AnnTo       Max Inda Houze
+Annadrto    2:464/108
+AnnFrom     Fullfeed Distribution Site
+Annadrfrom  2:464/910.108
+AnnOrigin   *** seumbieky forever ***
+AnnMessFlags k/s loc hld
+AnnFileOrigin on
+AnnFileRfrom on
+
+---------------------------------------
 
 27) AnnInclude <fileecho mask list>
 
 Array of fileecho names|masks that will be announced in this annAreaTag
+By default `AnnInclude' equal to `AnnInclude *'
 
 28) AnnExclude <fileecho mask list>
 

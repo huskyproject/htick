@@ -317,31 +317,43 @@ void MakeDefaultRepDef()
 s_message* MakeReportMessage(ps_anndef pRepDef)
 {
     s_message *msg = NULL;
-    int netmail = 0;
-
-    if (stricmp(pRepDef->annAreaTag,"netmail")==0)
+    int netmail = 0; /*  -1 => report to file      */
+                     /*   0 => report to echomail  */
+                     /*   1 => report to netmail   */
+    if ( pRepDef->annAreaTag[0] == '@' )
+        netmail=-1;
+    else if (stricmp(pRepDef->annAreaTag,"netmail")==0)
         netmail=1;
     else if (getNetMailArea(config, pRepDef->annAreaTag) != NULL) 
         netmail=1;
     
-    msg = makeMessage(
-        pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
-        pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]),
-        pRepDef->annfrom    ? pRepDef->annfrom    : versionStr, 
-        pRepDef->annto      ? pRepDef->annto      : (netmail ? NULL : "All"),
-        pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
-        netmail,
-        config->filefixKillReports);
-    
-    msg->attributes = pRepDef->attributes;
-
-    msg->text = createKludges(  
-        config->disablePID,
-        netmail ? NULL : pRepDef->annAreaTag, 
-        pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
-        pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]), 
-        versionStr);
-    xstrcat(&(msg->text), "\001FLAGS NPD\r");
+    if( netmail >= 0 )
+    {
+        msg = makeMessage(
+            pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
+            pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]),
+            pRepDef->annfrom    ? pRepDef->annfrom    : versionStr, 
+            pRepDef->annto      ? pRepDef->annto      : (netmail ? NULL : "All"),
+            pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
+            netmail,
+            config->filefixKillReports);
+        
+        msg->attributes = pRepDef->attributes;
+        
+        msg->text = createKludges(  
+            config->disablePID,
+            netmail ? NULL : pRepDef->annAreaTag, 
+            pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
+            pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]), 
+            versionStr);
+        xstrcat(&(msg->text), "\001FLAGS NPD\r");
+    }
+    else //report to file
+    {
+        msg = (s_message*) scalloc(1,sizeof(s_message));
+        msg->netMail = 2; 
+        xstrcat(&(msg->subjectLine), pRepDef->annAreaTag+1);
+    }
     return msg;
 }
 
@@ -413,8 +425,9 @@ void reportNewFiles()
     UINT      i,j,ii;
     s_message *msg = NULL;
     FILE      *echotosslog;
+    FILE      *rp;
     ps_anndef RepDef;
-  
+
     for(i = 0; i < config->ADCount; i++)    
     {
         RepDef = &(config->AnnDefs[i]);
@@ -431,8 +444,6 @@ void reportNewFiles()
             xscatprintf(&(msg->text), "\r>Area : %s",strUpper(aList[j].farea->areaName));
             if(aList[j].farea->description)
             {
-               //if (config->outtab != NULL)
-               //   recodeToTransportCharset(aList[j].farea->description);
                xscatprintf(&(msg->text), " : %s", aList[j].farea->description);
             }
             xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
@@ -446,14 +457,29 @@ void reportNewFiles()
             fileCountTotal += aList[j].fCount;
             fileSizeTotal  += aList[j].fSize;
         }
-        if(msg)
+        if(!msg) continue;
+        
+        xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
+        xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r",
+            fileSizeTotal, fileCountTotal);
+        
+        if(msg->netMail > 1)
         {
-            xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
-            xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r", fileSizeTotal, fileCountTotal);
-            
+            if (NULL == (rp = fopen(msg->subjectLine,"w")))
+            {
+                w_log(LL_ERR, "Could not create report file: %s", msg->subjectLine);
+            }
+            else
+            {
+                msg->textLength = strlen(msg->text);
+                fwrite(msg->text, 1, msg->textLength, rp);
+                w_log(LL_FLAG, "Created report file: %s", msg->subjectLine);
+                fclose(rp);
+            }
+        }
+        else
+        {
             writeMsgToSysop(msg, RepDef->annAreaTag, RepDef->annorigin);
-            freeMsgBuffers(msg);
-            nfree(msg);
             if (config->echotosslog != NULL) {
                 echotosslog = fopen (config->echotosslog, "a");
                 if (echotosslog != NULL) {
@@ -462,6 +488,8 @@ void reportNewFiles()
                 }
             }
         }
+        freeMsgBuffers(msg);
+        nfree(msg);
     }
 }
 
