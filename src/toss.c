@@ -256,12 +256,12 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
   int nRet=0;
 
   if(!tic->file){
-    w_log(LL_ERR,"File name not presents in TIC %s", ticfilename);
+    w_log(LL_ERR,"File name not presents in TIC %s, required by FSC-87", ticfilename);
     nRet++;
   }
 
   if(!tic->area){
-    w_log(LL_ERR,"Filearea name not presents in TIC %s", ticfilename);
+    w_log(LL_ERR,"Filearea name not presents in TIC %s, required by FSC-87", ticfilename);
     nRet++;
   }
 
@@ -270,19 +270,18 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
   }
 
   if(!tic->size){
-    w_log(LL_ALERT,"File size not presents in TIC %s", ticfilename);
+    w_log(LL_ALERT,"File size not presents in TIC %s, FSC-87 speak: \"SHOULD be required\"", ticfilename);
   }
 
   if(!tic->to.zone && !tic->to.net && !tic->to.node){
-    w_log(LL_ERR,"'To' address not presents in TIC %s", ticfilename);
-    nRet++;
+    w_log(LL_SECURITY,"'To' address not presents in TIC %s", ticfilename);
   }else if(!tic->to.zone || !tic->to.net){
     w_log(LL_ERR,"'To' address is illegal in TIC %s", ticfilename);
     nRet++;
   }
 
   if(!tic->from.zone && !tic->from.net && !tic->from.node){
-    w_log(LL_ERR,"'From' address not presents in TIC %s", ticfilename);
+    w_log(LL_ERR,"'From' address not presents in TIC %s, required by FSC-87", ticfilename);
     nRet++;
   }else if(!tic->from.zone || !tic->from.node){
     w_log(LL_ERR,"'From' address is illegal in TIC %s", ticfilename);
@@ -290,7 +289,7 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
   }
 
   if(!tic->origin.zone && !tic->origin.net && !tic->origin.node){
-    w_log(LL_ERR,"Originating address not presents in TIC %s", ticfilename);
+    w_log(LL_ERR,"Originating address not presents in TIC %s, required by FSC-87", ticfilename);
     nRet++;
   }else if(!tic->origin.zone || !tic->origin.node){
     w_log(LL_ERR,"Originating address is illegal in TIC %s", ticfilename);
@@ -298,15 +297,15 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
   }
 
   if(!tic->path){
-    w_log(LL_ALERT,"PATH line(s) not presents in TIC %s", ticfilename);
+    w_log(LL_ALERT,"PATH line(s) not presents in TIC %s, required by FSC-87", ticfilename);
   }
 
   if(!tic->seenby){
-    w_log(LL_ALERT,"SEENBY line(s) not presents in TIC %s", ticfilename);
+    w_log(LL_ALERT,"SEENBY line(s) not presents in TIC %s, required by FSC-87", ticfilename);
   }
 
   if(!tic->password){  /* Mandatory field (FSC-87) */
-    w_log(LL_SECURITY,"PW not presents in TIC %s", ticfilename);
+    w_log(LL_SECURITY,"PW not presents in TIC %s, required by FSC-87", ticfilename);
   }
 
   return nRet;
