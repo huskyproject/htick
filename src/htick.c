@@ -89,13 +89,13 @@ void processCommandLine(int argc, char **argv)
 void processConfig()
 {
    char *buff = NULL;
-
+   
    config = readConfig();
    if (NULL == config) {
       printf("Config not found\n");
       exit(1);
-   }
-
+   };
+   
    // lock...
  /*  if (config->lockfile!=NULL && fexist(config->lockfile)) {
            printf("lock file found! exit...\n");

@@ -1,10 +1,10 @@
 DEBUG   = 1
 CC      = gcc 
-INSTDIR = /usr/local/bin
+INSTDIR = /fido/bin
 MANDIR  = /usr/local/man
 
 #OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.oscan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
-OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o
+OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o
 #toss.oscan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o
 SRC_DIR = ../src/
 

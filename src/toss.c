@@ -56,6 +56,7 @@
 #include <progprot.h>
 
 #include <add_descr.h>
+#include <seenby.h>
 
 void changeFileSuffix(char *fileName, char *newSuffix) {
 
@@ -537,7 +538,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    from_link=getLinkFromAddr(*config,tic.from);
    if (from_link==NULL)
       {
-      sprintf(logstr,"Link for Tic From Adress %s not found",
+      sprintf(logstr,"Link for Tic From Adress '%s' not found",
               addr2string(&tic.from));
       writeLogEntry(log,'9',logstr);
       disposeTic(&tic);
@@ -667,8 +668,16 @@ int processTic(char *ticfile, e_tossSecurity sec)
     for (i=0;i<filearea->downlinkCount;i++)
         if (addrComp(tic.from,filearea->downlinks[i]->hisAka)!=0 && 
             addrComp(tic.to,filearea->downlinks[i]->hisAka)!=0 &&
-            addrComp(tic.origin,filearea->downlinks[i]->hisAka)!=0)
+            addrComp(tic.origin,filearea->downlinks[i]->hisAka)!=0 &&
+	    addrComp(tic.to, filearea->downlinks[i]->ourAka)!=0)
             { // Forward file to
+	     if (seenbyComp (&tic, filearea->downlinks[i]->hisAka) == 0) {
+                sprintf(logstr,"File %s already seenby %s, %s",
+                        tic.file,
+                        filearea->downlinks[i]->name,
+                        addr2string(&filearea->downlinks[i]->hisAka));
+                writeLogEntry(log,'6',logstr);
+	     } else {
              memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
              memcpy(&tic.to,&filearea->downlinks[i]->hisAka,
                     sizeof(s_addr));
@@ -698,6 +707,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                      addr2string(&filearea->downlinks[i]->hisAka));
 
              writeLogEntry(log,'6',logstr);
+	     } // if Seenby
              } // Forward file
 
 
