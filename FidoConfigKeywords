@@ -125,6 +125,18 @@ Execute some command on receiving file. Command get full filepath as parameter.
     h) LinkFileBaseDir 
     
     Where autocreated file echos will be placed (may be "passthrough")
+    
+    i) ForwardFileRequests on|off
+
+    Allow forward requests for file areas
+	
+	k) ForwardFilePriority <number>
+	   
+    Priority when requests file-area from uplinks
+
+    l) ForwardFileRequestFile
+
+    List of available file-areas from this link
 
 9) SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>
 
