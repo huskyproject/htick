@@ -659,7 +659,8 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         }
     }
 
-    if(seenbyComp(tic->seenby, tic->anzseenby, tic->to))
+    /* (dmitry) FixMe: Put correct AKA here if To: missing in tic */
+    if(isOurAka(config, tic->to) && seenbyComp(tic->seenby, tic->anzseenby, tic->to))
         seenbyAdd(&tic->seenby, &tic->anzseenby, &tic->to);
 
     seenbySort(tic->seenby,tic->anzseenby);
