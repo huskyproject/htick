@@ -1131,15 +1131,12 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     {
         if (creatingLink->autoFileCreateSubdirs)
         {
-            if (creatingLink->autoFileCreateSubdirs)
+            char *cp;
+            for (cp = fileechoFileName; *cp; cp++)
             {
-                char *cp;
-                for (cp = fileechoFileName; *cp; cp++)
+                if (*cp == '.')
                 {
-                    if (*cp == '.')
-                    {
-                        *cp = PATH_DELIM;
-                    }
+                    *cp = PATH_DELIM;
                 }
             }
         }
