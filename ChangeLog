@@ -1,3 +1,12 @@
+2002-10-14 Monday 09:42  sfpavel
+
+	* src/toss.c (1.220): Fix OS/2 EMX build (define _A_HIDDEN
+	attribute)
+
+2002-10-14 Monday 07:33  sfpavel
+
+	* src/clean.c (1.8): Fix OS/2 EMX build
+
 2002-10-10 Thursday 07:35  mche
 
 	* src/areafix.c (1.95): correct forwardrequest logic
