@@ -1,3 +1,102 @@
+2003-03-04 Tuesday 12:25  stas_degteff
+
+	* UPGRADE (1.1): file UPGRADE was initially added on branch
+	htick-1_4-stable.
+
+2003-03-04 Tuesday 12:25  stas_degteff
+
+	* UPGRADE (htick-1_4-stable.1): Information about upgrade from
+	htick 1.0 to htick 1.4
+
+2003-03-02 Sunday 17:43  stas_degteff
+
+	* doc/htick-FAQ.russian (1.6): Update header
+
+2003-03-02 Sunday 17:30  stas_degteff
+
+	* doc/htick-FAQ.russian (1.5): Update header
+
+2003-03-01 Saturday 22:27  i_zkh
+
+	* doc/htick-FAQ.russian (1.4): Fixed spelling
+
+2003-03-01 Saturday 08:01  stas_degteff
+
+	* makefile.inc (1.1): Common part of makefiles (include-file)
+
+2003-03-01 Saturday 08:00  stas_degteff
+
+	* win32/makefile.cyg (1.14): Allow DLL build, check cygwin version
+
+2003-02-28 Friday 08:09  stas_degteff
+
+	* win32/makefile.cyg (1.13): Add comments
+
+2003-02-27 Thursday 06:21  sfpavel
+
+	* misc/fileareas (1.3): Fix typo at sample config
+
+2003-02-26 Wednesday 10:36  stas_degteff
+
+	* src/areafix.c (htick-1_4-stable.1): MFC: Use FilefixFromName when
+	posting filefix reports
+
+2003-02-25 Tuesday 10:01  sfpavel
+
+	* debian/changelog (htick-1_4-stable.4): New debian version:
+	1.4-beta2
+
+2003-02-21 Friday 09:16  stas_degteff
+
+	* src/toss.c (htick-1_4-stable.2): MFC: Test parsetic() result
+
+2003-02-20 Thursday 12:33  stas_degteff
+
+	* HISTORY (htick-1_4-stable.2): Add section for 1.2-stable; add two
+	lines to bugfixes list
+
+2003-02-19 Wednesday 06:54  sfpavel
+
+	* debian/: changelog, control, rules (htick-1_4-stable.[3,2,2]):
+	New debian version - change section to main
+
+2003-02-11 Tuesday 12:29  sfpavel
+
+	* debian/changelog (htick-1_4-stable.2): Change debian version to
+	1.4.0-beta1
+
+2003-02-11 Tuesday 11:59  sfpavel
+
+	* VERSION (htick-1_4-stable.2): Correct VERSION file
+
+2003-02-11 Tuesday 11:01  sfpavel
+
+	* debian/: changelog, control, rules (htick-1_4-stable.[1,1,1]):
+	New debian package
+
+2003-02-11 Tuesday 10:55  sfpavel
+
+	* HISTORY, VERSION, doc/bugreport.rus, doc/bugreport.txt,
+	doc/htick.texi, h/version.h (htick-1_4-stable.[1,1,2,2,2,1]): Set
+	version to 1.4.0-stable
+
+2003-02-11 Tuesday 10:33  sfpavel
+
+	* doc/: bugreport.rus, bugreport.txt, htick.texi
+	(htick-1_4-stable.[1,1,1]): Update documentation
+
+2003-02-10 Monday 05:38  sfpavel
+
+	* src/toss.c (htick-1_4-stable.1): Merge with current fixes
+
+2003-02-07 Friday 12:07  sfpavel
+
+	* src/toss.c (1.250): Change previous patch
+
+2003-02-07 Friday 10:29  sfpavel
+
+	* src/toss.c (1.249): Remove unused variables
+
 2003-02-06 Thursday 14:47  mche
 
 	* src/toss.c (1.248): initilize tic structure before using
@@ -10,8 +109,8 @@
 
 	* Makefile (1.16), debian/changelog (1.14), debian/control (1.9),
 	debian/copyright (1.5), debian/doc-base (1.1), debian/docs (1.4),
-	debian/huskymak.cfg (1.8), debian/info (1.2), debian/rules (1.11),
-	doc/Makefile (1.3): New debian version
+	debian/info (1.2), debian/rules (1.11), doc/Makefile (1.3): New
+	debian version
 
 2003-02-06 Thursday 12:36  sfpavel
 
@@ -214,10 +313,6 @@
 
 	* doc/htick.texi (1.17): replace 'areafix' to 'filefix'
 
-2002-12-30 Monday 13:22  stas_degteff
-
-	* FidoConfigKeywords (1.48): Remove obsolete documentation
-
 2002-12-28 Saturday 15:12  mche
 
 	* src/toss.c (1.242): fix previous patch - copy file to filechodir
@@ -373,10 +468,6 @@
 
 	* doc/htick.texi (1.11): Cosmetic update
 
-2002-11-10 Sunday 19:10  d_sergienko
-
-	* BUGS (1.3), BUGS.rus (1.4): removed obsolete files
-
 2002-11-10 Sunday 19:07  d_sergienko
 
 	* BUG-REPORTING (1.2), doc/bugreport.rus (1.1), doc/bugreport.txt
@@ -384,9 +475,8 @@
 
 2002-11-10 Sunday 19:06  d_sergienko
 
-	* FidoConfigKeywords (1.47), HISTORY (1.8), doc/htick.texi (1.10),
-	misc/config (1.7), src/report.c (1.31): fixed spelling (AnnAdr* ->
-	AnnAddr*)
+	* HISTORY (1.8), doc/htick.texi (1.10), misc/config (1.7),
+	src/report.c (1.31): fixed spelling (AnnAdr* -> AnnAddr*)
 
 2002-11-10 Sunday 14:26  mche
 
@@ -496,8 +586,8 @@
 
 2002-10-29 Tuesday 09:20  stas_degteff
 
-	* FidoConfigKeywords (1.46), doc/htick.texi (1.2): Update
-	fileDescName token description. Thanks to Valery Kondakoff
+	* doc/htick.texi (1.2): Update fileDescName token description.
+	Thanks to Valery Kondakoff
 
 2002-10-29 Tuesday 07:35  mche
 
@@ -666,22 +756,9 @@
 	* src/: areafix.c (1.93), toss.c (1.218): Improve and fix
 	diagnostic
 
-2002-10-09 Wednesday 05:21  stas_degteff
-
-	* FidoConfigKeywords (1.45): Fix typo error
-
-2002-10-09 Wednesday 04:58  stas_degteff
-
-	* FidoConfigKeywords (1.44): Update & partially spell check htick
-	documentation.
-
 2002-10-09 Wednesday 03:59  stas_degteff
 
 	* src/report.c (1.19): Cosmetic fix
-
-2002-10-09 Wednesday 03:48  stas_degteff
-
-	* FidoConfigKeywords (1.43): Spell fix
 
 2002-10-08 Tuesday 14:49  mche
 
@@ -689,8 +766,7 @@
 
 2002-10-08 Tuesday 14:34  mche
 
-	* FidoConfigKeywords (1.42), src/report.c (1.18): report to file
-	documentation updated
+	* src/report.c (1.18): report to file documentation updated
 
 2002-10-08 Tuesday 14:26  stas_degteff
 
@@ -707,8 +783,7 @@
 
 2002-10-04 Friday 12:18  sfpavel
 
-	* debian/: README.Debian (1.5), changelog (1.12), rules (1.10): New
-	debian package
+	* debian/: changelog (1.12), rules (1.10): New debian package
 
 2002-10-04 Friday 05:29  stas_degteff
 
@@ -747,8 +822,8 @@
 
 2002-09-25 Wednesday 07:27  mche
 
-	* src/areafix.c (1.91), FidoConfigKeywords (1.41): feature:
-	FileFixEchoLimit patch by <Алексей Сухотин <pscorporation@mail.ru>>
+	* src/areafix.c (1.91): feature: FileFixEchoLimit patch by <Алексей
+	Сухотин <pscorporation@mail.ru>>
 
 2002-09-24 Tuesday 13:20  pgul
 
@@ -757,8 +832,8 @@
 
 2002-09-21 Saturday 09:47  d_sergienko
 
-	* FidoConfigKeywords (1.40), HISTORY (1.6), src/scan.c (1.24):
-	added FileFixNames functionality
+	* HISTORY (1.6), src/scan.c (1.24): added FileFixNames
+	functionality
 
 2002-09-21 Saturday 08:51  d_sergienko
 
@@ -766,13 +841,12 @@
 
 2002-09-20 Friday 17:30  d_sergienko
 
-	* FidoConfigKeywords (1.39), src/areafix.c (1.89): added
-	autoFileCreateFlag functionality
+	* src/areafix.c (1.89): added autoFileCreateFlag functionality
 
 2002-09-20 Friday 16:47  d_sergienko
 
-	* FidoConfigKeywords (1.38), misc/config (1.5), src/areafix.c
-	(1.88): replace areafixFromName to filefixFromName
+	* misc/config (1.5), src/areafix.c (1.88): replace areafixFromName
+	to filefixFromName
 
 2002-09-19 Thursday 08:45  sfpavel
 
@@ -842,8 +916,8 @@
 
 2002-09-02 Monday 15:37  mche
 
-	* FidoConfigKeywords (1.37), src/report.c (1.11): new tokens for
-	Htick's reports: AnnFileRFrom AnnFileOrigin
+	* src/report.c (1.11): new tokens for Htick's reports: AnnFileRFrom
+	AnnFileOrigin
 
 2002-08-30 Friday 12:14  mche
 
@@ -853,23 +927,14 @@
 
 	* misc/config (1.4): Small additions
 
-2002-08-29 Thursday 13:42  stas_degteff
-
-	* FidoConfigKeywords (1.36): Update previous fix
-
-2002-08-29 Thursday 13:39  stas_degteff
-
-	* FidoConfigKeywords (1.35): Fix documentation (OriginInAnnounce
-	description)
-
 2002-08-29 Thursday 13:30  sfpavel
 
 	* man/htick.1 (1.5), misc/config (1.3): Update sample config
 
 2002-08-29 Thursday 12:59  sfpavel
 
-	* debian/changelog (1.11), debian/dirs (1.3), debian/manpages
-	(1.2), debian/rules (1.9), man/htick.1 (1.4): New debian package
+	* debian/changelog (1.11), debian/dirs (1.3), debian/rules (1.9),
+	man/htick.1 (1.4): New debian package
 
 2002-08-29 Thursday 12:38  stas_degteff
 
@@ -899,8 +964,7 @@
 
 2002-08-26 Monday 13:33  d_sergienko
 
-	* FidoConfigKeywords (1.34), src/areafix.c (1.86): areafixFromName
-	feature
+	* src/areafix.c (1.86): areafixFromName feature
 
 2002-08-26 Monday 09:02  sfpavel
 
@@ -931,8 +995,8 @@
 
 2002-08-22 Thursday 11:02  sfpavel
 
-	* debian/: README.Debian (1.4), changelog (1.9), control (1.8),
-	copyright (1.3), docs (1.3), rules (1.7): New debian package
+	* debian/: changelog (1.9), control (1.8), copyright (1.3), docs
+	(1.3), rules (1.7): New debian package
 
 2002-08-22 Thursday 10:31  sfpavel
 
@@ -1031,9 +1095,9 @@
 
 2002-07-23 Tuesday 18:34  d.sergienko
 
-	* FidoConfigKeywords (1.33), src/areafix.c (1.75): + added ability
-	to autocreate directories when creating fileareas with selected
-	mode (token fileAreaCreatePerms)
+	* src/areafix.c (1.75): + added ability to autocreate directories
+	when creating fileareas with selected mode (token
+	fileAreaCreatePerms)
 
 2002-07-22 Monday 11:56  mche
 
@@ -1053,17 +1117,12 @@
 
 	* HISTORY (1.1): Add user-attention file
 
-2002-07-13 Saturday 16:36  stas
-
-	* FidoConfigKeywords (1.32): Correct documentation (cosmetic).
-
 2002-07-10 Wednesday 15:47  mche
 
 	* src/areafix.c (1.74), src/report.c (1.9), src/toss.c (1.200),
-	FidoConfigKeywords (1.31), h/toss.h (1.18): new tokens to Report
-	defenitions added "annmessflags" - flags like "k/s", "loc", "hld"
-	.... that will have announce message "annorigin" - origin for
-	definrd announce
+	h/toss.h (1.18): new tokens to Report defenitions added
+	"annmessflags" - flags like "k/s", "loc", "hld" .... that will have
+	announce message "annorigin" - origin for definrd announce
 
 2002-07-10 Wednesday 13:40  mche
 
@@ -1077,8 +1136,8 @@
 
 2002-07-09 Tuesday 16:45  mche
 
-	* src/clean.c (1.2), src/htick.c (1.65), FidoConfigKeywords (1.30),
-	h/htick.h (1.4), h/toss.h (1.17): added purging for file echos
+	* src/clean.c (1.2), src/htick.c (1.65), h/htick.h (1.4), h/toss.h
+	(1.17): added purging for file echos
 
 2002-07-08 Monday 15:59  mche
 
@@ -1096,11 +1155,6 @@
 
 	* src/seenby.c (1.9), h/seenby.h (1.7): fix cygwin compilation
 	warnings
-
-2002-07-06 Saturday 16:38  stas
-
-	* FidoConfigKeywords (1.29): Update documentation: add the
-	mandatory keyword & change 'manual' description
 
 2002-07-06 Saturday 16:30  stas
 
@@ -1155,14 +1209,13 @@
 
 2002-07-02 Tuesday 14:24  stas
 
-	* debian/: README.Debian (1.3), changelog (1.7), control (1.6),
-	dirs (1.2), huskymak.cfg (1.7), rules (1.5): Change debian control
-	files (like -stable)
+	* debian/: changelog (1.7), control (1.6), dirs (1.2), rules (1.5):
+	Change debian control files (like -stable)
 
 2002-07-02 Tuesday 14:21  stas
 
-	* BUGS.rus (1.3), INSTALL (1.5), Makefile (1.12), README (1.4):
-	Update documentation
+	* INSTALL (1.5), Makefile (1.12), README (1.4): Update
+	documentation
 
 2002-07-02 Tuesday 09:22  mche
 
@@ -1183,8 +1236,7 @@
 
 2002-07-01 Monday 12:35  mche
 
-	* src/report.c (1.4), src/toss.c (1.191), FidoConfigKeywords
-	(1.28): groups of announces
+	* src/: report.c (1.4), toss.c (1.191): groups of announces
 
 2002-06-30 Sunday 09:22  mche
 
@@ -1199,10 +1251,6 @@
 
 	* src/report.c (1.2), h/report.h (1.2), src/toss.c (1.190): reports
 	cosmetiq
-
-2002-06-29 Saturday 12:27  mche
-
-	* FidoConfigKeywords (1.27): added new tokens for htick announcer
 
 2002-06-29 Saturday 11:02  mche
 
@@ -1234,10 +1282,6 @@
 
 	* src/htick.c (1.61): new token "AnnounceSpool" added
 
-2002-06-26 Wednesday 12:31  mche
-
-	* FidoConfigKeywords (1.26): new token "AnnounceSpool" added
-
 2002-06-26 Wednesday 05:31  mche
 
 	* README (1.3): version changed
@@ -1254,10 +1298,6 @@
 
 	* src/areafix.c (1.70): "no access" reporting
 
-2002-06-16 Sunday 06:27  mche
-
-	* h/: pkt.h (1.7), strsep.h (1.2): no message
-
 2002-06-14 Friday 10:37  mche
 
 	* src/: areafix.c (1.69), toss.c (1.188): fix hatching from
@@ -1265,9 +1305,10 @@
 
 2002-06-13 Thursday 07:36  stas
 
-	* misc/: README (1.1), filefix.866 (1.1, htick-1_0_2-release,
-	htick-1_0-release), filefix.hlp (1.8, htick-1_0_2-release,
-	htick-1_0-release), st_htick.pl (1.1, htick-1_0_2-release,
+	* misc/: README (1.1), filefix.866 (1.1, htick-1_0_3-release,
+	htick-1_0_2-release, htick-1_0-release), filefix.hlp (1.8,
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release),
+	st_htick.pl (1.1, htick-1_0_3-release, htick-1_0_2-release,
 	htick-1_0-release): Add thick statistic generator; translate
 	filefix help to russian; change example for filefix help.
 
@@ -1277,12 +1318,8 @@
 
 2002-06-12 Wednesday 06:20  mche
 
-	* src/scan.c (1.23, htick-1_0_2-release, htick-1_0-release): fix
-	filefix scan
-
-2002-06-11 Tuesday 16:04  mche
-
-	* FidoConfigKeywords (1.25): RemoteFileRobotName
+	* src/scan.c (1.23, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release): fix filefix scan
 
 2002-06-11 Tuesday 11:14  mche
 
@@ -1294,13 +1331,13 @@
 
 2002-06-10 Monday 14:22  mche
 
-	* src/areafix.c (1.66), h/areafix.h (1.12, htick-1_0_2-release,
-	htick-1_0-release), misc/filefix.hlp (1.7): added %avail  command
-	to filefix
+	* src/areafix.c (1.66), h/areafix.h (1.12, htick-1_0_3-release,
+	htick-1_0_2-release, htick-1_0-release), misc/filefix.hlp (1.7):
+	added %avail  command to filefix
 
 2002-06-10 Monday 12:12  mche
 
-	* BUGS.rus (1.2), src/global.c (1.18): version was updated
+	* src/global.c (1.18): version was updated
 
 2002-06-10 Monday 06:05  mche
 
@@ -1308,18 +1345,15 @@
 
 2002-06-10 Monday 05:37  mche
 
-	* src/filelist.c (1.30, htick-1_0_2-release, htick-1_0-release):
-	fix filelist generation
-
-2002-06-10 Monday 05:26  mche
-
-	* FidoConfigKeywords (1.24): forwardrequests added
+	* src/filelist.c (1.30, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release): fix filelist generation
 
 2002-06-09 Sunday 12:28  mche
 
 	* win32/makefile.cyg (1.5, htick-1_0_2-release, htick-1_0-release),
-	src/add_desc.c (1.12, htick-1_0_2-release, htick-1_0-release),
-	src/scan.c (1.22), src/toss.c (1.187): remove cygwin warnings
+	src/add_desc.c (1.12, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release), src/scan.c (1.22), src/toss.c (1.187): remove
+	cygwin warnings
 
 2002-06-09 Sunday 12:16  mche
 
@@ -1334,8 +1368,8 @@
 2002-06-09 Sunday 08:53  mche
 
 	* src/filelist.c (1.29), src/hatch.c (1.54), src/toss.c (1.184),
-	h/toss.h (1.14, htick-1_0_2-release, htick-1_0-release): report
-	postin moved to filelist.c from toss.c
+	h/toss.h (1.14, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release): report postin moved to filelist.c from toss.c
 
 2002-06-09 Sunday 08:30  mche
 
@@ -1363,20 +1397,15 @@
 
 2002-06-06 Thursday 14:41  mche
 
-	* h/fcommon.h (1.17, htick-1_0_2-release, htick-1_0-release):
-	filearea option added: -nodiz Do not try to get description from
-	<fileDescName>
-
-2002-06-06 Thursday 14:35  mche
-
-	* FidoConfigKeywords (1.23): filearea option added: -nodiz Do not
-	try to get description from <fileDescName>
+	* h/fcommon.h (1.17, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release): filearea option added: -nodiz Do not try to get
+	description from <fileDescName>
 
 2002-06-06 Thursday 13:39  mche
 
 	* src/filelist.c (1.28), src/global.c (1.17), src/htick.c (1.58),
-	h/global.h (1.15, htick-1_0_2-release, htick-1_0-release): added
-	generation of dirlist
+	h/global.h (1.15, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release): added generation of dirlist
 
 2002-06-06 Thursday 13:38  mche
 
@@ -1391,8 +1420,8 @@
 2002-06-05 Wednesday 13:44  mche
 
 	* win32/: makefile.mvc (1.5), makefile.mvcdll (1.3) (utags:
-	htick-1_0_2-release, htick-1_0-release): some defines for anable
-	hardlinks in htick
+	htick-1_0_2-release, htick-1_0_3-release, htick-1_0-release): some
+	defines for anable hardlinks in htick
 
 2002-06-05 Wednesday 12:37  mche
 
@@ -1408,10 +1437,6 @@
 	* src/toss.c (1.178): get f-echo description from config if it
 	wasn't in tic-file
 
-2002-06-01 Saturday 12:36  mche
-
-	* FidoConfigKeywords (1.22): token SaveTic expanded
-
 2002-06-01 Saturday 12:22  mche
 
 	* src/toss.c (1.177): token SaveTic expanded
@@ -1419,10 +1444,10 @@
 2002-05-30 Thursday 14:26  stas
 
 	* src/: add_desc.c (1.11), areafix.c (1.60), fcommon.c (1.49),
-	filecase.c (1.5, htick-1_0_2-release, htick-1_0-release),
-	filelist.c (1.27), global.c (1.15), hatch.c (1.52), htick.c (1.56),
-	scan.c (1.19), seenby.c (1.7), toss.c (1.176): Add comments into
-	begin of each file (with revision ID).
+	filecase.c (1.5, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release), filelist.c (1.27), global.c (1.15), hatch.c
+	(1.52), htick.c (1.56), scan.c (1.19), seenby.c (1.7), toss.c
+	(1.176): Add comments into begin of each file (with revision ID).
 
 2002-05-30 Thursday 14:02  stas
 
@@ -1467,11 +1492,8 @@
 2002-05-18 Saturday 10:05  mche
 
 	* src/hatch.c (1.49), src/toss.c (1.170), h/hatch.h (1.5,
-	htick-1_0_2-release, htick-1_0-release): some code improvement
-
-2002-05-17 Friday 15:18  mche
-
-	* FidoConfigKeywords (1.21): no message
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release): some
+	code improvement
 
 2002-05-17 Friday 12:28  mche
 
@@ -1479,9 +1501,9 @@
 
 2002-05-17 Friday 05:59  mche
 
-	* FidoConfigKeywords (1.20), src/scan.c (1.18), src/toss.c (1.168):
-	new token for link  "LinkFileFaseDir" Where autocreated file echos
-	will be placed (may be "passthrough")
+	* src/: scan.c (1.18), toss.c (1.168): new token for link 
+	"LinkFileFaseDir" Where autocreated file echos will be placed (may
+	be "passthrough")
 
 2002-05-16 Thursday 09:54  pavel.gulchouck
 
@@ -1515,8 +1537,9 @@
 
 2002-05-14 Tuesday 12:16  mche
 
-	* src/filelist.c (1.26), h/filelist.h (1.8, htick-1_0_2-release,
-	htick-1_0-release): fix file date if stat() returns wrong date
+	* src/filelist.c (1.26), h/filelist.h (1.8, htick-1_0_3-release,
+	htick-1_0_2-release, htick-1_0-release): fix file date if stat()
+	returns wrong date
 
 2002-05-14 Tuesday 09:14  mche
 
@@ -1600,15 +1623,14 @@
 
 	* src/add_desc.c (1.5), src/areafix.c (1.56), src/fcommon.c (1.43),
 	src/filelist.c (1.25), src/hatch.c (1.47), src/toss.c (1.147),
-	h/add_desc.h (1.3, htick-1_0_2-release, htick-1_0-release),
-	h/areafix.h (1.7), h/pkt.h (1.6): A lot of fixed-length strings
-	bugfixs
+	h/add_desc.h (1.3, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release), h/areafix.h (1.7): A lot of fixed-length
+	strings bugfixs
 
 2002-05-03 Friday 12:32  mche
 
-	* src/areafix.c (1.55), src/toss.c (1.146), h/pkt.h (1.5):
-	createKludgesmoved to fidoconfig for common use in hpt htick
-	txt2pkt
+	* src/: areafix.c (1.55), toss.c (1.146): createKludgesmoved to
+	fidoconfig for common use in hpt htick txt2pkt
 
 2002-05-03 Friday 07:51  mche
 
@@ -1658,10 +1680,6 @@
 2002-04-11 Thursday 07:22  pavel.gulchouck
 
 	* src/toss.c (1.138): unused variable removed
-
-2002-04-09 Tuesday 16:31  mche
-
-	* src/strsep.c (1.4): no message
 
 2002-04-05 Friday 11:03  ml
 
@@ -1743,8 +1761,8 @@
 2002-03-15 Friday 11:28  mche
 
 	* src/global.c (1.13), src/htick.c (1.48), h/version.h (1.3,
-	htick-1_0_2-release, htick-1_0-release): changed version
-	enumeration
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release):
+	changed version enumeration
 
 2002-03-15 Friday 07:37  mche
 
@@ -1760,8 +1778,7 @@
 
 2002-03-05 Tuesday 00:27  joerg.jaspert
 
-	* debian/: changelog (1.6), control (1.5), huskymak.cfg (1.6): New
-	Debian Package built
+	* debian/: changelog (1.6), control (1.5): New Debian Package built
 
 2002-02-28 Thursday 08:57  mche
 
@@ -1784,9 +1801,10 @@
 2002-01-30 Wednesday 04:45  stas
 
 	* os2/makefile.wco (1.12), win32/makefile.bcw (1.7,
-	htick-1_0_2-release), win32/makefile.wcw (1.15,
-	htick-1_0_2-release) (utags: htick-1_0-release): Makefiles fix for
-	Borland & Watcom compilers (remove strsep.* from makefiles).
+	htick-1_0_3-release, htick-1_0_2-release), win32/makefile.wcw
+	(1.15, htick-1_0_3-release, htick-1_0_2-release) (utags:
+	htick-1_0-release): Makefiles fix for Borland & Watcom compilers
+	(remove strsep.* from makefiles).
 
 2002-01-27 Sunday 20:55  stas
 
@@ -1810,15 +1828,9 @@
 
 2002-01-26 Saturday 20:21  stas
 
-	* h/htick.h (1.3, htick-1_0_2-release, htick-1_0-release),
-	src/htick.c (1.41): Define log file name in htick.h (#define
-	LogFileName).
-
-2002-01-26 Saturday 20:14  stas
-
-	* h/crc32.h (1.3), h/log.h (1.8), h/recode.h (1.2), src/crc32.c
-	(1.6), src/log.c (1.7), src/recode.c (1.4): Remove obsoleted source
-	files (functions move to fidoconf package).
+	* h/htick.h (1.3, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release), src/htick.c (1.41): Define log file name in
+	htick.h (#define LogFileName).
 
 2002-01-26 Saturday 20:08  stas
 
@@ -1863,10 +1875,10 @@
 	htick-1_0-release), os2/makefile.emo (1.8, htick-1_0-release),
 	os2/makefile.emx (1.4, htick-1_0-release), os2/makefile.wco (1.8),
 	osf/makefile (1.4, htick-1_0-release), sun/makefile (1.6,
-	htick-1_0_2-release, htick-1_0-release), win32/makefile.bcw (1.3),
-	win32/makefile.cyg (1.3), win32/makefile.mvc (1.4),
-	win32/makefile.mvcdll (1.2), win32/makefile.wcw (1.11): adapted all
-	other makefiles
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release),
+	win32/makefile.bcw (1.3), win32/makefile.cyg (1.3),
+	win32/makefile.mvc (1.4), win32/makefile.mvcdll (1.2),
+	win32/makefile.wcw (1.11): adapted all other makefiles
 
 2002-01-25 Friday 10:19  d.sergienko
 
@@ -1891,8 +1903,8 @@
 
 2002-01-11 Friday 10:35  yagodkin
 
-	* FidoConfigKeywords (1.19), src/toss.c (1.118), win32/makefile.cyg
-	(1.2): added support for fileDescName
+	* src/toss.c (1.118), win32/makefile.cyg (1.2): added support for
+	fileDescName
 
 2002-01-05 Saturday 12:37  mche
 
@@ -1913,9 +1925,8 @@
 
 2002-01-02 Wednesday 12:17  ml
 
-	* h/log.h (1.7), src/areafix.c (1.45), src/fcommon.c (1.31),
-	src/htick.c (1.37), src/log.c (1.6), win32/makefile.cyg (1.1):
-	cygwin port
+	* src/areafix.c (1.45), src/fcommon.c (1.31), src/htick.c (1.37),
+	win32/makefile.cyg (1.1): cygwin port
 
 2001-12-12 Wednesday 10:28  ml
 
@@ -1954,25 +1965,22 @@
 
 2001-09-05 Wednesday 08:21  ml
 
-	* src/: add_desc.c (1.3), areafix.c (1.44), crc32.c (1.5),
-	fcommon.c (1.30), filelist.c (1.20), hatch.c (1.34), htick.c
-	(1.36), log.c (1.5), scan.c (1.13), toss.c (1.110): comment
-	createFlo(), createOutboundFileName() used -- fixed bug in
-	checkTmpDir() function when ASO outbound used and link is busy;
-	fixed another bug with freeing tic structure (if there is not .tic
-	file in busy.htk dir)
+	* src/: add_desc.c (1.3), areafix.c (1.44), fcommon.c (1.30),
+	filelist.c (1.20), hatch.c (1.34), htick.c (1.36), scan.c (1.13),
+	toss.c (1.110): comment createFlo(), createOutboundFileName() used
+	-- fixed bug in checkTmpDir() function when ASO outbound used and
+	link is busy; fixed another bug with freeing tic structure (if
+	there is not .tic file in busy.htk dir)
 
 2001-08-09 Thursday 23:03  joerg.jaspert
 
-	* debian/: changelog (1.5), control (1.4), huskymak.cfg (1.5):
-	Changed section to contrib.
+	* debian/: changelog (1.5), control (1.4): Changed section to
+	contrib.
 
 2001-07-05 Thursday 20:43  joerg.jaspert
 
-	* debian/: README.BUILD-DEB (1.3), README.Debian (1.2), changelog
-	(1.4), control (1.3), copyright (1.2), docs (1.2), htick.1 (1.2),
-	huskymak.cfg (1.4), manpages (1.1), rules (1.4): And now, htick
-	rebuild.
+	* debian/: changelog (1.4), control (1.3), copyright (1.2), docs
+	(1.2), rules (1.4): And now, htick rebuild.
 
 2001-05-29 Tuesday 14:09  ml
 
@@ -1986,14 +1994,15 @@
 
 2001-05-13 Sunday 19:22  wulf.krueger
 
-	* FidoConfigKeywords (1.18), INSTALL (1.4): 
+	* INSTALL (1.4): 
 	Modified Files: 	FidoConfigKeywords INSTALL
 	-------------------------------------------------------------------
 	--- - Added description for keyword "FileFixFSC87Subset"
 
 2001-05-13 Sunday 19:21  wulf.krueger
 
-	* .cvs2cl (1.1, htick-1_0_2-release, htick-1_0-release): 
+	* .cvs2cl (1.1, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release): 
 	Modified Files: 	ChangeLog Added Files:		.cvs2cl
 	-------------------------------------------------------------------
 	--
@@ -2009,15 +2018,15 @@
 
 2001-04-21 Saturday 15:24  joerg.jaspert
 
-	* debian/: changelog (1.3), control (1.2), huskymak.cfg (1.3),
-	rules (1.3): Turned debug on
+	* debian/: changelog (1.3), control (1.2), rules (1.3): Turned
+	debug on
 
-2001-04-18 Wednesday 21:47  tobi
+2001-04-18 Wednesday 21:48  tobi
 
-	* FidoConfigKeywords (1.17), src/toss.c (1.108): ----- cvs ci
-	------ Wed Apr 18 23:24:50 CEST 2001 tobi: * new keywords:
-	autofilecreatesubdirs and autoareacreatesubdirs   for creating
-	/filebase/gfd/app/comm/ instead of /filebase/gdb.app.comm/
+	* src/toss.c (1.108): ----- cvs ci ------ Wed Apr 18 23:24:50 CEST
+	2001 tobi: * new keywords: autofilecreatesubdirs and
+	autoareacreatesubdirs	for creating /filebase/gfd/app/comm/
+	instead of /filebase/gdb.app.comm/
 
 2001-04-14 Saturday 14:59  joerg.jaspert
 
@@ -2025,22 +2034,13 @@
 
 2001-04-14 Saturday 14:58  joerg.jaspert
 
-	* debian/huskymak.cfg (1.2): ONE huskymak in every debian-dir
-
-2001-04-14 Saturday 14:58  joerg.jaspert
-
 	* debian/changelog (1.2): smapi-change, htick-recompile
-
-2001-04-11 Wednesday 20:29  joerg.jaspert
-
-	* debian/README.BUILD-DEB (1.2): One thing was missing.
 
 2001-04-11 Wednesday 20:27  joerg.jaspert
 
-	* debian/: README.BUILD-DEB (1.1), README.Debian (1.1), changelog
-	(1.1), control (1.1), copyright (1.1), dirs (1.1), docs (1.1),
-	htick.1 (1.1), huskymak.cfg (1.1), rules (1.1): Files needed to
-	build Debian-Package
+	* debian/: changelog (1.1), control (1.1), copyright (1.1), dirs
+	(1.1), docs (1.1), rules (1.1): Files needed to build
+	Debian-Package
 
 2001-04-11 Wednesday 20:26  joerg.jaspert
 
@@ -2049,12 +2049,9 @@
 
 2001-04-05 Thursday 12:08  joerg.jaspert
 
-	* man/: README (1.1, htick-1_0_2-release, htick-1_0-release),
-	htick.1 (1.1): Small manpage for htick. Please check for errors.
-
-2001-03-19 Monday 16:43  georgi
-
-	* TODO.russian (1.5): not need
+	* man/: README (1.1, htick-1_0_3-release, htick-1_0_2-release,
+	htick-1_0-release), htick.1 (1.1): Small manpage for htick. Please
+	check for errors.
 
 2000-12-09 Saturday 07:47  ml
 
@@ -2133,13 +2130,9 @@
 	* VERSION (1.1): file VERSION was initially added on branch
 	htick-0_9.
 
-2000-07-13 Thursday 22:47  tobi
-
-	* src/crc32.c (1.4): merged fix from -stable
-
 2000-07-13 Thursday 21:59  tobi
 
-	* bsd/: makefile (1.4), makefile.bsd (1.2): bsd makefile fix
+	* bsd/makefile.bsd (1.2): bsd makefile fix
 
 2000-07-13 Thursday 21:58  tobi
 
@@ -2165,14 +2158,13 @@
 
 2000-07-13 Thursday 20:20  tobi
 
-	* Makefile (1.4), bsd/makefile (1.3), h/add_desc.h (1.2),
-	h/add_descr.h (1.5), linux/makefile.lnx (1.4), os2/makefile.bco
-	(1.2), os2/makefile.emo (1.7), os2/makefile.emx (1.2),
-	os2/makefile.wco (1.7), src/add_desc.c (1.2), src/add_descr.c
-	(1.21), src/filelist.c (1.19), src/hatch.c (1.33), src/htick.c
-	(1.32), src/toss.c (1.86), win32/makefile.bcw (1.2),
-	win32/makefile.mvc (1.3), win32/makefile.wcw (1.10): renamed
-	add_descr.* -> add_desc.* (8.3 ...)
+	* Makefile (1.4), h/add_desc.h (1.2), linux/makefile.lnx (1.4),
+	os2/makefile.bco (1.2), os2/makefile.emo (1.7), os2/makefile.emx
+	(1.2), os2/makefile.wco (1.7), src/add_desc.c (1.2), src/filelist.c
+	(1.19), src/hatch.c (1.33), src/htick.c (1.32), src/toss.c (1.86),
+	win32/makefile.bcw (1.2), win32/makefile.mvc (1.3),
+	win32/makefile.wcw (1.10): renamed add_descr.* -> add_desc.* (8.3
+	...)
 
 2000-07-13 Thursday 20:16  tobi
 
@@ -2204,9 +2196,8 @@
 2000-06-17 Saturday 18:51  tobi
 
 	* src/areafix.c (1.38, htick-0_9a-release), src/fcommon.c (1.25,
-	htick-0_9a-release), src/htick.c (1.30), src/strsep.c (1.3,
-	htick-0_9a-release), win32/makefile.bcw (1.1): Modifications for
-	Borland C for Win32
+	htick-0_9a-release), src/htick.c (1.30), win32/makefile.bcw (1.1):
+	Modifications for Borland C for Win32
 
 2000-06-04 Sunday 21:41  tobi
 
@@ -2254,19 +2245,13 @@
 	hatch.c (1.26), toss.c (1.66): changed htick code according to new
 	writeLogEntry
 
-2000-04-30 Sunday 22:48  nestyurkin.nikolay
-
-	* src/log.c (1.4), h/log.h (1.6) (utags: htick-0_9a-release): new
-	writeLogEntry, like in hpt
-
 2000-04-28 Friday 22:37  nestyurkin.nikolay
 
 	* src/toss.c (1.65): announce & execonfile fix
 
 2000-04-24 Monday 18:33  sms
 
-	* Makefile (1.1), makefile.husky (1.5): renamed makefile.husky to
-	Makefile
+	* Makefile (1.1): renamed makefile.husky to Makefile
 
 2000-04-17 Monday 15:40  tobi
 
@@ -2279,14 +2264,14 @@
 2000-04-15 Saturday 18:09  tobi
 
 	* h/fcommon.h (1.6), h/filelist.h (1.5), h/global.h (1.9),
-	h/hatch.h (1.4, htick-0_9a-release), h/log.h (1.5), h/pkt.h (1.3,
-	htick-0_9a-release), h/scan.h (1.3, htick-1_0_2-release,
-	htick-1_0-release, htick-0_9a-release), h/seenby.h (1.5,
-	htick-0_9a-release), src/add_descr.c (1.18), src/areafix.c (1.32),
-	src/fcommon.c (1.13), src/filelist.c (1.15), src/hatch.c (1.25),
-	src/htick.c (1.19), src/scan.c (1.11, htick-0_9a-release),
-	src/seenby.c (1.6, htick-0_9a-release), src/toss.c (1.64): fixed
-	include statements to match new 8.3 filenames
+	h/hatch.h (1.4, htick-0_9a-release), h/scan.h (1.3,
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release,
+	htick-0_9a-release), h/seenby.h (1.5, htick-0_9a-release),
+	src/areafix.c (1.32), src/fcommon.c (1.13), src/filelist.c (1.15),
+	src/hatch.c (1.25), src/htick.c (1.19), src/scan.c (1.11,
+	htick-0_9a-release), src/seenby.c (1.6, htick-0_9a-release),
+	src/toss.c (1.64): fixed include statements to match new 8.3
+	filenames
 
 2000-04-14 Friday 11:57  nestyurkin.nikolay
 
@@ -2297,19 +2282,14 @@
 	* src/toss.c (1.63): * removed check of groupaccess on import and
 	export of files
 
-2000-03-12 Sunday 15:30  tobi
-
-	* makefile.husky (1.4): makefile fixes
-
 2000-03-09 Thursday 16:27  sms
 
-	* makefile.husky (1.3), h/fcommon.h (1.5), h/filelist.h (1.4),
-	h/global.h (1.8), h/hatch.h (1.3), h/log.h (1.4), h/pkt.h (1.2),
-	h/scan.h (1.2), h/seenby.h (1.4), src/add_descr.c (1.17),
-	src/areafix.c (1.31), src/fcommon.c (1.12), src/filelist.c (1.14),
-	src/hatch.c (1.24), src/htick.c (1.17), src/scan.c (1.10),
-	src/seenby.c (1.5), src/toss.c (1.62): moved smapi and fidoconfig
-	headers to INCDIR/smapi and INCDIR/fidoconfig
+	* h/fcommon.h (1.5), h/filelist.h (1.4), h/global.h (1.8),
+	h/hatch.h (1.3), h/scan.h (1.2), h/seenby.h (1.4), src/areafix.c
+	(1.31), src/fcommon.c (1.12), src/filelist.c (1.14), src/hatch.c
+	(1.24), src/htick.c (1.17), src/scan.c (1.10), src/seenby.c (1.5),
+	src/toss.c (1.62): moved smapi and fidoconfig headers to
+	INCDIR/smapi and INCDIR/fidoconfig
 
 2000-02-21 Monday 21:43  henk-jan.krueger
 
@@ -2325,39 +2305,19 @@
 	requested, the tic.crc value is adjusted to the real file CRC32
 	value (instead of leaving it alone).
 
-2000-02-10 Thursday 12:36  simon.soltek
-
-	* FidoConfigKeywords (1.6): final noCRC, noTIC keywords
-	implementation
-
 2000-02-10 Thursday 12:35  simon.soltek
 
 	* src/toss.c (1.49): final noTIC, noCRC keyword implementation
 
 2000-01-28 Friday 20:42  sms
 
-	* makefile.husky (1.2), src/areafix.c (1.27), src/toss.c (1.45):
-	changed groups from chars to strings
-
-2000-01-28 Friday 14:03  sms
-
-	* makefile.husky (1.1), linux/makefile.husky (1.3): move
-	makefile.husky from htick/linux to htick
+	* src/: areafix.c (1.27), toss.c (1.45): changed groups from chars
+	to strings
 
 2000-01-28 Friday 13:57  sms
 
 	* linux/makefile.lnx (1.2): removed huskymak.cfg dependency from
 	makefile.lnx, created/updated makefile.husky for pascal programs
-
-2000-01-22 Saturday 23:42  sms
-
-	* linux/makefile.husky (1.2): Updated makefile.husky and
-	huskymak.cfg
-
-2000-01-22 Saturday 11:00  sms
-
-	* linux/makefile.husky (1.1): Created/Updated makefile.husky and
-	huskymak.cfg
 
 2000-01-18 Tuesday 21:21  sms
 
@@ -2370,8 +2330,7 @@
 
 2000-01-01 Saturday 21:19  tobi
 
-	* src/: areafix.c (1.23), recode.c (1.3, htick-0_9a-release),
-	toss.c (1.41): Romved some warnings.
+	* src/: areafix.c (1.23), toss.c (1.41): Romved some warnings.
 
 1999-12-18 Saturday 16:56  georgi
 
@@ -2405,8 +2364,8 @@
 
 1999-10-14 Thursday 16:07  sms
 
-	* linux/: makefile (1.11), makefile.lnx (1.1): reorganized
-	Makefiles, read husky-common/README.Makefiles \!\!\!
+	* linux/makefile.lnx (1.1): reorganized Makefiles, read
+	husky-common/README.Makefiles \!\!\!
 
 1999-10-14 Thursday 15:40  sms
 
@@ -2431,21 +2390,16 @@
 
 	* src/hatch.c (1.12): Fixed data corruption in hatch.c !?!
 
-1999-09-30 Thursday 11:59  tobi
-
-	* src/add_descr.c (1.9): Fixed data corruption in add_desc.c !?!
-
 1999-09-30 Thursday 11:56  tobi
 
 	* src/toss.c (1.32): Fixed data corruption in toss.c !?!
 
 1999-09-30 Thursday 11:38  tobi
 
-	* bsd/makefile (1.1), src/add_descr.c (1.8), src/filelist.c (1.7),
-	src/hatch.c (1.11), src/toss.c (1.31): * Fixed case sensitivity
-	problems.  Now all files are found no matter   how they are
-	spelled, but new files are always created with lower case.  * Added
-	FreeBSD port
+	* src/: filelist.c (1.7), hatch.c (1.11), toss.c (1.31): * Fixed
+	case sensitivity problems.  Now all files are found no matter	how
+	they are spelled, but new files are always created with lower case.
+	 * Added FreeBSD port
 
 1999-09-03 Friday 20:53  tobi
 
@@ -2492,14 +2446,6 @@
 
 	* src/toss.c (1.26): fixed bug in checkTmpDir
 
-1999-07-23 Friday 06:25  georgi
-
-	* FidoConfigKeywords (1.2): added PassFileAreaDir
-
-1999-07-23 Friday 06:24  georgi
-
-	* TODO.russian (1.1): TODO in russian language
-
 1999-07-21 Wednesday 07:41  georgi
 
 	* src/toss.c (1.25): bugfix and support Passthrough fileareas
@@ -2524,10 +2470,6 @@
 
 	* src/fcommon.c (1.7): small change in createOutboundFileName
 
-1999-07-21 Wednesday 07:30  georgi
-
-	* src/add_descr.c (1.5): bugfix in removeDesc; added getDesc
-
 1999-07-21 Wednesday 07:28  georgi
 
 	* misc/filefix.hlp (1.6, htick-0_9a-release), src/areafix.c (1.13):
@@ -2541,10 +2483,6 @@
 
 	* h/global.h (1.5): support "htick send"
 
-1999-07-21 Wednesday 07:24  georgi
-
-	* h/add_descr.h (1.4): int getDesc()
-
 1999-07-17 Saturday 11:47  georgi
 
 	* src/areafix.c (1.11): FileFix now support mask
@@ -2556,10 +2494,6 @@
 1999-07-16 Friday 05:35  georgi
 
 	* src/areafix.c (1.10): small change in %QUERY
-
-1999-07-15 Thursday 06:52  georgi
-
-	* src/add_descr.c (1.4): small bugfix - if description not found
 
 1999-07-15 Thursday 06:48  georgi
 
@@ -2605,10 +2539,6 @@
 
 	* src/scan.c (1.4): adding "AllFix" robot name
 
-1999-06-23 Wednesday 11:03  georgi
-
-	* src/recode.c (1.1): adding recoding
-
 1999-06-23 Wednesday 11:02  georgi
 
 	* src/htick.c (1.4): change command line
@@ -2630,19 +2560,6 @@
 
 	* src/fcommon.c (1.3): don't free "flo" file name
 
-1999-06-23 Wednesday 10:56  georgi
-
-	* src/crc32.c (1.1): adding support CRC
-
-1999-06-23 Wednesday 10:55  georgi
-
-	* src/add_descr.c (1.3): adding removeDesc, announceInFile,
-	announceNewFileecho
-
-1999-06-23 Wednesday 10:53  georgi
-
-	* linux/makefile (1.6): adding recode, crc32, hatch, filelist
-
 1999-06-23 Wednesday 10:52  georgi
 
 	* h/toss.h (1.2): adding header some function
@@ -2650,11 +2567,6 @@
 1999-06-23 Wednesday 10:51  georgi
 
 	* h/seenby.h (1.3): change seenbyComp
-
-1999-06-23 Wednesday 10:50  georgi
-
-	* h/recode.h (1.1, htick-0_9a-release): support for reconing field
-	Desc in TIC (for Region 50 fidonet)
 
 1999-06-23 Wednesday 10:48  georgi
 
@@ -2674,21 +2586,11 @@
 	* h/fcommon.h (1.2): adding multi line Desc in TIC (for Region 50
 	fidonet); change type CRC (unsigned long)
 
-1999-06-23 Wednesday 10:42  georgi
-
-	* h/crc32.h (1.1): adding CRC support
-
-1999-06-23 Wednesday 10:40  georgi
-
-	* h/add_descr.h (1.3): add announce in file, remove desc in
-	files.bbs
-
 1999-05-11 Tuesday 19:00  mt
 
-	* h/global.h (1.2), h/log.h (1.2), src/areafix.c (1.4),
-	src/fcommon.c (1.2), src/global.c (1.2), src/htick.c (1.3),
-	src/log.c (1.2), src/scan.c (1.2), src/toss.c (1.9),
-	os2/makefile.emo (1.1): new patches from oleg
+	* h/global.h (1.2), src/areafix.c (1.4), src/fcommon.c (1.2),
+	src/global.c (1.2), src/htick.c (1.3), src/scan.c (1.2), src/toss.c
+	(1.9), os2/makefile.emo (1.1): new patches from oleg
 
 1999-04-29 Thursday 07:09  gabriel
 
@@ -2705,18 +2607,13 @@
 
 1999-04-24 Saturday 15:50  gabriel
 
-	* CREDITS (1.2), linux/makefile (1.4), src/htick.c (1.2),
-	src/toss.c (1.6):  + seenbys added
-
-1999-04-24 Saturday 12:05  gabriel
-
-	* h/add_descr.h (1.1), src/add_descr.c (1.1): files forgotten by
-	antonio added
+	* CREDITS (1.2), src/htick.c (1.2), src/toss.c (1.6):  + seenbys
+	added
 
 1999-04-24 Saturday 12:01  gabriel
 
-	* linux/makefile (1.3), src/toss.c (1.5): By Alex Erzin, checked in
-	by Gabriel  + files.bbs files supported
+	* src/toss.c (1.5): By Alex Erzin, checked in by Gabriel  +
+	files.bbs files supported
 
 1999-04-11 Sunday 15:52  antonio.perez
 
@@ -2726,10 +2623,6 @@
 1999-03-22 Monday 12:31  gabriel
 
 	* src/toss.c (1.3):   + Support for Magic Tag
-
-1999-03-21 Sunday 19:33  gabriel
-
-	* linux/makefile (1.2): makefile
 
 1999-03-21 Sunday 19:17  gabriel
 
@@ -2744,8 +2637,4 @@
 	  Commented out lines with tossgrp in it, in order to let htick
 	compilable
 	  with the new fidoconfig version
-
-1999-03-03 Wednesday 08:06  tw
-
-	* htick.tar.gz (1.1): Initial revision
 
