@@ -1,3 +1,15 @@
+2002-08-27 Tuesday 07:48  mche
+
+	* src/toss.c (1.206): process keyword 'replace' only for tossing
+
+2002-08-27 Tuesday 07:40  mche
+
+	* src/hatch.c (1.63): fix memoryleak that makes htick coredump
+
+2002-08-27 Tuesday 07:14  mche
+
+	* src/areafix.c (1.87): fix AutoFileCreateDefaults substitution
+
 2002-08-26 Monday 13:33  d_sergienko
 
 	* FidoConfigKeywords (1.34), src/areafix.c (1.86): areafixFromName
