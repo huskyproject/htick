@@ -69,6 +69,13 @@
 #include <crc32.h>
 #include <filecase.h>
 
+#ifdef __EMX__
+#include <sys/types.h>
+#ifndef _A_HIDDEN
+#define _A_HIDDEN A_HIDDEN
+#endif
+#endif
+
 s_newfilereport **newFileReport = NULL;
 unsigned newfilesCount = 0;
 
@@ -1195,6 +1202,22 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    return(0);
 }
 
+#if !defined(UNIX)
+
+int hidden (char *filename)
+{
+   unsigned fattrs;
+
+#if defined(__TURBOC__) || defined(__DJGPP__)
+   _dos_getfileattr(filename, &fattrs);
+#else
+   fattrs = (GetFileAttributes(filename) & 0x2) ? _A_HIDDEN : 0;
+#endif
+   return fattrs & _A_HIDDEN;
+}
+#endif
+
+
 int processTic(char *ticfile, e_tossSecurity sec)
 {
    s_ticfile tic;
@@ -1306,6 +1329,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
       }
    }
 
+#if !defined(UNIX)
+   if(hidden(ticedfile)) {
+      writeLogEntry(htick_log,'6',"File %s from filearea %s not completely received, wait",tic.file,tic.area);
+      disposeTic(&tic);
+      return(5);
+   }
+#endif
+
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
    if (!tic.size) {
@@ -1387,32 +1418,39 @@ void processDir(char *directory, e_tossSecurity sec)
 #ifdef DEBUG_HPT
       printf("testing %s\n", file->d_name);
 #endif
+
       if (patimat(file->d_name, "*.TIC") == 1) {
          dummy = (char *) smalloc(strlen(directory)+strlen(file->d_name)+1);
          strcpy(dummy, directory);
          strcat(dummy, file->d_name);
 
-         rc=processTic(dummy,sec);
-
-         switch (rc) {
-            case 1:  /* pktpwd problem */
-               changeFileSuffix(dummy, "sec");
-               break;
-            case 2:  /* could not open file */
-               changeFileSuffix(dummy, "acs");
-               break;
-            case 3:  /* not/wrong pkt */
-               changeFileSuffix(dummy, "bad");
-               break;
-            case 4:  /* not to us */
-               changeFileSuffix(dummy, "ntu");
-               break;
-            case 5:  /* file not recieved */
-               break;
-            default:
-               remove (dummy);
-               break;
-         } /* switch */
+#if !defined(UNIX)
+         if (!hidden(dummy)) {
+#endif
+            rc=processTic(dummy,sec);
+   
+            switch (rc) {
+               case 1:  /* pktpwd problem */
+                  changeFileSuffix(dummy, "sec");
+                  break;
+               case 2:  /* could not open file */
+                  changeFileSuffix(dummy, "acs");
+                  break;
+               case 3:  /* not/wrong pkt */
+                  changeFileSuffix(dummy, "bad");
+                  break;
+               case 4:  /* not to us */
+                  changeFileSuffix(dummy, "ntu");
+                  break;
+               case 5:  /* file not recieved */
+                  break;
+               default:
+                  remove (dummy);
+                  break;
+            } /* switch */
+#if !defined(UNIX)
+         }
+#endif
          nfree(dummy);
       } /* if */
    } /* while */
