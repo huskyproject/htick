@@ -1241,10 +1241,10 @@ int processFileFix(s_message *msg)
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:
-					RetMsg(msg, link, preport, "list request");
+					RetMsg(msg, link, preport, "FileFix reply: list request");
 					break;
 				case HELP:
-					RetMsg(msg, link, preport, "help request");
+					RetMsg(msg, link, preport, "FileFix reply: help request");
 					break;
 				case ADD:
 					if (report == NULL) report = textHead();
@@ -1255,24 +1255,24 @@ int processFileFix(s_message *msg)
 					report = areastatus(preport, report);
 					break;
 				case UNLINK:
-					RetMsg(msg, link, preport, "unlinked request");
+					RetMsg(msg, link, preport, "FileFix reply: unlinked request");
 					break;
 				case LINKED:
-					RetMsg(msg, link, preport, "linked request");
+					RetMsg(msg, link, preport, "FileFix reply: linked request");
 					sprintf(tmp,"FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
 					writeLogEntry(htick_log, '8', tmp);
 					break;
 				case PAUSE:
-					RetMsg(msg, link, preport, "node change request");
+					RetMsg(msg, link, preport, "FileFix reply: node change request");
 					break;
 				case RESUME:
-					RetMsg(msg, link, preport, "node change request");
+					RetMsg(msg, link, preport, "FileFix reply: node change request");
 					break;
 				case INFO:
-					RetMsg(msg, link, preport, "link information");
+					RetMsg(msg, link, preport, "FileFix reply: link information");
 					break;
 				case RESEND:
-					RetMsg(msg, link, preport, "resend request");
+					RetMsg(msg, link, preport, "FileFix reply: resend request");
  					break;
 				case ERROR:
 					if (report == NULL) report = textHead();
