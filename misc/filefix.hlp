@@ -1,5 +1,19 @@
 Here's some help about how you can use FileFix to change your fileareas.
 
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+%list		list of fileareas avialable
+%help		what are you reading, pal? :)
+%unlinked       list of unlinked fileareas
+%pause          stop recieve files
+%resume         recieved files again
++<echotag>	subscribe filearea
+<echotag>	the same
+-<echotag>	unsubscribe filearea
+
+attention!	all other lines are *ignored*
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+
+
 Example:
 
  Msg  : 5 of 8                             Pvt
