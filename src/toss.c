@@ -1818,7 +1818,7 @@ void cleanPassthroughDir(void)
     unsigned int filesCount = 0, i, busy;
     char tmpdir[256];
 
-   writeLogEntry(htick_log,'6',"Purging files in passthrough dir");
+   writeLogEntry(htick_log, LL_INFO, "Start clean (purging files in passthrough dir)...");
 
    /* check busyFileDir */
    strcpy(tmpdir, config->busyFileDir);
@@ -2212,7 +2212,7 @@ void reportNewFiles()
 void toss()
 {
 
-   writeLogEntry(htick_log, '4', "Start tossing...");
+   writeLogEntry(htick_log, LL_INFO, "Start tossing...");
 
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);

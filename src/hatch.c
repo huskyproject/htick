@@ -29,13 +29,14 @@ void hatch()
    newFileReport = NULL;
    newfilesCount = 0;
 
+   writeLogEntry(htick_log, LL_INFO, "Start file hatch...");
 
    memset(&tic,0,sizeof(tic));
 
    // Exist file?
    adaptcase(hatchfile);
    if (!fexist(hatchfile)) {
-       writeLogEntry(htick_log,'6',"File %s, not found",hatchfile);
+       writeLogEntry(htick_log,LL_ALERT,"File %s, not found",hatchfile);
        disposeTic(&tic);
        return;
    }
@@ -98,6 +99,8 @@ int send(char *filename, char *area, char *addr)
     time_t acttime;
     int busy;
     FILE *flohandle;
+
+   writeLogEntry(htick_log, LL_INFO, "Start file send (%s in %s to %s)...",filename,area,addr);
 
    filearea=getFileArea(config,area);
    if (filearea == NULL) {

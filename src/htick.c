@@ -260,14 +260,8 @@ void processConfig()
      buff = (char *) smalloc(strlen(config->logFileDir)+strlen(LogFileName)+1);
      strcpy(buff, config->logFileDir),
      strcat(buff, LogFileName);
-/*     if (config->loglevels==NULL)
-        htick_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
-       else
-       htick_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
-*/
      htick_log = openLog(buff, versionStr, config);
      if (htick_log && quiet) htick_log->logEcho = 0;
-
    } else
        fprintf(stderr, "You have no logFileDir in your config, there will be no log created");
 
@@ -343,12 +337,12 @@ int main(int argc, char **argv)
 
    checkTmpDir();
 
-   if (1 == cmToss) toss();
-   if (cmScan == 1) scan();
-   if (cmHatch == 1) hatch();
-   if (cmSend == 1) send(sendfile, sendarea, sendaddr);
-   if (cmFlist == 1) filelist();
-   if (cmClean == 1) cleanPassthroughDir();
+   if (cmScan) scan();
+   if (cmToss) toss();
+   if (cmHatch) hatch();
+   if (cmSend) send(sendfile, sendarea, sendaddr);
+   if (cmFlist) filelist();
+   if (cmClean) cleanPassthroughDir();
 
    // deinit SMAPI
    MsgCloseApi();

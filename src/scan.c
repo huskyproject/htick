@@ -193,6 +193,7 @@ void scan(void)
 {
    s_area *afixarea;
 
+  writeLogEntry(htick_log, LL_INFO, "Start filefix scan...");
   if ((afixarea = getNetMailArea(config, config->robotsArea)) == NULL) {
      afixarea = &(config->netMailAreas[0]);
   }

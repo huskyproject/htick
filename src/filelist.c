@@ -262,6 +262,8 @@ void filelist()
     FILE *f;
     int i;
 
+   writeLogEntry(htick_log, LL_INFO, "Start filelist...");
+
    if (strlen(flistfile) == 0) {
       writeLogEntry(htick_log,'6',"Not found output file");
       return;
