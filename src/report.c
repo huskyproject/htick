@@ -138,16 +138,17 @@ void getReportInfo()
         if( parseTic( fname, &tmptic ) && tmptic.area && tmptic.file )
         {
             Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
+            memset(&(Report[rCount]),0,sizeof(s_ticfile));    
             Report[rCount].area = sstrdup( tmptic.area );
             Report[rCount].file = sstrdup( tmptic.file );
             Report[rCount].anzdesc = tmptic.anzdesc;
-            Report[rCount].desc = scalloc(sizeof(tmptic.desc),tmptic.anzdesc);
+            Report[rCount].desc = scalloc(sizeof(char*),tmptic.anzdesc);
             for( i = 0; i < tmptic.anzdesc; i++)
             {
                 Report[rCount].desc[i]=sstrdup(tmptic.desc[i]);
             }
             Report[rCount].anzldesc = tmptic.anzldesc;
-            Report[rCount].ldesc = scalloc(sizeof(tmptic.ldesc),tmptic.anzldesc);
+            Report[rCount].ldesc = scalloc(sizeof(char*),tmptic.anzldesc);
             for( i = 0; i < tmptic.anzldesc; i++)
             {
                 Report[rCount].ldesc[i]=sstrdup(tmptic.ldesc[i]);
