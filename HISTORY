@@ -50,6 +50,7 @@ Changes between htick-1.0-stable and htick-1.4-stable
    - save modification time for files in fileechoes;
    - set 'Loc' flag on messages from FileFix.
    - fixed crash while clean on passthrough areas with -p defined
+   - replace char 026 in ldesc to space. some programs think that 026 is EOF.
 
 
 

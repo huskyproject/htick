@@ -59,7 +59,7 @@ distclean: clean
 install: htick$(EXE)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(BINDIR)
 	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(MAN1DIR)
-	$(ECHO) To install documentation: change directory to doc and run make install
+	@$(ECHO) To install documentation: change directory to doc and run make install
 
 uninstall:
 	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)htick$(EXE)
