@@ -2,6 +2,13 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
+Sat Jan 22 15:38:40 2000
+* added support tokens FileDescPos and FileLDescString
+Georgi:
+* fixed segmentation fault if field Desc in TIC > 255 chars
+
+----- cvs ci ------
 max(patch from Srguei Revtov):
 Sun Jan 16 17:21:40 NOVT 2000
 * recode under NT (Alex Bronin 2:5049/36)

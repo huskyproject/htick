@@ -48,7 +48,6 @@
 #define ERROR   255
 
 
-char *print_ch(int len, char ch);
 s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, char netmail);
 void freeMsgBuff(s_message *msg);
 int processFileFix(s_message *msg);

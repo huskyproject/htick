@@ -37,6 +37,8 @@
 extern s_log     *htick_log;
 extern s_fidoconfig *config;
 
+char *print_ch(int len, char ch);
+
 // variables for config statements
 
 // variables for commandline statements

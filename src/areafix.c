@@ -75,15 +75,6 @@ int strncasesearch(char *strL, char *strR, int len)
     return ret;
 }
 
-char *print_ch(int len, char ch)
-{
-    static char tmp[256];
-    
-    memset(tmp, ch, len);
-    tmp[len]=0;
-    return tmp;
-}
-
 char *errorRQ(char *line)
 {
    char *report, err[] = "Error line";

@@ -29,9 +29,19 @@
  *****************************************************************************/
 
 #include <global.h>
+#include <string.h>
 
 s_log     *htick_log;
 s_fidoconfig *config;
+
+char *print_ch(int len, char ch)
+{
+    static char tmp[256];
+    
+    memset(tmp, ch, len);
+    tmp[len]=0;
+    return tmp;
+}
 
 const int VER_MAJOR = 0;
 const int VER_MINOR = 03;

@@ -13,7 +13,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 {
    FILE *descr_file;
    int i;
-   char desc_line[265], namefile[50];
+   char *desc_line, namefile[50];
    
    descr_file = fopen (descr_file_name, "a");
    if (descr_file == NULL) return 1;
@@ -21,12 +21,19 @@ int add_description (char *descr_file_name, char *file_name, char **description,
    strLower(namefile);
    fprintf (descr_file, "%-12s", namefile);
    for (i=0;i<count_desc;i++) {
-      strcpy(desc_line,description[i]);
+      desc_line = strdup(description[i]);
       if (config->intab != NULL) recodeToInternalCharset(desc_line);
       if (i==0)
          fprintf(descr_file," %s\n",desc_line);
-      else
-         fprintf(descr_file,"             %s\n",desc_line);
+      else {
+         if (config->fileDescPos == 0 )
+	    config->fileDescPos = 1;
+	 if (config->fileLDescString == NULL) 
+	    strcpy(config->fileLDescString, "");
+         fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '), 
+	         config->fileLDescString, desc_line);
+      }
+      free(desc_line);
    }
    if (count_desc == 0) fprintf(descr_file,"\n");
    fclose (descr_file);
