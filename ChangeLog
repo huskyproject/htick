@@ -1,3 +1,8 @@
+2002-06-02 Sunday 11:27  mche
+
+	* src/toss.c (1.178): get f-echo description from config if it
+	wasn't in tic-file
+
 2002-06-01 Saturday 14:36  mche
 
 	* FidoConfigKeywords (1.22): token SaveTic expanded
