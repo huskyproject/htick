@@ -1,12 +1,12 @@
 CC      = cc
 INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
-LIBDIR  = /usr/local/lib
+LIBDIR  = /home/fido/lib
 
 OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o recode.o crc32.o hatch.o filelist.o
 SRC_DIR = ../src/
 
-CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -O3 -DUNIX
+CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -g  -DUNIX
 LFLAGS  = -L$(LIBDIR)
 
 

@@ -47,7 +47,7 @@
 #include <toss.h>
 #include <patmat.h>
 
-#include <dir.h>
+#include <dirlayer.h>
 
 #include <msgapi.h>
 #include <typedefs.h>

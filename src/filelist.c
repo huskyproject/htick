@@ -11,7 +11,7 @@
 #include <common.h>
 #include <progprot.h>
 #include <add_descr.h>
-#include <dir.h>
+#include <dirlayer.h>
 #include <adcase.h>
 
 unsigned long totalfilessize = 0;
