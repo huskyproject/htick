@@ -383,7 +383,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         if (token) {
             key = strcrc16(strUpper(token), 0);
             /* calculate crc16 of tic                                   */
-            w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);/**/
+            /* w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);  */
             param=stripLeadingChars(strtok(NULL, "\0"), "\t");
             if(!param)
             {
