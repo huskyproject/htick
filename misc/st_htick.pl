@@ -52,21 +52,35 @@ while (<LOG>) {
         }
         next;
     }
+## log format changed ##################
+#    if ($from) {
+#        if (/Size: (\d+)/) {
+#            $totals += $1;
+#            $totalq++;
+#            $cur_size = $1;
+#        };
+#        if (/Area: (\S+)/) {
+#            $areaq{"\U$1"}++;
+#            $areas{"\U$1"} += $cur_size;
+#        };
+#        if (/From: (\S+)/) {
+#            $linkq{$1}++;
+#            $links{$1} += $cur_size;
+#        }
+#    }
+# ######################################
     if ($from) {
-        if (/Size: (\d+)/) {
+        if (/size: (\d+) area: (\S+) from: (\S+)/) {
             $totals += $1;
             $totalq++;
             $cur_size = $1;
-        };
-        if (/Area: (\S+)/) {
-            $areaq{"\U$1"}++;
-            $areas{"\U$1"} += $cur_size;
-        };
-        if (/From: (\S+)/) {
-            $linkq{$1}++;
-            $links{$1} += $cur_size;
+            $areaq{"\U$2"}++;
+            $areas{"\U$2"} += $cur_size;
+            $linkq{$3}++;
+            $links{$3} += $cur_size;
         }
     }
+
 }
 close LOG || die "Can't close $logname: $!";;
 
