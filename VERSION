@@ -1,2 +1,3 @@
-htick 1.1-current
-Required: smapi 2.3-current, fidoconf 0.15-current
+htick 1.3.0-current
+cvs tag: HEAD
+required: fidoconfig 1.3-current, smapi 2.3-current
