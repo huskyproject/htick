@@ -1,3 +1,17 @@
+2002-11-21 Thursday 12:44  stas_degteff
+
+	* doc/htick-FAQ.russian (1.1): Add russian FAQ for HTICK
+
+2002-11-21 Thursday 10:08  mche
+
+	* src/report.c (1.32): default for annaddrfrom is taken from
+	AreaToPost->useAka
+
+2002-11-21 Thursday 07:29  stas_degteff
+
+	* doc/htick.texi (1.14): Add exapmles: unrar for rar-sfx/dos and
+	unzipm pkunzip, pkzip25 decompressors
+
 2002-11-20 Wednesday 10:12  stas_degteff
 
 	* doc/htick.texi (1.13): Fix spelling (about long name)
