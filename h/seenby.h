@@ -4,6 +4,6 @@
 #include <fidoconfig.h>
 #include <fcommon.h>
 
-int seenbyComp ( s_ticfile *tic, s_addr Aka);
+int seenbyComp ( s_addr *seenby, int anzseenby, s_addr Aka);
 
 #endif
