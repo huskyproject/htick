@@ -1,3 +1,8 @@
+2001-11-21 Wednesday 06:25  ml
+
+	* src/toss.c (1.115): fixed inbound file searching according to fsc
+	[patch by Fedor Lizunkov]
+
 2001-11-10 Saturday 13:50  ml
 
 	* src/toss.c (1.114): 1. Fix: if tic password of downlink is empty,
