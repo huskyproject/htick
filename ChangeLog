@@ -1,3 +1,7 @@
+2003-02-27 Thursday 06:21  sfpavel
+
+	* misc/fileareas (1.3): Fix typo at sample config
+
 2003-02-26 Wednesday 13:05  stas_degteff
 
 	* src/toss.c (1.254): Improve TIC file check (Some FSC-87
