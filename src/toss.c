@@ -599,6 +599,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    time_t acttime;
    s_link *from_link;
    s_addr *old_seenby;
+   s_addr old_from, old_to;
    int old_anzseenby;
    int busy;
    unsigned long crc;
@@ -790,6 +791,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
    memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
    old_anzseenby = tic.anzseenby;
+   memcpy(&old_from,&tic.from,sizeof(s_addr));
+   memcpy(&old_to,&tic.to,sizeof(s_addr));
 
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
@@ -809,8 +812,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    // Checking to whom I shall forward
 
    for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0 &&
+      if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 && 
+            addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
             addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0) {
          // Forward file to
          if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
