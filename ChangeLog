@@ -1,3 +1,7 @@
+2002-07-26 Friday 16:27  mche
+
+	* src/areafix.c (1.79): fix know hpt areafix bugs
+
 2002-07-25 Thursday 16:16  mche
 
 	* src/areafix.c (1.78): some code improvement of  function
