@@ -118,7 +118,7 @@ Execute some command on receiving file. Command get full filepath as parameter.
     
     If link has file box - toss files and tics there
 
-    h) LinkFileFaseDir 
+    h) LinkFileBaseDir 
     
     Where autocreated file echos will be placed (may be "passthrough")
 
