@@ -401,9 +401,10 @@ int parseTic(char *ticfile,s_ticfile *tic)
   return(1);
 }
 
-int autoCreate(char *c_area, s_addr pktOrigAddr)                               
+int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 {                                                                              
-   FILE *f;                                                                    
+   FILE *f;
+   char *NewAutoCreate;
    char *fileName;                                                             
    char buff[255], myaddr[20], hisaddr[20];                                    
    int i=0;                                                                    
@@ -443,24 +444,60 @@ int autoCreate(char *c_area, s_addr pktOrigAddr)
                                                                                 
    //write new line in config file                                              
                             
-   sprintf(buff, "FileArea %s %s%s%s -a %s %s ", 
+/*   sprintf(buff, "FileArea %s %s%s%s -a %s %s ", 
            c_area,
            config->fileAreaBaseDir, 
            config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=='/'?
                   "":"/",
            c_area, 
            myaddr, 
-           hisaddr);                                                   
+           hisaddr); */
 
+   sprintf(buff, "FileArea %s %s%s%s -a %s ", 
+           c_area,
+           config->fileAreaBaseDir, 
+           config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=='/'?
+                  "":"/",
+           c_area, 
+           myaddr);
+           
+   NewAutoCreate=(char *) calloc (strlen(config->autoFileCreateDefaults)+1, sizeof(char));
+   strcpy(NewAutoCreate,config->autoFileCreateDefaults);
+   
+   if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
+     if (desc!=NULL) {
+       char *tmp;
+       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
+       sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
+       free (NewAutoCreate);
+       NewAutoCreate=tmp;
+     }
+   }
+   else {
+     if (desc!=NULL) {
+       char *tmp;
+       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
+       fileName[0]='\0';
+       sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
+       fileName++;
+       fileName=rindex(fileName,'\"')+1;
+       strcat(tmp,fileName);
+       free(NewAutoCreate);
+       NewAutoCreate=tmp;
+     }
+   }   
 
-   if ((config->autoFileCreateDefaults != NULL) &&
-      (strlen(buff)+strlen(config->autoFileCreateDefaults))<255) 
+   if ((NewAutoCreate != NULL) &&
+      (strlen(buff)+strlen(NewAutoCreate))<255) 
       {     
-      strcat(buff, config->autoFileCreateDefaults);                     
+      strcat(buff, NewAutoCreate);                     
       }                            
-                                    
-   fprintf(f, buff);                                                
-   fprintf(f, "\n");                                                
+   
+   free(NewAutoCreate);
+   
+   sprintf (buff+strlen(buff)," %s",hisaddr);
+   
+   fprintf(f, "%s\n", buff);                                                
                                                                     
    fclose(f);                                                       
                                                                     
@@ -532,7 +569,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    if (filearea==NULL)
       {
-      autoCreate(tic.area,tic.from);
+      autoCreate(tic.area,tic.from,tic.areadesc);
       filearea=getFileArea(config,tic.area);
       }
 
