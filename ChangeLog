@@ -1,3 +1,13 @@
+2001-09-05 Wednesday 10:21  ml
+
+	* src/: add_desc.c (1.3), areafix.c (1.44), crc32.c (1.5),
+	fcommon.c (1.30), filelist.c (1.20), hatch.c (1.34), htick.c
+	(1.36), log.c (1.5), scan.c (1.13), toss.c (1.110): comment
+	createFlo(), createOutboundFileName() used -- fixed bug in
+	checkTmpDir() function when ASO outbound used and link is busy;
+	fixed another bug with freeing tic structure (if there is not .tic
+	file in busy.htk dir)
+
 2001-08-10 Friday 01:03  joerg.jaspert
 
 	* debian/: changelog (1.5), control (1.4), huskymak.cfg (1.5):
