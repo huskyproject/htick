@@ -1,3 +1,13 @@
+htick (1.1.0-20020822-1) unstable; urgency=low
+
+  * New maintainer
+  * debian/docs: add HISTORY, BUG-REPORTING, BUGS.rus
+  * debian/rules: DH_COMPAT=4
+  * debian/postinst: create new ftn user, if not exist
+  * Setup new location for apt: http://husky.sourceforge.net/debian
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Thu, 22 Aug 2002 16:54:37 +0600
+
 htick (1.1.0-20020704-1) unstable; urgency=low
 
   * New cvs version
