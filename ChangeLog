@@ -1,3 +1,8 @@
+2003-01-08 Wednesday 06:59  mche
+
+	* src/areafix.c (1.108): fix bug on empty cfg file: AutoAreaCreate
+	adds wrong line feed in Win32
+
 2003-01-06 Monday 22:51  i_zkh
 
 	* doc/: bugreport.rus (1.2), bugreport.txt (1.2): Fix spelling
