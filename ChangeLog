@@ -2,6 +2,12 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+max(patch from Srguei Revtov):
+Sun Jan 16 17:21:40 NOVT 2000
+* recode under NT (Alex Bronin 2:5049/36)
+* fixed \r\r\n under NT
+
+----- cvs ci ------
 max:
 Mon Jan  3 21:21:59 NOVT 2000
 * manual -> mandatory
