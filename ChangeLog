@@ -1,3 +1,12 @@
+2002-10-15 Tuesday 13:20  mche
+
+	* src/toss.c (1.222): fix incorrect parsing of tic-file with empty
+	'Desc' lines
+
+2002-10-15 Tuesday 12:10  mche
+
+	* src/toss.c (1.221): a little bit speedup of tic-file parsing
+
 2002-10-14 Monday 09:42  sfpavel
 
 	* src/toss.c (1.220): Fix OS/2 EMX build (define _A_HIDDEN
