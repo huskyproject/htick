@@ -1441,36 +1441,34 @@ void cleanPassthroughDir(void)
          busy = 0;
          if (createOutboundFileName(&(config->links[i]), NORMAL, FLOFILE) == 1)
             busy = 1;
-         if (!busy) {
-            strcpy(tmpdir, config->links[i].floFile);
-            sprintf(strrchr(tmpdir, '.'), ".sep");
-            if (direxist(tmpdir)) {
-               sprintf(tmpdir+strlen(tmpdir), "%c", PATH_DELIM);
-               dir = opendir(tmpdir);
-               if (dir == NULL) continue;
+         strcpy(tmpdir, config->links[i].floFile);
+         sprintf(strrchr(tmpdir, '.'), ".sep");
+         if (direxist(tmpdir)) {
+            sprintf(tmpdir+strlen(tmpdir), "%c", PATH_DELIM);
+            dir = opendir(tmpdir);
+            if (dir == NULL) continue;
 
-               while ((file = readdir(dir)) != NULL) {
-                  if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
-                  ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
-                  strcpy(ticfile, tmpdir);
-                  strcat(ticfile, file->d_name);
-                  if (patimat(file->d_name, "*.TIC") == 1) {
-                     memset(&tic,0,sizeof(tic));
-                     parseTic(ticfile,&tic);
-                     if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
-                        filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
-                        filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
-                        strcpy(filesInTic[filesCount], tic.file);
-                        filesCount++;
-                     }
-                     disposeTic(&tic);
+            while ((file = readdir(dir)) != NULL) {
+               if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
+               ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
+               strcpy(ticfile, tmpdir);
+               strcat(ticfile, file->d_name);
+               if (patimat(file->d_name, "*.TIC") == 1) {
+                  memset(&tic,0,sizeof(tic));
+                  parseTic(ticfile,&tic);
+                  if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
+                     filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
+                     filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
+                     strcpy(filesInTic[filesCount], tic.file);
+                     filesCount++;
                   }
-                  nfree(ticfile);
-               } /* while */
-               closedir(dir);
-            }
-            remove(config->links[i].bsyFile);
-         } /* if !busy */
+                  disposeTic(&tic);
+               }
+               nfree(ticfile);
+            } /* while */
+            closedir(dir);
+         }
+         if (busy) remove(config->links[i].bsyFile);
          nfree(config->links[i].bsyFile);
          nfree(config->links[i].floFile);
       }
