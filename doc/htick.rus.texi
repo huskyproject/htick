@@ -867,7 +867,10 @@ Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0
 @code{AutoFileCreateDefaults -lw 100 -g Z}
 @end table
 
-Определяет умолчания новой файлобласти.
+Определяет умолчания новой файлобласти при автокриейте. 
+Не стоит использовать здесь указания каких-либо
+путей или passthrough - для этого существует отдельный токен - LinkFileBaseDir.
+@xref{LinkFileBaseDir}.
 
 Этот оператор может повторяться только для разных линков.
 

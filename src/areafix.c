@@ -1075,8 +1075,23 @@ void ffix(hs_addr addr, char *cmd)
     else scan();
 }
 
-/* file echo autocreation */
+/* remove token from string */
+void del_tok(char **ac, char *tok) {
+    char *p, *q;
 
+    q = fc_stristr(*ac,tok);
+    if (q) {
+	p = q+strlen(tok);
+	while (*p && !isspace(*p)) p++;
+	if (*p) memmove(q, p+1, strlen(p+1)+1); /*  begin or middle */
+	else {
+	    if (q > *ac) *(q-1)='\0'; /*  end */
+	    else *q='\0'; /*  "-token" defaults */
+	}
+    }
+}
+
+/* file echo autocreation */
 int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
 {
     FILE *f;
@@ -1167,6 +1182,10 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
 
     if (creatingLink->autoFileCreateDefaults) {
         NewAutoCreate = sstrdup(creatingLink->autoFileCreateDefaults);
+
+        /* remove "passthrough" from area line. use LinkFileBaseDir for this purposes. */
+        del_tok(&NewAutoCreate, "passthrough");
+
         if ((fileName=strstr(NewAutoCreate,"-d ")) !=NULL ) {
             if (descr) {
                 *fileName = '\0';
