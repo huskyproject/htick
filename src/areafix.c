@@ -322,37 +322,36 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 
 void addlink(s_link *link, s_filearea *area) {
     char *test = NULL;
-    
+    s_arealink *arealink;
+
     area->downlinks = realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
     area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
     area->downlinks[area->downlinkCount]->link = link;
+	arealink = area->downlinks[area->downlinkCount];
+	
+	if (link->numOptGrp > 0) {
+		// default set export on, import on, mandatory off
+		arealink->export = 1;
+		arealink->import = 1;
+		arealink->mandatory = 0;
+		
+		if (grpInArray(area->group,link->optGrp,link->numOptGrp)) {
+			arealink->export = link->export;
+			arealink->import = link->import;
+			arealink->mandatory = link->mandatory;
+		}
+		
+	} else {
+		arealink->export = link->export;
+		arealink->import = link->import;
+		arealink->mandatory = link->mandatory;
+	}
+	if (area->mandatory) arealink->mandatory = 1;
+	if (link->level < area->levelread)	arealink->export=0;
+	if (link->level < area->levelwrite) arealink->import=0;
+	// paused link can't receive mail
+	if (link->Pause) arealink->export = 0;
     
-    if (link->numOptGrp > 0)
-    {
-      unsigned int i;
-
-      test = NULL;
-      for (i = 0; i < link->numOptGrp; i++)
-        if (strcmp(area->group, link->optGrp[i]) == 0) test = link->optGrp[i];
-    }
-    area->downlinks[area->downlinkCount]->export = 1;
-    area->downlinks[area->downlinkCount]->import = 1;
-    area->downlinks[area->downlinkCount]->mandatory = 0;
-    if (link->export) if (*link->export==0) {
-	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
-		area->downlinks[area->downlinkCount]->export = 0;
-	    }
-	} 
-    if (link->import) if (*link->import==0) {
-	    if (link->numOptGrp == 0 ||  (link->numOptGrp && test)) {
-		area->downlinks[area->downlinkCount]->import = 0;
-	    }
-	} 
-    if (link->mandatory) if (*link->mandatory==1) {
-	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
-		area->downlinks[area->downlinkCount]->mandatory = 1;
-	    }
-	} 
     area->downlinkCount++;
 }
 

@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Feb  5 02:36:03 NOVT 2000
+max:
+* adopted my changes in fidoconfig for import, export, mandatory & groups
+
+----- cvs ci ------
 Sat Jan 29 18:17:00 2000
 Georgi:
 * if FileAreaBaseDir is "Passthrough", then autocreated filearea is Passthrough
