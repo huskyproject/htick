@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <add_desc.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -216,6 +217,8 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
 {
     FILE *filehandle;
     char *line = NULL, *tmp = NULL, *token = NULL;
+    char *p = token;
+
 
     int flag = 0, rc = 1;
     
@@ -238,30 +241,40 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
             flag = 0;
         
         tmp = sstrdup(line);
-        token = strtok(tmp, " \t\0");
-        
-        if (token==NULL)
-            continue;
+        token = tmp;
+        p = token;
+        while(p && *p != '\0' && !isspace(*p)) p++;
+        if(p && *p != '\0') 
+            *p = '\0';
+        else
+            p = NULL;
         
         if (stricmp(token,file_name) == 0) {
-            token=stripLeadingChars(strtok(NULL, "\0"), " ");
-            if (token != NULL) {
-                UINT i;
-                if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10 && token[0] == '[') {
-                    char *p = token;
-                    while(']' != *p)p++;
-                    p++;
-                    while(' ' == *p)p++;
-                    strcpy(token,p);
-                }
-                for( i = 0; i < tic->anzdesc; i++)
-                    nfree(tic->desc[i]);
-                tic->anzdesc = 0;
-                tic->desc=
-                    srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
-                tic->desc[tic->anzdesc]=sstrdup(token);
-                tic->anzdesc++;
+            UINT i;
+            
+            if(p == NULL) {
+                token = "";
+            }   else      {
+                p++;
+                while(p && *p != '\0' &&isspace(*p)) p++;
+                if(p && *p != '\0') 
+                    token = p;
+                else                
+                    token = "";
             }
+            if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10 && token[0] == '[') {
+                while(']' != *p)p++;
+                p++;
+                while(p && !isspace(*p)) p++;
+                token = p;
+            }
+            for( i = 0; i < tic->anzdesc; i++)
+                nfree(tic->desc[i]);
+            tic->anzdesc = 0;
+            tic->desc=
+                srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+            tic->desc[tic->anzdesc]=sstrdup(token);
+            tic->anzdesc++;
             flag = 1;
             rc = 0;
         }
