@@ -95,6 +95,29 @@
 char *versionStr;
 
 /* tic keywords calculated crc */
+#if defined (__sun__)
+
+#define CRC_CREATED      0x11DB
+#define CRC_FILE         0x51DF
+#define CRC_AREADESC     0x8ECA
+#define CRC_DESC         0xEC78
+#define CRC_AREA         0x825A
+#define CRC_CRC          0x5487
+#define CRC_REPLACES     0xCD3A
+#define CRC_ORIGIN       0x1162
+#define CRC_FROM         0xE6D5
+#define CRC_TO           0x7B50
+#define CRC_PATH         0x5411
+#define CRC_SEENBY       0x2D6
+#define CRC_PW           0x24AD
+#define CRC_SIZE         0xEB29
+#define CRC_DATE         0x2ABF
+#define CRC_DESTINATION  0xA5BF
+#define CRC_MAGIC        0x7861
+#define CRC_LDESC        0xB0B4
+
+#else
+
 #define CRC_CREATED     0x4EC6
 #define CRC_FILE        0x1A66
 #define CRC_AREADESC    0xB621
@@ -114,6 +137,7 @@ char *versionStr;
 #define CRC_MAGIC       0xD858
 #define CRC_LDESC       0x5394
 
+#endif
 
 
 void writeNetmail(s_message *msg, char *areaName)
