@@ -1,3 +1,8 @@
+2002-07-22 Monday 13:56  mche
+
+	* win32/: makefile.mvc (1.8), makefile.mvcdll (1.6): corrected file
+	cleaning
+
 2002-07-17 Wednesday 14:00  stas
 
 	* HISTORY (1.2), VERSION (1.2): update documentation
