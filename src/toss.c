@@ -1216,76 +1216,76 @@ void checkTmpDir(s_link link,char ***filesInTic,unsigned int *filesCount)
         strcpy(ticfile, tmpdir);
         strcat(ticfile, file->d_name);
         if (stricmp(file->d_name+8, ".TIC") == 0) {
-          memset(&tic,0,sizeof(tic));
-          parseTic(ticfile,&tic);
-	  if (busy==0) {
-            filearea=getFileArea(config,tic.area);
-            if (filearea!=NULL) {
-               if (filearea->pass != 1) strcpy(newticedfile,filearea->pathName);
-	       else strcpy(newticedfile,config->passFileAreaDir);
-               strcat(newticedfile,tic.file);
-               strLower(newticedfile);
-               strLower(tic.file);
-
-               strcpy(newticfile,link.floFile);
-               if (config->separateBundles) {
-                  *(strrchr(newticfile, '.')) = 0;
-                  sprintf(newticfile+strlen(newticfile), ".sep%c", PATH_DELIM);
-                  createDirectoryTree(newticfile);
-               } else {
-	          if (filearea->pass != 1) *(strrchr(newticfile,PATH_DELIM)+1)=0;
-		  else strcpy(newticfile,config->passFileAreaDir);
-               } /* endif */
-
-               strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
-               move_file(ticfile,newticfile);
-
-               flohandle=fopen(link.floFile,"a");
-               fprintf(flohandle,"%s\n",newticedfile);
-               fprintf(flohandle,"^%s\n",newticfile);
-               fclose(flohandle);
-
-               sprintf(logstr,"Forwarding save file %s for %s, %s",
-                       tic.file,
-                       link.name,
-                       addr2string(&link.hisAka));
-
-               writeLogEntry(htick_log,'6',logstr);
-	    }
-	  } else {
-            if (*filesCount == 0 || (*filesCount > 0 && !foundInArray(*filesInTic,*filesCount,tic.file))) {
-		*filesInTic = realloc(*filesInTic, sizeof(char *)*(*filesCount+1));
-		(*filesInTic)[*filesCount] = (char *) malloc(strlen(tic.file)+1);
-        	strcpy((*filesInTic)[*filesCount], tic.file);
-		(*filesCount)++;
-                sprintf(buff, "Adding %s to hold list, %d files holded", tic.file,*filesCount);
-                writeLogEntry(htick_log, '9', buff);		
-	    }
-	  }
-	 }
-	 disposeTic(&tic);
-         free(ticfile);
-      } /* while */
-      closedir(dir);
-      remove(link.bsyFile);
-      free(link.bsyFile);
-      if (tmpdir[strlen(tmpdir)-1] == PATH_DELIM) {
-         tmpdir[strlen(tmpdir)-1] = 0;
-      } /* endif */
-      rmdir(tmpdir);
-   } /* if */
-   free(link.floFile);
+            memset(&tic,0,sizeof(tic));
+            parseTic(ticfile,&tic);
+            if (busy==0) {
+                filearea=getFileArea(config,tic.area);
+                if (filearea!=NULL) {
+                    if (filearea->pass != 1) strcpy(newticedfile,filearea->pathName);
+                    else strcpy(newticedfile,config->passFileAreaDir);
+                    strcat(newticedfile,tic.file);
+                    strLower(newticedfile);
+                    strLower(tic.file);
+                    
+                    strcpy(newticfile,link.floFile);
+                    if (config->separateBundles) {
+                        *(strrchr(newticfile, '.')) = 0;
+                        sprintf(newticfile+strlen(newticfile), ".sep%c", PATH_DELIM);
+                        createDirectoryTree(newticfile);
+                    } else {
+                        if (filearea->pass != 1) *(strrchr(newticfile,PATH_DELIM)+1)=0;
+                        else strcpy(newticfile,config->passFileAreaDir);
+                    } /* endif */
+                    
+                    strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
+                    move_file(ticfile,newticfile);
+                    
+                    flohandle=fopen(link.floFile,"a");
+                    fprintf(flohandle,"%s\n",newticedfile);
+                    fprintf(flohandle,"^%s\n",newticfile);
+                    fclose(flohandle);
+                    
+                    sprintf(logstr,"Forwarding save file %s for %s, %s",
+                            tic.file,
+                            link.name,
+                            addr2string(&link.hisAka));
+                    
+                    writeLogEntry(htick_log,'6',logstr);
+                }
+            } else {
+                if (*filesCount == 0 || (*filesCount > 0 && !foundInArray(*filesInTic,*filesCount,tic.file))) {
+                    *filesInTic = realloc(*filesInTic, sizeof(char *)*(*filesCount+1));
+                    (*filesInTic)[*filesCount] = (char *) malloc(strlen(tic.file)+1);
+                    strcpy((*filesInTic)[*filesCount], tic.file);
+                    (*filesCount)++;
+                    sprintf(buff, "Adding %s to hold list, %d files holded", tic.file,*filesCount);
+                    writeLogEntry(htick_log, '9', buff);		
+                }
+            }
+        } /* if */
+        disposeTic(&tic);
+        free(ticfile);
+    } /* while */
+     
+    closedir(dir);
+    remove(link.bsyFile);
+    free(link.bsyFile);
+    if (tmpdir[strlen(tmpdir)-1] == PATH_DELIM) {
+        tmpdir[strlen(tmpdir)-1] = 0;
+    } /* endif */
+    rmdir(tmpdir);
+    free(link.floFile);
 }
 
 int foundInArray(char **filesInTic, unsigned int filesCount, char *name)
 {
     unsigned int i, rc = 0;
-   for (i = 0; i < filesCount; i++)
-      if (patimat(filesInTic[i],name) == 1) {
-         rc = 1;
-	 break;
-      }
-   return rc;
+    for (i = 0; i < filesCount; i++)
+        if (patimat(filesInTic[i],name) == 1) {
+            rc = 1;
+            break;
+        }
+    return rc;
 }
 
 void checkPassthroughDir(char ***filesInTic,unsigned int *filesCount)
