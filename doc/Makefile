@@ -46,7 +46,7 @@ htick.dvi: htick.texi
 	texi2dvi htick.texi
 
 htick.info: htick.texi
-	makeinfo --no-split htick.texi
+	export LC_ALL=C; makeinfo --no-split htick.texi
 
 clean:
 	-$(RM) $(RMOPT) htick.aux

@@ -1,8 +1,10 @@
 htick (1.0.1-1) stable; urgency=low
 
   * Htick 1.0 release
+  * Add html-doc into package
+  * Add htick.info
 
- -- Pavel Andreew <pavel@collage.etel.ru>  Wed,  6 Nov 2002 13:04:51 +0500
+ -- Pavel Andreew <pavel@collage.etel.ru>  Sun, 10 Nov 2002 14:24:12 +0500
 
 htick (1.0.0-20020918-1) stable; urgency=low
 
