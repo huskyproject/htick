@@ -12,10 +12,10 @@ SRC_DIR = ..\src
 
 
 !IF $(DEBUG) == 1
-CFLAGS  = -ml -v -w -O2 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DMSDOS
+CFLAGS  = -ml -v -w -O2 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DMSDOS -DNOSEMAPHORES
 LFLAGS  = -ml -v -w -L..\..\smapi -L..\..\fidoconf
 !ELSE
-CFLAGS  = -ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DMSDOS
+CFLAGS  = -ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DMSDOS -DNOSEMAPHORES
 LFLAGS  = -ml -w -L..\..\smapi -L..\..\fidoconf
 !ENDIF
 
