@@ -341,11 +341,12 @@ void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
         tmp = formDesc(tic->desc, tic->anzdesc); 
     }
     xstrcat(&(msg->text),tmp);
-    if (pRepDef->annforigin) {
-        xscatprintf(&(msg->text), "%sOrig: %s\r",print_ch(24, ' '),aka2str(tic->origin));
+    if (pRepDef->annforigin && tic->origin.zone!=0)
+    {
+       xscatprintf(&(msg->text), "%sOrig: %s\r",print_ch(24, ' '),aka2str(tic->origin));
     }
-    if (pRepDef->annfrfrom) {
-        xscatprintf(&(msg->text), "%From: %s\r",print_ch(24, ' '),aka2str(tic->from));
+    if (pRepDef->annfrfrom && tic->from.zone!=0) {
+       xscatprintf(&(msg->text), "%sFrom: %s\r",print_ch(24, ' '),aka2str(tic->from));
     }
     if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
     nfree(tmp);
