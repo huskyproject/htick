@@ -1075,7 +1075,7 @@ void checkTmpDir(void)
         strcat(ticfile, file->d_name);
         if (stricmp(file->d_name+8, ".TIC") == 0) {
             memset(&tic,0,sizeof(tic));
-            parseTic(ticfile,&tic);
+            if(!parseTic(ticfile,&tic)) continue;
             link = getLinkFromAddr(config, tic.to);
             if(!link) continue;
             /*  createFlo doesn't  support ASO!!! */
