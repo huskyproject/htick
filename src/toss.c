@@ -28,6 +28,12 @@
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
 
+#ifdef OS2
+#define INCL_DOSFILEMGR /* for hidden() routine */
+#include <os2.h>
+#endif
+
+
 #include <string.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -69,10 +75,12 @@
 #include <crc32.h>
 #include <filecase.h>
 
+#ifndef OS2
 #ifdef __EMX__
 #include <sys/types.h>
 #ifndef _A_HIDDEN
 #define _A_HIDDEN A_HIDDEN
+#endif
 #endif
 #endif
 
@@ -426,9 +434,9 @@ int parseTic(char *ticfile,s_ticfile *tic)
 	       string2addr(param,&tic->from);
 	       ticSourceLink = getLinkFromAddr(*config, tic->from);
 	    }
-	    else if (stricmp(token,"to")==0) string2addr(param,&tic->to); 
-            else if ((stricmp(token,"Destination")==0) && 
-		     (ticSourceLink && !ticSourceLink->FileFixFSC87Subset)) 
+	    else if (stricmp(token,"to")==0) string2addr(param,&tic->to);
+            else if ((stricmp(token,"Destination")==0) &&
+		     (ticSourceLink && !ticSourceLink->FileFixFSC87Subset))
 	                string2addr(param,&tic->to);
             else if (stricmp(token,"origin")==0) string2addr(param,&tic->origin);
             else if (stricmp(token,"magic")==0);
@@ -462,7 +470,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 
   fclose(tichandle);
 
-  if (!tic->anzdesc) { 
+  if (!tic->anzdesc) {
      tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
      tic->desc[0] = sstrdup("no desc");
      tic->anzdesc = 1;
@@ -494,14 +502,14 @@ static int makealldirs(const char *basedir, const char *filename)
 
     memcpy(buffer, basedir, l);
     cpd = buffer + l;
-  
+
     do
     {
         while ((!my_isdirsep(*cps)) && (*cps))
         {
             *cpd++ = *cps++;
         }
-        
+
         if (my_isdirsep(*cps))
         {
             if (!direxist(buffer))
@@ -522,7 +530,7 @@ static int makealldirs(const char *basedir, const char *filename)
     free(buffer);
     return 1;
 }
-    
+
 #undef my_isdirsep
 
 
@@ -557,11 +565,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 #if defined(MSDOS) || defined(WINNT) || defined(OS2) || defined(__NT__) \
           || defined(DOS) || defined(__OS2__) || defined(__WINNT__)
           *fileechoFileName = '\\';
-#else          
+#else
           *fileechoFileName = '/';
-#endif          
+#endif
       }
-          
+
       fileechoFileName++;
       i++;
    }
@@ -1205,16 +1213,48 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
 #if !defined(UNIX)
 
+/* FIXME: This code is nonportable and should therefore really be part
+          of a porting library like huskylib or fidoconf!!!
+*/
+
 int hidden (char *filename)
 {
+#if (defined(__TURBOC__) && !defined(OS2)) || defined(__DJGPP__)
    unsigned fattrs;
-
-#if defined(__TURBOC__) || defined(__DJGPP__)
    _dos_getfileattr(filename, &fattrs);
-#else
-   fattrs = (GetFileAttributes(filename) & 0x2) ? _A_HIDDEN : 0;
-#endif
    return fattrs & _A_HIDDEN;
+#elif defined (WINNT)
+   fattrs = (GetFileAttributes(filename) & 0x2) ? _A_HIDDEN : 0;
+   return fattrs & _A_HIDDEN;
+#elif defined (OS2)
+   FILESTATUS3 fstat3;
+   const char *p;
+   char *q,*backslashified;
+
+   /* Under OS/2 users can also use "forward slashes" in filenames because
+      the OS/2 C libraries support this, but the OS/2 API itself does not
+      support this, and as we are calling an OS/2 API here we must first
+      transform slashes into backslashes */
+
+   backslashified=(char *)smalloc(strlen(filename)+1);
+   for (p=filename,q=backslashified;*p;q++,p++)
+   {
+       if (*p=='/')
+           *q='\\';
+       else
+           *q=*p;
+   }
+   *q='\0';
+
+   DosQueryPathInfo((PSZ)backslashified,1,&fstat3,sizeof(fstat3));
+
+   free(backslashified);
+
+   return fstat3.attrFile & FILE_HIDDEN;
+#else
+#error "Don't know how to check for hidden files on this platform"
+   return 0; /* well, we can't check if we don't know about the host */
+#endif
 }
 #endif
 
@@ -1368,14 +1408,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
 	      findfile = pos+1;
 	      pos = strrchr(findfile, '.');
 	      if (pos) {
-	          
+
 	          *(++pos) = 0;
 		  strcat(findfile, "*");
 #ifdef DEBUG_HPT
                   printf("NoCRC! dirname = %s, findfile = %s\n", dirname, findfile);
 #endif
 		  dir = opendir(dirname);
-		  
+
 		  if (dir) {
 		      while ((file = readdir(dir)) != NULL) {
 		          if (patimat(file->d_name, findfile)) {
@@ -1396,7 +1436,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
 	      }
 	  }
-	  
+
 	  if (fileisfound) {
 	      realfile = smalloc(strlen(dirname)+1);
 	      strcpy(realfile, dirname);
@@ -1428,7 +1468,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 	  }
       }
    }
-   
+
 
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
@@ -1497,7 +1537,7 @@ void processDir(char *directory, e_tossSecurity sec)
          if (!hidden(dummy)) {
 #endif
             rc=processTic(dummy,sec);
-   
+
             switch (rc) {
                case 1:  /* pktpwd problem */
                   changeFileSuffix(dummy, "sec");
