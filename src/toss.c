@@ -753,6 +753,33 @@ int createFlo(s_link *link, e_prio prio)
    return 0;
 }
 
+void doSaveTic(char *ticfile,s_ticfile *tic)
+{
+   char logstr[200],filename[256];
+   int i;
+   s_savetic *savetic;
+
+   for (i = 0; i< config->saveTicCount; i++)
+     {
+       savetic = &(config->saveTic[i]);
+       if (patimat(tic->area,savetic->fileAreaNameMask)==1) {
+          sprintf(logstr,"Saving Tic-File %s to %s",strrchr(ticfile,PATH_DELIM) + 1,savetic->pathName);
+          writeLogEntry(htick_log,'6',logstr);
+          strcpy(filename,savetic->pathName);
+          strcat(filename,strrchr(ticfile, PATH_DELIM) + 1);
+          strLower(filename);
+          if (copy_file(ticfile,filename)!=0) {
+             sprintf(logstr,"File %s not found or moveable",ticfile);
+             writeLogEntry(htick_log,'9',logstr);
+          };
+          break;
+       };
+
+     };
+
+   return;
+}
+
 int processTic(char *ticfile, e_tossSecurity sec)                     
 {
    s_ticfile tic;
@@ -837,6 +864,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 		     }
 		  }
 	       }
+               doSaveTic(ticfile,&tic);
                disposeTic(&tic);
                return(0);
 	    }
@@ -1172,6 +1200,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    newfilesCount++;
 
    free(old_seenby);
+   doSaveTic(ticfile,&tic);
    disposeTic(&tic);
    return(0);
 }
