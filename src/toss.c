@@ -1088,8 +1088,8 @@ void checkTmpDir(void)
                   }
                   _createDirectoryTree(newticfile);
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
-                  if( !fexist(newticfile) )
-                     w_log(LL_ERROR,"File %s not found",newticfile);
+                  if( !fexist(ticfile) )
+                     w_log(LL_ERROR,"File %s not found",ticfile);
                   else if (move_file(ticfile,newticfile)!=0) {
                      w_log(LL_ERROR,"File %s not moveable to %s", ticfile, newticfile);
                      error = 1;
