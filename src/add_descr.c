@@ -67,8 +67,8 @@ int removeDesc (char *descr_file_name, char *file_name)
       if (*line == 0 || *line == 10 || *line == 13)
             continue;
 
-         /*if (line[strlen(line)-1]=='\r')
-            line[strlen(line)-1]=0;*/
+         if (line[strlen(line)-1]=='\r')
+            line[strlen(line)-1]=0;
 
 	 if (flag && (*line == '\t' || *line == ' ' || *line == *LDescString))
 	    continue;

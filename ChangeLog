@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sun Jan 23 04:30:00 2000
+Georgi:
+* change code if function removeDesc
+
+----- cvs ci ------
 Sat Jan 22 22:28:00 2000
 Georgi:
 * fixed bug in patch from Nestyurkin Nikolay
