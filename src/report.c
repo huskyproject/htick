@@ -474,7 +474,7 @@ void reportNewFiles()
         
         if(msg->netMail > 1)
         {
-            if (NULL == (rp = fopen(msg->subjectLine,"w")))
+            if (NULL == (rp = fopen(msg->subjectLine,"wt")))
             {
                 w_log(LL_ERR, "Could not create report file: %s", msg->subjectLine);
             }
