@@ -4,7 +4,7 @@
 
 2003-02-07 Friday 12:07  sfpavel
 
-	* src/toss.c (1.250, htick-1_4-stable): Change previous patch
+	* src/toss.c (1.250): Change previous patch
 
 2003-02-07 Friday 10:29  sfpavel
 
