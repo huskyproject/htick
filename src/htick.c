@@ -63,7 +63,7 @@
 #include <htick.h>
 #include <global.h>
 
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <toss.h>
 #include <scan.h>
 #include <hatch.h>

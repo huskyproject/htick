@@ -71,7 +71,7 @@
 
 #include <add_desc.h>
 #include <seenby.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <crc32.h>
 #include <filecase.h>
 

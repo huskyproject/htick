@@ -6,7 +6,7 @@
 #include <string.h>
 #include <smapi/progprot.h>
 #include <global.h>
-#include <recode.h>
+#include <fidoconf/recode.h>
 #include <toss.h>
 #include <filecase.h>
 
