@@ -1,3 +1,7 @@
+2003-12-22 Monday 02:43  andr_lukyanov
+
+	* win32/makefile.mvcdll (1.18): Fix MSVC compilation
+
 2003-12-12 Friday 08:07  mche
 
 	* h/toss.h (1.25): bugfixes for areafix
