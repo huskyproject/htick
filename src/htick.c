@@ -57,9 +57,11 @@
 #include <hatch.h>
 #include <filelist.h>
 
-void processCommandLine(int argc, char **argv)
+int processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
+   int rc = 1;
+   char *basename, *extdelim;
 
    if (argc == 1) {
       printf(
@@ -94,9 +96,21 @@ void processCommandLine(int argc, char **argv)
          cmScan = 1;
          continue;
       } else if (stricmp(argv[i], "hatch") == 0) {
+         if (argc-i < 3) {
+            printf("insufficient number of arguments\n");
+            return(0);
+         } 
          cmHatch = 1;
          i++;
          strcpy(hatchfile, argv[i++]);
+         // Check filename for 8.3, warn if not
+         basename = strrchr(hatchfile, PATH_DELIM);
+         if (basename==NULL) basename = hatchfile;
+         if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
+
+         if (extdelim - basename > 8 || strlen(extdelim) > 4) {
+            printf("Warning: hatching file with non-8.3 name!\n");
+         }
          strcpy(hatcharea, argv[i++]);
          if (i < argc) {
            strcpy(hatchdesc, argv[i]);
@@ -145,9 +159,13 @@ void processCommandLine(int argc, char **argv)
          cmAnnNewFileecho = 1;
          strcpy(announcenewfileecho, argv[i]);
          continue;
-      } else printf("Unrecognized Commandline Option %s!\n", argv[i]);
+      } else {
+         printf("Unrecognized Commandline Option %s!\n", argv[i]);
+         rc = 0;
+      }
 
    } /* endwhile */
+return rc;
 }
 
 void processConfig()
@@ -252,8 +270,8 @@ int main(int argc, char **argv)
 
    printf("Husky Tick v%u.%02u by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR);
 
+   if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
-   processCommandLine(argc, argv);
 
    // init SMAPI
    m.req_version = 0;

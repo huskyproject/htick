@@ -2,6 +2,12 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Wed Apr 26 11:29:36 MSD 2000
+max (patch from Serguei Revtov):
+* exit on error in command line, additional command line check
+* warn for non-8.3 files hatch
+
+----- cvs ci ------
 Sun Apr  9 17:48:48 CET 2000
 hjk:
 * removed check of groupaccess on import and export of files
