@@ -284,6 +284,6 @@ Announce address of system who hatched file
 Define permissions for newly created filearea directories (UNIX filesystems 
 	only)
 
-39) AreaFixFromName <string>
-	Use AreaFixFromName when responding to messages for areafix.
+39) FileFixFromName <string>
+	Use FileFixFromName when responding to messages for filefix.
         

@@ -9,7 +9,7 @@ FileFixKillRequests
 
 if "[module]"=="htick"
 
-AreaFixFromName		FileFix
+FileFixFromName		FileFix
 
 OriginInAnnounce
 ConvertLongNames	DontTouch

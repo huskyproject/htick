@@ -902,12 +902,12 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     s_message *tmpmsg;
 
-    if (config->areafixFromName == NULL)
+    if (config->filefixFromName == NULL)
         tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName,
                              subj, 1,config->filefixKillReports);
     else
         tmpmsg = makeMessage(link->ourAka, &(link->hisAka),
-                             config->areafixFromName, msg->fromUserName,
+                             config->filefixFromName, msg->fromUserName,
                              subj, 1,config->filefixKillReports);
     preprocText(report, tmpmsg);
 
