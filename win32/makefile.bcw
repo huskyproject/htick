@@ -28,7 +28,6 @@ htick.exe: $(OBJS)
 	$(CC) $(LFLAGS) @&&!
 htick.obj
 global.obj
-log.obj
 toss.obj
 fcommon.obj
 scan.obj
