@@ -1,14 +1,20 @@
 htick 0.01
 ----------
 
+Sat Apr 24  
+By Alex Erzin, checked in by Gabriel
+ + files.bbs files supported
+
 Sun Apr 11  17:00:00
 Antonio:
-+ htick supports filearea descriptions.
+ + htick supports filearea descriptions.
 
 Mo 22.03.1999
+Gabriel Plutzar:
   + Support for Magic Tag
 
 Su 21.03.1999
+Gabriel Plutzar:
   + Areafix now writes mails to the right sender name
   + As the to Field in tic file is not necessarily needed as FSC says,
     it is now checked only if it exists, as some Prozessors don't generate

@@ -55,6 +55,8 @@
 #include <stamp.h>
 #include <progprot.h>
 
+#include <add_descr.h>
+
 void changeFileSuffix(char *fileName, char *newSuffix) {
 
    int   i = 1;
@@ -516,7 +518,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    FILE *flohandle;
 
    char ticedfile[256],fileareapath[256],
-        newticedfile[256],linkfilepath[256];
+        newticedfile[256],linkfilepath[256],descr_file_name[256];
    char *newticfile;
    char logstr[200];
    s_filearea *filearea;
@@ -633,6 +635,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
       sprintf(logstr,"Moved %s to %s",ticedfile,newticedfile);
       writeLogEntry(log,'6',logstr);
       }
+
+     strcpy(descr_file_name, fileareapath);
+     if (fileareapath[strlen(fileareapath)-1]!='/')
+        strcat(descr_file_name, "/");
+     strcat(descr_file_name, "files.bbs");
+     strLower(descr_file_name);
+     
+     add_description (descr_file_name, tic.file, tic.desc);
 
     // Adding path & seenbys
 //    tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
