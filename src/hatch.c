@@ -181,7 +181,7 @@ int send(char *filename, char *area, char *addr)
    timestr[strlen(timestr)-1]=0;
    if (timestr[8]==' ') timestr[8]='0';
    sprintf(tmp,"%s %lu %s UTC %s",
-           addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
+           aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
    tic.path=srealloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
    tic.path[tic.anzpath]=sstrdup(tmp);
    tic.anzpath++;
@@ -227,7 +227,7 @@ int send(char *filename, char *area, char *addr)
       remove(link->bsyFile);
 
       w_log('6',"Send %s from %s for %s",
-              tic.file,tic.area,addr2string(&link->hisAka));
+              tic.file,tic.area,aka2str(link->hisAka));
       nfree(link->bsyFile);
    }
    nfree(link->floFile);
