@@ -1869,18 +1869,25 @@ void reportNewFiles()
                } /* endif */
                fileCount = fileSize = 0;
 
-               xscatprintf(&(msg->text), "\r>Area : %-15s Desc : %s\r %s\r", 
-                   newFileReport[i]->areaName,
-                   (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
-                   print_ch(77, '-'));
-               xscatprintf(&tmp," %-12s %9ld ", strUpper(newFileReport[i]->fileName), 
-                   newFileReport[i]->fileSize);
+               xscatprintf(&(msg->text), "\r>Area : %s", newFileReport[i]->areaName);
+               
+               if(newFileReport[i]->areaDesc)
+                   xscatprintf(&(msg->text), " : %s", newFileReport[i]->areaDesc);
 
-               if(strlen(tmp) > 24)
-                   xscatprintf(&(msg->text),"%s\r",tmp);
+               xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
+
+
+               if(strlen(newFileReport[i]->fileName) > 12)
+                   xscatprintf(&(msg->text),"% s\r%23ld ",
+                                 strUpper(newFileReport[i]->fileName),
+                                 newFileReport[i]->fileSize
+                               );
                else
-                   xstrcat(&(msg->text),tmp);
-               nfree(tmp);
+                   xscatprintf(&(msg->text)," %-12s %9ld ",
+                                strUpper(newFileReport[i]->fileName), 
+                                newFileReport[i]->fileSize
+                                );
+
                tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
                xstrcat(&(msg->text),tmp);
                if (config->originInAnnounce) {
@@ -1897,13 +1904,16 @@ void reportNewFiles()
                       newFileReport[b]->useAka == &(config->addr[c]) &&
                       stricmp(newFileReport[i]->areaName,
                       newFileReport[b]->areaName) == 0) {
-                      xscatprintf(&tmp," %-12s %9ld ", strUpper(newFileReport[b]->fileName), 
-                          newFileReport[b]->fileSize);
-                      if(strlen(tmp) > 24)
-                          xscatprintf(&(msg->text),"%s\r",tmp);
+                      if(strlen(newFileReport[b]->fileName) > 12)
+                          xscatprintf(&(msg->text),"% s\r%23ld ",
+                          strUpper(newFileReport[b]->fileName),
+                          newFileReport[b]->fileSize
+                          );
                       else
-                          xstrcat(&(msg->text),tmp);
-                      nfree(tmp);
+                          xscatprintf(&(msg->text)," %-12s %9ld ",
+                          strUpper(newFileReport[b]->fileName), 
+                          newFileReport[b]->fileSize
+                          );
                       
                       tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       
