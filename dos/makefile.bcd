@@ -1,0 +1,43 @@
+# It is NOT necessary any more to copy this file into the ../src directory
+# and run make there. You can now run make here in the dos subdirectory.
+
+CC      = bcc
+
+OBJ=.obj
+OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
+          scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
+          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
+
+SRC_DIR = ..\src
+
+
+!IF $(DEBUG) == 1
+CFLAGS  = -ml -v -w -O2 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DMSDOS
+LFLAGS  = -ml -v -w -L..\..\smapi -L..\..\fidoconf
+!ELSE
+CFLAGS  = -ml -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DMSDOS
+LFLAGS  = -ml -w -L..\..\smapi -L..\..\fidoconf
+!ENDIF
+
+
+all: $(OBJS) \
+     htick.exe \
+
+htick.exe: $(OBJS)
+	$(CC) $(LFLAGS) @&&!
+$(OBJS)
+fconfbco.lib
+smapibco.lib
+!
+
+
+{..\src}.c.obj:
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	-del *.obj
+	-del *.bak
+
+distclean: clean
+	-del *.exe
+
