@@ -1,3 +1,8 @@
+2002-12-20 Friday 15:10  stas_degteff
+
+	* src/: htick.c, toss.c (htick-1_0-stable.[5,11]): bugfix: memory
+	fault if netmailarea not defined in config
+
 2002-11-21 Thursday 05:46  stas_degteff
 
 	* doc/htick.texi (htick-1_0-stable.5): Fix typo error
