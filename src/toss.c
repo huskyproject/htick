@@ -57,6 +57,7 @@
 
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/typedefs.h>
@@ -121,42 +122,6 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
       w_log( '9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
    }
 }
-
-char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka)
-{
-   static time_t preTime=0L;
-   time_t curTime;
-   char *buff = NULL;
-
-   if (area != NULL)
-      xscatprintf(&buff, "AREA:%s\r", area);
-   else {
-      if (ourAka->point) xscatprintf(&buff, "\001FMPT %d\r",
-          ourAka->point);
-      if (destAka->point) xscatprintf(&buff, "\001TOPT %d\r",
-          destAka->point);
-   };
-
-   // what a fucking bullshit?
-   curTime = time(NULL);
-   while (curTime == preTime) {
-      sleep(1);
-      curTime = time(NULL);
-   }
-   preTime = curTime;
-
-   if (ourAka->point)
-      xscatprintf(&buff,"\001MSGID: %u:%u/%u.%u %08lx\r",
-          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) curTime);
-   else
-      xscatprintf(&buff,"\001MSGID: %u:%u/%u %08lx\r",
-              ourAka->zone,ourAka->net,ourAka->node,(unsigned long) curTime);
-
-   xscatprintf(&buff, "\001PID: %s\r", versionStr);
-
-   return buff;
-}
-
 
 XMSG createXMSG(s_message *msg)
 {
@@ -720,10 +685,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
       if (getNetMailArea(config, config->ReportTo) != NULL) {
          msg = makeMessage(area->useAka, area->useAka, versionStr, config->sysop, "Created new fileareas", 1);
-         msg->text = createKludges(NULL, area->useAka, area->useAka);
+         msg->text = createKludges(config,NULL, area->useAka,area->useAka,versionStr);
       } else {
          msg = makeMessage(area->useAka, area->useAka, versionStr, "All", "Created new fileareas", 0);
-         msg->text = createKludges(config->ReportTo, area->useAka, area->useAka);
+         msg->text = createKludges(config,config->ReportTo, area->useAka, area->useAka,versionStr);
       } /* endif */
       sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
           (area->description) ? area->description : "");
@@ -1973,12 +1938,20 @@ void reportNewFiles()
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, config->sysop, "New Files", 1);
-                     msg->text = createKludges(NULL, newFileReport[i]->useAka, newFileReport[i]->useAka);
+                     msg->text = createKludges(
+                                     config,NULL,
+                                     newFileReport[i]->useAka,
+                                     newFileReport[i]->useAka,
+                                     versionStr);
                   } else {
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, "All", "New Files", 0);
-                     msg->text = createKludges(annArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
+                     msg->text = createKludges(
+                                     config,annArea, 
+                                     newFileReport[i]->useAka, 
+                                     newFileReport[i]->useAka,
+                                     versionStr);
                   } /* endif */
                   xstrcat(&(msg->text), " ");
                } /* endif */

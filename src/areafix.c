@@ -960,7 +960,7 @@ char *areastatus(char *preport, char *text)
 
 void preprocText(char *preport, s_message *msg)
 {
-    msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
+    msg->text = createKludges(config, NULL, &msg->origAddr, &msg->destAddr,versionStr);
     xstrcat(&msg->text, preport);
     xscatprintf(&msg->text, " \r--- %s FileFix\r", versionStr);
     msg->textLength=(int)strlen(msg->text);

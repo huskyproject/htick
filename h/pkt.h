@@ -67,8 +67,8 @@ char        *getKludge(s_message msg, char *what);
   Output: getKludge returns a pointer to the text which followed the kludge
           If the kludge does not exist it returns NULL
 */
-  
-char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
+// moved to fidoconfig  
+//char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
 /*DOC
    Taken from the areafix.c
    Input:  a s_addr struct
