@@ -1,20 +1,19 @@
 # makefile for PGCC/EMX 1.1.1
-DEBUG   = 0
+
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
 CC      = gcc 
-INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man
 
 OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O3 -s -DUNIX
-# LFLAGS  = -L../../fidoconfig -L../../smapi 
-  LFLAGS  =
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX
+  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
 else
-  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I../../fidoconfig -I../../smapi -Wall -Os -mpentium -s -DOS2
-# LFLAGS  = -L../../smapi -L../../fidoconfig
-  LFLAGS  = -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -L../../smapi -L../../fidoconfig -lwrap
+  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -Os -s -DOS2
+  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
 endif
 
 all: $(OBJS) \
@@ -25,3 +24,13 @@ all: $(OBJS) \
 
 htick.exe: $(OBJS)
 	$(CC) $(LFLAGS) -o htick.exe $(OBJS) -lsmapiemo -lfidoconfig
+
+clean:
+	-del *.obj *.bak
+
+distclean: clean
+	-del *.exe
+
+install: htick.exe
+	copy htick.exe $(BINDIR)
+

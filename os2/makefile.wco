@@ -1,6 +1,8 @@
 # makefile for Watcom OS/2 32
 
-DEBUG   = 1
+# include Husky-Makefile-Config
+!include ..\..\huskymak.cfg
+
 CC      = wcc386
 LINK    = WLINK
 
@@ -8,10 +10,10 @@ OBJS    = htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areaf
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
+CFLAGS  = -d2 -hw -i=..\h;$(INCDIR) -oneatx -zq
 LFLAGS  = DEBUG Watcom
 !ELSE
-CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
+CFLAGS  = -i..\h;$(INCDIR) -oneatx -zq
 LFLAGS  =
 !ENDIF
 
@@ -24,5 +26,15 @@ $(OBJS): $(SRC_DIR)\$*.c
 
 htick.exe: $(OBJS)
    @echo linking htick
-  $(LINK) $(LFLAGS) FILE $(OBJS) Library ..\..\smapi\smapiwco, ..\..\fidoconfig\fidoconfig.lib NAME htick.exe
+  $(LINK) $(LFLAGS) FILE $(OBJS) Library $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig.lib NAME htick.exe
+
+
+clean:
+	del *.obj *.bak
+
+distclean: clean
+	del *.exe
+
+install: htick.exe
+	copy htick.exe $(BINDIR)
 
