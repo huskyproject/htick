@@ -1,3 +1,11 @@
+2002-05-27 Monday 16:28  mche
+
+	* src/add_desc.c (1.9): DLCDigits position moved back
+
+2002-05-27 Monday 13:48  mche
+
+	* src/toss.c (1.173): loging size of recived file
+
 2002-05-22 Wednesday 13:21  mche
 
 	* src/areafix.c (1.59): new version of DelLinkFromString() moved
