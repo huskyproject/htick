@@ -116,6 +116,8 @@ int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
 	}
 	
     if (echo->levelread > link->level) return 2;
+    /* check for 'access export' for arealink set up by WriteOnly keyword */
+    if (echo->downlinks[i]->export==0) return 3;
 
     return rc;
 }
@@ -159,6 +161,8 @@ int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
     }
 	
     if (echo->levelwrite > link->level) return 2;
+    /* check for 'access import' for arealink set up by ReadOnly keyword */
+    if (echo->downlinks[i]->import==0) return 3;
 
     return rc;
 }
