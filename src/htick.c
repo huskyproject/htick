@@ -395,14 +395,13 @@ int main(int argc, char **argv)
    doneCharsets();
    w_log( '1', "End");
    closeLog();
-   if (config->lockfile != NULL) remove(config->lockfile);
-   disposeConfig(config);
-   nfree(versionStr);
-
    if (config->lockfile) {
       close(lock_fd);
       remove(config->lockfile);
    }
+   disposeConfig(config);
+   nfree(versionStr);
+
 
    return 0;
 }
