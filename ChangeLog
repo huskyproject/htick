@@ -1,3 +1,11 @@
+2002-10-20 Sunday 10:12  mche
+
+	* win32/makefile.cyg (1.10): Remove useless defines
+
+2002-10-20 Sunday 09:57  mche
+
+	* win32/makefile.cyg (1.9): Remove useless defines
+
 2002-10-16 Wednesday 15:41  mche
 
 	* src/hatch.c (1.68): fix bug with incorrect hatching macros
