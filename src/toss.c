@@ -763,7 +763,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
           writeLogEntry(htick_log,'6',"Saving Tic-File %s to %s",strrchr(ticfile,PATH_DELIM) + 1,savetic->pathName);
           strcpy(filename,savetic->pathName);
           strcat(filename,strrchr(ticfile, PATH_DELIM) + 1);
-          strLower(filename);
+          //strLower(filename);
           if (copy_file(ticfile,filename)!=0) {
              writeLogEntry(htick_log,'9',"File %s not found or moveable",ticfile);
           };
@@ -778,8 +778,8 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
 int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                 char *filename)
 /*
-   if isToss == 1 - tossing
-   else           - hatching
+   isToss == 1 - tossing
+   isToss == 0 - hatching
 */
 {
    int i, z;
@@ -800,8 +800,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    int minLinkCount;
 
 
-   if (isToss) minLinkCount = 2; // uplink and downlink
-   else minLinkCount = 1;        // only downlink
+   if (isToss == 1) minLinkCount = 2; // uplink and downlink
+   else minLinkCount = 1;             // only downlink
 
    if (!filearea->pass && !filearea->sendorig)
       strcpy(fileareapath,filearea->pathName);
@@ -812,31 +812,34 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    createDirectoryTree(fileareapath);
 
-   if (tic->replaces && !filearea->pass ) {
-      /* Delete old file */
-      /*
-      strcpy(newticedfile,fileareapath);
-      strcat(newticedfile,tic.replaces);
-      adaptcase(newticedfile);
-      */
-      if (removeFileMask(fileareapath,tic->replaces)>0) {
-         writeLogEntry(htick_log,'6',"Removed file[s] %s one request",tic->replaces);
+   if (tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
+      /* Delete old file[s] */
+      int num_files;
+      char *repl;
+
+      repl = strrchr(tic->replaces,PATH_DELIM);
+      if (repl==NULL) repl = tic->replaces;
+      else repl++;
+      num_files = removeFileMask(fileareapath,repl);
+      if (num_files>0) {
+         writeLogEntry(htick_log,'6',"Removed %d file[s]. Filemask: %s",num_files,tic->replaces);
       }
    }
 
    if (!filearea->pass || (filearea->pass && filearea->downlinkCount>=minLinkCount)) {
 
       strcpy(newticedfile,fileareapath);
-      /*
-      p = strrchr(newticedfile,PATH_DELIM); 
-      if(p) strLower(p+1);
-      */
       strcat(newticedfile,MakeProperCase(tic->file));
 
-      if (isToss)
+      if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
+         writeLogEntry(htick_log,'9',"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
+         return(3);
+      }
+
+      if (isToss == 1)
          if (move_file(filename,newticedfile)!=0) {
              writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
-             disposeTic(tic);
+             //disposeTic(tic);
              return(2);
          } else {
              writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
@@ -844,7 +847,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       else
          if (copy_file(filename,newticedfile)!=0) {
             writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
-            disposeTic(tic);
+            //disposeTic(tic);
             return(2);
          } else {
             writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
@@ -884,7 +887,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       tic->path[tic->anzpath]=strdup(hlp);
       tic->anzpath++;
 
-      if (isToss) {
+      if (isToss == 1) {
          /* Save seenby structure */
          old_seenby = malloc(tic->anzseenby*sizeof(s_addr));
          memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
@@ -896,9 +899,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            (isToss && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) &&
+            (isToss == 1 && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) &&
             addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-            (isToss && seenbyComp (tic->seenby, tic->anzseenby,
+            (isToss == 1 && seenbyComp (tic->seenby, tic->anzseenby,
                filearea->downlinks[i]->link->hisAka) != 0)) {
          /* Adding Downlink to Seen-By */
          tic->seenby=realloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
@@ -942,7 +945,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          }
 
          if (readAccess == 0) {
-            if (isToss && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
+            if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
                writeLogEntry(htick_log,'7',"File %s already seenby %s",
                        tic->file,
                        addr2string(&filearea->downlinks[i]->link->hisAka));
@@ -1039,7 +1042,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       newfilesCount++;
    }
 
-   if (!isToss) reportNewFiles();
+   if (isToss == 0) reportNewFiles();
 
    /* execute external program */
    for (z = 0; z < config->execonfileCount; z++) {
@@ -1064,7 +1067,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        }                                         
    }
 
-   if (isToss) free(old_seenby);
+   if (isToss == 1) free(old_seenby);
    return(0);
 }
 
@@ -1082,6 +1085,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    unsigned long crc;
    struct stat stbuf;
    int writeAccess;
+   int rc = 0;
 
 
 #ifdef DEBUG_HPT
@@ -1165,9 +1169,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    /* Recieve file? */
    if (!fexist(ticedfile)) {
-       writeLogEntry(htick_log,'6',"File %s, not received, wait",tic.file);
-       disposeTic(&tic);
-       return(5);
+      if (from_link->delNotRecievedTIC) {
+         writeLogEntry(htick_log,'6',"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
+         disposeTic(&tic);
+         return(0);
+      } else {
+         writeLogEntry(htick_log,'6',"File %s from filearea %s not received, wait",tic.file,tic.area);
+         disposeTic(&tic);
+         return(5);
+      }
    }
 
    stat(ticedfile,&stbuf);
@@ -1222,11 +1232,11 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(3);
    }
 
-   sendToLinks(1, filearea, &tic, ticedfile);
+   rc = sendToLinks(1, filearea, &tic, ticedfile);
 
    doSaveTic(ticfile,&tic);
    disposeTic(&tic);
-   return(0);
+   return(rc);
 }
 
 void processDir(char *directory, e_tossSecurity sec)
@@ -1235,24 +1245,21 @@ void processDir(char *directory, e_tossSecurity sec)
    struct dirent  *file;
    char           *dummy;
    int            rc;
-   int            ticFile;
 
-   if (directory==NULL) return;
+   if (directory == NULL) return;
 
    dir = opendir(directory);
+   if (dir == NULL) return;
 
    while ((file = readdir(dir)) != NULL) {
 #ifdef DEBUG_HPT
       printf("testing %s\n", file->d_name);
 #endif
-
-      ticFile = 0;
-
-      dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
-      strcpy(dummy, directory);
-      strcat(dummy, file->d_name);
-
       if (patimat(file->d_name, "*.TIC") == 1) {
+         dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+         strcpy(dummy, directory);
+         strcat(dummy, file->d_name);
+
          rc=processTic(dummy,sec);
 
          switch (rc) {
@@ -1274,8 +1281,8 @@ void processDir(char *directory, e_tossSecurity sec)
                remove (dummy);
                break;
          } /* switch */
+         free(dummy);
       } /* if */
-      free(dummy);
    } /* while */
    closedir(dir);
 }
@@ -1784,4 +1791,3 @@ void toss()
    
    reportNewFiles();
 }
-

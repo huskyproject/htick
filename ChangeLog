@@ -3,6 +3,16 @@ htick 0.9
 (released on Mon May 22 14:58:56 CEST 2000)
 
 ----- cvs ci ------
+Mon Jun 05 12:23:00 SAMST 2000
+Georgi:
+* fixed bug in remove file[s]
+* added new token delNotRecievedTIC (in link section) -
+  if file not recieved, then remove TIC
+* added new filearea option - noreplace
+* htick now again compile
+  Sorry
+
+----- cvs ci ------
 Fri Jun 02 10:48:00 SAMST 2000
 Georgi:
 * now outgoing tics stores in ticOutbound directory

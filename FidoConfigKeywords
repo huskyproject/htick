@@ -68,6 +68,10 @@ Same as EchoArea, most options are valid:
 
     Description for this filearea
 
+    k) -noreplace
+
+    No replace exists files in this filearea
+
 7) ExecOnFile <filearea> <filemask> <command>
   
 Execute some command on receiving file. Command get full filepath as parameter.
@@ -85,6 +89,10 @@ Execute some command on receiving file. Command get full filepath as parameter.
     d) AutoFileCreateDefaults <string> 
 
     Defaults for File Area Autocreate
+
+    e) delNotRecievedTIC
+
+    If file not recieved, then remove TIC
 
 9) SaveTic <FileEchoMask> <DirToSaveTic>
 
@@ -135,4 +143,4 @@ Kill filefix request after procession
 
 20) bbsarea <name> <bbsareapath>
 
-For "htick filelist"
+Use in "htick filelist"

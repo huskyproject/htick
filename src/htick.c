@@ -95,8 +95,6 @@ int processCommandLine(int argc, char **argv)
 " send <file> <filearea>\n"
 "      <address>          Send file from filearea to address\n"
 " clean                   Clean passthrough dir\n"
-" purge <days>            Purge files older than <days> days (not implemented)\n"
-" request <Adress> <file> Request file from adress (not implemented)\n"
 "\n"
 "Not all features are implemented yet, you are welcome to implement them :)\n"
 );

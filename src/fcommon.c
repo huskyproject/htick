@@ -382,6 +382,7 @@ int removeFileMask(char *directory, char *mask)
     char          tmpDir[256];
     unsigned int  numfiles = 0, dirLen;
 
+   if (directory == NULL) return(0);
    dirLen = strlen(directory);
    if (directory[dirLen-1] == PATH_DELIM) {
       strcpy(tmpDir, directory);
