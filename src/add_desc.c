@@ -25,11 +25,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#ifndef __GNUC__
-#  include <process.h>
-#endif
 
 #include <smapi/compiler.h>
+
+#ifdef HAS_PROCESS_H
+#  include <process.h>
+#endif
 
 #ifdef HAS_DOS_H
 #  include <dos.h>
