@@ -282,7 +282,7 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
   if(!tic->from.zone && !tic->from.net && !tic->from.node){
     w_log(LL_ERR,"'From' address not presents in TIC %s, required by FSC-87", ticfilename);
     nRet++;
-  }else if(!tic->from.zone || !tic->from.node){
+  }else if(!tic->from.zone || !tic->from.net){
     w_log(LL_ERR,"'From' address is illegal in TIC %s", ticfilename);
     nRet++;
   }
