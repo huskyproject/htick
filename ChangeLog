@@ -1,3 +1,13 @@
+2002-07-25 Thursday 16:16  mche
+
+	* src/areafix.c (1.78): some code improvement of  function
+	changeconfig() using InsertCfgLine()
+
+2002-07-25 Thursday 12:04  d.sergienko
+
+	* src/areafix.c (1.77): fixed warning "implicit declaration of
+	function `chmod'"
+
 2002-07-24 Wednesday 17:01  mche
 
 	* src/areafix.c (1.76): report about rescanable areas by %list
