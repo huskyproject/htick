@@ -63,11 +63,11 @@ int createLockFile(char *lockfile) {
         if ((f=fopen(lockfile,"a")) == NULL)
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-                   writeLogEntry(htick_log, '9', "createLockFile: cannot create lock file");
+                   writeLogEntry(htick_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
-        fprintf(f, "%u\n", getpid());
+        fprintf(f, "%u\n", (unsigned)getpid());
         fclose(f);
         return 0;
 }
