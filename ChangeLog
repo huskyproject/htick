@@ -1,3 +1,8 @@
+2003-03-04 Tuesday 12:25  stas_degteff
+
+	* UPGRADE (1.1): file UPGRADE was initially added on branch
+	htick-1_4-stable.
+
 2003-03-03 Monday 08:07  d_sergienko
 
 	* src/: add_desc.c (1.33), areafix.c (1.115), clean.c (1.16),
