@@ -289,10 +289,10 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
 
   if(!tic->origin.zone && !tic->origin.net && !tic->origin.node){
     w_log(LL_ERR,"Originating address not presents in TIC %s, required by FSC-87", ticfilename);
-    nRet++;
+    /* nRet++; */
   }else if(!tic->origin.zone || !tic->origin.node){
     w_log(LL_ERR,"Originating address is illegal in TIC %s", ticfilename);
-    nRet++;
+    /* nRet++; */
   }
 
   if(!tic->path){
