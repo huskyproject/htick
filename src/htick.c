@@ -199,6 +199,7 @@ void processConfig()
    if (config->addrCount == 0) printf("at least one addr must be defined\n");
    if (config->linkCount == 0) printf("at least one link must be specified\n");
    if (config->fileAreaBaseDir == NULL) printf("you must set FileAreaBaseDir in fidoconfig first\n");
+   if (config->passFileAreaDir == NULL) printf("you must set PassFileAreaDir in fidoconfig first\n");
 
    if (config->addrCount == 0 ||
        config->linkCount == 0 ||

@@ -2,6 +2,11 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Sun Jul 25 21:17:54 NOVST 1999
+max:
+* small bugfix (if no passFileAreaDir in config -> core dump)
+
+----- cvs ci ------
 Thu Jul 22 11:39:46 1999
 Georgi:
 * bugfix in move from .htk dir
