@@ -170,6 +170,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
     unsigned int i;
+    char *p;
     s_area *filearea = NULL;
 
     if (ticfile) {
@@ -203,8 +204,10 @@ int writeTic(char *ticfile,s_ticfile *tic)
     for (i=0;i<tic->anzdesc;i++)
         fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
 
-    for (i=0;i<tic->anzldesc;i++)
+    for (i=0;i<tic->anzldesc;i++) {
+        while ((p=strchr(tic->ldesc[i], 26))) *p=' ';
         fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
+    }
 
     if (tic->replaces)
         fprintf(tichandle,"Replaces %s\r\n",tic->replaces);
