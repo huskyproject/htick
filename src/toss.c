@@ -552,6 +552,10 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz && isToss)
          GetDescFormDizFile(newticedfile, tic);
 
+   
+   if (config->announceSpool) doSaveTic4Report(tic);
+
+
    if (!filearea->pass) {
       strcpy(descr_file_name, filearea->pathName);
       strcat(descr_file_name, "files.bbs");
@@ -652,10 +656,6 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          } /* if readAccess == 0 */
       } /* Forward file */
    }
-   if (config->announceSpool) doSaveTic4Report(tic);
-
-//   if (!filearea->hide) {
-   // report about new files - if filearea not hidden
    /* execute external program */
    for (z = 0; z < config->execonfileCount; z++) {
      if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
@@ -982,10 +982,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return(3);
    }
-
+   
    rc = sendToLinks(1, filearea, &tic, ticedfile);
+   
+   if(rc == 0)   
+       doSaveTic(ticfile,&tic,filearea);
 
-   doSaveTic(ticfile,&tic,filearea);
    disposeTic(&tic);
    return(rc);
 }
