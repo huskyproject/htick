@@ -110,7 +110,7 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
     int i;
 
    fprintf(f,"%-12s",filename);
-   fprintf(f,"%8lu ",size);
+   fprintf(f,"%8lu ",(unsigned long) size);
    fprintf(f, "%02u-", day);
    switch (month) {
    case 0: fprintf(f, "Jan");

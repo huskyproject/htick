@@ -2,6 +2,9 @@
 #define _FILELIST_H
 
 #include <fidoconf/fidoconf.h>
+#if defined(__TURBOC__) && defined(MSDOS)
+typedef unsigned long off_t;
+#endif
 
 void formatDesc(char **desc, int *count);
 void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, int year, int countdesc, char **desc);
