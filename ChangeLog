@@ -1,3 +1,13 @@
+2003-05-11 Sunday 17:41  mche
+
+	* src/: areafix.c (1.121), clean.c (1.20), fcommon.c (1.70): fix
+	reallocation array of links
+
+2003-05-11 Sunday 07:54  d_sergienko
+
+	* src/toss.c (1.267): add yourself to seen-by if missing into
+	transit tics
+
 2003-05-07 Wednesday 17:11  mche
 
 	* src/areafix.c (1.120):  - common areafix function moved from
