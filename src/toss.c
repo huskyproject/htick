@@ -669,7 +669,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
         if (addrComp(tic.from,filearea->downlinks[i]->hisAka)!=0 && 
             addrComp(tic.to,filearea->downlinks[i]->hisAka)!=0 &&
             addrComp(tic.origin,filearea->downlinks[i]->hisAka)!=0 &&
-	    addrComp(tic.to, filearea->downlinks[i]->ourAka)!=0)
+	    addrComp(tic.to, *filearea->downlinks[i]->ourAka)!=0)
             { // Forward file to
 	     if (seenbyComp (&tic, filearea->downlinks[i]->hisAka) == 0) {
                 sprintf(logstr,"File %s already seenby %s, %s",
