@@ -297,7 +297,7 @@ void processConfig()
    if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first\n");
    if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first\n");
    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
-       w_log( LL_CRIT, "Parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
+       w_log( LL_CRIT, "Parameter MaxTicLineLength (%d) in fidoconfig must be 0 or >80\n",config->MaxTicLineLength);
 
    if (config->addrCount == 0 ||
        config->linkCount == 0 ||
