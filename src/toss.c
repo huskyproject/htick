@@ -654,7 +654,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
 //    }
 
   if (strcmp(echo->group, "0")) {
-    if (link->numAccessGroup) {
+    if (link->numAccessGrp) {
       if (config->numPublicGroup) {
         for (i = 0; i < config->numPublicGroup; i++)
           if (strcmp(echo->group, config->PublicGroup[i]) == 0) return 1;
