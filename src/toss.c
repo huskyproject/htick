@@ -463,7 +463,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
 
 void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
 {
-    char *filename = NULL;
     unsigned int i;
     s_savetic *savetic;
 
@@ -471,31 +470,39 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
     {
         savetic = &(config->saveTic[i]);
         if (patimat(tic->area,savetic->fileAreaNameMask)==1) {
+            char *ticFname = NULL;
+            char *filename = NULL;
 
-            char *ticFname = GetFilenameFromPathname(ticfile);
+            if (ticfile)      {
+                ticFname = GetFilenameFromPathname(ticfile);
+                w_log(LL_FILENAME,"Saving Tic-File %s to %s", ticFname, savetic->pathName);
+                xscatprintf(&filename,"%s%s", savetic->pathName,ticFname);
+                if (copy_file(ticfile,filename,1)!=0) { /* overwrite existing file if not same */
+                    w_log(LL_ERROR,"File %s not found or not moveable",ticfile);
+                }
+            } else {
+                filename = makeUniqueDosFileName(savetic->pathName,"tic",config);
+                w_log(LL_FILENAME,"Saving Tic-File %s to %s", GetFilenameFromPathname(filename), savetic->pathName);
+                writeTic(filename,tic);
+            }
+            nfree(filename);
 
-            w_log(LL_FILENAME,"Saving Tic-File %s to %s", ticFname, savetic->pathName);
-            xscatprintf(&filename,"%s%s", savetic->pathName,ticFname);
-            if (copy_file(ticfile,filename,1)!=0) { /* overwrite existing file if not same */
-                w_log(LL_ERROR,"File %s not found or not moveable",ticfile);
-            };
             if( filearea &&
-               filearea->msgbType != MSGTYPE_PASSTHROUGH && !filearea->sendorig && savetic->fileAction)
+                filearea->msgbType != MSGTYPE_PASSTHROUGH && !filearea->sendorig && savetic->fileAction)
             {
                 char *from = NULL, *to = NULL;
                 xstrscat(&from, filearea->fileName, tic->file, NULL);
                 xstrscat(&to,   savetic->pathName, tic->file, NULL);
                 if( savetic->fileAction == 1)
-                   copy_file(from,to,1); /* overwrite existing file if not same */
+                    copy_file(from,to,1); /* overwrite existing file if not same */
                 if( savetic->fileAction == 2)
-                   link_file(from,to);
+                    link_file(from,to);
                 nfree(from); nfree(to);
             }
             break;
         };
 
     };
-    nfree(filename);
     return;
 }
 
