@@ -344,7 +344,18 @@ int parseTic(char *ticfile,s_ticfile *tic)
     } /* endwhile */
     
     fclose(tichandle);
-    
+
+    if(( linecut = strrchr(tic->file, '/') )) {
+      w_log( LL_ALERT, "Directory separator found in TIC's file clause, possible hack attack: %s", tic->file);
+      strcpy(tic->file, linecut);
+      return 0;
+    }
+    if(( linecut = strrchr(tic->file, '\\') )) {
+      w_log( LL_ALERT, "Directory separator found in TIC's file clause, possible hack attack: %s", tic->file);
+      strcpy(tic->file, linecut);
+      return 0;
+    }
+
     if (!tic->anzdesc) {
         tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
         tic->desc[0] = sstrdup("no desc");
