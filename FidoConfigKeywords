@@ -22,7 +22,7 @@ set, it is set to a single space.
 5) FileFixHelp <file>
 
 Help file for FileFix.
-Same as AreaFixHelp for AreaFix
+Same as AreaFixHelp for HPT AreaFix
 
 6) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
 
