@@ -137,7 +137,7 @@ XMSG createXMSG(s_message *msg)
                 msgHeader.attr = msg->attributes;
 
                 if (isOurAka(config,msg->destAddr)==0) {
-                        msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD
+                        msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGLOCAL | MSGHOLD
                           | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); /* kill these flags */
                         msgHeader.attr |= MSGPRIVATE; /* set this flags */
                 } /*else if (header!=NULL) msgHeader.attr |= MSGFWD; */ /* set TRS flag, if the mail is not to us */
