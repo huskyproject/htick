@@ -1,5 +1,5 @@
 # $Id$
-# Legacy makefile for build htick with Borland C
+# Legacy makefile to build htick with Borland C
 
 CC      = bcc32
 

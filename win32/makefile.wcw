@@ -1,5 +1,5 @@
 # $Id$
-# Legacy makefile for build htick with Watcom C (win32 build)
+# Legacy makefile to build htick with Watcom C (win32 build)
 
 CC      = wcc386
 LINK    = WLINK

@@ -1,11 +1,11 @@
 # $Id$
-# Legacy makefile for build htick with Microsoft Visual C++
+# Legacy makefile to build htick with Microsoft Visual C++
 
 CC=     cl
 CFLAGS= -nologo -Zp1 -I..\.. -I..\h
-CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE 
+CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
 
-# uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
+# uncomment one of these lines if you want to enable hardlinking on NTFS 4.0, 5.0
 # CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
 # CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
 
