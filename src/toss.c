@@ -573,7 +573,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
       return 3;
    };
 
-   for (i=0;i<tic->anzldesc;i++)
+   for (i=0;i<(unsigned int)tic->anzldesc;i++)
       nfree(tic->ldesc[i]);
    tic->anzldesc=0;
 
@@ -780,7 +780,7 @@ int readCheck(s_filearea *echo, s_link *link)
   if (i == echo->downlinkCount) return 4;
 
   /* pause */
-  if (link->Pause && !echo->noPause) return 5;
+  if ((link->Pause & FPAUSE) == FPAUSE && !echo->noPause) return 5;
 
 /* Do not check for groupaccess here, use groups only (!) for Filefix */
 /*  if (strcmp(echo->group,"0")) {
@@ -961,7 +961,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    isToss == 0 - hatching
 */
 {
-   int i, z;
+   unsigned int i, z;
    char descr_file_name[256], newticedfile[256], fileareapath[256];
    char *linkfilepath=NULL;
    char hlp[100],timestr[40];
@@ -1249,7 +1249,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          newFileReport[newfilesCount]->filedescCount = tic->anzldesc;
       } else {
          newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzdesc, sizeof(char*));
-         for (i = 0; i < tic->anzdesc; i++) {
+         for (i = 0; i < (unsigned int)tic->anzdesc; i++) {
             newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->desc[i]);
             if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
@@ -2037,7 +2037,7 @@ static int compare_filereport(const void *a, const void *b)
 void reportNewFiles()
 {
    int       b,  fileCount;
-   unsigned  i, c;
+   unsigned  int i, c;
    UINT32    fileSize;
    s_message *msg;
    char      buff[256], *tmp;
