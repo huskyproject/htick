@@ -12,9 +12,9 @@ else
   LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o
 endif
   CDEFS=  $(CFLAGS)
-# uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
-# CDEFS=  $(CFLAGS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CFLAGS) -D_WIN32_WINNT=0x0500
+# uncomment one of this line if you want to enable hardlinking on NTFS 4.0, 5.0
+#CDEFS+= -D_WIN32_WINNT=0x0400
+#CDEFS+= -D_WIN32_WINNT=0x0500
 
 
 all: $(OBJS) \

@@ -22,7 +22,7 @@ This file describe changes between htick-0.9 and htick-1.0
 
 2. CONFIG changes:
    - FileFixFSC87Subset : ignore unknown keywords in tic-file
-   - FileForwardRequest : 
+   - FileForwardRequest :
    - RemoteFileRobotName (in link definition) : Name of remote file (tic) robot
      (need for FileForwardRequest);
    - FileDescName : file with archive description (usually file_id.diz);
@@ -30,7 +30,7 @@ This file describe changes between htick-0.9 and htick-1.0
    - BBSArea : BBS files directory (for file list building);
    - FileEchoFlavour (in link definition) : set outbound flavor for fileecho
      files (Imm, Crash, Direct, Hold, Normal);
-   - filearea option '-nodiz' : do not try to get description from 
+   - filearea option '-nodiz' : do not try to get description from
      <fileDescName>;
    - syntax of token 'SaveTic' expanded;
    - new token for link  "LinkFileFaseDir" : Where autocreated file echos
@@ -46,5 +46,9 @@ This file describe changes between htick-0.9 and htick-1.0
    - areadesc set into TIC at 'htick hatch';
    - set 'Loc' flag on messages from FileFix.
    - add own seen-by when hatch.
+
+Fixes after 1.0.2-release
+   - fix forward subscribe;
+   - fix CR-LF for autocreated "echoarea" lines
 
 $Id$
