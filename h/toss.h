@@ -42,10 +42,10 @@ void checkTmpDir(void);
 void processTmpDir(void);
 void toss(void);
 void writeNetmail(s_message *msg, char *areaName);
-int readCheck(s_filearea *echo, s_link *link);
-int writeCheck(s_filearea *echo, ps_addr aka);
-int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic, char *filename);
-int parseTic(char *ticfile,s_ticfile *tic);
+int  readCheck(s_filearea *echo, s_link *link);
+int  writeCheck(s_filearea *echo, ps_addr aka);
+int  sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic, const char *filename);
+int  parseTic(char *ticfile,s_ticfile *tic);
 
 
 #endif

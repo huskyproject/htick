@@ -507,242 +507,252 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
 }
 
 int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
-                char *filename)
-/*
-   isToss == 1 - tossing
-   isToss == 0 - hatching
-*/
+                const char *filename)
+                /*
+                isToss == 1 - tossing
+                isToss == 0 - hatching
+                */
 {
-   unsigned int i, z;
-   char descr_file_name[256], newticedfile[256], fileareapath[256];
-   char timestr[40];
-   time_t acttime;
-   hs_addr *old_seenby = NULL;
-   hs_addr old_from, old_to;
-   int old_anzseenby = 0;
-   int readAccess;
-   int cmdexit;
-   char *comm;
-   char *p;
-   unsigned int minLinkCount;
+    unsigned int i, z;
+    char descr_file_name[256], newticedfile[256], fileareapath[256];
+    char timestr[40];
+    time_t acttime;
+    hs_addr *old_seenby = NULL;
+    hs_addr old_from, old_to;
+    int old_anzseenby = 0;
+    int readAccess;
+    int cmdexit;
+    char *comm;
+    char *p;
+    unsigned int minLinkCount;
+    
+    if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
+    else minLinkCount = 1;             /*  only downlink */
 
-
-   if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
-   else minLinkCount = 1;             /*  only downlink */
-
-   if (!filearea->pass)
-      strcpy(fileareapath,filearea->pathName);
-   else
-      strcpy(fileareapath,config->passFileAreaDir);
-   p = strrchr(fileareapath,PATH_DELIM);
-   if(p) strLower(p+1);
-
-   _createDirectoryTree(fileareapath);
-
-   if (isToss == 1 && tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
-       /* Delete old file[s] */
-       int num_files;
-       char *repl;
-
-       repl = strrchr(tic->replaces,PATH_DELIM);
-       if (repl==NULL) repl = tic->replaces;
-       else repl++;
-       num_files = removeFileMask(fileareapath,repl);
-       if (num_files>0) {
-           w_log(LL_DEL,"Removed %d file[s]. Filemask: %s",num_files,repl);
-       }
-   }
-
-
-   strcpy(newticedfile,fileareapath);
-   strcat(newticedfile,MakeProperCase(tic->file));
-
-   if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
-       w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
-       return(3);
-   }
-
-   if (isToss == 1) {
-       if (!filearea->sendorig) {
-           if( fexist(filename) ){
-              if (move_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log( LL_ERROR,"File %s not moveable to %s: %s",
-                      filename, newticedfile, strerror(errno) );
-                return(2);
-              } else {
+    if( !fexist(filename) ) {
+        /* origin file does not exist */
+        w_log(LL_ERROR,"File %s not found",filename);
+        return TIC_NotRecvd;
+    }
+    
+    if (!filearea->pass)
+        strcpy(fileareapath,filearea->pathName);
+    else
+        strcpy(fileareapath,config->passFileAreaDir);
+    p = strrchr(fileareapath,PATH_DELIM);
+    if(p) strLower(p+1);
+    
+    _createDirectoryTree(fileareapath);
+    
+    if (isToss == 1 && tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
+        /* Delete old file[s] */
+        int num_files;
+        char *repl;
+        
+        repl = strrchr(tic->replaces,PATH_DELIM);
+        if (repl==NULL) repl = tic->replaces;
+        else repl++;
+        num_files = removeFileMask(fileareapath,repl);
+        if (num_files>0) {
+            w_log(LL_DEL,"Removed %d file[s]. Filemask: %s",num_files,repl);
+        }
+    }
+    
+    
+    strcpy(newticedfile,fileareapath);
+    strcat(newticedfile,MakeProperCase(tic->file));
+    
+    if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
+        w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
+        return(3);
+    }
+    
+    if (isToss == 1) {
+        if (!filearea->sendorig) {
+            /* overwrite existing file if not same */
+            if (move_file(filename,newticedfile,1)!=0) { 
+                w_log( LL_ERROR,"File %s not moveable to %s: %s",
+                    filename, newticedfile, strerror(errno) );
+                return TIC_NotOpen;
+            } else {
                 w_log('6',"Moved %s to %s",filename,newticedfile);
-              }
-           }else
-              w_log(LL_ERROR,"File %s not found",filename);
-       } else {
-           if( fexist(filename) ){
-             if (copy_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log( LL_ERROR,"File %s not moveable to %s: %s",
-                      filename, newticedfile, strerror(errno) );
-               return(2);
-             } else {
-               w_log('6',"Put %s to %s",filename,newticedfile);
-             }
-           }else
-              w_log(LL_ERROR,"File %s not found",filename);
-           strcpy(newticedfile,config->passFileAreaDir);
-           strcat(newticedfile,MakeProperCase(tic->file));
-           if( fexist(filename) ){
-             if (move_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log( LL_ERROR, "File %s not moveable to %s: %s",
-                      filename, newticedfile, strerror(errno) );
-               return(2);
-             } else {
-               w_log('6',"Moved %s to %s",filename,newticedfile);
-             }
-           }else
-              w_log(LL_ERROR,"File %s not found",filename);
-       }
-   } else if (strcasecmp(filename,newticedfile) != 0){
-       if( fexist(filename) ){
-         if (copy_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log( LL_ERROR, "File %s not moveable to %s: %s",
-                      filename, newticedfile, strerror(errno) );
-           return(2);
-         } else {
-             w_log('6',"Put %s to %s",filename,newticedfile);
-         }
-       }else
-          w_log(LL_ERROR,"File %s not found",filename);
-   }
-
-   if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz && isToss)
-         GetDescFormDizFile(newticedfile, tic);
-
-   
-   if (config->announceSpool) doSaveTic4Report(tic);
-
-
-   if (!filearea->pass) {
-      strcpy(descr_file_name, filearea->pathName);
-      strcat(descr_file_name, "files.bbs");
-      adaptcase(descr_file_name);
-      removeDesc(descr_file_name,tic->file);
-      if (tic->anzldesc>0)
-         add_description (descr_file_name, tic->file, tic->ldesc, tic->anzldesc);
-      else
-         add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
-   }
-
-   if (filearea->downlinkCount>=minLinkCount) {
-      /* Adding path & seenbys */
-      time(&acttime);
-      strcpy(timestr,asctime(gmtime(&acttime)));
-      timestr[strlen(timestr)-1]=0;
-      if (timestr[8]==' ') timestr[8]='0';
-
-
-      tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
-      tic->path[tic->anzpath] = NULL;
-      xscatprintf(&tic->path[tic->anzpath],"%s %lu %s UTC %s",
-          aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
-      tic->anzpath++;
-   }
-
-   if (isToss == 1) {
-      /*  Save seenby structure */
-      old_seenby = smalloc(tic->anzseenby*sizeof(hs_addr));
-      memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(hs_addr));
-      old_anzseenby = tic->anzseenby;
-      memcpy(&old_from,&tic->from,sizeof(hs_addr));
-      memcpy(&old_to,&tic->to,sizeof(hs_addr));
-   }
-
-   for (i=0;i<filearea->downlinkCount;i++) {
-       s_link* downlink = filearea->downlinks[i]->link;
-       if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
-           (readCheck(filearea, downlink) == 0)
-           )
-       {  /*  if link is not in seen-by list & */
-           /*  if link can recive files from filearea */
-           /*  Adding Downlink to Seen-By */
-           /*
-           tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(hs_addr));
-           memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(hs_addr));
-           tic->anzseenby++;
-           */
-           seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
-       }
-   }
-
-   seenbySort(tic->seenby,tic->anzseenby);
-
-   /* Checking to whom I shall forward */
-   for (i=0;i<filearea->downlinkCount;i++) {
-      s_link* downlink = filearea->downlinks[i]->link;
-      if (  addrComp(old_from,downlink->hisAka)   !=0 &&
+            }
+        } else {
+            /* overwrite existing file if not same */
+            if (copy_file(filename,newticedfile,1)!=0) { 
+                w_log( LL_ERROR,"File %s not moveable to %s: %s",
+                    filename, newticedfile, strerror(errno) );
+                return TIC_NotOpen;
+            } else {
+                w_log('6',"Put %s to %s",filename,newticedfile);
+            }
+            strcpy(newticedfile,config->passFileAreaDir);
+            strcat(newticedfile,MakeProperCase(tic->file));
+            /* overwrite existing file if not same */
+            if (move_file(filename,newticedfile,1)!=0) { 
+                w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                    filename, newticedfile, strerror(errno) );
+                return TIC_NotOpen;
+            } else {
+                w_log('6',"Moved %s to %s",filename,newticedfile);
+            }
+        }
+    } else if (strcasecmp(filename,newticedfile) != 0) {
+        if (!filearea->sendorig) {
+            /* overwrite existing file if not same */
+            if (copy_file(filename,newticedfile,1)!=0) { 
+                w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                    filename, newticedfile, strerror(errno) );
+                return TIC_NotOpen;
+            } else {
+                w_log('6',"Put %s to %s",filename,newticedfile);
+            }
+        } else {
+            strcpy(newticedfile,config->passFileAreaDir);
+            strcat(newticedfile,MakeProperCase(tic->file));
+            /* overwrite existing file if not same */
+            if (move_file(filename,newticedfile,1)!=0) { 
+                w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                    filename, newticedfile, strerror(errno) );
+                return TIC_NotOpen;
+            } else {
+                w_log('6',"Moved %s to %s",filename,newticedfile);
+            }
+        }
+    }
+    
+    if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz && isToss)
+        GetDescFormDizFile(newticedfile, tic);
+    
+    
+    if (config->announceSpool) doSaveTic4Report(tic);
+    
+    
+    if (!filearea->pass) {
+        strcpy(descr_file_name, filearea->pathName);
+        strcat(descr_file_name, "files.bbs");
+        adaptcase(descr_file_name);
+        removeDesc(descr_file_name,tic->file);
+        if (tic->anzldesc>0)
+            add_description (descr_file_name, tic->file, tic->ldesc, tic->anzldesc);
+        else
+            add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
+    }
+    
+    if (filearea->downlinkCount>=minLinkCount) {
+        /* Adding path & seenbys */
+        time(&acttime);
+        strcpy(timestr,asctime(gmtime(&acttime)));
+        timestr[strlen(timestr)-1]=0;
+        if (timestr[8]==' ') timestr[8]='0';
+        
+        
+        tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
+        tic->path[tic->anzpath] = NULL;
+        xscatprintf(&tic->path[tic->anzpath],"%s %lu %s UTC %s",
+            aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
+        tic->anzpath++;
+    }
+    
+    if (isToss == 1) {
+        /*  Save seenby structure */
+        old_seenby = smalloc(tic->anzseenby*sizeof(hs_addr));
+        memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(hs_addr));
+        old_anzseenby = tic->anzseenby;
+        memcpy(&old_from,&tic->from,sizeof(hs_addr));
+        memcpy(&old_to,&tic->to,sizeof(hs_addr));
+    }
+    
+    for (i=0;i<filearea->downlinkCount;i++) {
+        s_link* downlink = filearea->downlinks[i]->link;
+        if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
+            (readCheck(filearea, downlink) == 0)
+            )
+        {  /*  if link is not in seen-by list & */
+            /*  if link can recive files from filearea */
+            /*  Adding Downlink to Seen-By */
+            /*
+            tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(hs_addr));
+            memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(hs_addr));
+            tic->anzseenby++;
+            */
+            seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
+        }
+    }
+    
+    seenbySort(tic->seenby,tic->anzseenby);
+    
+    /* Checking to whom I shall forward */
+    for (i=0;i<filearea->downlinkCount;i++) {
+        s_link* downlink = filearea->downlinks[i]->link;
+        if (  addrComp(old_from,downlink->hisAka)   !=0 &&
             addrComp(old_to,downlink->hisAka)     !=0 &&
             addrComp(tic->origin,downlink->hisAka)!=0)
-      {
-         /* Forward file to */
-
-         readAccess = readCheck(filearea, downlink);
-         switch (readAccess) {
-         case 0: break;
-         case 5:
-            w_log(LL_FROUTE,"Link %s paused",
+        {
+            /* Forward file to */
+            
+            readAccess = readCheck(filearea, downlink);
+            switch (readAccess) {
+            case 0: break;
+            case 5:
+                w_log(LL_FROUTE,"Link %s paused",
                     aka2str(downlink->hisAka));
-            break;
-         case 4:
-            w_log(LL_FROUTE,"Link %s not subscribe to File Area %s",
+                break;
+            case 4:
+                w_log(LL_FROUTE,"Link %s not subscribe to File Area %s",
                     aka2str(old_from), tic->area);
-            break;
-         case 3:
-            w_log(LL_FROUTE,"Not export to link %s",
+                break;
+            case 3:
+                w_log(LL_FROUTE,"Not export to link %s",
                     aka2str(downlink->hisAka));
-            break;
-         case 2:
-            w_log(LL_FROUTE,"Link %s no access level",
+                break;
+            case 2:
+                w_log(LL_FROUTE,"Link %s no access level",
                     aka2str(downlink->hisAka));
-            break;
-         case 1:
-            w_log(LL_FROUTE,"Link %s no access group",
+                break;
+            case 1:
+                w_log(LL_FROUTE,"Link %s no access group",
                     aka2str(downlink->hisAka));
-            break;
-         }
-
-         if (readAccess == 0) {
-            if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0)
-            {
-               w_log(LL_FROUTE,"File %s already seenby %s",
-                       tic->file,
-                       aka2str(downlink->hisAka));
-            } else {
-               PutFileOnLink(newticedfile, tic,  downlink);
+                break;
             }
-         } /* if readAccess == 0 */
-      } /* Forward file */
-   }
-   /* execute external program */
-   for (z = 0; z < config->execonfileCount; z++) {
-     if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
-       if (patimat(tic->file,config->execonfile[z].filename) == 0) continue;
-       else {
-         comm = (char *) smalloc(strlen(config->execonfile[z].command)+1
-                                +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
-                                +strlen(tic->file)+1);
-         if (comm == NULL) {
-            w_log( LL_ERROR, "Exec failed - not enough memory");
-            continue;
-         }
-         sprintf(comm,"%s %s%s",config->execonfile[z].command,
-                                (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
-                                tic->file);
-         w_log( LL_EXEC, "Executing %s", comm);
-         if ((cmdexit = system(comm)) != 0) {
-           w_log( LL_ERROR, "Exec failed, code %d", cmdexit);
-         }
-         nfree(comm);
-       }
-   }
-
-   if (isToss == 1) nfree(old_seenby);
-   return(0);
+            
+            if (readAccess == 0) {
+                if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0)
+                {
+                    w_log(LL_FROUTE,"File %s already seenby %s",
+                        tic->file,
+                        aka2str(downlink->hisAka));
+                } else {
+                    PutFileOnLink(newticedfile, tic,  downlink);
+                }
+            } /* if readAccess == 0 */
+        } /* Forward file */
+    }
+    /* execute external program */
+    for (z = 0; z < config->execonfileCount; z++) {
+        if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
+        if (patimat(tic->file,config->execonfile[z].filename) == 0) continue;
+        else {
+            comm = (char *) smalloc(strlen(config->execonfile[z].command)+1
+                +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
+                +strlen(tic->file)+1);
+            if (comm == NULL) {
+                w_log( LL_ERROR, "Exec failed - not enough memory");
+                continue;
+            }
+            sprintf(comm,"%s %s%s",config->execonfile[z].command,
+                (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
+                tic->file);
+            w_log( LL_EXEC, "Executing %s", comm);
+            if ((cmdexit = system(comm)) != 0) {
+                w_log( LL_ERROR, "Exec failed, code %d", cmdexit);
+            }
+            nfree(comm);
+        }
+    }
+    
+    if (isToss == 1) nfree(old_seenby);
+    return(0);
 }
 
 #if !defined(UNIX)
