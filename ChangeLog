@@ -1,3 +1,12 @@
+2003-04-28 Monday 14:57  mche
+
+	* HISTORY (1.15), src/htick.c (1.97), src/toss.c (1.266): toss -b  
+	Toss bad tics
+
+2003-04-28 Monday 13:37  mche
+
+	* src/toss.c (1.265), h/toss.h (1.23): prevent memoryleak
+
 2003-04-25 Friday 05:02  andr_lukyanov
 
 	* win32/makefile.cyg (1.17): Fixed compilation. Remark DEBUG mode.
