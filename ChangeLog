@@ -1,3 +1,8 @@
+2002-10-24 Thursday 10:24  stas_degteff
+
+	* src/toss.c (htick-1_0-stable.8): Check parseTic() return value to
+	prevent memory fault
+
 2002-10-23 Wednesday 10:24  stas_degteff
 
 	* src/htick.c (htick-1_0-stable.4): Sort #include operators to
