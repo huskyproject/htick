@@ -569,7 +569,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
    dizfile=malloc(strlen(config->tempInbound)+strlen(config->fileDescName)+1);
    sprintf(dizfile, "%s%s", config->tempInbound, config->fileDescName);
    if ((dizhandle=fopen(dizfile,"r")) == NULL) {
-      w_log('9',"File %s not found or moveable",dizfile);
+      w_log('9',"File %s not found or not moveable",dizfile);
       return 3;
    };
 
@@ -945,7 +945,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
           strcat(filename,strrchr(ticfile, PATH_DELIM) + 1);
           //strLower(filename);
           if (copy_file(ticfile,filename)!=0) {
-             w_log('9',"File %s not found or moveable",ticfile);
+             w_log('9',"File %s not found or not moveable",ticfile);
           };
           break;
        };
@@ -963,8 +963,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 */
 {
    int i, z;
-   char descr_file_name[256], newticedfile[256], fileareapath[256],
-        linkfilepath[256];
+   char descr_file_name[256], newticedfile[256], fileareapath[256];
+   char *linkfilepath=NULL;
    char hlp[100],timestr[40];
    time_t acttime;
    s_addr *old_seenby = NULL;
@@ -1019,14 +1019,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       if (isToss == 1) {
          if (!filearea->sendorig) {
             if (move_file(filename,newticedfile)!=0) {
-                w_log('9',"File %s not found or moveable",filename);
+                w_log('9',"File %s not found or not moveable",filename);
                 return(2);
             } else {
                w_log('6',"Moved %s to %s",filename,newticedfile);
             }
          } else {
             if (copy_file(filename,newticedfile)!=0) {
-               w_log('9',"File %s not found or moveable",filename);
+               w_log('9',"File %s not found or not moveable",filename);
                return(2);
             } else {
               w_log('6',"Put %s to %s",filename,newticedfile);
@@ -1034,7 +1034,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
             if (move_file(filename,newticedfile)!=0) {
-               w_log('9',"File %s not found or moveable",filename);
+               w_log('9',"File %s not found or not moveable",filename);
                return(2);
             } else {
                w_log('6',"Moved %s to %s",filename,newticedfile);
@@ -1042,7 +1042,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          }
       } else
          if (copy_file(filename,newticedfile)!=0) {
-            w_log('9',"File %s not found or moveable",filename);
+            w_log('9',"File %s not found or not moveable",filename);
             return(2);
          } else {
             w_log('6',"Put %s to %s",filename,newticedfile);
@@ -1097,34 +1097,33 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    }
 
    for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 &&
-          ( (isToss==1 && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) ||
-	   isToss==0 ) &&
-            addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-            ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,
-               filearea->downlinks[i]->link->hisAka)!=0) || isToss==0) ) {
+      s_link* downlink = filearea->downlinks[i]->link;
+      if ( addrComp(tic->from,downlink->hisAka)!=0 &&
+           ( (isToss==1 && addrComp(tic->to,downlink->hisAka)!=0) || isToss==0 ) &&
+           addrComp(tic->origin,downlink->hisAka)!=0 &&
+           ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka)!=0) || isToss==0) 
+         ) {
          /* Adding Downlink to Seen-By */
          tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
-         memcpy(&tic->seenby[tic->anzseenby],
-            &filearea->downlinks[i]->link->hisAka,
-            sizeof(s_addr));
+         memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(s_addr));
          tic->anzseenby++;
       }
    }
 
    /* Checking to whom I shall forward */
    for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 &&
-            addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
-            addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0) {
+      s_link* downlink = filearea->downlinks[i]->link;
+      if (addrComp(old_from,downlink->hisAka)!=0 &&
+            addrComp(old_to,downlink->hisAka)!=0 &&
+            addrComp(tic->origin,downlink->hisAka)!=0) {
          /* Forward file to */
 
-         readAccess = readCheck(filearea, filearea->downlinks[i]->link);
+         readAccess = readCheck(filearea, downlink);
          switch (readAccess) {
          case 0: break;
          case 5:
             w_log('7',"Link %s paused",
-                    aka2str(filearea->downlinks[i]->link->hisAka));
+                    aka2str(downlink->hisAka));
             break;
          case 4:
             w_log('7',"Link %s not subscribe to File Area %s",
@@ -1132,75 +1131,89 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             break;
          case 3:
             w_log('7',"Not export to link %s",
-                    aka2str(filearea->downlinks[i]->link->hisAka));
+                    aka2str(downlink->hisAka));
             break;
          case 2:
             w_log('7',"Link %s no access level",
-                    aka2str(filearea->downlinks[i]->link->hisAka));
+                    aka2str(downlink->hisAka));
             break;
          case 1:
             w_log('7',"Link %s no access group",
-                    aka2str(filearea->downlinks[i]->link->hisAka));
+                    aka2str(downlink->hisAka));
             break;
          }
 
          if (readAccess == 0) {
-            if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
+            if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0) {
                w_log('7',"File %s already seenby %s",
                        tic->file,
-                       aka2str(filearea->downlinks[i]->link->hisAka));
+                       aka2str(downlink->hisAka));
             } else {
 //               memcpy(&tic->from,filearea->useAka,sizeof(s_addr));
-               memcpy(&tic->from,filearea->downlinks[i]->link->ourAka,sizeof(s_addr));
-               memcpy(&tic->to,&filearea->downlinks[i]->link->hisAka,
+               memcpy(&tic->from,downlink->ourAka,sizeof(s_addr));
+               memcpy(&tic->to,&downlink->hisAka,
                       sizeof(s_addr));
-               if (filearea->downlinks[i]->link->ticPwd!=NULL)
-                  strncpy(tic->password,filearea->downlinks[i]->link->ticPwd,sizeof(tic->password));
+               if (downlink->ticPwd!=NULL)
+                  strncpy(tic->password,downlink->ticPwd,sizeof(tic->password));
                else tic->password[0]='\0';
 
                busy = 0;
 
-               if (createOutboundFileName(filearea->downlinks[i]->link,
-                     filearea->downlinks[i]->link->fileEchoFlavour,
+               if (createOutboundFileName(downlink,
+                     downlink->fileEchoFlavour,
                      FLOFILE)==1)
                   busy = 1;
 
                if (busy) {
                   w_log( '7', "Save TIC in temporary dir");
                   /* Create temporary directory */
-                  strcpy(linkfilepath,config->busyFileDir);
+                  xstrcat(&linkfilepath,config->busyFileDir);
                } else {
                   if (config->separateBundles) {
-                     strcpy(linkfilepath, filearea->downlinks[i]->link->floFile);
+                     xstrcat(&linkfilepath, downlink->floFile);
                      sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
                   } else {
-                     strcpy(linkfilepath, config->ticOutbound);
+                      // fileBoxes support
+                      if (needUseFileBoxForLink(config,downlink)) {
+                          if (!downlink->fileBox) 
+                              downlink->fileBox = makeFileBoxName (config,downlink);
+                          xstrcat(&linkfilepath, downlink->fileBox);
+                      } else {
+                          xstrcat(&linkfilepath, config->ticOutbound);
+                      }
                   }
                }
                _createDirectoryTree(linkfilepath);
 
                /* Don't create TICs for everybody */
-               if (!filearea->downlinks[i]->link->noTIC || busy) {
+               if (!downlink->noTIC || busy) {
                  newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
                  writeTic(newticfile,tic);
                } else newticfile = NULL;
 
                if (!busy) {
-                  flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
-                  fprintf(flohandle,"%s\n",newticedfile);
-
-                  if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
-
-                  fclose(flohandle);
-
-                  remove(filearea->downlinks[i]->link->bsyFile);
-
-                  w_log('6',"Forwarding %s for %s",
-                          tic->file,
-                          aka2str(filearea->downlinks[i]->link->hisAka));
+                   if (needUseFileBoxForLink(config,downlink)) {
+                       xstrcat(&linkfilepath, tic->file);
+                       if (copy_file(newticedfile,linkfilepath )==0)
+                           w_log('6',"Copied %s to %s",newticedfile,linkfilepath);
+                       else 
+                           w_log('9',"File %s not found or not copyable",newticedfile);
+                           
+                   } else {
+                       flohandle=fopen(downlink->floFile,"a");
+                       fprintf(flohandle,"%s\n",newticedfile);
+                       if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
+                       fclose(flohandle);
+                   }
+                   remove(downlink->bsyFile);
+                   w_log('6',"Forwarding %s for %s",
+                       tic->file,
+                       aka2str(downlink->hisAka));
+                   
                }
-               nfree(filearea->downlinks[i]->link->bsyFile);
-               nfree(filearea->downlinks[i]->link->floFile);
+               nfree(downlink->bsyFile);
+               nfree(downlink->floFile);
+               nfree(linkfilepath);
             } /* if Seenby */
          } /* if readAccess == 0 */
       } /* Forward file */
@@ -1670,7 +1683,7 @@ void checkTmpDir(void)
                   _createDirectoryTree(newticfile);
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
                   if (move_file(ticfile,newticfile)!=0) {
-                     w_log('9',"File %s not found or moveable",ticfile);
+                     w_log('9',"File %s not found or not moveable",ticfile);
                      error = 1;
                   }
                } else remove(ticfile);
