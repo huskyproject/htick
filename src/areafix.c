@@ -1100,163 +1100,163 @@ void ffix(s_addr addr, char *cmd)
 
 int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
 {
-   FILE *f;
-   char *NewAutoCreate = NULL;
-   char *fileName = NULL;
-   char *bDir = NULL;
-
-   char *fileechoFileName = NULL;
-   char *buff= NULL, hisaddr[20];
-   s_link *creatingLink;
-   s_message *msg;
-   s_filearea *area;
-   FILE *echotosslog;
-
-   creatingLink = getLinkFromAddr(config, *pktOrigAddr);
-
-   fileechoFileName = makeMsgbFileName(config, c_area);
-
+    FILE *f;
+    char *NewAutoCreate = NULL;
+    char *fileName = NULL;
+    char *bDir = NULL;
+    
+    char *fileechoFileName = NULL;
+    char *buff= NULL;
+    s_link *creatingLink;
+    s_message *msg;
+    s_filearea *area;
+    FILE *echotosslog;
+    
+    creatingLink = getLinkFromAddr(config, *pktOrigAddr);
+    
+    fileechoFileName = makeMsgbFileName(config, c_area);
+    
     // translating name of the area to lowercase/uppercase
     if (config->createAreasCase == eUpper) strUpper(c_area);
     else strLower(c_area);
-
+    
     // translating filename of the area to lowercase/uppercase
     if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
     else strLower(fileechoFileName);
-
+    
     bDir = (creatingLink->fileBaseDir) ?
         creatingLink->fileBaseDir : config->fileAreaBaseDir;
-
-
-   if (creatingLink->autoFileCreateSubdirs &&
-       strcasecmp(bDir,"passthrough"))
-   {
-       if (creatingLink->autoFileCreateSubdirs)
-       {
-           char *cp;
-           for (cp = fileechoFileName; *cp; cp++)
-           {
-               if (*cp == '.')
-               {
-                   *cp = PATH_DELIM;
-               }
-           }
-       }
-   }
-   xscatprintf(&buff,"%s%s",bDir,fileechoFileName);
-   if (_createDirectoryTree(buff))
-   {
-       w_log(LL_ERROR, "cannot make all subdirectories for %s\n",
-             fileechoFileName);
-       nfree(buff);
-       return 1;
-   }
+    
+    
+    if (creatingLink->autoFileCreateSubdirs &&
+        strcasecmp(bDir,"passthrough"))
+    {
+        if (creatingLink->autoFileCreateSubdirs)
+        {
+            char *cp;
+            for (cp = fileechoFileName; *cp; cp++)
+            {
+                if (*cp == '.')
+                {
+                    *cp = PATH_DELIM;
+                }
+            }
+        }
+    }
+    xscatprintf(&buff,"%s%s",bDir,fileechoFileName);
+    if (_createDirectoryTree(buff))
+    {
+        w_log(LL_ERROR, "cannot make all subdirectories for %s\n",
+            fileechoFileName);
+        nfree(buff);
+        return 1;
+    }
 #if defined (UNIX)
-   else
-       if(config->fileAreaCreatePerms && chmod(buff, config->fileAreaCreatePerms))
-           fprintf(stderr, "Cannot chmod() for newly created filearea: %s\n",
-                   strerror(errno));
+    if(config->fileAreaCreatePerms && chmod(buff, config->fileAreaCreatePerms))
+        fprintf(stderr, "Cannot chmod() for newly created filearea: %s\n",
+        strerror(errno));
 #endif
-   nfree(buff);
-
-
-   fileName = creatingLink->autoFileCreateFile;
-   if (fileName == NULL) fileName = getConfigFileName();
-
-   f = fopen(fileName, "a");
-   if (f == NULL) {
-      f = fopen(getConfigFileName(), "a");
-      if (f == NULL)
-         {
-            if (!quiet) fprintf(stderr,"autocreate: cannot open config file\n");
-            return 1;
-         }
-   }
-
-   /* making address of uplink */
-   strcpy(hisaddr,aka2str(*pktOrigAddr));
-
-   /* write new line in config file */
-
-   xscatprintf(&buff, "FileArea %s %s%s -a %s ",
-       c_area, bDir,
-       (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
-       aka2str(*(creatingLink->ourAka))
-       );
-
-   if ( creatingLink->LinkGrp &&
-       !(creatingLink->autoFileCreateDefaults && (hpt_stristr(creatingLink->autoFileCreateDefaults, "-g ")!=NULL))
-       )
-   {
-       xscatprintf(&buff,"-g %s ",creatingLink->LinkGrp);
-   }
-
-   if (creatingLink->autoFileCreateDefaults) {
-       NewAutoCreate = sstrdup(creatingLink->autoFileCreateDefaults);
-       if ((fileName=strstr(NewAutoCreate,"-d ")) !=NULL ) {
-           if (descr) {
-               *fileName = '\0';
-               xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
-           } else {
-               xstrcat(&buff, NewAutoCreate);
-           }
-       } else if (descr) {
-           xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
-       }
-       nfree(NewAutoCreate);
-   }
-   else if (descr)
-   {
-       xscatprintf(&buff,"-d \"%s\"",descr);
-   }
-
-   xscatprintf(&buff," %s",hisaddr);
-
-   if(dwLink) xscatprintf(&buff," %s",aka2str(*dwLink));
-
-   fprintf(f, "%s\n", buff);
-   fclose(f);
-
-   /* add new created echo to config in memory */
-   parseLine(buff,config);
-
-   w_log( '8', "FileArea '%s' autocreated by %s", c_area, hisaddr);
-
-   /* report about new filearea */
-   if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
-      if (getNetMailArea(config, config->ReportTo) != NULL) {
-         msg = makeMessage(area->useAka,
-                           area->useAka,
-                           versionStr,
-                           config->sysop,
-                           "Created new fileareas", 1,
-                           config->filefixKillReports);
-         msg->text = createKludges(config->disableTID,NULL, area->useAka,area->useAka,versionStr);
-      } else {
-         msg = makeMessage(area->useAka,
-                           area->useAka,
-                           versionStr,
-                           "All", "Created new fileareas", 0,
-                           config->filefixKillReports);
-         msg->text = createKludges(config->disableTID,config->ReportTo, area->useAka, area->useAka,versionStr);
-      } /* endif */
-      xstrcat(&msg->text, "\001FLAGS NPD\r");
-      sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
-          (area->description) ? area->description : "");
-      msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
-      strcat(msg->text, buff);
-      writeMsgToSysop(msg, config->ReportTo, NULL);
-      freeMsgBuffers(msg);
-      nfree(msg);
-      if (config->echotosslog != NULL) {
-         echotosslog = fopen (config->echotosslog, "a");
-         fprintf(echotosslog,"%s\n",config->ReportTo);
-         fclose(echotosslog);
-      }
-   } else {
-   } /* endif */
-
-   if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, hisaddr);
-
-   return 0;
+    nfree(buff);
+    
+    fileName = creatingLink->autoFileCreateFile ? creatingLink->autoFileCreateFile : getConfigFileName();
+    
+    f = fopen(fileName, "a+b");
+    if (f == NULL) {
+        fprintf(stderr,"autocreate: cannot open config file\n");
+        w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
+        return 1;
+    }
+    
+    /* write new line in config file */
+    
+    xscatprintf(&buff, "FileArea %s %s%s -a %s ",
+        c_area, bDir,
+        (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
+        aka2str(*(creatingLink->ourAka))
+        );
+    
+    if ( creatingLink->LinkGrp &&
+        !(creatingLink->autoFileCreateDefaults && (hpt_stristr(creatingLink->autoFileCreateDefaults, "-g ")!=NULL))
+        )
+    {
+        xscatprintf(&buff,"-g %s ",creatingLink->LinkGrp);
+    }
+    
+    if (creatingLink->autoFileCreateDefaults) {
+        NewAutoCreate = sstrdup(creatingLink->autoFileCreateDefaults);
+        if ((fileName=strstr(NewAutoCreate,"-d ")) !=NULL ) {
+            if (descr) {
+                *fileName = '\0';
+                xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
+            } else {
+                xstrcat(&buff, NewAutoCreate);
+            }
+        } else if (descr) {
+            xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
+        }
+        nfree(NewAutoCreate);
+    }
+    else if (descr)
+    {
+        xscatprintf(&buff,"-d \"%s\"",descr);
+    }
+    if(!isOurAka(config,*pktOrigAddr))
+    {
+        xscatprintf(&buff," %s",aka2str(*pktOrigAddr));
+    }    
+    if(dwLink) xscatprintf(&buff," %s",aka2str(*dwLink));
+    
+    // fix if dummys del \n from the end of file
+    fseek (f, -1L, SEEK_END);
+    if (getc(f) != '\n') {
+        fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
+        fputs (cfgEol(), f);
+    } else {
+        fseek (f, 0L, SEEK_END);
+    }
+    fprintf(f, "%s%s", buff, cfgEol()); // add line to config
+    fclose(f);
+    
+    /* add new created echo to config in memory */
+    parseLine(buff,config);
+    
+    w_log( '8', "FileArea '%s' autocreated by %s", c_area, aka2str(*pktOrigAddr));
+    
+    /* report about new filearea */
+    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
+        if (getNetMailArea(config, config->ReportTo) != NULL) {
+            msg = makeMessage(area->useAka,
+                area->useAka,
+                versionStr,
+                config->sysop,
+                "Created new fileareas", 1,
+                config->filefixKillReports);
+            msg->text = createKludges(config->disableTID,NULL, area->useAka,area->useAka,versionStr);
+        } else {
+            msg = makeMessage(area->useAka,
+                area->useAka,
+                versionStr,
+                "All", "Created new fileareas", 0,
+                config->filefixKillReports);
+            msg->text = createKludges(config->disableTID,config->ReportTo, area->useAka, area->useAka,versionStr);
+        } /* endif */
+        xstrcat(&msg->text, "\001FLAGS NPD\r");
+        sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
+            (area->description) ? area->description : "");
+        msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
+        strcat(msg->text, buff);
+        writeMsgToSysop(msg, config->ReportTo, NULL);
+        freeMsgBuffers(msg);
+        nfree(msg);
+        if (config->echotosslog != NULL) {
+            echotosslog = fopen (config->echotosslog, "a");
+            fprintf(echotosslog,"%s\n",config->ReportTo);
+            fclose(echotosslog);
+        }
+    } else {
+    } /* endif */
+    
+    if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, aka2str(*pktOrigAddr));
+    
+    return 0;
 }
