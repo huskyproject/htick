@@ -1,3 +1,10 @@
+htick (1.0.0-20020801-1) stable; urgency=low
+
+  * New Maintainter
+  * Add HISTORY and BUG-REPORTING to doc dir
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed, 31 Jul 2002 03:49:21 +0600
+
 htick (1.0.0-20020702-1) stable; urgency=low
 
   * New cvs version
