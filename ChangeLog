@@ -1,3 +1,13 @@
+2003-10-21 Tuesday 06:06  andr_lukyanov
+
+	* win32/: makefile.mvc (1.14), makefile.mvcdll (1.16): Fix MSVC
+	compilation
+
+2003-10-21 Tuesday 02:46  andr_lukyanov
+
+	* win32/: makefile.mvc (1.13), makefile.mvcdll (1.15): Fix MSVC
+	compilation
+
 2003-10-20 Monday 06:33  andr_lukyanov
 
 	* win32/makefile.mvcdll (1.14): Fix MSVC compilation
