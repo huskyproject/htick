@@ -202,6 +202,7 @@ void hatch()
    newFileReport[newfilesCount]->useAka = filearea->useAka;
    newFileReport[newfilesCount]->areaName = filearea->areaName;
    newFileReport[newfilesCount]->areaDesc = filearea->description;
+   if (config->outtab != NULL) recodeToTransportCharset(newFileReport[newfilesCount]->areaDesc);
    newFileReport[newfilesCount]->fileName = strdup(tic.file);
 
    newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
