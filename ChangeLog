@@ -1,3 +1,8 @@
+2005-01-02 Sunday 16:46  val_khokhlov
+
+	* src/: htickafix.c (1.2), toss.c (1.286): move some vars from
+	s_link into s_link_robot
+
 2004-12-31 Friday 20:32  val_khokhlov
 
 	* Makefile (1.24), makefile.inc (1.3), h/global.h (1.25),
