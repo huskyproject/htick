@@ -269,29 +269,6 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
     return rc;
 }
 
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-void *mk_lst(char *a) {
-    char *p=a, *q=a, **list=NULL, end=0, num=0;
-
-    while (*p && !end) {
-	while (*q && !isspace(*q)) q++;
-	if (*q=='\0') end=1;
-	*q ='\0';
-	list = (char **) realloc(list, ++num*sizeof(char*));
-	list[num-1]=(char*)p;
-	if (!end) {
-	    p=q+1;
-	    while(isspace(*p)) p++;
-	}
-	q=p;
-    }
-    list = (char **) realloc(list, (++num)*sizeof(char*));
-    list[num-1]=NULL;
-
-    return list;
-}
-#endif
-
 
 int GetDescFormFile (char *fileName, s_ticfile *tic)
 {
