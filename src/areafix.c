@@ -143,7 +143,7 @@ int subscribeCheck(s_filearea area, s_message *msg, s_link *link)
     if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
   }
 
-  if (strcmp(area.group, "\060") != 0)
+  if (area.group)
   {
     if (link->numAccessGrp > 0)
     {
