@@ -89,9 +89,6 @@ char      sendaddr[256];
 int       cmAnnounce = 0;
 char      announceArea[256];
 
-int       cmAnnFile = 0;
-char      announcefile[256];
-
 int       cmAnnNewFileecho = 0;
 char      announcenewfileecho[256];
 

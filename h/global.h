@@ -75,7 +75,6 @@ extern int       cmHatch;
 extern int       cmSend;
 extern int       cmFlist;
 extern int       cmAnnounce;
-extern int       cmAnnFile;
 extern int       cmAnnNewFileecho;
 extern int       cmClean;
 extern int       cmAfix;
@@ -95,7 +94,6 @@ extern char      sendfile[256];
 extern char      sendarea[256];
 extern char      sendaddr[256];
 extern char      announceArea[256];
-extern char      announcefile[256];
 extern char      announcenewfileecho[256];
 
 extern int  lock_fd;

@@ -546,14 +546,6 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
    }
 
-   if (cmAnnFile && !filearea->hide)
-   {
-      if (tic->anzldesc>0)
-         announceInFile (announcefile, tic->file, tic->size, tic->area, tic->origin, tic->ldesc, tic->anzldesc);
-      else
-         announceInFile (announcefile, tic->file, tic->size, tic->area, tic->origin, tic->desc, tic->anzdesc);
-   }
-
    if (filearea->downlinkCount>=minLinkCount) {
       /* Adding path & seenbys */
       time(&acttime);

@@ -171,35 +171,6 @@ int removeDesc (char *descr_file_name, char *file_name)
     return 0;
 }
 
-int announceInFile (char *announcefile, char *file_name, int size, char *area, s_addr origin, char **description, int count_desc)
-{
-    FILE *ann_file;
-    int i;
-    char *desc_line = NULL;
-    
-    if (!fexist(announcefile)) {
-        ann_file = fopen (announcefile, "w");
-        if (ann_file == NULL) return 1;
-        fprintf (ann_file,"File             Size         Area                 Origin\n");
-        fprintf (ann_file,"---------------- ------------ -------------------- ----------------\n");
-    } else {
-        ann_file = fopen (announcefile, "a");
-        if (ann_file == NULL) return 1;
-    }
-    fprintf (ann_file, "%-16s %-12d %-20s %u:%u/%u.%u\n", file_name, size, area, origin.zone, origin.net, origin.node, origin.point);
-    for (i=0;i<count_desc;i++) {
-        desc_line = sstrdup(description[i]);
-        if (desc_line != NULL) {
-            if (config->intab != NULL) recodeToInternalCharset(desc_line);
-            fprintf(ann_file,"%s\n",desc_line);
-            nfree(desc_line);
-        }
-    }
-    fprintf (ann_file,"-------------------------------------------------------------------\n");
-    fclose (ann_file);
-    return 0;
-}
-
 int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
 {
     FILE *ann_file;
