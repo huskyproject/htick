@@ -1,3 +1,11 @@
+htick (1.0.0-20020827-1) stable; urgency=low
+
+  * New cvs version (1.0-RC1)
+  * Place /etc/filefix.hlp into /etc/husky
+  * Place misc scripts into doc/misc
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Tue, 27 Aug 2002 16:27:54 +0600
+
 htick (1.0.0-20020815-2) stable; urgency=low
 
   * debian/copyright: new http-location of sources
