@@ -1,3 +1,7 @@
+2002-10-28 Monday 07:03  mche
+
+	* src/htick.c (1.78): fix output of version string
+
 2002-10-25 Friday 21:51  stas_degteff
 
 	* doc/: Makefile (1.1), htick.texi (1.1), makefile.unx (1.1): Htick
