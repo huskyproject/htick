@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Thu Feb  1 20:47:16 NOVT 2001
+max:
+* manipulation with createKludges() & removing static buffers
+
+----- cvs ci ------
 Sun Dec 17 10:11:28 NOVT 2000
 max (patch from Alex Bronin):
 * fix crash if no desc in tic again

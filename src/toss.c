@@ -112,21 +112,22 @@ int to_us(const s_addr destAddr)
    return !0;
 }
 
-void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka)
+char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka)
 {
    static time_t preTime=0L;
    time_t curTime;
+   char *buff = NULL;
 
-   *buff = 0;
    if (area != NULL)
-      sprintf(buff + strlen(buff), "AREA:%s\r", area);
+      xscatprintf(&buff, "AREA:%s\r", area);
    else {
-      if (ourAka->point) sprintf(buff + strlen(buff), "\001FMPT %d\r",
+      if (ourAka->point) xscatprintf(&buff, "\001FMPT %d\r",
           ourAka->point);
-      if (destAka->point) sprintf(buff + strlen(buff), "\001TOPT %d\r",
+      if (destAka->point) xscatprintf(&buff, "\001TOPT %d\r",
           destAka->point);
    };
 
+   // what a fucking bullshit?
    curTime = time(NULL);
    while (curTime == preTime) {
       sleep(1);
@@ -135,13 +136,15 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
    preTime = curTime;
 
    if (ourAka->point)
-      sprintf(buff + strlen(buff),"\001MSGID: %u:%u/%u.%u %08lx\r",
+      xscatprintf(&buff,"\001MSGID: %u:%u/%u.%u %08lx\r",
           ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) curTime);
    else
-      sprintf(buff + strlen(buff),"\001MSGID: %u:%u/%u %08lx\r",
+      xscatprintf(&buff,"\001MSGID: %u:%u/%u %08lx\r",
               ourAka->zone,ourAka->net,ourAka->node,(unsigned long) curTime);
 
-   sprintf(buff + strlen(buff), "\001PID: %s\r", versionStr);
+   xscatprintf(&buff, "\001PID: %s\r", versionStr);
+
+   return buff;
 }
 
 
@@ -573,12 +576,10 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
       if (getNetMailArea(config, config->ReportTo) != NULL) {
          msg = makeMessage(area->useAka, area->useAka, versionStr, config->sysop, "Created new fileareas", 1);
-         msg->text = (char *)calloc(300, sizeof(char));
-         createKludges(msg->text, NULL, area->useAka, area->useAka);
+         msg->text = createKludges(NULL, area->useAka, area->useAka);
       } else {
          msg = makeMessage(area->useAka, area->useAka, versionStr, "All", "Created new fileareas", 0);
-         msg->text = (char *)calloc(300, sizeof(char));
-         createKludges(msg->text, config->ReportTo, area->useAka, area->useAka);
+         msg->text = createKludges(config->ReportTo, area->useAka, area->useAka);
       } /* endif */
       sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
           (area->description) ? area->description : "");
@@ -1716,14 +1717,12 @@ void reportNewFiles()
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, config->sysop, "New Files", 1);
-                     msg->text = (char*)calloc(300, sizeof(char));
-                     createKludges(msg->text, NULL, newFileReport[i]->useAka, newFileReport[i]->useAka);
+                     msg->text = createKludges(NULL, newFileReport[i]->useAka, newFileReport[i]->useAka);
                   } else {
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, "All", "New Files", 0);
-                     msg->text = (char*)calloc(300, sizeof(char));
-                     createKludges(msg->text, annArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
+                     msg->text = createKludges(annArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
                   } /* endif */
                   strcat(msg->text, " ");
                } /* endif */

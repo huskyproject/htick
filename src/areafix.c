@@ -35,13 +35,9 @@
 #include <unistd.h>
 #endif
 
-#ifndef MSDOS
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#else
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-#endif
+#include <fidoconf/xstr.h>
 
 #include <fcommon.h>
 #include <global.h>
@@ -1153,16 +1149,10 @@ char *areastatus(char *preport, char *text)
 
 void preprocText(char *preport, s_message *msg)
 {
-    char *text, tmp[80], kludge[100];
-	
-    sprintf(tmp, " \r--- %s FileFix\r", versionStr);
-    createKludges(kludge, NULL, &msg->origAddr, &msg->destAddr);
-    text=(char*) malloc(strlen(kludge)+strlen(preport)+strlen(tmp)+1);
-    strcpy(text, kludge);
-    strcat(text, preport);
-    strcat(text, tmp);
-    msg->textLength=(int)strlen(text);
-    msg->text=text;
+    msg->text = createKludges(NULL, &msg->origAddr, &msg->destAddr);
+    xstrcat(&msg->text, preport);
+    xscatprintf(&msg->text, " \r--- %s FileFix\r", versionStr);
+    msg->textLength=(int)strlen(msg->text);
 }
 
 char *textHead(void)
