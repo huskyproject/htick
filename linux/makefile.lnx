@@ -1,23 +1,21 @@
-DEBUG   = 1
-CC      = gcc 
-INSTDIR = /usr/local/bin
-MANDIR  = /usr/local/man
+# include Husky-Makefile-Config
+include ../../huskymak.cfg
+
+CC      = gcc
 
 OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o recode.o crc32.o hatch.o filelist.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O2 -s -DUNIX
-# LFLAGS  = -L../../fidoconfig -L../../smapi 
-  LFLAGS  =
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O2 -DUNIX
+  LFLAGS  = -L$(LIBDIR)
 else
-  CFLAGS  = -c -I../h -I../../smapi -Wall -O3 -s -DUNIX
-# LFLAGS  = -L../../smapi -L../../fidoconfig
-  LFLAGS  =  
+  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -O3 -s -DUNIX
+  LFLAGS  = -L$(LIBDIR)
 endif
 
 all: $(OBJS) \
-     htick 
+     htick
 
 %.o: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
@@ -36,5 +34,6 @@ distclean: clean
 	-rm *.1.gz
 	-rm *.log
 
-install:
-	install htick $(INSTDIR)
+install: htick
+	install $(IBOPT) htick $(BINDIR)
+
