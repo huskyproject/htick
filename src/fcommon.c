@@ -351,11 +351,11 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
            if ((f=fopen(link->bsyFile,"a")) == NULL)
                    {
                            fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
-                           if (config->lockfile != NULL) {
-                                   remove(link->bsyFile);
-                                   free(link->bsyFile);
-                                   link->bsyFile=NULL;
-                           }
+			   remove(link->bsyFile);
+                           free(link->bsyFile);
+                           link->bsyFile=NULL;
+                           free(link->floFile);
+                           if (config->lockfile != NULL) remove(config->lockfile);
                            writeLogEntry(htick_log, '9', "cannot create *.bsy file");
                            writeLogEntry(htick_log, '1', "End");
                            closeLog(htick_log);
