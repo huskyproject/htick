@@ -1,16 +1,19 @@
 htick 0.03
 ----------
 
+----- cvs ci ------
+mtt:
+* remove strLower from htick, because its in fidoconfig
+	
+----- cvs ci ------
+Tue Nov 30 22:13:00 1999
+sms:
+* fixed some misuses of ++ in areafix.c
 
 
 htick 0.02
 (released on Tue Nov 09 09:23:00 CEST 1999)
 ----------
-
------ cvs ci ------
-Tue Nov 30 22:13:00 1999
-sms:
-* fixed some misuses of ++ in areafix.c
 
 ----- cvs ci ------
 Sun Nov 07 15:30:00 1999

@@ -48,7 +48,6 @@ typedef struct newfilereport s_newfilereport;
 
 void writeMsgToSysop(s_message *msg);
 void reportNewFiles(void);
-void strLower(char *s);
 void disposeTic(s_ticfile *tic);
 void writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(s_link link);

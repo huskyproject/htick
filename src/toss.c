@@ -297,15 +297,6 @@ char *addr2string(s_addr *addr)
    return(hlp);
 }
 
-void strLower(char *s)
-{
-  while (*s!=0)
-        {
-        *s=tolower(*s);
-        s++;
-        }
-}
-
 void writeTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;
