@@ -11,7 +11,6 @@
 export DH_COMPAT=4
 export DEBIAN=1
 export PACKAGE=htick
-export VERSION=1.1
 # Next Line to build debug-versions !
 # export DEB_BUILD_OPTIONS=nostrip
 
