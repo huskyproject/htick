@@ -2,12 +2,19 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Sun Jul 11  12:27:35
+Georgi:
+* small bugfix with recoding in posting announce and FileFix
+* posting about new files in echoarea ("htick <toss | hatch> [announce <area>"])
++ "htick hatch ... [replace]" - fill replace field in TIC
++ support -h and -manual in area option
+
 Mon Jul  5 22:39:33 NOVST 1999
 max:
 * small bugfix in recode.c
 
 ----- cvs ci ------
-Thu Jul 01  15:30:55
+Thu Jul  1  15:30:55
 Georgi:
 * Fixed bug with seenby
 
@@ -24,7 +31,7 @@ Fedor:
 + Added posting about new files in netmail or echoarea (ReportTo)
 
 Wed Jun 23  14:52:45
-georgi (georgi@inem.uni.udm.ru):
+Georgi Fofanov (georgi@inem.uni.udm.ru):
 * Many changes for "htick toss"
 + Added "htick hatch"
 + Added "htick filelist"
