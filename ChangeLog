@@ -1,3 +1,12 @@
+2002-11-15 Friday 17:48  pgul
+
+	* src/areafix.c (1.102): Fixed memory leak
+
+2002-11-15 Friday 17:39  pgul
+
+	* src/areafix.c (1.101): Check write to config result when creating
+	an area
+
 2002-11-14 Thursday 10:18  pgul
 
 	* src/toss.c (1.236): Fix spelling in comment
