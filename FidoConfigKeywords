@@ -60,3 +60,20 @@ Set maximum line length in TIC to <number>
 
 Where shall be put TICs for busy links (default <outbound>/busy.htk).
 
+13) ConvertLongNames {Upper|Lower|DontTouch}
+
+What do with long names when toss or hatch. Long name is name with mixed case,
+or more than 8.3
+
+14) ConvertShortNames {Upper|Lower|DontTouch}
+
+What do with short names when toss or hatch. Short name is DOS-like name, 
+8.3, without mixed case.
+
+15) addDLC
+
+Add Download counters to files.bbs
+
+16) DLCDigits <number>
+
+How much digits DLC must be. DLC have [000] form.

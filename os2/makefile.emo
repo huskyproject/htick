@@ -5,7 +5,7 @@ include ../../huskymak.cfg
 
 CC      = gcc 
 
-OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj
+OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj filecase.obj
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)

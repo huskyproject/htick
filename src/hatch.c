@@ -15,6 +15,7 @@
 #include <version.h>
 #include <smapi/progprot.h>
 #include <fidoconf/adcase.h>
+#include <filecase.h>
 
 void hatch()
 {
@@ -49,9 +50,18 @@ void hatch()
    newticfile = strrchr(hatchfile,PATH_DELIM);
    if (newticfile) strcpy(tic.file, newticfile+1);
    else strcpy(tic.file,hatchfile);
+
+   /*--- Lev Serebryakov BEGIN */
+   /* It is BAD idea to make file downcase, even on UNIX.
+      Standards want to have NODELIST.XXX and NODEDIFF.XXX, for example
+   */
+   /***************************************
 #ifdef UNIX
-   strLower(tic.file); /* Finally, we want it in lower case */
+   strLower(tic.file); *//* Finally, we want it in lower case *//*
 #endif
+   ***************************************/
+   MakeProperCase(tic.file);
+   /*--- Lev Serebryakov END */
 
    strcpy(tic.area,hatcharea);
    filearea=getFileArea(config,tic.area);
@@ -83,12 +93,27 @@ void hatch()
    tic.crc = filecrc32(hatchfile);
 
    if (filearea->pass != 1) {
+      char *p;
+
       strcpy(fileareapath,filearea->pathName);
-      strLower(fileareapath);
+
+      /*--- Lev Serebryakov BEGIN */
+      /* Why we lower fileareapath?! It is stupid.
+         Imagine, we have path /var/FIDO/File.Echoes/...
+         It is BAD idea to lower whole path
+      */
+      /* strLower(fileareapath); */
+      p = strrchr(fileareapath,PATH_DELIM);
+      if(p) strLower(p+1);
+      /*--- Lev Serebryakov END */
+
       createDirectoryTree(fileareapath);
       strcpy(filename,fileareapath);
       strcat(filename,tic.file);
-      strLower(filename);
+      /*--- Lev Serebryakov BEGIN */
+      /* We already have PROPER case! */
+      /* strLower(filename); */
+      /*--- Lev Serebryakov END */
       if (copy_file(hatchfile,filename)!=0) {
          writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
          disposeTic(&tic);
@@ -99,12 +124,29 @@ void hatch()
    } 
 
    if (filearea->sendorig || filearea->pass) {
+      char *p;
+
       strcpy(fileareapath,config->passFileAreaDir);
-      strLower(fileareapath);
+
+      /*--- Lev Serebryakov BEGIN */
+      /* Why we lower fileareapath?! It is stupid.
+         Imagine, we have path /var/FIDO/File.Echoes/...
+         It is BAD idea to lower whole path
+      */
+      /* strLower(fileareapath); */
+      p = strrchr(fileareapath,PATH_DELIM);
+      if(p) strLower(p+1);
+      /*--- Lev Serebryakov END */
+
       createDirectoryTree(fileareapath);
       strcpy(filename,fileareapath);
       strcat(filename,tic.file);
-      strLower(filename);
+
+      /*--- Lev Serebryakov BEGIN */
+      /* We already have PROPER case! */
+      /* strLower(filename); */
+      /*--- Lev Serebryakov END */
+
       if (copy_file(hatchfile,filename)!=0) {
          writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
          disposeTic(&tic);

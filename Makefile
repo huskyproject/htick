@@ -3,7 +3,7 @@ include ../huskymak.cfg
 
 OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
           scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
-          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ)
+          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
 SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)

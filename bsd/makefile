@@ -3,7 +3,7 @@ INSTDIR = /usr/local/bin
 MANDIR  = /usr/local/man
 LIBDIR  = /usr/local/lib
 
-OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o recode.o crc32.o hatch.o filelist.o
+OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o recode.o crc32.o hatch.o filelist.o filecase.o
 SRC_DIR = ../src/
 
 CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -O3 -DUNIX

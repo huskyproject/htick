@@ -22,7 +22,8 @@ OBJS    = global.obj \
           recode.obj \
           crc32.obj \
           hatch.obj \
-          filelist.obj
+          filelist.obj\
+          filecase.obj
 
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<

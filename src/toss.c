@@ -66,6 +66,7 @@
 #include <seenby.h>
 #include <recode.h>
 #include <crc32.h>
+#include <filecase.h>
 
 s_newfilereport **newFileReport = NULL;
 unsigned newfilesCount = 0;
@@ -797,6 +798,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    int writeAccess, readAccess;
    int cmdexit;
    char *comm;
+   char *p;
 
 
 /*   printf("Ticfile %s\n",ticfile); */
@@ -941,7 +943,16 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(3);
    }
 
-   strLower(fileareapath);
+   /*--- Lev Serebryakov BEGIN */
+   /* Why we lower fileareapath?! It is stupid.
+      Imagine, we have path /var/FIDO/File.Echoes/...
+      It is BAD idea to lower whole path
+   */
+   /* strLower(fileareapath); */
+   p = strrchr(fileareapath,PATH_DELIM); 
+   if(p) strLower(p+1);
+   /*--- Lev Serebryakov END */
+
    createDirectoryTree(fileareapath);
 
    if (tic.replaces[0]!=0 && filearea->pass !=1 ) {
@@ -962,12 +973,29 @@ int processTic(char *ticfile, e_tossSecurity sec)
 /* if no will forward */
          if (!(filearea->downlinkCount==1 &&
              addrComp(tic.from,filearea->downlinks[0]->link->hisAka)==0)) {
+
+            /*--- Lev Serebryakov BEGIN */
+            /* It is BAD idea to make file downcase, even on UNIX.
+               Standards want to have NODELIST.XXX and NODEDIFF.XXX, for example
+               Now sysop could select case of files.
+                 convertLongNames {Upper|Lower|DontTouch}
+                 convertShortNames {Upper|Lower|DontTouch}
+               Short name is DOS-like name -- 8.3, in one case
+            */
+            /***************************************
             strcpy(newticedfile,filearea->pathName);
             strcat(newticedfile,tic.file);
 #ifdef UNIX
             strLower(newticedfile);
             strLower(tic.file);
 #endif
+            ****************************************/
+            strcpy(newticedfile,filearea->pathName);
+            p = strrchr(newticedfile,PATH_DELIM); 
+            if(p) strLower(p+1);
+            strcat(newticedfile,MakeProperCase(tic.file));
+            /*--- Lev Serebryakov END */
+
             if (copy_file(ticedfile,newticedfile)!=0) {
                 writeLogEntry(htick_log,'9',"File %s not found or copyable",ticedfile);
                 disposeTic(&tic);
@@ -979,12 +1007,21 @@ int processTic(char *ticfile, e_tossSecurity sec)
             strcpy(fileareapath,filearea->pathName);
          }
       }
+      /*--- Lev Serebryakov BEGIN */
+      /* It is BAD idea to make file downcase, even on UNIX. */
+      /***************************************
       strcpy(newticedfile,fileareapath);
       strcat(newticedfile,tic.file);
 #ifdef UNIX
       strLower(newticedfile);
       strLower(tic.file);
 #endif
+      ****************************************/
+      strcpy(newticedfile,fileareapath);
+      p = strrchr(newticedfile,PATH_DELIM); 
+      if(p) strLower(p+1);
+      strcat(newticedfile,MakeProperCase(tic.file));
+      /*--- Lev Serebryakov END */
 
       if (move_file(ticedfile,newticedfile)!=0) {
           writeLogEntry(htick_log,'9',"File %s not found or moveable",ticedfile);
@@ -1113,7 +1150,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                      strcpy(linkfilepath, config->passFileAreaDir);
                   }
 	       }
-               createDirectoryTree(linkfilepath);
+           createDirectoryTree(linkfilepath);
 
 	       /* Don't create TICs for everybody */
 	       if (!filearea->downlinks[i]->link->noTIC) {

@@ -8,6 +8,7 @@
 #include <global.h>
 #include <recode.h>
 #include <toss.h>
+#include <filecase.h>
 
 int add_description (char *descr_file_name, char *file_name, char **description, int count_desc)
 {
@@ -18,8 +19,17 @@ int add_description (char *descr_file_name, char *file_name, char **description,
    descr_file = fopen (descr_file_name, "a");
    if (descr_file == NULL) return 1;
    strcpy(namefile,file_name);
-   strLower(namefile);
+   MakeProperCase(namefile);
    fprintf (descr_file, "%-12s", namefile);
+   if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10) {
+      char dlc[10];
+      dlc[0] = ' ';
+      dlc[1] = '[';
+      for(i = 1; i <= config->DLCDigits; i++) dlc[i+1] = '0';
+      dlc[i+1] = ']';
+      dlc[i+2] = '\x00';
+      fprintf (descr_file, "%s", dlc);
+   }
    for (i=0;i<count_desc;i++) {
       desc_line = strdup(description[i]);
       if (config->intab != NULL) recodeToInternalCharset(desc_line);
@@ -184,15 +194,22 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
 
          if (stricmp(token,file_name) == 0) {
             token=stripLeadingChars(strtok(NULL, "\0"), " ");
-	    if (token != NULL) {
+	   	    if (token != NULL) {
+               if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10 && token[0] == '[') {
+                 char *p = token;
+                 while(']' != *p)p++;
+                 p++;
+                 while(' ' == *p)p++;
+                 strcpy(token,p);
+               }
                tic->desc=
                realloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
                tic->desc[tic->anzdesc]=strdup(token);
                tic->anzdesc++;
-	    }
-	    flag = 1;
-	    rc = 0;
-	 }
+		    }
+	    	flag = 1;
+	    	rc = 0;
+	 	}
 	 hlp[0] = '\0';
    }
 
