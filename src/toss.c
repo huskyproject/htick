@@ -1648,60 +1648,100 @@ void cleanPassthroughDir(void)
    }
 }
 
-int putMsgInArea(s_area *echo, s_message *msg, int strip)
+int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
-   char *ctrlBuff, *textStart, *textWithoutArea;
-   UINT textLength = (UINT) msg->textLength;
-   HAREA harea;
-   HMSG  hmsg;
-   XMSG  xmsg;
-   int rc = 0;
+    char *ctrlBuff, *textStart, *textWithoutArea;
+    UINT textLength = (UINT) msg->textLength;
+    HAREA harea = NULL;
+    HMSG  hmsg;
+    XMSG  xmsg;
+    char /**slash,*/ *p, *q, *tiny;
+    int rc = 0;
 
+    if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
+        w_log('9', "Can't put message to passthrough area %s!", echo->areaName);
+        return rc;
+    }
+      
+    if (!msg->netMail) {
+	msg->destAddr.zone  = echo->useAka->zone;
+	msg->destAddr.net   = echo->useAka->net;
+	msg->destAddr.node  = echo->useAka->node;
+	msg->destAddr.point = echo->useAka->point;
+    }
 
-   harea = MsgOpenArea((UCHAR *) echo->fileName, 
-                        MSGAREA_CRIFNEC, 
-                       (word)(echo->msgbType | MSGTYPE_ECHO));
-   if (harea != NULL) {
-      hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
-      if (hmsg != NULL) {
+	harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, 
+			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
+    if (harea!= NULL) {
+	    hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
+	if (hmsg != NULL) {
 
-         /* recode from TransportCharset to internal Charset */
-         if (msg->recode == 0 && config->intab != NULL) {
-            recodeToInternalCharset(msg->subjectLine);
-            recodeToInternalCharset(msg->text);
-            recodeToInternalCharset(msg->toUserName);
-            recodeToInternalCharset(msg->fromUserName);
-                        msg->recode = 1;
-         }
+	    // recode from TransportCharset to internal Charset
+	    if (msg->recode == 0 && config->intab != NULL) {
+		    recodeToInternalCharset((CHAR*)msg->fromUserName);
+		    recodeToInternalCharset((CHAR*)msg->toUserName);
+		    recodeToInternalCharset((CHAR*)msg->subjectLine);
+		    recodeToInternalCharset((CHAR*)msg->text);
+            msg->recode = 1;
+	    }
 
-         textWithoutArea = msg->text;
+	    textWithoutArea = msg->text;
 
-         if ((strncmp(msg->text, "AREA:", 5) == 0) && (strip==1)) {
-            /* jump over AREA:xxxxx\r */
-            while (*(textWithoutArea) != '\r') textWithoutArea++;
-            textWithoutArea++;
-         }
+	    if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
+		// jump over AREA:xxxxx\r
+		while (*(textWithoutArea) != '\r') textWithoutArea++;
+		textWithoutArea++;
+		textLength -= (size_t) (textWithoutArea - msg->text);
+	    }
 
-         ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
-                                              (UCHAR **) &textStart,
-                                              &textLength);
-         /* textStart is a pointer to the first non-kludge line */
-         xmsg = createXMSG(config,msg,NULL,0,NULL);
+	    if (echo->killSB) {
+		tiny = strrstr(textWithoutArea, " * Origin:");
+		if (tiny == NULL) tiny = textWithoutArea;
+		if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+		    p[1]='\0';
+		    textLength = (size_t) (p - textWithoutArea + 1);
+		}
+	    } else if (echo->tinySB) {
+		tiny = strrstr(textWithoutArea, " * Origin:");
+		if (tiny == NULL) tiny = textWithoutArea;
+		if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+		    p++;
+		    if (NULL != (q = strstr(p,"\001PATH: "))) {
+			// memmove(p,q,strlen(q)+1);
+			memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
+			textLength -= (size_t) (q - p);
+		    } else {
+			p[0]='\0';
+			textLength = (size_t) (p - textWithoutArea);
+		    }
+		}
+	    }
 
-         MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
+	   
+	    ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
+						 (UCHAR **) &textStart,
+						 &textLength);
+	    // textStart is a pointer to the first non-kludge line
+	    xmsg = createXMSG(config,msg, NULL, forceattr,NULL);
 
-         MsgCloseMsg(hmsg);
-         nfree(ctrlBuff);
-         rc = 1;
+	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
+			    textLength, (dword) textLength,
+			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0) 
+		w_log('9', "Could not write msg in %s!", echo->fileName);
+	    else rc = 1; // normal exit
 
-      } else {
-         w_log( '9', "Could not create new msg in %s!", echo->fileName);
-      } /* endif */
-      MsgCloseArea(harea);
-   } else {
-      w_log( '9', "Could not open/create EchoArea %s!", echo->fileName);
-   } /* endif */
-   return rc;
+	    if (MsgCloseMsg(hmsg)!=0) {
+		w_log('9', "Could not close msg in %s!", echo->fileName);
+		rc = 0;
+	    }
+	    nfree(ctrlBuff);
+       
+	} else w_log('9', "Could not create new msg in %s!", echo->fileName);
+	/* endif */
+    MsgCloseArea(harea);
+    } else w_log('9', "Could not open/create EchoArea %s!", echo->fileName);
+    /* endif */
+    return rc;
 }
 
 void writeMsgToSysop(s_message *msg, char *areaName)
@@ -1716,7 +1756,7 @@ void writeMsgToSysop(s_message *msg, char *areaName)
       if (echo != &(config->badArea)) {
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
             msg->recode = 1;
-            putMsgInArea(echo, msg,1);
+            putMsgInArea(echo, msg,1,MSGLOCAL);
             echo->imported = 1;  /* area has got new messages */
             w_log( '7', "Post report message to %s area", echo->areaName);
          }
