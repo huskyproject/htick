@@ -2,6 +2,19 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Wed May 17 21:40:28 NOVST 2000
+max (patch from Alex Bronin):
+* fix cleaning passthrough dir:
+ - outgoing tics stores in passFileAreaDir
+ - outgoing tics for busy links stores in busyFileDir
+   (default <outbound>/busy.htk)
+ - clean files in passthrough dir only if command 'htick clean' used
+* fix printing link's access by areafix
+* fix ExecOnFile with passthrough filearea
+* added -sendorig option to filearea - send files to links from passFileAreaDir
+* changed log entries from link's name to link's address
+
+----- cvs ci ------
 Sat May 13 18:11:12 NOVST 2000
 max:
 * fixed hatching with ticPwd==NULL

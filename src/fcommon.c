@@ -341,7 +341,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    // maybe we have session with this link?
    if (fexist(link->bsyFile)) {
 
-           writeLogEntry(htick_log, '7', "link %s is busy.", link->name);
+           writeLogEntry(htick_log, '7', "link %s is busy.", addr2string(&link->hisAka));
            //free (link->floFile); link->floFile = NULL;
            free (link->bsyFile); link->bsyFile = NULL;
 
@@ -351,7 +351,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
            if ((f=fopen(link->bsyFile,"a")) == NULL)
                    {
-                           fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
+                           fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
 			   remove(link->bsyFile);
                            free(link->bsyFile);
                            link->bsyFile=NULL;

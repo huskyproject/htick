@@ -24,6 +24,7 @@ Help file for FileFix  (Same as AreaFixHelp for AreaFix)
 
 Same as EchoArea, most options are valid
 new option: noCRC to disable CRC on incoming files
+new option: sendorig to send files from PassFileAreaDir
 
 7) ExecOnFile <filearea> <filemask> <command>
   
@@ -54,3 +55,8 @@ Show Origin in announce
 11) MaxTicLineLength <number>
 
 Set maximum line length in TIC to <number>
+
+12) BusyFileDir <directory>
+
+Where shall be put TICs for busy links (default <outbound>/busy.htk).
+

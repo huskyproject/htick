@@ -23,7 +23,7 @@ void hatch()
    FILE *flohandle;
    char filename[256], fileareapath[256], descr_file_name[256],
          linkfilepath[256];
-   char *newticfile, sepname[13], *sepDir;
+   char *newticfile;
    time_t acttime;
    char tmp[100],timestr[40];
    int i, busy;
@@ -46,10 +46,12 @@ void hatch()
        return;
    }
 
-   sepDir = strrchr(hatchfile,PATH_DELIM);
-   if (sepDir) strcpy(tic.file, sepDir+1);
+   newticfile = strrchr(hatchfile,PATH_DELIM);
+   if (newticfile) strcpy(tic.file, newticfile+1);
    else strcpy(tic.file,hatchfile);
+#ifdef UNIX
    strLower(tic.file); /* Finally, we want it in lower case */
+#endif
 
    strcpy(tic.area,hatcharea);
    filearea=getFileArea(config,tic.area);
@@ -72,14 +74,6 @@ void hatch()
       return;
    } 
 
-   if (filearea->pass != 1) {
-      strcpy(fileareapath,filearea->pathName);
-      strLower(fileareapath);
-      createDirectoryTree(fileareapath);
-   } else {
-      strcpy(fileareapath,config->passFileAreaDir);
-   }
-
    stat(hatchfile,&stbuf);
    tic.size = stbuf.st_size;
 
@@ -88,15 +82,36 @@ void hatch()
    // Adding crc
    tic.crc = filecrc32(hatchfile);
 
-   strcpy(filename,fileareapath);
-   strcat(filename,tic.file);
-   strLower(filename);
-   if (copy_file(hatchfile,filename)!=0) {
-      writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
-      disposeTic(&tic);
-      return;
-   } else {
-      writeLogEntry(htick_log,'6',"Put %s to %s",hatchfile,filename);
+   if (filearea->pass != 1) {
+      strcpy(fileareapath,filearea->pathName);
+      strLower(fileareapath);
+      createDirectoryTree(fileareapath);
+      strcpy(filename,fileareapath);
+      strcat(filename,tic.file);
+      strLower(filename);
+      if (copy_file(hatchfile,filename)!=0) {
+         writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
+         disposeTic(&tic);
+         return;
+      } else {
+         writeLogEntry(htick_log,'6',"Put %s to %s",hatchfile,filename);
+      }
+   } 
+
+   if (filearea->sendorig || filearea->pass) {
+      strcpy(fileareapath,config->passFileAreaDir);
+      strLower(fileareapath);
+      createDirectoryTree(fileareapath);
+      strcpy(filename,fileareapath);
+      strcat(filename,tic.file);
+      strLower(filename);
+      if (copy_file(hatchfile,filename)!=0) {
+         writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
+         disposeTic(&tic);
+         return;
+      } else {
+         writeLogEntry(htick_log,'6',"Put %s to %s",hatchfile,filename);
+      }
    }
 
    if (filearea->pass != 1) {
@@ -139,18 +154,15 @@ void hatch()
          switch (readAccess) {
          case 0: break;
          case 3:
-            writeLogEntry(htick_log,'7',"Not export to link %s, %s",
-            filearea->downlinks[i]->link->name,
+            writeLogEntry(htick_log,'7',"Not export to link %s",
             addr2string(&filearea->downlinks[i]->link->hisAka));
 	    break;
          case 2:
-            writeLogEntry(htick_log,'7',"Link %s, %s no access level",
-            filearea->downlinks[i]->link->name,
+            writeLogEntry(htick_log,'7',"Link %s no access level",
             addr2string(&filearea->downlinks[i]->link->hisAka));
 	    break;
          case 1:
-            writeLogEntry(htick_log,'7',"Link %s, %s no access group",
-            filearea->downlinks[i]->link->name,
+            writeLogEntry(htick_log,'7',"Link %s no access group",
             addr2string(&filearea->downlinks[i]->link->hisAka));
 	    break;
          }
@@ -170,39 +182,19 @@ void hatch()
                 FLOFILE)==1)
                busy = 1;
 
-            strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
             if (busy) {
                writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
                //Create temporary directory
-	       *(strrchr(linkfilepath,'.'))=0;
-	       strcat(linkfilepath,".htk");
-               createDirectoryTree(linkfilepath);
+               strcpy(linkfilepath,config->busyFileDir);
 	    } else {
-               if (filearea->pass) 
-	          strcpy(linkfilepath, config->passFileAreaDir);
-	       *(strrchr(linkfilepath,PATH_DELIM))=0;
+               if (config->separateBundles) {
+                  strcpy(linkfilepath, filearea->downlinks[i]->link->floFile);
+                  sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
+               } else {
+                  strcpy(linkfilepath, config->passFileAreaDir);
+               }
 	    }
-
-         // separate bundles
-         if (config->separateBundles && !busy) {
-          
-            if (filearea->downlinks[i]->link->hisAka.point != 0)
-                sprintf(sepname,
-                      "%08x.sep",
-                      filearea->downlinks[i]->link->hisAka.point);
-            else
-               sprintf(sepname,
-                       "%04x%04x.sep",
-                       filearea->downlinks[i]->link->hisAka.net,
-                       filearea->downlinks[i]->link->hisAka.node);
-
-             sepDir = (char*) malloc(strlen(linkfilepath)+1+strlen(sepname)+1+1);
-             sprintf(sepDir,"%s%c%s%c",linkfilepath,PATH_DELIM,sepname,PATH_DELIM);
-             strcpy(linkfilepath,sepDir);
-
-             createDirectoryTree(sepDir);
-             free(sepDir);
-         }
+            createDirectoryTree(linkfilepath);
 
 	    /* Don't create TICs for everybody */
 	    if (!filearea->downlinks[i]->link->noTIC) {
@@ -222,9 +214,8 @@ void hatch()
 
                remove(filearea->downlinks[i]->link->bsyFile);
 
-               writeLogEntry(htick_log,'6',"Forwarding %s for %s, %s",
+               writeLogEntry(htick_log,'6',"Forwarding %s for %s",
                        tic.file,
-                       filearea->downlinks[i]->link->name,
                        addr2string(&filearea->downlinks[i]->link->hisAka));
 	    }
 	    free(filearea->downlinks[i]->link->bsyFile);
@@ -278,9 +269,9 @@ int send(char *filename, char *area, char *addr)
     s_link *link = NULL;
     s_filearea *filearea;
     s_addr address;
-    char sendfile[256], descr_file_name[256];
+    char sendfile[256], descr_file_name[256], tmpfile[256];
     char tmp[100], timestr[40], linkfilepath[256];
-    char sepname[13], *sepDir, *newticfile;
+    char *newticfile;
     struct stat stbuf;
     time_t acttime;
     int busy;
@@ -319,9 +310,29 @@ int send(char *filename, char *area, char *addr)
          return 3;
    }
 
-   sepDir = strrchr(sendfile,PATH_DELIM);
-   if (sepDir) strcpy(tic.file, sepDir+1);
+   newticfile = strrchr(sendfile,PATH_DELIM);
+   if (newticfile) strcpy(tic.file, newticfile+1);
    else strcpy(tic.file,sendfile);
+
+   if (filearea->sendorig) {
+      strcpy(tmpfile,config->passFileAreaDir);
+      strcat(tmpfile,tic.file);
+      adaptcase(tmpfile);
+
+      if (copy_file(sendfile,tmpfile)!=0) {
+         adaptcase(sendfile);
+         if (copy_file(sendfile,tmpfile)==0) {
+            writeLogEntry(htick_log,'6',"Copied %s to %s",sendfile,tmpfile);
+         } else {
+            writeLogEntry(htick_log,'9',"File %s not found or copyable",sendfile);
+            disposeTic(&tic);
+            return(2);
+         }
+      } else {
+          writeLogEntry(htick_log,'6',"Copied %s to %s",sendfile,tmpfile);
+          strcpy(sendfile,tmpfile);
+      }
+   }
 
    strcpy(tic.area,area);
 
@@ -366,30 +377,19 @@ int send(char *filename, char *area, char *addr)
        cvtFlavour2Prio(link->fileEchoFlavour), FLOFILE)==1)
       busy = 1;
 
-   strcpy(linkfilepath,link->floFile);
    if (busy) {
       writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
       //Create temporary directory
-      *(strrchr(linkfilepath,'.'))=0;
-      strcat(linkfilepath,".htk");
-      createDirectoryTree(linkfilepath);
-   } else *(strrchr(linkfilepath,PATH_DELIM))=0;
-
-   // separate bundles
-   if (config->separateBundles && !busy) {
-          
-      if (link->hisAka.point != 0)
-         sprintf(sepname,"%08x.sep",link->hisAka.point);
-      else
-         sprintf(sepname,"%04x%04x.sep",link->hisAka.net,link->hisAka.node);
-
-      sepDir = (char*) malloc(strlen(linkfilepath)+1+strlen(sepname)+1+1);
-      sprintf(sepDir,"%s%c%s%c",linkfilepath,PATH_DELIM,sepname,PATH_DELIM);
-      strcpy(linkfilepath,sepDir);
-
-      createDirectoryTree(sepDir);
-      free(sepDir);
+       strcpy(linkfilepath,config->busyFileDir);
+   } else {
+       if (config->separateBundles) {
+          strcpy(linkfilepath, link->floFile);
+          sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
+       } else {
+           strcpy(linkfilepath, config->passFileAreaDir);
+       }
    }
+   createDirectoryTree(linkfilepath);
 
    newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
    writeTic(newticfile,&tic);
@@ -402,8 +402,8 @@ int send(char *filename, char *area, char *addr)
 
       remove(link->bsyFile);
 
-      writeLogEntry(htick_log,'6',"Send %s from %s for %s, %s",
-              tic.file,tic.area,link->name,addr2string(&link->hisAka));
+      writeLogEntry(htick_log,'6',"Send %s from %s for %s",
+              tic.file,tic.area,addr2string(&link->hisAka));
       free(link->bsyFile);
    }
    free(link->floFile);

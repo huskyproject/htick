@@ -85,6 +85,7 @@ int processCommandLine(int argc, char **argv)
 " filelist <file>         Generate filelist which includes all files in base\n"
 " send <file> <filearea>\n"
 "      <address>          Send file from filearea to address\n"
+" clean                   Clean passthrough dir\n"
 " purge <days>            Purge files older than <days> days (not implemented)\n"
 " request <Adress> <file> Request file from adress (not implemented)\n"
 "\n"
@@ -163,6 +164,9 @@ int processCommandLine(int argc, char **argv)
          i++;
          cmAnnNewFileecho = 1;
          strcpy(announcenewfileecho, argv[i]);
+         continue;
+      } else if (stricmp(argv[i], "clean") == 0) {
+         cmClean = 1;
          continue;
       } else {
          printf("Unrecognized Commandline Option %s!\n", argv[i]);
@@ -252,6 +256,11 @@ void processConfig()
       disposeConfig(config);
       exit(1);
    }
+   if (config->busyFileDir == NULL) {
+      config->busyFileDir = (char*) malloc(strlen(config->outbound) + 10);
+      strcpy(config->busyFileDir, config->outbound);
+      sprintf(config->busyFileDir + strlen(config->outbound), "busy.htk%c", PATH_DELIM);
+   }
 }
 
 int main(int argc, char **argv)
@@ -293,13 +302,14 @@ int main(int argc, char **argv)
    if (config->intab != NULL) getctab(intab, config->intab);
    if (config->outtab != NULL) getctab(outtab, config->outtab);
 
-   processTmpDir();
+   checkTmpDir();
 
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
    if (cmHatch == 1) hatch();
    if (cmSend == 1) send(sendfile, sendarea, sendaddr);
    if (cmFlist == 1) filelist();
+   if (cmClean == 1) cleanPassthroughDir();
 
    // deinit SMAPI
    MsgCloseApi();

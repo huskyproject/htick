@@ -409,6 +409,7 @@ char *list(s_message *msg, s_link *link) {
     int *areaslen;
     int maxlen;
     char *report, addline[256];
+    int readdeny, writedeny;
 
    areaslen = malloc(config->fileAreaCount * sizeof(int));
 
@@ -437,13 +438,13 @@ char *list(s_message *msg, s_link *link) {
          report=(char*) realloc(report, len);
 
          if (rc==0) {
-            if (config->fileAreas[i].levelwrite <= link->level
-                && config->fileAreas[i].levelread <= link->level)
+            readdeny = readCheck(&config->fileAreas[i], link);
+            writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
+            if (!readdeny && !writedeny)
                strcat(report,"& ");
-            else if (config->fileAreas[i].levelread <= link->level)
-                    strcat(report,"+ ");
-            else if (config->fileAreas[i].levelwrite <= link->level)
-                    strcat(report,"* ");
+            else if (writedeny)
+               strcat(report,"+ ");
+            else strcat(report,"* ");
             active++;
             avail++;
          } else {
@@ -477,6 +478,7 @@ char *linked(s_message *msg, s_link *link, int action)
 {
     int i, n, rc;
     char *report, addline[256];
+    int readdeny, writedeny;
 
     if (link->Pause) 
         sprintf(addline, "\rPassive fileareas on %s\r\r", aka2str(link->hisAka));
@@ -492,13 +494,13 @@ char *linked(s_message *msg, s_link *link, int action)
 	    if (action == 1) {
 	       report=(char*)realloc(report, strlen(report)+
 			       strlen(config->fileAreas[i].areaName)+4);
-	       if (config->fileAreas[i].levelwrite <= link->level
-                   && config->fileAreas[i].levelread <= link->level)
+               readdeny = readCheck(&config->fileAreas[i], link);
+               writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
+               if (!readdeny && !writedeny)
                   strcat(report,"& ");
-               else if (config->fileAreas[i].levelread <= link->level)
-                       strcat(report,"+ ");
-               else if (config->fileAreas[i].levelwrite <= link->level)
-                       strcat(report,"* ");
+               else if (writedeny)
+                  strcat(report,"+ ");
+               else strcat(report,"* ");
 	    } else {
 	    report=(char*)realloc(report, strlen(report)+
 			    strlen(config->fileAreas[i].areaName)+3);
@@ -545,7 +547,7 @@ char *help(s_link *link) {
 
 		fclose(f);
 
-		writeLogEntry(htick_log, '8', "FileFix: help sent to %s",link->name);
+		writeLogEntry(htick_log, '8', "FileFix: help sent to %s", aka2str(link->hisAka));
 
 		return help;
 	}
@@ -556,7 +558,7 @@ char *help(s_link *link) {
 char *available(s_link *link) {                                                 
 /*        FILE *f;                                                                
         int i=1;                                                                
-        char *avail, addline[256];                                              
+        char *avail;                                              
         long endpos;                                                            
 
         if (config->available!=NULL) {                                          
@@ -578,7 +580,6 @@ char *available(s_link *link) {
 
                 fclose(f);                                                      
 
-                sprintf(addline,"areafix: Available Area List sent to %s",link->name);
                 writeLogEntry(htick_log, '8', "areafix: Available Area List sent to %s",link->name);
                                    
                 return avail;                                                   
@@ -778,8 +779,8 @@ char *resend(s_link *link, s_message *msg, char *cmd)
 	    if (rc == 1 && area->mandatory == 1) rc = 5;
 	    else rc = send(filename,filearea,addr2string(&link->hisAka));
 	    switch (rc) {
-	    case 0: sprintf(addline,"Send %s from %s for %s, %s\r",
-                            filename,filearea,link->name,addr2string(&link->hisAka));
+	    case 0: sprintf(addline,"Send %s from %s for %s\r",
+                            filename,filearea,addr2string(&link->hisAka));
                     break;
 	    case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
 		    writeLogEntry(htick_log, '8', "FileFix %%Resend: Passthrough filearea %s", filearea);

@@ -52,6 +52,7 @@ extern int       cmFlist;
 extern int       cmAnnounce;
 extern int       cmAnnFile;
 extern int       cmAnnNewFileecho;
+extern int       cmClean;
 
 extern char      flistfile[256];
 extern char      hatchfile[256];

@@ -53,6 +53,7 @@ int       cmHatch = 0;
 int       hatchReplace = 0;
 int       cmSend = 0;
 int       cmFlist = 0;
+int       cmClean = 0;
 
 char      flistfile[256];
 
