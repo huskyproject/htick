@@ -74,7 +74,7 @@ int subscribeCheck(s_filearea area, s_message *msg) {
 	int i;
 	
         for (i = 0; i<area.downlinkCount;i++) {
-           if (addrComp(msg->origAddr, area.downlinks[i]->hisAka)==0) return 0;
+           if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
 	}
 	
 	return 1;
@@ -175,12 +175,41 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	return 0;
 }
 
+void addlink(s_link *link, s_filearea *area) {
+    char *test = NULL;
+    
+    area->downlinks = realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
+    area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
+    area->downlinks[area->downlinkCount]->link = link;
+    
+    if (link->optGrp) test = strchr(link->optGrp, area->group);
+    area->downlinks[area->downlinkCount]->export = 1;
+    area->downlinks[area->downlinkCount]->import = 1;
+    area->downlinks[area->downlinkCount]->mandatory = 0;
+    if (link->export) if (*link->export==0) {
+	    if (link->optGrp == NULL || (link->optGrp && test)) {
+		area->downlinks[area->downlinkCount]->export = 0;
+	    }
+	} 
+    if (link->import) if (*link->import==0) {
+	    if (link->optGrp == NULL ||  (link->optGrp && test)) {
+		area->downlinks[area->downlinkCount]->import = 0;
+	    }
+	} 
+    if (link->mandatory) if (*link->mandatory==1) {
+	    if (link->optGrp == NULL || (link->optGrp && test)) {
+		area->downlinks[area->downlinkCount]->mandatory = 1;
+	    }
+	} 
+    area->downlinkCount++;
+}
+
 void removelink (s_link *link, s_filearea *area) {
 	int i;
 	s_link *links;
 
 	for (i=0; i < area->downlinkCount; i++) {
-           links = area->downlinks[i];
+           links = area->downlinks[i]->link;
            if (addrComp(link->hisAka, links->hisAka)==0) break;
 	}
 	
@@ -406,9 +435,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			sprintf(addline,"no area '%s' in my config\r",line);
                         break;
                 case 1:	changeconfig (getConfigFileName(), area->areaName, link, 0);
-                        area->downlinks = realloc(area->downlinks, sizeof(s_link*)*(area->downlinkCount+1));
-                        area->downlinks[area->downlinkCount] = link;
-                        area->downlinkCount++;
+                        addlink(link, area);
                         sprintf(addline,"area %s subscribed\r",area->areaName);
                         sprintf(logmsg,"filefix: %s subscribed to %s",link->name,area->areaName);
                         writeLogEntry(htick_log, '8', logmsg);

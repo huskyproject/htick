@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include <add_descr.h>
+//#include <add_descr.h>
 
 int add_description (char *descr_file_name, char *file_name, char *description)
 {

@@ -2,7 +2,7 @@
 #include <common.h>    
 #include <fcommon.h>   
 #include <global.h>    
-#include <seenby.h>
+//#include <seenby.h>
 
 int seenbyComp ( s_ticfile *tic, s_addr Aka)
 {

@@ -429,7 +429,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
                                                                                
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);                       
                                                                                
-   fileName = creatingLink->autoCreateFile;                                    
+   fileName = creatingLink->autoFileCreateFile;                                    
    if (fileName == NULL) fileName = getConfigFileName();              
                                                                       
    f = fopen(fileName, "a");                                          
@@ -459,16 +459,16 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
            myaddr, 
            hisaddr); */
 
-   sprintf(buff, "FileArea %s %s%s%s -a %s ", 
+   sprintf(buff, "FileArea %s %s%s -a %s ", 
            c_area,
            config->fileAreaBaseDir, 
-           config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=='/'?
-                  "":"/",
            c_area, 
            myaddr);
-           
-   NewAutoCreate=(char *) calloc (strlen(config->autoFileCreateDefaults)+1, sizeof(char));
-   strcpy(NewAutoCreate,config->autoFileCreateDefaults);
+    
+   if (creatingLink->autoFileCreateDefaults) {       
+      NewAutoCreate=(char *) calloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));
+      strcpy(NewAutoCreate,creatingLink->autoFileCreateDefaults);
+   } else NewAutoCreate = (char*)calloc(1, sizeof(char));
    
    if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
      if (desc!=NULL) {
@@ -486,7 +486,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        fileName[0]='\0';
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
        fileName++;
-       fileName=rindex(fileName,'\"')+1;
+       fileName=strrchr(fileName,'\"')+1;
        strcat(tmp,fileName);
        free(NewAutoCreate);
        NewAutoCreate=tmp;
@@ -520,6 +520,13 @@ int processTic(char *ticfile, e_tossSecurity sec)
    s_ticfile tic;
    int i;
    FILE *flohandle;
+
+#ifdef UNIX
+   char limiter = '/';
+#else
+   char limiter = '\\';
+#endif
+
 
    char ticedfile[256],fileareapath[256],
         newticedfile[256],linkfilepath[256],descr_file_name[256];
@@ -568,32 +575,31 @@ int processTic(char *ticfile, e_tossSecurity sec)
          }
 
    strcpy(ticedfile,ticfile);
-   *(strrchr(ticedfile,'/')+1)=0;
+   *(strrchr(ticedfile,limiter)+1)=0;
    strcat(ticedfile,tic.file);
 
    filearea=getFileArea(config,tic.area);
 
-   if (filearea==NULL)
+   if (filearea==NULL && from_link->autoFileCreate)
       {
       autoCreate(tic.area,tic.from,tic.areadesc);
       filearea=getFileArea(config,tic.area);
       }
 
-   if (filearea!=NULL)
-      {
+   if (filearea!=NULL) {
       strcpy(fileareapath,filearea->pathName);
-      if (filearea->pathName[strlen(filearea->pathName)-1]!='/')
-         strcat(filearea->pathName,"/");
-
+      if (filearea->pathName[strlen(filearea->pathName)-1]!=limiter) {
+	 filearea->pathName = (char*)realloc(filearea->pathName, strlen(filearea->pathName)+2);
+	 sprintf(hlp, "%c", limiter);
+         strcat(filearea->pathName,hlp);
       }
-     else
-      {
+   } else {
       sprintf(logstr,"Cannot open oder create File Area %s",tic.area);
       writeLogEntry(htick_log,'9',logstr);
       fprintf(stderr,"Cannot open oder create File Area %s !",tic.area);
       disposeTic(&tic);
       return(2);
-      } 
+   } 
 
    strLower(fileareapath);
    createDirectoryTree(fileareapath);
@@ -601,8 +607,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (tic.replaces[0]!=0)
       { // Delete old file
       strcpy(newticedfile,fileareapath);
-      if (fileareapath[strlen(fileareapath)-1]!='/')
-         strcat(newticedfile,"/");
+      if (fileareapath[strlen(fileareapath)-1]!=limiter) {
+	 sprintf(hlp, "%c", limiter);	
+         strcat(newticedfile,hlp);
+      }
       strcat(newticedfile,tic.replaces);
       strLower(newticedfile);
       if (remove(newticedfile)==0)
@@ -613,8 +621,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
       }
 
    strcpy(newticedfile,fileareapath);
-   if (fileareapath[strlen(fileareapath)-1]!='/')
-      strcat(newticedfile,"/");
+   if (fileareapath[strlen(fileareapath)-1]!=limiter) {
+      sprintf(hlp, "%c", limiter);
+      strcat(newticedfile,hlp);
+   }
    strcat(newticedfile,tic.file);
    strLower(newticedfile);
 
@@ -641,8 +651,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
       }
 
      strcpy(descr_file_name, fileareapath);
-     if (fileareapath[strlen(fileareapath)-1]!='/')
-        strcat(descr_file_name, "/");
+     if (fileareapath[strlen(fileareapath)-1]!=limiter) {
+	sprintf(hlp, "%c", limiter);
+        strcat(descr_file_name, hlp);
+     }
      strcat(descr_file_name, "files.bbs");
      strLower(descr_file_name);
      
@@ -661,15 +673,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
       tic.anzpath++;
 
     for (i=0;i<filearea->downlinkCount;i++)
-        if (addrComp(tic.from,filearea->downlinks[i]->hisAka)!=0 && 
-            addrComp(tic.to,filearea->downlinks[i]->hisAka)!=0 &&
-            addrComp(tic.origin,filearea->downlinks[i]->hisAka)!=0 &&
-	    addrComp(tic.to, *filearea->downlinks[i]->ourAka)!=0 &&
-            seenbyComp (&tic, filearea->downlinks[i]->hisAka) != 0)
+        if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
+            addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0 &&
+            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0 &&
+	    addrComp(tic.to, *filearea->downlinks[i]->link->ourAka)!=0 &&
+            seenbyComp (&tic, filearea->downlinks[i]->link->hisAka) != 0)
            { // Adding Downlink to Seen-By
            tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
            memcpy(&tic.seenby[tic.anzseenby],
-                  &filearea->downlinks[i]->hisAka,
+                  &filearea->downlinks[i]->link->hisAka,
                   sizeof(s_addr));
            tic.anzseenby++;
            }
@@ -678,45 +690,45 @@ int processTic(char *ticfile, e_tossSecurity sec)
     // Checking to whom I shall forward
 
     for (i=0;i<filearea->downlinkCount;i++)
-        if (addrComp(tic.from,filearea->downlinks[i]->hisAka)!=0 && 
-            addrComp(tic.to,filearea->downlinks[i]->hisAka)!=0 &&
-            addrComp(tic.origin,filearea->downlinks[i]->hisAka)!=0 &&
-	    addrComp(tic.to, *filearea->downlinks[i]->ourAka)!=0)
+        if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
+            addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0 &&
+            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0 &&
+	    addrComp(tic.to, *filearea->downlinks[i]->link->ourAka)!=0)
             { // Forward file to
-	     if (seenbyComp (&tic, filearea->downlinks[i]->hisAka) == 0) {
+	     if (seenbyComp (&tic, filearea->downlinks[i]->link->hisAka) == 0) {
                 sprintf(logstr,"File %s already seenby %s, %s",
                         tic.file,
-                        filearea->downlinks[i]->name,
-                        addr2string(&filearea->downlinks[i]->hisAka));
+                        filearea->downlinks[i]->link->name,
+                        addr2string(&filearea->downlinks[i]->link->hisAka));
                 writeLogEntry(htick_log,'6',logstr);
 	     } else {
              memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
-             memcpy(&tic.to,&filearea->downlinks[i]->hisAka,
+             memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
                     sizeof(s_addr));
-             strcpy(tic.password,filearea->downlinks[i]->ticPwd);
+             strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
 
-             if (createOutboundFileName(filearea->downlinks[i],
-                 cvtFlavour2Prio(filearea->downlinks[i]->echoMailFlavour),
+             if (createOutboundFileName(filearea->downlinks[i]->link,
+                 cvtFlavour2Prio(filearea->downlinks[i]->link->echoMailFlavour),
                  FLOFILE)==1)
                 printf("busy \n");
 
-             strcpy(linkfilepath,filearea->downlinks[i]->floFile);
-             *(strrchr(linkfilepath,'/'))=0;
+             strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
+             *(strrchr(linkfilepath,limiter))=0;
 
              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
              writeTic(newticfile,&tic);   
 
-             flohandle=fopen(filearea->downlinks[i]->floFile,"a");
+             flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
              fprintf(flohandle,"^%s\r\n",newticfile);
              fprintf(flohandle,"%s\r\n",newticedfile);
              fclose(flohandle);   
        
-             remove(filearea->downlinks[i]->bsyFile);
+             remove(filearea->downlinks[i]->link->bsyFile);
 
              sprintf(logstr,"Forwarding %s for %s, %s",
                      tic.file,
-                     filearea->downlinks[i]->name,
-                     addr2string(&filearea->downlinks[i]->hisAka));
+                     filearea->downlinks[i]->link->name,
+                     addr2string(&filearea->downlinks[i]->link->hisAka));
 
              writeLogEntry(htick_log,'6',logstr);
 	     } // if Seenby
