@@ -329,7 +329,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     {
         int fh = 0;
         /* insure that ticfile won't be removed while parsing */
-#ifdef __UNIX__
+#if defined (__UNIX__) || defined (__DJGPP__)
         fh = sopen(ticfile, O_RDWR | O_BINARY, SH_DENYNO, S_IWRITE | S_IREAD);
 #else
         fh = sopen(ticfile, O_RDWR | O_BINARY, SH_DENYRW);
