@@ -1,0 +1,41 @@
+DEBUG   = 1
+CC      = gcc 
+INSTDIR = /usr/local/bin
+MANDIR  = /usr/local/man
+
+#OBJS    = hpt.o pktread.o pktwrite.o fcommon.o log.o global.o toss.oscan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o link.o strsep.o
+OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o
+#toss.oscan.o scanarea.o seenby.o dupe.o tree.o recode.o areafix.o post.o
+SRC_DIR = ../src/
+
+ifeq ($(DEBUG), 1)
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O3 -s -DUNIX
+# LFLAGS  = -L../../fidoconfig -L../../smapi 
+  LFLAGS  =
+else
+  CFLAGS  = -c -I../h -I../../smapi -Wall -O3 -s -DUNIX
+# LFLAGS  = -L../../smapi -L../../fidoconfig
+  LFLAGS  =  
+endif
+
+all: $(OBJS) \
+     htick 
+
+%.o: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+htick: $(OBJS)
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapilnx -lfidoconfig
+
+clean:
+	-rm -f *.o
+	-rm *~
+	-rm core
+
+distclean: clean
+	-rm htick
+	-rm *.1.gz
+	-rm *.log
+
+install:
+	install htick $(INSTDIR)
