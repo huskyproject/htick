@@ -1,0 +1,20 @@
+Document tokens (add to tparser & dumpcfg):
+    filefix
+    filefixkillreports
+    filefixkillrequests
+    semadir
+    badfilesdir
+    bbsarea
+    autofilecreate
+    autofilecreatedefaults
+    savetick
+    execonfile
+    origininannounce
+    busyFileDir
+    -sendorig
+    ConvertShortNames
+    ConvertLongNames
+    forwardFileRequestFile
+    ForwardFilePriority
+    forwardFileRequests
+    filefixhelp

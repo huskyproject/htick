@@ -144,3 +144,8 @@ Kill filefix request after procession
 20) bbsarea <name> <bbsareapath>
 
 Use in "htick filelist"
+
+21) fileEchoFlavour <hold|normal|crash|direct|immediate>
+
+This statement sets the flavour which outgoing files in fileechos for this link
+get. For example set fileEchoFlavour for points to hold and for uplink crash.
