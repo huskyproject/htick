@@ -1,3 +1,9 @@
+2003-09-17 Wednesday 09:05  mche
+
+	* src/areafix.c (1.122), src/global.c (1.27), src/htick.c (1.100),
+	h/global.h (1.24): fix incorrect configfile handling when
+	configfile is passed by command line
+
 2003-08-21 Thursday 18:58  d_sergienko
 
 	* doc/htick.rus.texi (1.1): added russian doc translation from
