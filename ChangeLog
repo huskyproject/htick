@@ -1,3 +1,9 @@
+2002-03-25 Monday 16:03  mche
+
+	* src/fcommon.c (1.37), src/global.c (1.14), src/htick.c (1.50),
+	h/fcommon.h (1.11), h/global.h (1.13): creatin' lock file chanched
+	to hpt-style
+
 2002-03-20 Wednesday 17:20  mche
 
 	* src/fcommon.c (1.36), src/filelist.c (1.24), src/hatch.c (1.42),
