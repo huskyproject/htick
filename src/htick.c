@@ -107,9 +107,11 @@ int processCommandLine(int argc, char **argv)
             " [replace [<filemask>]]  Hatch file into Area, using Description for file,\n"
             "                         if exist \"replace\", then fill replace field in TIC;\n"
             "                         if not exist <filemask>, then put <file> in field\n"
-            " filelist <file>         Generate filelist which includes all files in base\n"
-            " send <file> <filearea>\n"
-            "      <address>          Send file from filearea to address\n"
+            " filelist <file> [<dirlist>]\n"
+            "                         Generate filelist which includes all files in base\n"
+            "                         <dirlist> - list of paths to files from filelist\n"
+            " send <file> <filearea> <address>\n"
+            "                         Send file from filearea to address\n"
             " clean                   Clean passthrough dir\n"
             " ffix [<addr> command]   process filefix\n"
             "\n"
@@ -187,8 +189,12 @@ int processCommandLine(int argc, char **argv)
             cmFlist = 1;
             if (i < argc-1) {
                 i++;
-                strcpy(flistfile, argv[i]);
-            } else flistfile[0] = 0;
+                flistfile = sstrdup(argv[i]);
+                if(i < argc-1) {
+                    i++;
+                    dlistfile = sstrdup(argv[i]);
+                }
+            } 
             continue;
         } else if (stricmp(argv[i], "announce") == 0) {
             if (i < argc-1) {
@@ -370,7 +376,8 @@ int main(int argc, char **argv)
    if (cmClean) cleanPassthroughDir();
    if (cmAfix)  ffix(afixAddr, afixCmd);
    nfree(afixCmd);
-
+   nfree(flistfile);
+   nfree(dlistfile);
 
    // deinit SMAPI
    MsgCloseApi();

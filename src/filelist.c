@@ -275,12 +275,13 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
 
 void filelist()
 {
-    FILE *f;
+    FILE *f = NULL;
+    FILE *d = NULL;
     unsigned int i;
     
     w_log( LL_INFO, "Start filelist...");
     
-    if (strlen(flistfile) == 0) {
+    if (flistfile == NULL) {
         w_log('6',"Not found output file");
         return;
     }
@@ -289,14 +290,24 @@ void filelist()
         w_log('6',"Could not open for write file %s",flistfile);
         return;
     }
-    
+
+    if(dlistfile)
+    {
+        if ( (d = fopen(dlistfile,"w")) == NULL ) {
+            w_log('6',"Could not open for write file %s",dlistfile);
+        }
+    }
     for (i=0; i<config->fileAreaCount; i++) {
         if (config->fileAreas[i].pass != 1 && !(config->fileAreas[i].hide))
+        {
             printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].pathName, config->fileAreas[i].description, f, 0);
+            fprintf(d, "%s\n",config->fileAreas[i].pathName);
+        }
     }
     
     for (i=0; i<config->bbsAreaCount; i++) {
         printFileArea(config->bbsAreas[i].areaName, config->bbsAreas[i].pathName, config->bbsAreas[i].description, f, 1);
+        fprintf(d, "%s\n",config->bbsAreas[i].pathName);
     }
     
     fprintf(f,"=============================================================================\n");
@@ -304,5 +315,6 @@ void filelist()
     fprintf(f,"=============================================================================\n\n");
     
     fclose(f);
+    if(d) fclose(d);
 }
 

@@ -70,7 +70,8 @@ int       cmFlist = 0;
 int       cmClean = 0;
 int       cmAfix = 0;
 
-char      flistfile[256];
+char      *flistfile = NULL;
+char      *dlistfile = NULL;
 
 char      hatchfile[256];
 char      hatcharea[256];

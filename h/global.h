@@ -56,7 +56,8 @@ extern int       cmAnnNewFileecho;
 extern int       cmClean;
 extern int       cmAfix;
 
-extern char      flistfile[256];
+extern char      *flistfile;
+extern char      *dlistfile;
 extern char      hatchfile[256];
 extern char      hatcharea[256];
 extern char      hatchdesc[256];
