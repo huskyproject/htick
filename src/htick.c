@@ -34,6 +34,8 @@
 #ifndef __IBMC__
 #include <unistd.h>
 #endif
+#include <sys/types.h>
+#include <signal.h>
 
 #include <msgapi.h>
 
@@ -118,8 +120,16 @@ void processCommandLine(int argc, char **argv)
 
 void processConfig()
 {
+#if !defined(__OS2__) && !defined(UNIX)
+   time_t   time_cur, locklife = 0;
+   struct   stat stat_file;
+#endif
    char *buff = NULL;
    
+   unsigned long pid;
+   
+   FILE *f;
+
    config = readConfig();
    if (NULL == config) {
       printf("Config not found\n");
@@ -128,11 +138,29 @@ void processConfig()
    
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
+      f = fopen(config->lockfile, "rt");
+      fscanf(f, "%lu\n", &pid);
+      fclose(f);
+      /* Checking process PID */
+#ifdef __OS2__
+      if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
+#elif UNIX
+      if (kill(pid, 0) == 0) {
+#else
+      if (stat(config->lockfile, &stat_file) != -1) {
+          time_cur = time(NULL);
+	  locklife = (time_cur - stat_file.st_mtime)/60;
+      }
+      if (locklife < 180) {
+#endif
            printf("lock file found! exit...\n");
            disposeConfig(config);
            exit(1);
-   } 
-   else if (config->lockfile!=NULL) createLockFile(config->lockfile);
+      } else {
+         remove(config->lockfile);
+         createLockFile(config->lockfile);
+      } /* endif */
+   }
 
    // open Logfile
    htick_log = NULL;
