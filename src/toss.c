@@ -261,12 +261,14 @@ int parseTic(char *ticfile,s_ticfile *tic)
     s_link *ticSourceLink=NULL;
     UINT16 key;
     hs_addr Aka;
-    
+    int fh = 0;
+
+    memset(tic,'\0',sizeof(s_ticfile));
+
 #ifndef HAS_sopen
     tichandle=fopen(ticfile,"r");
 #else
     /* insure that ticfile won't be removed while parsing */
-    int fh = 0;
     fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
     if( fh<0 ){
         w_log(LL_ERROR, "Can't open '%s': %s (sopen())", ticfile, strerror(errno));
@@ -279,8 +281,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
         w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
         return 0;
     }
-    
-    memset(tic,'\0',sizeof(s_ticfile));
     
     while ((line = readLine(tichandle)) != NULL) {
         line = trimLine(line);
