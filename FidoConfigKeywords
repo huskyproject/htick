@@ -80,6 +80,10 @@ Same as EchoArea, most options are valid:
 	
     Do not try to get description from <fileDescName>
 
+    o) -p <integer> 
+
+    Purge after n days. if 0 purging is disabled.
+
 7) ExecOnFile <filearea> <filemask> <command>
 
 Execute some command on receiving file. Command get full filepath as parameter.

@@ -35,5 +35,6 @@
 
 int  processCommandLine(int argc, char **argv);
 void processConfig(void);
+void Purge(void);
 
 #endif

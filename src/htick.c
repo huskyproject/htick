@@ -242,7 +242,7 @@ void processConfig()
       exit(1);
    };
 
-   w_log( '1', "Start");
+   w_log( LL_START, "Start");
 
    if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
    if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
@@ -373,7 +373,7 @@ int main(int argc, char **argv)
    if (cmHatch) hatch();
    if (cmSend)  send(sendfile, sendarea, sendaddr);
    if (cmFlist) filelist();
-   if (cmClean) cleanPassthroughDir();
+   if (cmClean) Purge();
    if (cmAfix)  ffix(afixAddr, afixCmd);
    if (cmAnnounce && !cmAnnFile && config->announceSpool != NULL)  report();
    nfree(afixCmd);
@@ -384,7 +384,7 @@ int main(int argc, char **argv)
    MsgCloseApi();
 
    doneCharsets();
-   w_log( '1', "End");
+   w_log( LL_STOP, "End");
    closeLog();
    if (config->lockfile) {
       close(lock_fd);

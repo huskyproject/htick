@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <fidoconf/log.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
@@ -41,6 +42,7 @@
 #include <smapi/progprot.h>
 
 #include "toss.h"
+#include "htick.h"
 #include "global.h"
 
 
@@ -79,7 +81,6 @@ void cleanPassthroughDir(void)
     struct dirent  *file;
     char           *ticfile = NULL;
     w_log( LL_FUNC, "cleanPassthroughDir(): begin" );
-    w_log( LL_INFO, "Start clean (purging files in passthrough dir)...");
     
     /* check busyFileDir */
     if (direxist(config->busyFileDir)) {
@@ -150,4 +151,58 @@ void cleanPassthroughDir(void)
     tree_mung(&fileTree, htick_deleteEntry);
 
     w_log( LL_FUNC, "cleanPassthroughDir(): end" );
+}
+
+void purgeFileEchos()
+{
+    UINT i;
+    char* filename = NULL;
+    time_t tnow;
+
+    DIR            *dir;
+    struct dirent  *file;
+    struct stat    st;
+      
+    time( &tnow );
+
+
+    for (i=0; i<config->fileAreaCount; i++) {
+        if(config->fileAreas[i].purge == 0)
+            continue;
+        w_log(LL_INFO,  "Cleaning %s ...", config->fileAreas[i].areaName);
+        dir = opendir(config->fileAreas[i].pathName);
+        if (dir == NULL) 
+            continue;
+
+        while ((file = readdir(dir)) != NULL) {
+            if (patimat(file->d_name, "*.BBS") == 1)
+                continue;
+
+            xstrscat(&filename,config->fileAreas[i].pathName,file->d_name,NULL);
+            if (direxist(filename)) { // do not touch dirs
+                nfree(filename);
+                continue;
+            }
+            memset(&st, 0, sizeof(st));
+            stat(filename, &st);
+            if(st.st_mtime + (time_t)(config->fileAreas[i].purge * 86400) > tnow ) {
+                nfree(filename);
+                continue;
+            }
+            w_log(LL_INFO,  "Deleting file %s that is %d days old", file->d_name,(tnow-st.st_mtime)/86400);
+            remove(filename);
+            nfree(filename);
+        }
+        closedir(dir);
+    }
+
+}
+
+void Purge(void)
+{
+    w_log( LL_INFO, "Start clean (purging files in passthrough dir)...");
+    cleanPassthroughDir();
+    w_log(LL_STOP,  "End   Cleaning Passthrough Dir...");
+
+    purgeFileEchos();
 }
