@@ -1,3 +1,8 @@
+2004-10-06 Wednesday 14:54  mche
+
+	* src/areafix.c (1.128): fix for previous patch: variable 'i' is
+	being used without being defined.
+
 2004-09-19 Sunday 15:31  mche
 
 	* src/areafix.c (1.127): additional cheks for export/import
