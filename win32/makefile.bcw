@@ -36,7 +36,6 @@ areafix.obj
 strsep.obj
 add_desc.obj
 seenby.obj
-recode.obj
 hatch.obj
 filelist.obj
 filecase.obj
