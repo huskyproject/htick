@@ -1238,7 +1238,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
         if (getNetMailArea(config, config->ReportTo) != NULL) {
             msg = makeMessage(area->useAka,
                 area->useAka,
-                versionStr,
+                config->filefixFromName ? config->filefixFromName : versionStr,
                 config->sysop,
                 "Created new fileareas", 1,
                 config->filefixReportsAttr);
@@ -1246,7 +1246,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
         } else {
             msg = makeMessage(area->useAka,
                 area->useAka,
-                versionStr,
+                config->filefixFromName ? config->filefixFromName : versionStr,
                 "All", "Created new fileareas", 0,
                 config->filefixReportsAttr);
             msg->text = createKludges(config, config->ReportTo, area->useAka, area->useAka, versionStr);
