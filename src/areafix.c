@@ -50,6 +50,7 @@
 #include <progprot.h>
 #include <strsep.h>
 #include <areafix.h>
+#include <hatch.h>
 
 unsigned char RetFix;
 
@@ -767,6 +768,52 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	return report;
 }
 
+char *resend(s_link *link, s_message *msg, char *cmd)
+{
+    int rc = 0;
+    char *line, addline[256], logmsg[256];
+    char *report=NULL, *token, filename[100], filearea[100];
+
+   report=(char*)calloc(1, sizeof(char));
+   line = cmd;
+   line=stripLeadingChars(line, " \t");
+   token = strtok(line, " \t\0");
+   if (token == NULL)
+      sprintf(addline,"Error in line! Format: %%Resend <file> <filearea>\r");
+   else {
+      strcpy(filename,token);
+      token=stripLeadingChars(strtok(NULL, "\0"), " ");
+      if (token == NULL)
+         sprintf(addline,"Error in line! Format: %%Resend <file> <filearea>\r");
+      else {
+         strcpy(filearea,token);
+	 rc = send(filename,filearea,addr2string(&link->hisAka));
+	 switch (rc) {
+	 case 0: sprintf(addline,"Send %s from %s for %s, %s\r",
+                         filename,filearea,link->name,addr2string(&link->hisAka));
+		 break;
+	 case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
+		 sprintf(logmsg,"FileFix %%Resend: Passthrough filearea %s", filearea);
+		 writeLogEntry(htick_log, '8', logmsg);
+	         break;
+	 case 2: sprintf(addline,"Error: Filearea %s not found!\r",filearea);
+		 sprintf(logmsg,"FileFix %%Resend: Filearea %s not found", filearea);
+		 writeLogEntry(htick_log, '8', logmsg);
+	         break;
+	 case 3: sprintf(addline,"Error: File %s not found!\r",filename);
+		 sprintf(logmsg,"FileFix %%Resend: File %s not found", filename);
+		 writeLogEntry(htick_log, '8', logmsg);
+	         break;
+	 }
+      }
+   }
+
+   report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
+   strcat(report, addline);
+
+   return report;
+}
+
 int testAddr(char *addr, s_addr hisAka)
 {
     s_addr aka;
@@ -1011,7 +1058,8 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
 		if (stricmp(line,"info")==0) return INFO;
-		if (strncasesearch(line, "resend", 6)==0) return RESEND;
+		if (strncasesearch(line, "resend", 6)==0)
+		   if (line[6] != 0) return RESEND;
 		return ERROR;
 	case '\001': return NOTHING;
 	case '\000': return NOTHING;
@@ -1058,9 +1106,9 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 /*	case INFO: report = info_link(msg, link);
 		RetFix=INFO;
 		break;*/
-/*	case RESEND: report = resend(link, msg, line);
+	case RESEND: report = resend(link, msg, line+7);
 		RetFix=RESEND;
-		break;*/
+		break;
 	case ERROR: report = errorRQ(line);
 		RetFix=ERROR;
 		break;
@@ -1208,8 +1256,7 @@ int processFileFix(s_message *msg)
 					RetMsg(msg, link, preport, "link information");
 					break;
 				case RESEND:
-					if (report == NULL) report=textHead();
- 					report=areastatus(preport, report);
+					RetMsg(msg, link, preport, "resend request");
  					break;
 				case ERROR:
 					if (report == NULL) report = textHead();
