@@ -1,3 +1,6 @@
+This file contents very shord description about fidoconfig keywords using
+by htick. For details see htick.info, htick.html or htick.dvi.
+
 1) FileAreaBaseDir <directory>
 
 Where the directories for all Fileareas shall be made at autocreate.
@@ -70,7 +73,7 @@ Same as EchoArea, most options are valid:
 
     k) -noreplace
 
-    No replace exists files in this filearea
+    Don't replace exisiting files in this filearea.
 
 	l) -nodiz
 	
