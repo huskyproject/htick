@@ -1,3 +1,16 @@
+2002-03-20 Wednesday 17:20  mche
+
+	* src/fcommon.c (1.36), src/filelist.c (1.24), src/hatch.c (1.42),
+	src/toss.c (1.132), h/fcommon.h (1.10): function makeMsgbFileName
+	is removed from htick  and hpt to fidoconfig function
+	createDirectoryTree changed to _createDirectoryTree from smapi
+
+2002-03-20 Wednesday 15:53  mche
+
+	* src/: areafix.c (1.50), fcommon.c (1.35), filelist.c (1.23),
+	hatch.c (1.41), htick.c (1.49), scan.c (1.17), toss.c (1.131):
+	function writeLogEntry are removed
+
 2002-03-15 Friday 12:28  mche
 
 	* src/global.c (1.13), src/htick.c (1.48), h/version.h (1.3):
