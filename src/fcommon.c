@@ -178,12 +178,12 @@ int createTempPktFileName(s_link *link)
 
    do {
 
-           sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, aTime, counter);
+           sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, (unsigned long) aTime, counter);
 
            if ( link->hisAka.point == 0 )
-                   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound,aTime,counter,wday);
+                   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound, (unsigned long) aTime, counter,wday);
            else
-                   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, aTime, counter, wday);
+                   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, (unsigned long) aTime, counter, wday);
            counter++;
 
    } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));

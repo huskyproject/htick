@@ -116,7 +116,7 @@ void hatch()
       strcpy(timestr,asctime(localtime(&acttime)));
       timestr[strlen(timestr)-1]=0;
       sprintf(tmp,"%s %lu %s %s",
-              addr2string(filearea->useAka), time(NULL), timestr,versionStr);
+              addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
       tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
       tic.path[tic.anzpath]=strdup(tmp);
       tic.anzpath++;
@@ -302,7 +302,7 @@ int send(char *filename, char *area, char *addr)
    strcpy(timestr,asctime(localtime(&acttime)));
    timestr[strlen(timestr)-1]=0;
    sprintf(tmp,"%s %lu %s %s",
-           addr2string(filearea->useAka), time(NULL), timestr,versionStr);
+           addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
    tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
    tic.path[tic.anzpath]=strdup(tmp);
    tic.anzpath++;

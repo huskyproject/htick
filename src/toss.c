@@ -122,10 +122,10 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
                                                                                 
    if (ourAka->point)                                                           
       sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u.%u %08lx\r",               
-          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,time(NULL));  
+          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) time(NULL));  
    else                                                                         
       sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u %08lx\r",                  
-              ourAka->zone,ourAka->net,ourAka->node,time(NULL));                
+              ourAka->zone,ourAka->net,ourAka->node,(unsigned long) time(NULL));                
                                                                                 
    sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);                     
 }                                                                               
@@ -851,11 +851,13 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    if (cmAnnFile)
+   {
       if (tic.anzldesc>0)
          announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
       else
          announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
-
+   }
+   
    if (filearea->downlinkCount>0) {
       // Adding path & seenbys
       time(&acttime);
@@ -863,7 +865,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       timestr[strlen(timestr)-1]=0;
 
       sprintf(hlp,"%s %lu %s %s",
-              addr2string(filearea->useAka), time(NULL), timestr,versionStr);
+              addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
 
       tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
       tic.path[tic.anzpath]=strdup(hlp);
