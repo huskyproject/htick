@@ -511,7 +511,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    sprintf(buff, "FileArea %s %s%s -a %s ", 
            c_area,
            config->fileAreaBaseDir, 
-           c_area, 
+           fileechoFileName, 
            myaddr);
            
    if (creatingLink->autoFileCreateDefaults) {
