@@ -1,3 +1,12 @@
+2002-01-11 Friday 11:45  yagodkin
+
+	* src/toss.c (1.119): some fixes
+
+2002-01-11 Friday 11:35  yagodkin
+
+	* FidoConfigKeywords (1.19), src/toss.c (1.118), win32/makefile.cyg
+	(1.2): added support for fileDescName
+
 2002-01-05 Saturday 13:37  mche
 
 	* win32/makefile.mvcdll (1.1): build htick with dlls
