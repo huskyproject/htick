@@ -353,7 +353,9 @@ void hatch()
     /*  Adding crc */
     hatchInfo->crc = filecrc32(hatchedFile);
     
-    sendToLinks(0, filearea, hatchInfo, hatchedFile);
+    if ( sendToLinks(0, filearea, hatchInfo, hatchedFile) == 0 ) {
+       doSaveTic(hatchedFile,hatchInfo,filearea);
+    }
     
     nfree(hatchedFile);
 }
