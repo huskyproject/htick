@@ -44,13 +44,13 @@ struct ticfiletype {
                 int size;           /*  Size of file */
                 unsigned long crc;  /*  CRC of File */
                 unsigned long date; /*  Date */
-                s_addr from;        /*  From Addr */
-                s_addr to;          /*  To Addr */
-                s_addr origin;      /*  Origin */
+                hs_addr from;        /*  From Addr */
+                hs_addr to;          /*  To Addr */
+                hs_addr origin;      /*  Origin */
                 char *password;     /*  Password */
                 char **ldesc;       /*  Array of Pointer to Strings with ldescs */
                 unsigned int anzldesc;       /*  Number of Ldesc Lines */
-                s_addr *seenby;     /*  Array of Pointer to Seenbys */
+                hs_addr *seenby;     /*  Array of Pointer to Seenbys */
                 unsigned int anzseenby;      /*  Number of seenbys */
                 char **path;        /*  Array of Pointer to Strings with Path */
                 unsigned int anzpath;        /*  Numer of Path lines */
@@ -99,7 +99,7 @@ extern char      announcenewfileecho[256];
 extern int  lock_fd;
 extern char *_lockfile;
 
-extern s_addr afixAddr;
+extern hs_addr afixAddr;
 extern char *afixCmd;
 
 

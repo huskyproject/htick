@@ -48,7 +48,7 @@
 #define FFERROR 255
 
 int   processFileFix(s_message *msg);
-void  ffix(s_addr addr, char *cmd);
-int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink);
+void  ffix(hs_addr addr, char *cmd);
+int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink);
 
 #endif

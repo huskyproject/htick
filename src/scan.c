@@ -52,7 +52,7 @@
 #include <toss.h>
 
 
-void cvtAddr(const NETADDR aka1, s_addr *aka2)
+void cvtAddr(const NETADDR aka1, ps_addr aka2)
 {
   aka2->zone = aka1.zone;
   aka2->net  = aka1.net;
@@ -91,7 +91,7 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    }
 }
 
-void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
+void convertMsgText(HMSG SQmsg, s_message *msg, hs_addr ourAka)
 {
    char    *kludgeLines, viaLine[100];
    UCHAR   *ctrlBuff;
@@ -136,7 +136,7 @@ void scanNMArea(s_area *afixarea)
    HMSG            msg;
    unsigned long   highMsg, i, j;
    XMSG            xmsg;
-   s_addr          dest;
+   hs_addr         dest;
    int             for_us;
    s_message       filefixmsg;
 

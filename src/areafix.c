@@ -1037,7 +1037,7 @@ int processFileFix(s_message *msg)
 	return 1;
 }
 
-void ffix(s_addr addr, char *cmd)
+void ffix(hs_addr addr, char *cmd)
 {
     s_link          *link   = NULL;
     s_message	    *tmpmsg = NULL;
@@ -1062,7 +1062,7 @@ void ffix(s_addr addr, char *cmd)
 
 /* file echo autocreation */
 
-int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
+int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
 {
     FILE *f;
     char *NewAutoCreate = NULL;

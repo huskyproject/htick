@@ -246,7 +246,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     char *line, *token, *param, *linecut = "", *emptyline = "";
     s_link *ticSourceLink=NULL;
     UINT16 key;
-    s_addr Aka;
+    hs_addr Aka;
     
 #if defined(UNIX) || defined(__DJGPP__)
     tichandle=fopen(ticfile,"r");
@@ -414,7 +414,7 @@ int readCheck(s_filearea *echo, s_link *link)
   return 0;
 }
 
-int writeCheck(s_filearea *echo, s_addr *aka)
+int writeCheck(s_filearea *echo, ps_addr aka)
 {
 
   /* rc == '\x0000' access o'k
@@ -513,8 +513,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    char descr_file_name[256], newticedfile[256], fileareapath[256];
    char timestr[40];
    time_t acttime;
-   s_addr *old_seenby = NULL;
-   s_addr old_from, old_to;
+   hs_addr *old_seenby = NULL;
+   hs_addr old_from, old_to;
    int old_anzseenby = 0;
    int readAccess;
    int cmdexit;
@@ -642,11 +642,11 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    if (isToss == 1) {
       /*  Save seenby structure */
-      old_seenby = smalloc(tic->anzseenby*sizeof(s_addr));
-      memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
+      old_seenby = smalloc(tic->anzseenby*sizeof(hs_addr));
+      memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(hs_addr));
       old_anzseenby = tic->anzseenby;
-      memcpy(&old_from,&tic->from,sizeof(s_addr));
-      memcpy(&old_to,&tic->to,sizeof(s_addr));
+      memcpy(&old_from,&tic->from,sizeof(hs_addr));
+      memcpy(&old_to,&tic->to,sizeof(hs_addr));
    }
 
    for (i=0;i<filearea->downlinkCount;i++) {
@@ -658,8 +658,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
            /*  if link can recive files from filearea */
            /*  Adding Downlink to Seen-By */
            /*
-           tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
-           memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(s_addr));
+           tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(hs_addr));
+           memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(hs_addr));
            tic->anzseenby++;
            */
            seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
@@ -1289,7 +1289,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     return rc;
 }
 
-int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr)
+int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
 

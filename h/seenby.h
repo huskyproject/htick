@@ -4,8 +4,8 @@
 #include <fidoconf/fidoconf.h>
 #include "fcommon.h"
 
-int seenbyAdd  ( s_addr **seenby, UINT* anzseenby, s_addr *Aka);
-int seenbyComp ( s_addr *seenby, int anzseenby, s_addr Aka);
-int seenbySort ( s_addr *seenby, int anzseenby);
+int seenbyAdd  ( hs_addr **seenby, UINT* anzseenby, hs_addr *Aka);
+int seenbyComp ( hs_addr *seenby, int anzseenby, hs_addr Aka);
+int seenbySort ( hs_addr *seenby, int anzseenby);
 
 #endif

@@ -368,7 +368,6 @@ int send(char *filename, char *area, char *addr)
     s_ticfile tic;
     s_link *link = NULL;
     s_filearea *filearea;
-    /* s_addr address; */
     char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
     char timestr[40];
     struct stat stbuf;
@@ -478,8 +477,8 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     char *newticfile   = NULL;
     FILE *flohandle    = NULL;
 
-    memcpy(&tic->from,downlink->ourAka,sizeof(s_addr));
-    memcpy(&tic->to,&downlink->hisAka, sizeof(s_addr));
+    memcpy(&tic->from,downlink->ourAka,sizeof(hs_addr));
+    memcpy(&tic->to,&downlink->hisAka, sizeof(hs_addr));
 
     nfree(tic->password);
     if (downlink->ticPwd!=NULL)

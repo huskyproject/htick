@@ -96,5 +96,5 @@ char      announcenewfileecho[256];
 int       lock_fd;
 char      *_lockfile=NULL;
 
-s_addr    afixAddr = {0,0,0,0};
+hs_addr   afixAddr = {0,0,0,0};
 char      *afixCmd = NULL;

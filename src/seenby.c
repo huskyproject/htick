@@ -31,7 +31,7 @@
 #include <global.h>    
 #include "seenby.h"
 
-int seenbyComp ( s_addr *seenby, int anzseenby, s_addr Aka)
+int seenbyComp ( hs_addr *seenby, int anzseenby, hs_addr Aka)
 {
     int i;
     
@@ -43,12 +43,12 @@ int seenbyComp ( s_addr *seenby, int anzseenby, s_addr Aka)
     return !0;
 }
 
-int seenbyAdd ( s_addr **seenby, UINT *anzseenby, s_addr* Aka)
+int seenbyAdd ( hs_addr **seenby, UINT *anzseenby, ps_addr Aka)
 {
-    s_addr* tmp = *seenby;
+    ps_addr tmp = *seenby;
     
-    tmp = srealloc( tmp, (*anzseenby+1)*sizeof(s_addr) );
-    memcpy(&tmp[*anzseenby],Aka,sizeof(s_addr));
+    tmp = srealloc( tmp, (*anzseenby+1)*sizeof(hs_addr) );
+    memcpy(&tmp[*anzseenby],Aka,sizeof(hs_addr));
     (*anzseenby)++;
     *seenby = tmp;
     
@@ -57,8 +57,8 @@ int seenbyAdd ( s_addr **seenby, UINT *anzseenby, s_addr* Aka)
 
 static int cmp_Addr(const void *a, const void *b)
 {
-    const s_addr* r1 = (s_addr*)a;
-    const s_addr* r2 = (s_addr*)b;
+    const ps_addr r1 = (ps_addr)a;
+    const ps_addr r2 = (ps_addr)b;
     
     if             ( r1->zone > r2->zone )
         return  1;
@@ -80,8 +80,8 @@ static int cmp_Addr(const void *a, const void *b)
 }
 
 
-int seenbySort ( s_addr *seenby, int anzseenby)
+int seenbySort ( ps_addr seenby, int anzseenby)
 {
-    qsort( (void*)seenby, anzseenby, sizeof(s_addr), cmp_Addr ); 
+    qsort( (void*)seenby, anzseenby, sizeof(hs_addr), cmp_Addr ); 
     return 1;
 }
