@@ -1,3 +1,9 @@
+htick (1.0.1-1) stable; urgency=low
+
+  * Htick 1.0 release
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed,  6 Nov 2002 13:04:51 +0500
+
 htick (1.0.0-20020918-1) stable; urgency=low
 
   * New cvs version (1.0-RC2)
