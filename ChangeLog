@@ -1,3 +1,7 @@
+2003-11-30 Sunday 18:58  mche
+
+	* src/filelist.c (1.45): fix build
+
 2003-11-28 Friday 15:48  mche
 
 	* src/filelist.c (1.44): fix filelist processing
