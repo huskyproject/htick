@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Wed Feb 16 23:09:43 NOVT 2000
+max:
+* fixed some bug when calculates replace file without path
+
+----- cvs ci ------
 Sun Feb 13 15:59:24 NOVT 2000
 max (patch from Alex Bronin):
 * UTC time in path while hatching

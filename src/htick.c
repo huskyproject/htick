@@ -119,7 +119,9 @@ void processCommandLine(int argc, char **argv)
          if (i < argc-1) {
 	    i++;
 	    strcpy(replaceMask, argv[i]);
-	 } else strcpy(replaceMask, strrchr(hatchfile,PATH_DELIM)+1);
+	 } else strcpy(replaceMask, (strrchr(hatchfile,PATH_DELIM)) ?
+	                             strrchr(hatchfile,PATH_DELIM)+1 :
+				     hatchfile);
          continue;
       } else if (stricmp(argv[i], "filelist") == 0) {
          cmFlist = 1;
