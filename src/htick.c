@@ -282,6 +282,8 @@ int main(int argc, char **argv)
     sprintf(versionStr, "HTick/NT v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #elif defined(__sun__)
     sprintf(versionStr, "HTick/SUN v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
+#elif defined(__BEOS__)
+    sprintf(versionStr, "HTick/beos v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #else
     sprintf(versionStr, "HTick v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #endif
