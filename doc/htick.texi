@@ -333,6 +333,8 @@ FIDOCONFIG about location of config file and keywords ideology.
 * filefixKillRequests::  Kill filefix request after processing.
 * filefixReportsAttr::   Set kill/sent flag to filefix replies.
 * BBSarea::              Filearea without subscribing (for `htick filelist`).
+* fileDescription::      Name of file to hold file descriptions,
+                         by default files.bbs
 * fileDescName::         If no LDESC is defined in tic file, use <name> file
                          from archive to fill it.
 * FileAreaCreatePerms::  Set permissions for newly created filearea directories.
@@ -633,6 +635,20 @@ Filearea without subscribing, not shown in filefix reports.
 Use for filelist generation only (`htick filelist` command).
 
 This statement cannot be repeated.
+
+@node fileDescription, fileDescName, FileAreaCreatePerms, BBSarea, Keywords
+@subsection fileDescription
+@findex fileDescription
+@table @asis
+@item Syntax:
+@code{fileDescription <name>}
+@item Example:
+@code{fileDescription descriopt.ion}
+@end table
+
+Name of file to hold file descriptions, by default files.bbs
+
+This statement can be repeated.
 
 @node fileDescName, FileAreaCreatePerms, BBSarea, Keywords
 @subsection fileDescName
