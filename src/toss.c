@@ -602,7 +602,7 @@ int readCheck(s_filearea *echo, s_link *link)
   if (i == echo->downlinkCount) return 4;
 
   /* pause */
-  if (link->Pause) return 3;
+  if (link->Pause && !echo->noPause) return 3;
 
   if (strcmp(echo->group,"0")) {
       if (link->numAccessGrp) {
@@ -1612,6 +1612,7 @@ void reportNewFiles()
    FILE      *echotosslog;
    s_filearea *filearea;
    char      *annArea;
+   int       areaLen;
 
    if (cmAnnounce) annArea = announceArea;
    else if (config->ReportTo != NULL && (!cmAnnFile)) annArea = config->ReportTo;
@@ -1664,9 +1665,10 @@ void reportNewFiles()
                }
 
                fileCount = fileSize = 0;
+	       areaLen = strlen(newFileReport[i]->areaName);
                sprintf(buff, "\r Area : %s%s", newFileReport[i]->areaName,
-                                               print_ch(25, ' '));
-               sprintf(buff+25, "Desc : %s\r %s\r",
+                                               print_ch(((areaLen<=15) ? 25 : areaLen+10), ' '));
+               sprintf(buff+((areaLen<=15) ? 25 : areaLen+10), "Desc : %s\r %s\r",
 	    	    (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
             	    print_ch(77, '-'));
                msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);

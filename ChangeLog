@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Wed Mar 01 09:10:00 IZH 2000
+Georgi:
+* now working filearea option nopause
+
+----- cvs ci ------
 Fri Feb 25 11:19:12 NOVT 2000
 max (patch from Vladimir Borozenets, 2:5005/49):
 * cosmetical changes in areafix
