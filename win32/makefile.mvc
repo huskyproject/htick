@@ -1,50 +1,84 @@
 # $Id$
-# Legacy makefile to build htick with Microsoft Visual C++
+#
+# Microsoft Visual C++ Makefile for build static program(s)
+# No support for the Husky build environment.
+#
+# Tested on MS Visual C 6.0
+#
+include ..\makefile.inc
 
-CC=     cl
-CFLAGS= -nologo -Zp1
-CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
-CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
+USE_HPTZIP=0
 
-# uncomment one of these lines if you want to enable hardlinking on NTFS 4.0, 5.0
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
+!if $(USE_HPTZIP) == 1
+HPTZIPL = ..\..\hptzip\make\hptzip.lib
+HPTZIPI = -I..\..\hptzip
+HPTZIPD = -DUSE_HPTZIP
+!endif
 
-COPT=   -O2
-TLIB=   lib -nologo
+## programs ##
+CC	= cl
+AR	= lib
+LINK	= link
+RANLIB	=
+RM	= del
+
+## file suffixes ##
+_C	  = .c
+_OBJ	  = .obj
+_EXP	  = .exp
+_LIB	  = .lib
+_DLL	  = .dll 
+_EXE	  = .exe
+
+## programs ##
+CFLAGS	= -nologo -Zp1
+CINCL	= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI)
+CDEFS	= -D__NT__ -DNT -DWINNT -D_CONSOLE $(HPTZIPD)
+COPT	= -O2
+
+# Uncomment one of these lines if you want to enable hardlinking
+# on NTFS 4.0 or 5.0
+#CDEFS	= $(CDEFS) -D_WIN32_WINNT=0x0400
+#CDEFS	= $(CDEFS) -D_WIN32_WINNT=0x0500
+
+#EXEFLAGS= /link /nodefaultlib /opt:nowin98
+EXENAMEFLAG = -Fe
 
 LIBS	= ..\..\huskylib\make\huskymvc.lib \
-	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\fconfmvc.lib
+	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\make\fconfmvc.lib \
+	  USER32.lib $(HPTZIPL)
 
-HTICKL=	htickmvc.lib
+default:
+	@echo Run 'make programs' to build static version of programs ($(PROGRAMS))
+	@echo Run 'make all' to build all above
 
-OBJS    = global.obj \
-          toss.obj \
-          fcommon.obj \
-          scan.obj \
-          areafix.obj \
-          add_desc.obj \
-          seenby.obj \
-          hatch.obj \
-          filelist.obj\
-          filecase.obj\
-          report.obj\
-          clean.obj
+all: programs
+programs: $(PROGRAMS)
 
-{..\src}.c.obj:
-	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
+{$(_SRC_DIR)}$(_C)$(_OBJ):
+	@$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
 
-all: $(HTICKL) htick.exe
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)...
+	@$(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) $(EXENAMEFLAG)$@ $** $(LIBS)
 
-$(HTICKL): $(OBJS)
-	$(TLIB) /out:$@ $(OBJS)
+man:
 
-htick.exe:
-        $(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(LIBS) $(HTICKL) USER32.LIB /link /opt:nowin98
+doc: man
+	man2html$(_EXE) <..\$(LIBNAME).1 >$(LIBNAME).html
 
 clean:
-	-del *.obj
-	-del *.lib
+	-$(RM) $(RMOPT) *$(_OBJ)
 
 distclean: clean
-	-del *.exe
+	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) $(LIBNAME).html
+
+install: programs doc
+	$(INSTALL) $(IBOPT) $(PROGRAMS) $(BINDIR)
+	$(INSTALL) $(IBOPT) ..\$(LIBNAME).1 $(DOCDIR)
+	$(INSTALL) $(IBOPT) $(LIBNAME).html $(DOCDIR)
+
+uninstall:
+	-$(RM) $(RMOPT) $(BINDIR)\$(PROGRAMS)
+	-$(RM) $(RMOPT) $(DOCDIR)\$(LIBNAME).html
