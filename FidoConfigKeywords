@@ -3,26 +3,29 @@
 Where the directories for all Fileareas shall be made at autocreate.
 Same as MsgBaseDir
 
+
 2) PassFileAreaDir <directory>
 
 Where shall be put files from Passthrough File areas (and TICs, if
 not define ticOutbound).
 
+
 3) FileDescPos <number>
 
-Indent long descriptions in FILES.BBS by number characters (not
-counting fileLDescString!).
-Reccomended 13
+The number of spaces to indent long descriptions in FILES.BSS
+Recommend: 13 (8.3+space)
+
 
 4) fileLDescString <string>
 
-This string is put before long descriptions in FILES.BBS. If it is not
-set, it is set to a single space.
+This string is put before long descriptions in FILES.BBS. (Usually ">" or "+".)
+Default value: single space.
+
 
 5) FileFixHelp <file>
 
-Help file for FileFix.
-Same as AreaFixHelp for AreaFix
+Help file for FileFix, same as AreaFixHelp for AreaFix
+
 
 6) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
 
@@ -34,11 +37,12 @@ Same as EchoArea, most options are valid:
 
     b) -lr <number>
 
-    Min level for recieve files from this filearea
+    "REad level": Min link level for send files from this filearea to this link.
 
     c) -lw <number>
 
-    Min level for put files to this filearea
+    "Write level": Min link level for allow received files from link to post
+    into this filearea
 
     d) -h
 
@@ -46,15 +50,15 @@ Same as EchoArea, most options are valid:
 
     e) -manual
 
-    Disallow remote subscribe
+    Disallow remote subscribe (disable subscribe areafix command).
 
     f) -mandatory
 
-    Disallow remote unsubscribe
+    Disallow remote unsubscribe (disable unsubscribe areafix command).
 
     g) -sendorig
 
-    to send files from PassFileAreaDir for non passthrough areas
+    Set: send files from PassFileAreaDir for non passthrough areas.
 
     h) -nopause
 
@@ -62,7 +66,7 @@ Same as EchoArea, most options are valid:
 
     j) -noCRC
 
-    to disable CRC on incoming files
+    Disable CRC check for incoming files
 
     k) -g <group>
 
@@ -78,15 +82,18 @@ Same as EchoArea, most options are valid:
 
     n) -nodiz
 	
-    Do not try to get description from <fileDescName>
+    Do not try to get file description from <fileDescName> (for packed files).
 
     o) -p <integer>
 
-    Purge after n days. if 0 purging is disabled.
+    Purge after n days. Set to 0 disable purging.
+
 
 7) ExecOnFile <filearea> <filemask> <command>
 
-Execute some command on receiving file. Command get full filepath as parameter.
+Execute some command on receiving file. Command get full filepath as parameter
+(space and file pathname to be append to command string before execution).
+
 
 8) In Link section:
 
@@ -96,22 +103,26 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     b) autoFileCreate on|off
 
+    Allow or deny autocreate fileechoes received from this link.
+
     c) AutoFileCreateFile <file>
+
+    New filearea definitions to be placed into this file.
 
     d) AutoFileCreateDefaults <string>
 
-    Defaults for File Area Autocreate
+    Defaults for Autocreated filearea
 
     e) AutoFileCreateSubdirs on|off
 
     Whether to autocreate areas like /filebase/gfd.app.edit (off) or
     /filebase/gfd/app/edit (on). If you want to configure this globally
     instead of on per-link basis, set this in the deflink section. For more
-    information see doc about AutoAreaCreateSubdirs in the hpt manual.
+    information see 'AutoAreaCreateSubdirs' in the hpt manual.
 
     e) delNotRecievedTIC
 
-    If file not recieved, then remove TIC
+    If file not received, then remove TIC
 
     f) FileFixFSC87Subset
 
@@ -132,23 +143,24 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     h) LinkFileBaseDir
 
-    Where autocreated file echos will be placed (may be "passthrough")
+    Where autocreated fileareas will be placed (may be "passthrough")
 
     i) ForwardFileRequests on|off
 
-    Allow forward requests for file areas
+    Allow file areas subscribe requests forward to this link.
 	
     k) ForwardFilePriority <number>
 	
-    Priority when requests file-area from uplinks
+    Priority in uplinks order for filearea subscribing forward-requests
 
     l) ForwardFileRequestFile
 
-    List of available file-areas from this link
+    List of available fileareas from this link
 
     m) FileFixEchoLimit <number>
  
-    Area subscribe limit
+    Area subscribe limit (max fileareas number allowed for this link subscribe)
+
 
 9) SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>
 
@@ -160,80 +172,94 @@ Execute some command on receiving file. Command get full filepath as parameter.
                  3) -c    - copy files from fileechodir to <DirToSaveTic>
                  -l,-c works only for non-Passthrough file echos
 
-10) originInAnnounce (not used and will be removed in next release)
 
-Show system address that hatch file in announce.
-
-11) MaxTicLineLength <number>
+10) MaxTicLineLength <number>
 
 Set maximum line length in outgoing TICs to number.
 
-12) BusyFileDir <directory>
+
+11) BusyFileDir <directory>
 
 Where shall be put TICs for busy links (default <outbound>/busy.htk).
 
-13) ConvertLongNames {Upper|Lower|DontTouch}
 
-What do with long names when toss or hatch. Long name is name with mixed case,
+12) ConvertLongNames {Upper|Lower|DontTouch}
+
+What do with long names when toss or hatch. Long name is name with mixed case
 or more than 8.3
 
-14) ConvertShortNames {Upper|Lower|DontTouch}
+
+13) ConvertShortNames {Upper|Lower|DontTouch}
 
 What do with short names when toss or hatch. Short name is DOS-like name,
 8.3, without mixed case.
 
-15) addDLC
 
-Add Download counters to files.bbs
+14) addDLC
 
-16) DLCDigits <number>
+Add Download counters ([000]) to files.bbs. Use with DLCDigits only!
+
+
+15) DLCDigits <number>
 
 How much digits DLC must be. DLC have [000] form.
 
-17) ticOutbound <path>
+
+16) ticOutbound <path>
 
 TICs are stored here and killed after transmission
-If ticOutbound not define, ticOutbound=PassFileAreaDir
+Default: use PassFileAreaDir value
 
-18) filefixKillReports
 
-Set kill/sent flag to filefix reports
+17) filefixKillReports
 
-19) filefixKillRequests
+Set kill/sent flag to filefix replies.
 
-Kill filefix request after procession
 
-20) bbsarea <name> <bbsareapath>
+18) filefixKillRequests
 
-Use in "htick filelist"
+Kill filefix request after processing.
 
-21) fileEchoFlavour <hold|normal|crash|direct|immediate>
+
+19) bbsarea <name> <bbsareapath>
+
+File area without subscribing, not show in filefix reports.
+Use for fileleist generation only ("htick filelist" command).
+
+
+20) fileEchoFlavour <hold|normal|crash|direct|immediate>
 
 This statement sets the flavour which outgoing files in fileechos for this link
 get. For example set fileEchoFlavour for points to hold and for uplink crash.
 
-22) fileAreaDefaults <options> [links]
+
+21) fileAreaDefaults <options> [links]
 
 Set defaults for filearea definitions that follow. Keyword can be repeated.
-All options are possible, except areatag and path. Different setting in
+All options are possible, except areatag and path. Settings in the
 filearea definition overrides default.
 See also echoAreaDefaults.
 Defaults are switched off with empty 'fileAreaDefaults'.
 
-23) fileDescName <name>
 
-If no LDESC defined in tic file, use <name> file from archive fill it.
-'unpack' action should be defined for archive and contain $f parameter.
+22) fileDescName <name>
 
-24) RemoteFileRobotName <name>
+If no LDESC defined in tic file, use <name> file from archive fill it (usually
+file_id.diz). 'unpack' action should be defined for archive and contain $f
+parameter.
 
-Name of remote file (tic) robot (need for FileForwardRequest)
 
-25) AnnounceSpool <path>
+23) RemoteFileRobotName <name>
 
-Place for accumulating report information
+Name of remote filefix robot (need for FileForwardRequest)
 
-26) AnnAreaTag <AREATAG> or <@filename>
+
+24) AnnounceSpool <path>
+
+Directory for accumulating report information.
+
+
+25) AnnAreaTag <AREATAG> or <@filename>
 
 <AREATAG>
 	Name of area where annouce will be placed
@@ -280,63 +306,75 @@ AnnFileRfrom on
 
 ---------------------------------------
 
-27) AnnInclude <fileecho mask list>
+
+26) AnnInclude <fileecho mask list>
 
 Array of fileecho names|masks that will be announced in this annAreaTag
-By default `AnnInclude' equal to `AnnInclude *'
-
-28) AnnExclude <fileecho mask list>
-
-Array of fileecho names|masks that won't be announced in this annAreaTag
-
-29) Annto <string>
-
-Field TONAME  : in announce message
-
-30) Annfrom <string>
-
-Field FROMNAME: in announce message
-
-31) Annsubj <string>
-
-Field SUBJ:     in announce message
-
-32) Annadrto  <addres>
-
-Field ADRTO:    in announce message  (must be present if AnnAreaTag is netmail area)
-
-33) Annadrfrom  <addres>
-
-Field ADRFROM:  in announce message
-
-34) Annorigin <string>
-
-Origin in announce message
-
-35) AnnMessFlags <string>
-
-Flags like k/s loc hld ... that will have announce message
-
-36) AnnFileRFrom <on/off>
-
-announce address of system which file recived from
-
-37) AnnFileOrigin <on/off>
-
-Announce address of system who hatched file
+Default: all fileareas.
 
 
-38) FileAreaCreatePerms <mode>
+27) AnnExclude <fileecho mask list>
 
-Define permissions for newly created filearea directories (UNIX filesystems 
-	only)
+Array of filearea names|masks that won't be announced in this annAreaTag
 
-39) FileFixFromName <string>
-	Use FileFixFromName when responding to messages for filefix.
 
-40) AutoFileCreateFlag <string>
-	Create flag when filearea has been autocreated
+28) Annto <string>
 
-41) FileFixNames <string>
-	Set of names separated by space on which FileFix will respond
+Announce message destination name.
 
+
+29) Annfrom <string>
+
+Announce message originator name.
+
+
+30) Annsubj <string>
+
+Announce message subject.
+
+
+31) Annadrto  <address>
+
+Announce message destination address (use for netmail area).
+
+
+32) Annadrfrom  <addres>
+
+Announce message originate address.
+
+
+33) Annorigin <string>
+
+Origin line in announce message
+
+
+34) AnnMessFlags <string>
+
+Announce message flags (k/s loc hld ...)
+
+
+35) AnnFileRFrom <on/off>
+
+Show in announce: address of system which file recived from
+
+
+36) AnnFileOrigin <on/off>
+
+Show in announce: address of system who hatched file
+
+
+37) FileAreaCreatePerms <mode>
+
+Define permissions for newly created filearea directories (UNIX only)
+
+
+38) FileFixFromName <string>
+Originator name in filefix replies.
+
+
+39) AutoFileCreateFlag <string>
+Create flag when filearea has been autocreated
+
+
+40) FileFixNames <string>
+Set of names separated by space on which FileFix will respond
