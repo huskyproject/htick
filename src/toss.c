@@ -655,15 +655,8 @@ int writeCheck(s_filearea *echo, s_addr *aka)
 
   if (!addrComp(*aka,*echo->useAka)) return 0;
 
-  link = getLinkFromAddr (*config,*aka);
+  link = getLinkForFileArea (*config, addr2string(aka), echo);
   if (link == NULL) return 4;
-
-  for (i=0; i<echo->downlinkCount; i++)
-  {
-    if (link == echo->downlinks[i]->link) break;
-  }
-
-  if (i == echo->downlinkCount) return 4;
 
 /* Do not check for groupaccess here, use groups only (!) for Filefix */
 /*  if (strcmp(echo->group,"0")) {
