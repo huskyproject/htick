@@ -1,3 +1,8 @@
+2002-05-22 Wednesday 13:21  mche
+
+	* src/areafix.c (1.59): new version of DelLinkFromString() moved
+	from hpt to fidoconfig for common use in hpt & htick
+
 2002-05-20 Monday 14:35  mche
 
 	* src/: fcommon.c (1.48), toss.c (1.172): hardlinks on WinNT 4.0
