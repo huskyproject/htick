@@ -42,8 +42,8 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 @menu
 * Overview::                    What is @value{HTICK}?
 * Installation::                Installation. @emph{Read this!}
+* Command Line::                Command Line OPTIONS and SWITCHES
 * Configuration Reference::     Explanation of the configuration file.
-* Support::                     Support information.
 * Keyword Index::               Configuration File Keywords Index
 @end menu
 
@@ -55,16 +55,24 @@ supported by Husky Development Team (see @url{http://husk.sf.net/team.html}).
 
 Features of @value{HTICK}:
 @enumerate
-@item tossing file areas
-@item filefix (on the fly, from command line, limit for areas...)
-@item autocreate on the fly
-@item forward requests
-@item posting to net & echo areas
-@item pause and autopause for links
-@item groups & levels for personal and public access to file areas
-@item security check of tossgroup
-@c @item dupe checking
-@item link defaults
+@item Tossing file areas.
+@item Filefix (on the fly, from command line, limit for areas...).
+@item Autocreate on the fly.
+@item Automatic forwarding of requests for missing areas to the uplinks.
+@item Switching areas into passive (send-only) and back into active mode.
+@item Resending files from passthrough and none passthrough file areas.
+@item Groups & levels for personal and public access to file areas.
+@item Security check of tossgroup.
+@c @item dupe checking.
+@item Link defaults.
+@item Posting to net & echo areas.
+@item Flexible file announcements via echo or netmail messages.
+Wildcards in file area tags allow easy configuration of
+multiple announcement areas for different groups of file
+areas.
+@item Save announces on disk, so you are protected from
+losing announcements in critical @value{HTICK} termination
+(insufficient disk space, ^Break pressed, power off etc).
 @item much, much more :)
 @end enumerate
 
@@ -135,7 +143,7 @@ groups for @code{FileEchoAreas})
 @end table
 You should use the _same_ makefiles in smapi, fidoconf and htick.
 
-@node Support, Configuration Reference, Compiling, Installation
+@node Support, Command Line, Compiling, Installation
 @section Support
 
 There are numerous reasons why you might wish to establish contact with developers.
@@ -216,19 +224,11 @@ So here are developers addresses if you want to get in contact with us:
 
 @itemize @bullet
 @item Fidonet:
-Georgi Fofanov @@ 2:5050/29
-@item e-mail:
-fg@@fg.udm.ru
-
-@end itemize
-
-@itemize @bullet
-@item Fidonet:
 Max Chernogor @@ 2:464/108
 @item e-mail:
 mche@@ua.fm
-
 @end itemize
+
 @itemize @bullet
 @item Fidonet:
 Stas Degteff @@ 2:5080/102
@@ -236,8 +236,11 @@ Stas Degteff @@ 2:5080/102
 stas_degteff@@users.sf.net
 @end itemize
 
-@node Configuration Reference, Keywords, Support, Top
-@section Configuration Reference
+@node Command Line, Configuration Reference, Support, Top
+@chapter @value{HTICK} @value{VERSION} Command Line OPTIONS and SWITCHES
+To get help about the command line syntax, use @value{HTICK} without any arguments
+
+@node Configuration Reference, Keywords, Command Line, Top
 @chapter @value{HTICK} @value{VERSION} Configuration Reference
 
 @value{HTICK} based on FIDOCONFIG library, so read documentation of
