@@ -1,3 +1,7 @@
+2002-10-10 Thursday 07:35  mche
+
+	* src/areafix.c (1.95): correct forwardrequest logic
+
 2002-10-09 Wednesday 09:02  mche
 
 	* src/areafix.c (1.94): functions addlink and removelink are moved
