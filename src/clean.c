@@ -111,8 +111,10 @@ void cleanPassthroughDir(void)
                         addFileToTree(tmpdir, file->d_name);
                     } /* while */
                     closedir(dir);
-                    remove(config->links[i].bsyFile);
-                    nfree(config->links[i].bsyFile);
+                    if(config->links[i].bsyFile){
+                      remove(config->links[i].bsyFile);
+                      nfree(config->links[i].bsyFile);
+                    }
                     nfree(config->links[i].floFile);
                 }
             }
