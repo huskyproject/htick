@@ -631,7 +631,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 }
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
-	int i, rc=4;
+	int i, c, rc=4;
 	char *line, *report, addline[256], logmsg[256];
 	s_filearea *area;
 
@@ -647,6 +647,13 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		
 		area = &(config->fileAreas[i]);
 		
+		for (c = 0; c<area->downlinkCount; c++) {
+		    if (link == area->downlinks[c]->link) {
+			if (area->downlinks[c]->mandatory) rc=5;
+			break;
+		    }
+		}
+		
 		switch (rc) {
 		    case 0: 
 			sprintf(addline,"%s Already linked\r", area->areaName);
@@ -660,6 +667,11 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			addlink(link, area);
 			sprintf(addline,"%s Added\r",area->areaName);
 			sprintf(logmsg,"FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+			writeLogEntry(htick_log, '8', logmsg);
+			break;
+		    case 5: sprintf(addline,"%s Link is not possible\r", area->areaName);
+			sprintf(logmsg,"FileFix: area %s -- link is not possible for %s",
+					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			break;
 		    default :
