@@ -38,6 +38,8 @@
 
 #include <string.h>
 #include <stdlib.h>
+#include <share.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
 #ifdef __EMX__
@@ -73,6 +75,7 @@
 #include <fidoconf/crc.h>
 
 #include <smapi/progprot.h>
+#include <smapi/compiler.h>
 
 #include <fcommon.h>
 #include <global.h>
@@ -206,8 +209,16 @@ int parseTic(char *ticfile,s_ticfile *tic)
    FILE *tichandle;
    char *line, *token, *param, *linecut = "";
    s_link *ticSourceLink=NULL;
-
+   
+#ifdef UNIX
    tichandle=fopen(ticfile,"r");
+#else
+   // insure that ticfile won't be removed while parsing
+   int fh = 0;
+   fh = sopen( ticfile, _O_RDWR | O_BINARY, SH_DENYWR);
+   tichandle = fdopen(fh,"r");
+#endif
+
    memset(tic,'\0',sizeof(s_ticfile));
 
    while ((line = readLine(tichandle)) != NULL) {
@@ -682,7 +693,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    }
 
    if (isToss == 1) {
-      /* Save seenby structure */
+      // Save seenby structure 
       old_seenby = smalloc(tic->anzseenby*sizeof(s_addr));
       memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
       old_anzseenby = tic->anzseenby;
@@ -697,7 +708,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
            addrComp(tic->origin,downlink->hisAka)!=0 &&
            ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka)!=0) || isToss==0) 
          ) {
-         /* Adding Downlink to Seen-By */
+         // Adding Downlink to Seen-By 
          tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
          memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(s_addr));
          tic->anzseenby++;
