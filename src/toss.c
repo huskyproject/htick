@@ -506,7 +506,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
      if (desc[0] != 0) {
        char *tmp;
-       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
+       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
        nfree (NewAutoCreate);
        NewAutoCreate=tmp;
@@ -514,7 +514,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    } else {
      if (desc[0] != 0) {
        char *tmp;
-       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
+       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
        fileName[0]='\0';
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
        fileName++;
