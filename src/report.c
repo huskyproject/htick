@@ -94,6 +94,8 @@ void doSaveTic4Report(s_ticfile *tic)
     }
     if (tic->origin.zone!=0)
         fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
+    if (tic->from.zone!=0)
+        fprintf(tichandle,"From %s\r\n",aka2str(tic->from));
     if (tic->size!=0)
         fprintf(tichandle,"Size %u\r\n",tic->size);
     
@@ -319,7 +321,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
     return msg;
 }
 
-void ReportOneFile(s_message* msg, s_ticfile* tic)
+void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
 {
     char *tmp = NULL;
     if(strlen(tic->file) > 12)
@@ -339,8 +341,11 @@ void ReportOneFile(s_message* msg, s_ticfile* tic)
         tmp = formDesc(tic->desc, tic->anzdesc); 
     }
     xstrcat(&(msg->text),tmp);
-    if (config->originInAnnounce) {
+    if (pRepDef->annforigin) {
         xscatprintf(&(msg->text), "%sOrig: %s\r",print_ch(24, ' '),aka2str(tic->origin));
+    }
+    if (pRepDef->annfrfrom) {
+        xscatprintf(&(msg->text), "%From: %s\r",print_ch(24, ' '),aka2str(tic->from));
     }
     if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
     nfree(tmp);
@@ -409,7 +414,7 @@ void reportNewFiles()
             
             for(ii = aList[j].begin; ii < aList[j].begin+aList[j].fCount; ii++)
             {
-                ReportOneFile(msg,&(Report[ii]));
+                ReportOneFile(msg, RepDef, &(Report[ii]));
             }
             xscatprintf(&(msg->text), " %s\r", print_ch(77, '-'));
             xscatprintf(&(msg->text), " %u bytes in %u file(s)\r", aList[j].fSize, aList[j].fCount);

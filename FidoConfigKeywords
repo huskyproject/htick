@@ -156,7 +156,7 @@ Execute some command on receiving file. Command get full filepath as parameter.
                  3) -c    - copy files from fileechodir to <DirToSaveTic>
                  -l,-c works only for non-Passthrough file echos
 
-10) originInAnnounce
+10) originInAnnounce (not used and will be removed in next release)
 
 Show system address that hatch file in announce.
 
@@ -270,11 +270,20 @@ Origin in announce message
 
 Flags like k/s loc hld ... that will have announce message
 
-36) FileAreaCreatePerms <mode>
+36) AnnFileRFrom <on/off>
+
+announce address of system which file recived from
+
+37) AnnFileOrigin <on/off>
+
+Announce address of system who hatched file
+
+
+38) FileAreaCreatePerms <mode>
 
 Define permissions for newly created filearea directories (UNIX filesystems 
 	only)
 
-37) AreaFixFromName <string>
+39) AreaFixFromName <string>
 	Use AreaFixFromName when responding to messages for areafix.
         
