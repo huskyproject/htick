@@ -1,3 +1,8 @@
+2003-05-25 Sunday 23:05  d_sergienko
+
+	* h/hatch.h (1.7), h/toss.h (1.24), src/hatch.c (1.81), src/toss.c
+	(1.272): workaround for bug 711588 (htick toss on perm denied)
+
 2003-05-18 Sunday 10:36  d_sergienko
 
 	* src/toss.c (1.271): Fixed adding SeenBy 0:0/0 if To: missing in
