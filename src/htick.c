@@ -215,51 +215,16 @@ return rc;
 
 void processConfig()
 {
-/*
-#if !defined(__OS2__) && !defined(UNIX)
-   time_t   time_cur, locklife = 0;
-   struct   stat stat_file;
-#endif
-*/
    char *buff = NULL;
-/*
-   unsigned long pid;
 
-   FILE *f;
-*/
    setvar("module", "htick");
+   SetAppModule(M_HTICK);
    config = readConfig(NULL);
    if (NULL == config) {
       fprintf(stderr, "Config file not found\n");
       exit(1);
    };
-/*
-   // lock...
-   if (config->lockfile!=NULL && fexist(config->lockfile)) {
-      f = fopen(config->lockfile, "rt");
-      fscanf(f, "%lu\n", &pid);
-      fclose(f);
-      // Checking process PID 
-#if defined(__OS2__)
-      if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
-#elif defined(UNIX)
-      if (kill(pid, 0) == 0) {
-#else
-      if (stat(config->lockfile, &stat_file) != -1) {
-          time_cur = time(NULL);
-	  locklife = (time_cur - stat_file.st_mtime)/60;
-      }
-      if (locklife < 180) {
-#endif
-           if (!quiet) fprintf(stderr, "Lock file found! exit...\n");
-           disposeConfig(config);
-           exit(1);
-      } else {
-         remove(config->lockfile);
-         createLockFile(config->lockfile);
-      } // endif 
-   }
-*/
+
    if (config->lockfile) {
       _lockfile = sstrdup(config->lockfile);
       if (config->advisoryLock) {
