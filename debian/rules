@@ -1,4 +1,6 @@
 #!/usr/bin/make -f
+# $Id$
+#
 # Sample debian/rules that uses debhelper.
 # GNU copyright 1997 to 1999 by Joey Hess.
 
@@ -9,7 +11,7 @@
 export DH_COMPAT=3
 export DEBIAN=1
 export PACKAGE=htick
-export VERSION=0.9
+export VERSION=1.0
 # Next Line to build debug-versions !
 # export DEB_BUILD_OPTIONS=nostrip
 
