@@ -1196,7 +1196,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 	char tmp[80], *textBuff, *report=NULL, *preport, *token;
 	
 	// find link
-	link=getLinkFromAddr(*config, msg->origAddr);
+	link=getLinkFromAddr(config, msg->origAddr);
 
 	// this is for me?
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);

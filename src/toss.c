@@ -437,7 +437,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 
             else if (stricmp(token,"from")==0) {
 	       string2addr(param,&tic->from);
-	       ticSourceLink = getLinkFromAddr(*config, tic->from);
+	       ticSourceLink = getLinkFromAddr(config, tic->from);
 	    }
 	    else if (stricmp(token,"to")==0) string2addr(param,&tic->to);
             else if ((stricmp(token,"Destination")==0) &&
@@ -703,7 +703,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    fileechoFileName = (char *) smalloc(strlen(c_area)+1);
    strcpy(fileechoFileName, c_area);
 
-   creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+   creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
    /* translating path of the area to lowercase, much better imho. */
    while (*fileechoFileName != '\0') {
@@ -917,7 +917,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
 
   if (!addrComp(*aka,*echo->useAka)) return 0;
 
-  link = getLinkForFileArea (*config, addr2string(aka), echo);
+  link = getLinkForFileArea (config, addr2string(aka), echo);
   if (link == NULL) return 4;
 
   for (i=0; i<echo->downlinkCount; i++)
@@ -1452,7 +1452,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (tic.to.zone!=0) {
       if (to_us(tic.to)) {
          /* Forwarding tic and file to other link? */
-         to_link=getLinkFromAddr(*config,tic.to);
+         to_link=getLinkFromAddr(config,tic.to);
          if ( (to_link != NULL) && (to_link->forwardPkts != fOff) ) {
             if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
             else { /* Forwarding */
@@ -1495,7 +1495,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    /* Security Check */
-   from_link=getLinkFromAddr(*config,tic.from);
+   from_link=getLinkFromAddr(config,tic.from);
    if (from_link == NULL) {
       writeLogEntry(htick_log,'9',"Link for Tic From Adress '%s' not found",
               addr2string(&tic.from));
@@ -1749,7 +1749,7 @@ void checkTmpDir(void)
       if (stricmp(file->d_name+8, ".TIC") == 0) {
          memset(&tic,0,sizeof(tic));
          parseTic(ticfile,&tic);
-         link = getLinkFromAddr(*config, tic.to);
+         link = getLinkFromAddr(config, tic.to);
 	 // createFlo doesn't  support ASO!!!
          //if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) {
 	 if (createOutboundFileName(link,

@@ -110,7 +110,7 @@ int send(char *filename, char *area, char *addr)
    }
 
    string2addr(addr, &address);
-   link = getLinkFromAddr(*config, address);
+   link = getLinkFromAddr(config, address);
    if (link == NULL) {
       fprintf(stderr,"Error: Link not found\n");
       return 4;
