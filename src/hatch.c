@@ -139,39 +139,46 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
             xstrcat(&descr_file_name, "files.bbs");    
         }
         adaptcase(descr_file_name);
-        if( GetDescFormBbsFile(descr_file_name, tic->file, tic) == 0)
+        if( GetDescFormBbsFile(descr_file_name, tic->file, &tmptic) == 0)
         {
+            
             if      ( LdescOPT == BBSONELINE ) 
             {
                 tic->anzldesc = 1;
                 tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
-                tic->ldesc[0] = sstrdup(tic->desc[0]);
+                tic->ldesc[0] = sstrdup(tmptic.desc[0]);
                 LdescOPT = 0;
             }
             else if ( LdescOPT == BBSMLTLINE ) 
             {
-                tic->anzldesc = tic->anzdesc;
+                tic->anzldesc = tmptic.anzdesc;
                 tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
-                for( i = 0; i < tic->anzdesc; i++)
+                for( i = 0; i < tic->anzldesc; i++)
                 {
-                    tic->ldesc[i]=sstrdup(tic->desc[i]);
+                    tic->ldesc[i]=sstrdup(tmptic.desc[i]);
                 }
                 LdescOPT = 0;
             }
             if      ( SdescOPT == BBSONELINE ) 
             {
-                for( i = 1; i < tic->anzdesc; i++)
-                {
-                    nfree(tic->desc[i]);
-                }
                 tic->anzdesc = 1;
+                tic->desc = scalloc(sizeof(*tic->desc),tic->anzdesc);
+                tic->desc[0] = sstrdup(tmptic.desc[0]);
                 SdescOPT = 0;
-            } else {
+            } else if ( SdescOPT == BBSMLTLINE ) {
+
+                tic->anzdesc = tmptic.anzdesc;
+                tic->desc = scalloc(sizeof(*tic->desc),tic->anzdesc);
+                for( i = 0; i < tic->anzdesc; i++)
+                {
+                    tic->desc[i]=sstrdup(tmptic.desc[i]);
+                }
                 SdescOPT = 0;
-            }
+           }
+            disposeTic(&tmptic);
+            memset(&tmptic,0,sizeof(s_ticfile));    
         }
     }
-
     if(SdescOPT == DIZONELINE || LdescOPT == DIZONELINE || SdescOPT == DIZMLTLINE || LdescOPT == DIZMLTLINE)
     {
         if ( GetDescFormDizFile(hatchedFile, &tmptic) == 1 )
