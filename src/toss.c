@@ -312,41 +312,41 @@ void writeTic(char *ticfile,s_ticfile *tic)
 
    tichandle=fopen(ticfile,"w");
    
-   fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\n");
-   fprintf(tichandle,"File %s\n",tic->file);
-   fprintf(tichandle,"Area %s\n",tic->area);
+   fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
+   fprintf(tichandle,"File %s\r\n",tic->file);
+   fprintf(tichandle,"Area %s\r\n",tic->area);
    if (tic->areadesc[0]!=0)
-      fprintf(tichandle,"Areadesc %s\n",tic->areadesc);
+      fprintf(tichandle,"Areadesc %s\r\n",tic->areadesc);
 
    for (i=0;i<tic->anzdesc;i++)
-      fprintf(tichandle,"Desc %s\n",tic->desc[i]);
+      fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
 
    for (i=0;i<tic->anzldesc;i++)
-       fprintf(tichandle,"LDesc %s\n",tic->ldesc[i]);
+       fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
 
    if (tic->replaces[0]!=0)
-      fprintf(tichandle,"Replaces %s\n",tic->replaces);
+      fprintf(tichandle,"Replaces %s\r\n",tic->replaces);
    if (tic->from.zone!=0)
-      fprintf(tichandle,"From %s\n",addr2string(&tic->from));
+      fprintf(tichandle,"From %s\r\n",addr2string(&tic->from));
    if (tic->to.zone!=0)
-      fprintf(tichandle,"To %s\n",addr2string(&tic->to));
+      fprintf(tichandle,"To %s\r\n",addr2string(&tic->to));
    if (tic->origin.zone!=0)
-      fprintf(tichandle,"Origin %s\n",addr2string(&tic->origin));
+      fprintf(tichandle,"Origin %s\r\n",addr2string(&tic->origin));
    if (tic->size!=0)
-      fprintf(tichandle,"Size %u\n",tic->size);
+      fprintf(tichandle,"Size %u\r\n",tic->size);
    if (tic->date!=0)
-      fprintf(tichandle,"Date %lu\n",tic->date);
+      fprintf(tichandle,"Date %lu\r\n",tic->date);
    if (tic->crc!=0)
-      fprintf(tichandle,"Crc %lX\n",tic->crc);
+      fprintf(tichandle,"Crc %lX\r\n",tic->crc);
 
    for (i=0;i<tic->anzpath;i++)
-       fprintf(tichandle,"Path %s\n",tic->path[i]);
+       fprintf(tichandle,"Path %s\r\n",tic->path[i]);
   
    for (i=0;i<tic->anzseenby;i++)
-       fprintf(tichandle,"Seenby %s\n",addr2string(&tic->seenby[i]));
+       fprintf(tichandle,"Seenby %s\r\n",addr2string(&tic->seenby[i]));
   
    if (tic->password[0]!=0)
-      fprintf(tichandle,"Pw %s\n",tic->password);
+      fprintf(tichandle,"Pw %s\r\n",tic->password);
 
      fclose(tichandle);
 }
