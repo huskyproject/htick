@@ -8,7 +8,7 @@ endif
 
 OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
           scan$(OBJ) areafix$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
-	  hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
+	  hatch$(OBJ) filelist$(OBJ) filecase$(OBJ) report$(OBJ)
 MAN1PAGE = man/htick.1
 MAN1DIR  = $(MANDIR)$(DIRSEP)man1
 SRC_DIR = src/

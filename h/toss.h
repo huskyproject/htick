@@ -35,20 +35,7 @@
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
-struct newfilereport {
-   s_addr   *useAka;
-   s_addr   origin;
-   char     *areaName;
-   char     *areaDesc;
-   char     *fileName;
-   char     **fileDesc;
-   unsigned filedescCount;
-   UINT32   fileSize;
-};
-typedef struct newfilereport s_newfilereport;
-
 void writeMsgToSysop(s_message *msg, char *areaName);
-void reportNewFiles(void);
 void disposeTic(s_ticfile *tic);
 void writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
@@ -60,9 +47,7 @@ void writeNetmail(s_message *msg, char *areaName);
 int readCheck(s_filearea *echo, s_link *link);
 int writeCheck(s_filearea *echo, s_addr *aka);
 int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic, char *filename);
-
-s_newfilereport **newFileReport;
-unsigned newfilesCount;
+int parseTic(char *ticfile,s_ticfile *tic);
 
 
 #endif

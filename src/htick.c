@@ -75,6 +75,7 @@
 #include <hatch.h>
 #include <filelist.h>
 #include <areafix.h>
+#include "report.h"
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
@@ -99,7 +100,6 @@ int processCommandLine(int argc, char **argv)
             "\n"
             "Commands:\n"
             " toss                    Reading *.tic and tossing files\n"
-            " [announce <area>]       Announce new files in area (toss and hatch)\n"
             " [annfile <file>]        Announce new files in text file (toss and hatch)\n"
             " [annfecho <file>]       Announce new fileecho in text file\n"
             " scan                    Scanning Netmail area for mails to filefix\n"
@@ -113,7 +113,8 @@ int processCommandLine(int argc, char **argv)
             " send <file> <filearea> <address>\n"
             "                         Send file from filearea to address\n"
             " clean                   Clean passthrough dir\n"
-            " ffix [<addr> command]   process filefix\n"
+            " ffix [<addr> command]   Process filefix\n"
+            " announce                Announce new files\n"
             "\n"
             "Not all features are implemented yet, you are welcome to implement them :)\n"
             );
@@ -197,13 +198,7 @@ int processCommandLine(int argc, char **argv)
             } 
             continue;
         } else if (stricmp(argv[i], "announce") == 0) {
-            if (i < argc-1) {
-                i++;
-                cmAnnounce = 1;
-                strcpy(announceArea, argv[i]);
-            } else {
-                fprintf(stderr, "Insufficient number of arguments\n");
-            }
+            cmAnnounce = 1;
             continue;
         } else if (stricmp(argv[i], "annfile") == 0) {
             if (i < argc-1) {
@@ -377,6 +372,7 @@ int main(int argc, char **argv)
    if (cmFlist) filelist();
    if (cmClean) cleanPassthroughDir();
    if (cmAfix)  ffix(afixAddr, afixCmd);
+   if (cmAnnounce && !cmAnnFile)  report();
    nfree(afixCmd);
    nfree(flistfile);
    nfree(dlistfile);

@@ -83,9 +83,7 @@
 #include <seenby.h>
 #include <filecase.h>
 #include "hatch.h"
-
-s_newfilereport **newFileReport = NULL;
-unsigned newfilesCount = 0;
+#include "report.h"
 
 
 void writeNetmail(s_message *msg, char *areaName)
@@ -753,42 +751,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       } /* Forward file */
    }
 
-   if (!filearea->hide) {
-   /* report about new files - if filearea not hidden */
-      newFileReport = (s_newfilereport**)srealloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
-      newFileReport[newfilesCount] = (s_newfilereport*)scalloc(1, sizeof(s_newfilereport));
-      newFileReport[newfilesCount]->useAka = filearea->useAka;
-      newFileReport[newfilesCount]->areaName = filearea->areaName;
-      newFileReport[newfilesCount]->areaDesc = filearea->description;
-      newFileReport[newfilesCount]->fileName = sstrdup(tic->file);
-      if (config->originInAnnounce) {
-         newFileReport[newfilesCount]->origin.zone = tic->origin.zone;
-         newFileReport[newfilesCount]->origin.net = tic->origin.net;
-         newFileReport[newfilesCount]->origin.node = tic->origin.node;
-         newFileReport[newfilesCount]->origin.point = tic->origin.point;
-      }
-
-      if (tic->anzldesc>0) {
-         newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzldesc, sizeof(char*));
-         for (i = 0; i < tic->anzldesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->ldesc[i]);
-         } /* endfor */
-         newFileReport[newfilesCount]->filedescCount = tic->anzldesc;
-      } else {
-         newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzdesc, sizeof(char*));
-         for (i = 0; i < (unsigned int)tic->anzdesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->desc[i]);
-         } /* endfor */
-         newFileReport[newfilesCount]->filedescCount = tic->anzdesc;
-      }
-
-      newFileReport[newfilesCount]->fileSize = tic->size;
-
-      newfilesCount++;
-   }
-
-   if (isToss == 0) reportNewFiles();
-
+//   if (!filearea->hide) {
+   // report about new files - if filearea not hidden 
    /* execute external program */
    for (z = 0; z < config->execonfileCount; z++) {
      if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
@@ -892,11 +856,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
    int writeAccess;
    int fileisfound = 0;
    int rc = 0;
-
-
-#ifdef DEBUG_HPT
-   printf("Ticfile %s\n",ticfile);
-#endif
 
    w_log('6',"Processing Tic-File %s",ticfile);
 
@@ -1119,6 +1078,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
 
+   doSaveTic4Report(ticfile,&tic);
    doSaveTic(ticfile,&tic,filearea);
    disposeTic(&tic);
    return(rc);
@@ -1543,5 +1503,4 @@ void toss()
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
 
-   reportNewFiles();
 }

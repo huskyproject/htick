@@ -49,10 +49,7 @@ void hatch()
     s_filearea *filearea;
     struct stat stbuf;
     
-    newFileReport = NULL;
-    newfilesCount = 0;
-    
-    w_log( LL_INFO, "Start file hatch...");
+   w_log( LL_INFO, "Start file hatch...");
     
     memset(&tic,0,sizeof(tic));
     

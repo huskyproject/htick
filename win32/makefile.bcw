@@ -10,6 +10,7 @@ OBJS    = global.obj \
           hatch.obj \
           filelist.obj\
           filecase.obj\
+          report.obj\
 	  htick.obj
 
 SRC_DIR = ..\src

@@ -3,7 +3,7 @@ CFLAGS  = -c -I../h -I../.. -Wall -O3 -DUNIX
 SRC_DIR = ../src/
 LIBS = ../../fidoconf/libfidoconfigsun.a ../../smapi/libsmapisun.a
 
-OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o
+OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o report.o
 
 all: $(OBJS) \
      htick

@@ -24,7 +24,8 @@ OBJS    = global.obj \
           seenby.obj \
           hatch.obj \
           filelist.obj\
-          filecase.obj
+          filecase.obj\
+          report.obj
 
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
