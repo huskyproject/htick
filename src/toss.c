@@ -932,9 +932,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                memcpy(&tic->from,downlink->ourAka,sizeof(s_addr));
                memcpy(&tic->to,&downlink->hisAka,
                       sizeof(s_addr));
+               nfree(tic->password);
                if (downlink->ticPwd!=NULL)
                   tic->password = sstrdup(downlink->ticPwd);
-               else nfree(tic->password);
 
                busy = 0;
 
