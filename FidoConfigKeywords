@@ -24,7 +24,7 @@ Help file for FileFix  (Same as AreaFixHelp for AreaFix)
 
 Same as EchoArea, most options are valid
 new option: noCRC to disable CRC on incoming files
-new option: sendorig to send files from PassFileAreaDir
+new option: sendorig to send files from PassFileAreaDir for non passthrough areas
 
 7) ExecOnFile <filearea> <filemask> <command>
   
