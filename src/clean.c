@@ -108,15 +108,15 @@ void cleanPassthroughDir(void)
         hs_addr *aka;
 
         for (i = 0; i < config->linkCount; i++) {
-            if (config->links[i].hisPackAka.zone != 0)
+            if (config->links[i]->hisPackAka.zone != 0)
               pcnt = 0;
             else
               pcnt = 1;
-            aka = &(config->links[i].hisAka);
+            aka = &(config->links[i]->hisAka);
             do
             {
-              if (createOutboundFileNameAka(&(config->links[i]), normal, FLOFILE, aka) == 0)  {
-                  strcpy(tmpdir, config->links[i].floFile);
+              if (createOutboundFileNameAka(config->links[i], normal, FLOFILE, aka) == 0)  {
+                  strcpy(tmpdir, config->links[i]->floFile);
                   sprintf(strrchr(tmpdir, '.'), ".sep");
                   if (direxist(tmpdir)) {
                       sprintf(tmpdir+strlen(tmpdir), "%c", PATH_DELIM);
@@ -127,17 +127,17 @@ void cleanPassthroughDir(void)
                           addFileToTree(tmpdir, filename);
                       } /* while */
                       husky_closedir(dir);
-                      if(config->links[i].bsyFile){
-                        remove(config->links[i].bsyFile);
-                        nfree(config->links[i].bsyFile);
+                      if(config->links[i]->bsyFile){
+                        remove(config->links[i]->bsyFile);
+                        nfree(config->links[i]->bsyFile);
                       }
-                      nfree(config->links[i].floFile);
+                      nfree(config->links[i]->floFile);
                   }
               }
               if (pcnt == 1)
               {
                 pcnt = 0;
-                aka = &(config->links[i].hisPackAka);
+                aka = &(config->links[i]->hisPackAka);
               }
             } while (pcnt!=0);
         }
