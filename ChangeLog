@@ -1,3 +1,9 @@
+2002-07-23 Tuesday 20:34  d.sergienko
+
+	* FidoConfigKeywords (1.33), src/areafix.c (1.75): + added ability
+	to autocreate directories when creating fileareas with selected
+	mode (token fileAreaCreatePerms)
+
 2002-07-22 Monday 13:56  mche
 
 	* win32/: makefile.mvc (1.8), makefile.mvcdll (1.6): corrected file
