@@ -1,3 +1,12 @@
+2002-04-13 Saturday 16:51  mche
+
+	* src/toss.c (1.140): filebox support improved
+
+2002-04-13 Saturday 16:47  mche
+
+	* src/htick.c (1.54): Some internal features added.  Now we can set
+	application that use fidoconfig
+
 2002-04-11 Thursday 16:36  mche
 
 	* src/toss.c (1.139): filebox support reduced
