@@ -304,7 +304,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
    fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
    fprintf(tichandle,"File %s\r\n",tic->file);
    fprintf(tichandle,"Area %s\r\n",tic->area);
-   if (tic->areadesc[0]!=0)
+   if (tic->areadesc)
       fprintf(tichandle,"Areadesc %s\r\n",tic->areadesc);
 
    for (i=0;i<tic->anzdesc;i++)
@@ -313,7 +313,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
    for (i=0;i<tic->anzldesc;i++)
        fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
 
-   if (tic->replaces[0]!=0)
+   if (tic->replaces)
       fprintf(tichandle,"Replaces %s\r\n",tic->replaces);
    if (tic->from.zone!=0)
       fprintf(tichandle,"From %s\r\n",aka2str(tic->from));
@@ -334,7 +334,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
    for (i=0;i<tic->anzseenby;i++)
        fprintf(tichandle,"Seenby %s\r\n",aka2str(tic->seenby[i]));
 
-   if (tic->password[0]!=0)
+   if (tic->password)
       fprintf(tichandle,"Pw %s\r\n",tic->password);
 
      fclose(tichandle);
@@ -678,7 +678,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    } else NewAutoCreate = (char*)scalloc(1, sizeof(char));
 
    if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
-     if (desc[0] != 0) {
+     if (desc) {
        char *tmp;
        tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
@@ -686,7 +686,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        NewAutoCreate=tmp;
      }
    } else {
-     if (desc[0] != 0) {
+     if (desc) {
        char *tmp;
        tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
        fileName[0]='\0';
@@ -841,83 +841,9 @@ int writeCheck(s_filearea *echo, s_addr *aka)
   return 0;
 }
 
-/* FIXME:
- i don't know for what reasont this function
- to developers: use createOutboundFileName and delete this shit
- (this function doesn't support ASO) -- ml (5-10-2001).
-int createFlo(s_link *link, e_prio prio)
-{
-
-    FILE *f; // bsy file for current link
-    char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
-
-   if (link->hisAka.point != 0) {
-      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, PATH_DELIM);
-      sprintf(name, "%08x.flo", link->hisAka.point);
-   } else {
-      pntDir[0] = 0;
-      sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
-   }
-
-   if (link->hisAka.zone != config->addr[0].zone) {
-      // add suffix for other zones
-      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-   } else {
-      zoneSuffix[0] = 0;
-   }
-
-   switch (prio) {
-      case CRASH :    name[9] = 'c';
-                      break;
-      case HOLD  :    name[9] = 'h';
-                      break;
-      case DIRECT:    name[9] = 'd';
-                      break;
-      case IMMEDIATE: name[9] = 'i';
-                      break;
-      case NORMAL:    break;
-   }
-
-   // create floFile
-   link->floFile = (char *) smalloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   link->bsyFile = (char *) smalloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   strcpy(link->floFile, config->outbound);
-   if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
-   strcat(link->floFile, pntDir);
-   createDirectoryTree(link->floFile); // create directoryTree if necessary
-   strcpy(link->bsyFile, link->floFile);
-   strcat(link->floFile, name);
-
-   // create bsyFile
-   strcpy(bsyname, name);
-   bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
-   strcat(link->bsyFile, bsyname);
-
-   // maybe we have session with this link?
-   if (fexist(link->bsyFile)) {
-      nfree (link->bsyFile);
-      return 1;
-   } else {
-      if ((f=fopen(link->bsyFile,"a")) == NULL) {
-         if (!quiet) fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
-         remove(link->bsyFile);
-         nfree(link->bsyFile);
-         nfree(link->floFile);
-         w_log( LL_CRIT, "cannot create *.bsy file, exit.");
-         closeLog();
-         if (config->lockfile != NULL) remove(config->lockfile);
-         disposeConfig(config);
-         exit(1);
-      }
-      fclose(f);
-   }
-   return 0;
-}
-*/
-
 void doSaveTic(char *ticfile,s_ticfile *tic)
 {
-   char filename[256];
+   char *filename;
    unsigned int i;
    s_savetic *savetic;
 
@@ -926,9 +852,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
        savetic = &(config->saveTic[i]);
        if (patimat(tic->area,savetic->fileAreaNameMask)==1) {
           w_log('6',"Saving Tic-File %s to %s",strrchr(ticfile,PATH_DELIM) + 1,savetic->pathName);
-          strcpy(filename,savetic->pathName);
-          strcat(filename,strrchr(ticfile, PATH_DELIM) + 1);
-          //strLower(filename);
+          xscatprintf(&filename,"%s%s",savetic->pathName,strrchr(ticfile, PATH_DELIM) + 1);
           if (copy_file(ticfile,filename)!=0) {
              w_log('9',"File %s not found or not moveable",ticfile);
           };
@@ -936,7 +860,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
        };
 
      };
-
+   nfree(filename);
    return;
 }
 
@@ -1140,7 +1064,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                       sizeof(s_addr));
                if (downlink->ticPwd!=NULL)
                   strncpy(tic->password,downlink->ticPwd,sizeof(tic->password));
-               else tic->password[0]='\0';
+               else nfree(tic->password);
 
                busy = 0;
 
@@ -1410,7 +1334,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(1);
    }
 
-   if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
+   if (tic.password && ((from_link->ticPwd==NULL) ||
        (stricmp(tic.password,from_link->ticPwd)!=0))) {
       w_log('9',"Wrong Password %s from %s",
               tic.password,aka2str(tic.from));
