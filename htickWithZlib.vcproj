@@ -18,7 +18,7 @@
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2"
+			CharacterSet="0"
 			WholeProgramOptimization="TRUE">
 			<Tool
 				Name="VCCLCompilerTool"
@@ -30,6 +30,7 @@
 				StringPooling="TRUE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="TRUE"
+				DefaultCharIsUnsigned="TRUE"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=""
 				AssemblerListingLocation=".\..\nd_r\obj\htickz/"
@@ -77,7 +78,7 @@
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="FALSE"
-			CharacterSet="2">
+			CharacterSet="0">
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
@@ -85,6 +86,7 @@
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_MAKE_DLL;_WIN32_WINNT=0x0400;USE_HPTZIP"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
+				DefaultCharIsUnsigned="TRUE"
 				UsePrecompiledHeader="2"
 				PrecompiledHeaderFile=".\..\nd_d\obj\htickz/htickz.pch"
 				AssemblerListingLocation=".\..\nd_d\obj\htickz/"
