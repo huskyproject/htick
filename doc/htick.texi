@@ -298,6 +298,7 @@ FIDOCONFIG about location of config file and keywords ideology.
 
 @menu
 * Keywords::               This chapter describes keywords
+* Common husky keywords::  List of keywords used in many husky programs
 * Link Keywords::          Keywords that can be repeated for different links
 * FileArea Definition::    FileAreas definition
 * Announce System::        Announces definition
@@ -1316,7 +1317,7 @@ Show in announcement: address of system that has hatched file.
 This statement can be repeated only for different AnnAreaTag.
 
 
-@node Announcements example, Keyword Index, AnnFileOrigin, Announce System
+@node Announcements example, Common husky keywords, AnnFileOrigin, Announce System
 @subsection Announcements example
 @findex Announcements example
 
@@ -1365,7 +1366,20 @@ AnnFileRfrom    on
 #= Announces definitions ends ================================
 @end example
 
-@node Keyword Index, , Announcements example, Top
+@node Common husky keywords, Keyword Index, Announcements example, Configuration Reference
+@subsection Common husky keywords
+@findex Common husky keywords
+
+List of keywords used in many husky programs. For details see fidoconfig manual.
+
+@table @asis
+@item @code{BBSArea}
+@item @code{LogLevels}
+...
+@end table
+
+
+@node Keyword Index, , Common husky keywords, Top
 @appendix Configuration File Keyword Index
 @printindex fn
 
