@@ -545,6 +545,7 @@ int init_htickafix(void) {
   af_send_notify = cmNotifyLink;
   af_pause = FILEAREA;
   /* callbacks and hooks */
+  call_getArea  = &getFileArea;
   call_sendMsg  = &afSendMsg;
   call_writeMsgToSysop = &afWriteMsgToSysop;
   call_getLinkRobot = &getLinkRobot;
