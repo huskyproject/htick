@@ -123,7 +123,7 @@ int processCommandLine(int argc, char **argv)
          continue;
       } else if (stricmp(argv[i], "hatch") == 0) {
          if (argc-i < 3) {
-            printf("insufficient number of arguments\n");
+            fprintf(stderr, "Insufficient number of arguments\n");
             return(0);
          }
          cmHatch = 1;
@@ -135,7 +135,7 @@ int processCommandLine(int argc, char **argv)
          if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
 
          if (extdelim - basename > 8 || strlen(extdelim) > 4) {
-            printf("Warning: hatching file with non-8.3 name!\n");
+            if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
          }
          strcpy(hatcharea, (argv[i]!=NULL)?argv[i++]:"");
          if (i < argc) {
@@ -176,7 +176,7 @@ int processCommandLine(int argc, char **argv)
             cmAnnounce = 1;
             strcpy(announceArea, argv[i]);
          } else {
-	    printf("insufficient number of arguments\n");
+	    fprintf(stderr, "Insufficient number of arguments\n");
 	 }
          continue;
       } else if (stricmp(argv[i], "annfile") == 0) {
@@ -185,7 +185,7 @@ int processCommandLine(int argc, char **argv)
             cmAnnFile = 1;
             strcpy(announcefile, argv[i]);
          } else {
-	    printf("insufficient number of arguments\n");
+	    fprintf(stderr, "Insufficient number of arguments\n");
 	 }
          continue;
       } else if (stricmp(argv[i], "annfecho") == 0) {
@@ -194,14 +194,14 @@ int processCommandLine(int argc, char **argv)
             cmAnnNewFileecho = 1;
             strcpy(announcenewfileecho, argv[i]);
          } else {
-	    printf("insufficient number of arguments\n");
+	    fprintf(stderr, "Insufficient number of arguments\n");
 	 }
          continue;
       } else if (stricmp(argv[i], "clean") == 0) {
          cmClean = 1;
          continue;
       } else {
-         printf("Unrecognized Commandline Option %s!\n", argv[i]);
+         fprintf(stderr, "Unrecognized Commandline Option %s!\n", argv[i]);
          rc = 0;
       }
 
@@ -224,7 +224,7 @@ void processConfig()
    setvar("module", "htick");
    config = readConfig(NULL);
    if (NULL == config) {
-      printf("Config not found\n");
+      fprintf(stderr, "Config file not found\n");
       exit(1);
    };
 
@@ -245,7 +245,7 @@ void processConfig()
       }
       if (locklife < 180) {
 #endif
-           printf("lock file found! exit...\n");
+           if (!quiet) fprintf(stderr, "Lock file found! exit...\n");
            disposeConfig(config);
            exit(1);
       } else {
@@ -269,18 +269,18 @@ void processConfig()
      if (htick_log && quiet) htick_log->logEcho = 0;
 
    } else
-       printf("You have no logFileDir in your config, there will be no log created");
+       fprintf(stderr, "You have no logFileDir in your config, there will be no log created");
 
    nfree(buff);
 
    writeLogEntry(htick_log, '1', "Start");
 
-   if (config->addrCount == 0) printf("at least one addr must be defined\n");
-   if (config->linkCount == 0) printf("at least one link must be specified\n");
-   if (config->fileAreaBaseDir == NULL) printf("you must set FileAreaBaseDir in fidoconfig first\n");
-   if (config->passFileAreaDir == NULL) printf("you must set PassFileAreaDir in fidoconfig first\n");
+   if (config->addrCount == 0) writeLogEntry(htick_log, LL_CRIT, "At least one addr must be defined\n");
+   if (config->linkCount == 0) writeLogEntry(htick_log, LL_CRIT, "At least one link must be specified\n");
+   if (config->fileAreaBaseDir == NULL) writeLogEntry(htick_log, LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first\n");
+   if (config->passFileAreaDir == NULL) writeLogEntry(htick_log, LL_CRIT, "You must set PassFileAreaDir in fidoconfig first\n");
    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
-       printf("parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
+       writeLogEntry(htick_log, LL_CRIT, "Parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
 
    if (config->addrCount == 0 ||
        config->linkCount == 0 ||
