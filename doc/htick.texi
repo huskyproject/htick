@@ -5,7 +5,7 @@
 @c adopted from hpt.texi, written by Tema Zelikin 2:5097/31
 @setfilename htick.info
 @set HTICK HTICK
-@set VERSION 1.1.0
+@set VERSION 1.0.0-stable
 @settitle @value{HTICK} @value{VERSION} - Husky Ticker
 @setchapternewpage odd
 @c %**end of header
@@ -37,7 +37,7 @@
 @node Top, Overview, (dir), (dir)
 @top @value{HTICK}
 This document describes @value{HTICK} @value{VERSION}, a Fidonet Fileecho
-Processor for OS/2, Windows, BeOS and Unix clones.
+Processor for OS/2, Windows, BeOS and Unix.
 
 @menu
 * Overview::                    What is @value{HTICK}?
@@ -51,29 +51,21 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 @node Overview, Installation, Top, Top
 @chapter An Overview of @value{HTICK}
 
-@value{HTICK} is a Fidonet file areas tosser with filefix. Now project
-supported by Husky Development Team (see @url{http://husk.sf.net/team.html}).
+@value{HTICK} is a Fidonet file areas tosser with filefix. Now project 
+supported by Husky Development Team.
 
 Features of @value{HTICK}:
 @enumerate
-@item Tossing file areas.
-@item Filefix (on the fly, from command line, limit for areas...).
-@item Autocreate on the fly.
-@item Automatic forwarding of requests for missing areas to the uplinks.
-@item Switching areas into passive (send-only) and back into active mode.
-@item Resending files from passthrough and none passthrough file areas.
-@item Groups & levels for personal and public access to file areas.
-@item Security check of tossgroup.
-@c @item dupe checking.
-@item Link defaults.
-@item Posting to net & echo areas.
-@item Flexible file announcements via echo or netmail messages.
-Wildcards in file area tags allow easy configuration of
-multiple announcement areas for different groups of file
-areas.
-@item Save announces on disk, so you are protected from
-losing announcements in critical @value{HTICK} termination
-(insufficient disk space, ^Break pressed, power off etc).
+@item tossing file areas
+@item filefix (on the fly, from command line, limit for areas...)
+@item autocreate on the fly
+@item forward requests
+@item posting to net & echo areas
+@item pause and autopause for links
+@item groups & levels for personal and public access to file areas
+@item security check of tossgroup
+@item dupe checking
+@item link defaults
 @item much, much more :)
 @end enumerate
 
@@ -81,8 +73,8 @@ The advantages of @value{HTICK} are:
 
 @enumerate
 @item Open Source (GPL)
-@item Many supported platforms & operating systems
-@item Quick bug fixing
+@item many supported platforms & operating systems
+@item quick bug fixing
 @end enumerate
 
 @node Installation, Download, Overview, Top
@@ -103,18 +95,17 @@ groups for @code{FileEchoAreas})
 @end enumerate
 
 @menu
-* Download::  Download the Source Code & Binary Files
-* Compiling:: How to compile the source code
-* Support::   Support, Contacting the Author, Reporting Bugs, Contributing Code
+* Download::            Download the Source Code & Binary Files
+* Compiling::           How to compile the source code
+* Support::             Support, Contacting the Author, Reporting Bugs, Contributing Code
 @end menu
 
 @node Download, Compiling, Installation, Installation
 @section Download the Source Code & Binary Files
 
 @table @asis
-@item Main page (releases, source code, latest beta versions) - @url{http://husky.sf.net/htick.html}
-@item Direct link to 'stable' branch sources: @url{http://husky.sf.net/cvs2/stable/}
-@item Direct link to 'current' (development) branch sources: @url{http://husky.sf.net/cvs2/current/}
+@item Main page (source code, win32 & os/2 releases) - @url{http://husky.sf.net/htick.html}
+@item Win32 bins (current, russian) - @url{http://hpt-bin.narod.ru}
 @end table
 
 @node Compiling, Support, Download, Installation
@@ -128,9 +119,8 @@ groups for @code{FileEchoAreas})
 @table @asis
 @item /usr/src/packages/
 @item -> smapi/
-@item -> fidoconfig/
 @item -> htick/
-@item
+@item -> fidoconfig/
 @end table
 
 3. Compile and install smapi and fidoconf packages. Use "Makefile" for
@@ -166,13 +156,8 @@ The international Husky conference. English is the preferred language here.
 This Russian echo covers Husky Project.
 @end table
 
-If you have access to Internet, you may of course post your support request
-or bug report into form on husky development site:
-http://sourceforge.net/projects/husky, click to "Bugs" link if you have post
-bug report.
-
-If you do not have access to any of these echos and internet, you may of course
-also contact developers via netmail or e-mail at the addresses listed below.
+If you do not have access to any of these echos, you may of course also
+contact developers via netmail or e-mail at the addresses listed below.
 
 @item
 You want to report a bug. There are two sorts of bugs:
@@ -181,9 +166,9 @@ You want to report a bug. There are two sorts of bugs:
 @item Normal bugs.
 You think that a certain function of @value{HTICK} does not work as expected,
 e.g. it is producing garbage, or doing strange things, or similar. In this
-case, either post to the echos listed above, bugrack on site or contact
-developers via netmail. Please do supply all information that is necessary
-to understand your problem.
+case, either post to the echos listed above, or contact developers via
+netmail. Please do supply all information that is necessary to understand
+your problem.
 
 @item Fatal bugs.
 A fatal bug occurs if @value{HTICK} crashes. Depending on your operating
@@ -200,9 +185,8 @@ Then send report to addresses below.
 
 If you are running any other binary version (like Windows), you will not
 get a core file on a crash. Write down as much information as you can,
-try to find a way to reproduce the crash and contact autors at the addresses
-below. Please attach log-file with @code{loglevels 1-0A-Za-z} (all numbers
-and letters).
+try to find a way to reproduce the crash and contact me at the addresses
+below. We need log-file with @code{loglevels 1-0A-Za-z}.
 @end enumerate
 
 @item You want to contribute to @value{HTICK}.
@@ -228,61 +212,61 @@ So here are developers addresses if you want to get in contact with us:
 Max Chernogor @@ 2:464/108
 @item e-mail:
 mche@@ua.fm
-@end itemize
 
+@end itemize
 @itemize @bullet
 @item Fidonet:
-Stas Degteff @@ 2:5080/102
+Stas Degteff @@ 2:5080/102.1
 @item e-mail:
 stas_degteff@@users.sf.net
 @end itemize
+
 
 @node Command Line, Configuration Reference, Support, Top
 @chapter @value{HTICK} @value{VERSION} Command Line OPTIONS and SWITCHES
 To get help about the command line syntax, use @value{HTICK} without any arguments
 
+
 @node Configuration Reference, Keywords, Command Line, Top
+@section Configuration Reference
 @chapter @value{HTICK} @value{VERSION} Configuration Reference
 
 @value{HTICK} is based on FIDOCONFIG library, so read documentation of
 FIDOCONFIG about location of config file and keywords ideology.
 
 @menu
-* Keywords::               This chapter describes keywords
-* Link Keywords::          Keywords that can be repeated for different links
-* FileArea Definition::    FileAreas definition
-* Announce System::        Announces definition
+* Keywords::                    This chapter describes keywords
+* Link Keywords::               Keywords, that can be repeated for different links
+* FileArea Definition::         FileAreas definition
 @end menu
 
 @node Keywords, FileAreaBaseDir, Configuration Reference, Configuration Reference
 @section Keywords
 
 @menu
-* FileAreaBaseDir::      Base directory for FileAreas.
-* PassFileAreaDir::      In this directory shall be put files from Passthrough
-                         File areas.
-* FileDescPos::          Indent position for long descriptions in FILES.BSS.
-* fileLDescString::      Prefix string for long descriptions in FILES.BBS.
-* FileFixHelp::          Help file for FileFix.
-* FileArea::             File area definition.
-* ExecOnFile::           Execute some command on receiving file.
-* SaveTic::              Save files with tics
-* MaxTicLineLength::     Set maximum line length in outgoing TICs to number.
-* BusyFileDir::          Where shall be put TICs for busy links
-* ConvertLongNames::     What to do with long names when toss or hatch.
-* ConvertShortNames::    What to do with short names when toss or hatch.
-* addDLC::               Add Download counters to FILES.BBS.
-* DLCDigits::            How much digits DLC must be.
-* ticOutbound::          TICs are stored here and killed after transmission
-* filefixKillReports::   Set kill/sent flag to filefix replies.
-* filefixKillRequests::  Kill filefix request after processing.
-* BBSarea::              File area without subscribing (for `htick filelist`).
-* fileDescName::         If no LDESC defined in tic file, use <name> file from
-                         archive fill it.
-* FileAreaCreatePerms::  Set permissions for newly created filearea directories
-* FileFixFromName::      Originator name in filefix replies.
-* AutoFileCreateFlag::   Create flag when filearea has been autocreated.
-* FileFixNames::         Set of names on which FileFix will respond.
+* FileAreaBaseDir::             Base directory for FileAreas
+* PassFileAreaDir::             In this directory shall be put files from Passthrough File areas (and TICs, if not define ticOutbound).
+* FileDescPos::                 The number of spaces to indent long descriptions in FILES.BSS. Recommend: 13 (8.3+space)
+* fileLDescString::             This string is put before long descriptions in FILES.BBS. (Usually ">" or "+".) Default value: single space.
+* FileFixHelp::                 Help file for FileFix, same as AreaFixHelp for AreaFix
+* FileArea::                    Same as EchoArea, most options are valid
+* ExecOnFile::                  Execute some command on receiving file. Command get full filepath as parameter(space and file pathname to be append to command string before execution).
+* SaveTic::                     Save files with tics
+* MaxTicLineLength::            Set maximum line length in outgoing TICs to number.
+* BusyFileDir::                 Where shall be put TICs for busy links
+* ConvertLongNames::            What to do with long names when toss or hatch.
+* ConvertShortNames::           What to do with short names when toss or hatch.
+* addDLC::                      Add Download counters to files.bbs. 
+* DLCDigits::                   How much digits DLC must be. DLC have [000] form.
+* ticOutbound::                 TICs are stored here and killed after transmission
+* filefixKillReports::          Set kill/sent flag to filefix replies.
+* filefixKillRequests::         Kill filefix request after processing.
+* bbsarea::                     File area without subscribing, not show in filefix reports.
+* fileDescName::                If no LDESC defined in tic file, use <name> file from archive fill it (usuallyfile_id.diz).
+* FileAreaCreatePerms::         Define permissions for newly created filearea directories (UNIX only)
+* FileFixFromName::             Originator name in filefix replies.
+* AutoFileCreateFlag::          Create flag when filearea has been autocreated
+* FileFixNames::                Set of names separated by space on which FileFix will respond
 @end menu
 
 @node FileAreaBaseDir, PassFileAreaDir, Keywords, Keywords
@@ -337,7 +321,7 @@ This statement cannot be repeated.
 @code{fileLDescString ">"}
 @end table
 
-This string is put before long descriptions in FILES.BBS (Usually ">" or "+".).
+This string is put before long descriptions in FILES.BBS (Usually ">" or "+".). 
 Default value: single space.
 
 This statement cannot be repeated.
@@ -519,7 +503,7 @@ Set kill/sent flag to filefix replies.
 
 This statement cannot be repeated.
 
-@node filefixKillRequests, BBSarea, filefixKillReports, Keywords
+@node filefixKillRequests, bbsarea, filefixKillReports, Keywords
 @subsection filefixKillRequests
 @findex filefixKillRequests
 @table @asis
@@ -533,22 +517,22 @@ Kill filefix request after processing.
 
 This statement cannot be repeated.
 
-@node BBSarea, fileDescName, filefixKillRequests, Keywords
-@subsection BBSarea
-@findex BBSarea
+@node bbsarea, fileDescName, filefixKillRequests, Keywords
+@subsection bbsarea
+@findex bbsarea
 @table @asis
 @item Syntax:
-@code{BBSarea <name> <bbsareapath>}
+@code{bbsarea <name> <bbsareapath>}
 @item Example:
-@code{bbsarea bbs /var/spool/fido/bbsareas/bbs}
+@code{bbsarea bbs /var/spool/fido/fileareas/bbsarea}
 @end table
 
 File area without subscribing, not shown in filefix reports.
-Use for filelist generation only (`htick filelist` command).
+Use for fileleist generation only ("htick filelist" command).
 
 This statement cannot be repeated.
 
-@node fileDescName, FileAreaCreatePerms, BBSarea, Keywords
+@node fileDescName, FileAreaCreatePerms, bbsarea, Keywords
 @subsection fileDescName
 @findex fileDescName
 @table @asis
@@ -558,20 +542,11 @@ This statement cannot be repeated.
 @code{fileDescName file_id.diz}
 @end table
 
-If no LDESC defined in tic file, use <name> file from archive to fill it
-(usually file_id.diz).
+If no LDESC defined in tic file, use <name> file from archive fill it 
+(usually file_id.diz). 'unpack' action should be defined for archive
+and contain $fparameter.
 
 This statement cannot be repeated.
-
-@subsection Note
-@code{unpack} action should be defined for archive and contain @option{$f} parameter
-(@option{$f} replaces with file name on unpacking time).
-
-Examples:
-@example
-Unpack "/path/to/unrar e -y -ec- -o- -cl $a $p $f" 0 52617221
-Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
-@end example
 
 @node FileAreaCreatePerms, FileFixFromName, fileDescName, Keywords
 @subsection FileAreaCreatePerms
@@ -633,29 +608,24 @@ This statement cannot be repeated.
 @section Link Keywords
 
 @menu
-* fileEchoFlavour::         This statement sets the flavour which outgoing
-                            files in fileechos for this linkget.
-* fileAreaDefaults::        Set defaults for filearea definitions that follow.
-* RemoteFileRobotName::     Name of remote filefix robot (need for
-                            FileForwardRequest).
-* FileFixEchoLimit::        Area subscription limit.
-* noTIC::                   Disable TIC file creation.
+* fileEchoFlavour::         This statement sets the flavour which outgoing files in fileechos for this linkget.
+* fileAreaDefaults::        Set defaults for filearea definitions that follow. 
+* RemoteFileRobotName::     Name of remote filefix robot (need for FileForwardRequest)
+* FileFixEchoLimit::        Area subscription limit
+* noTIC::                   Disable TIC file creation
 * autoFileCreate::          Allow or deny autocreating fileechoes received from
                             this link.
 * AutoFileCreateFile::      Specifies the file new filearea will be placed into
 * AutoFileCreateDefaults::  Specifies the new filearea defaults.
-* AutoFileCreateSubdirs::   Whether to autocreate areas like /fils/gfd.app.edit
-                            (off) or /files/gfd/app/edit (on).
-* delNotRecievedTIC::       If file not received, then remove TIC.
-* FileFixFSC87Subset::      This boolean switch will change on a per link basis
-                            how TIC files are processed.
-* TickerPackToBox::         If link has file box - toss files and tics there.
-* LinkFileBaseDir::         Where autocreated fileareas will be placed.
-* ForwardFileRequests::     Allow file areas subscribe requests forward to link
-* ForwardFilePriority::     Priority in uplinks order for filearea subscribing
-                            forward-requests.
-* ForwardFileRequestFile::  List of available fileareas from this link.
-* FileFixEchoLimit::        Area subscribe limit.
+* AutoFileCreateSubdirs::   Whether to autocreate areas like /filebase/gfd.app.edit (off) or /filebase/gfd/app/edit (on).
+* delNotRecievedTIC::       If file not received, then remove TIC
+* FileFixFSC87Subset::      This boolean switch will change on a per link basis how TIC files are processed.
+* TickerPackToBox::         If link has file box - toss files and tics there
+* LinkFileBaseDir::         Where autocreated fileareas will be placed
+* ForwardFileRequests::     Allow file areas subscribe requests forward to this link.
+* ForwardFilePriority::     Priority in uplinks order for filearea subscribing forward-requests
+* ForwardFileRequestFile::  List of available fileareas from this link
+* FileFixEchoLimit::        Area subscribe limit (max fileareas number allowed for this link subscribe)
 @end menu
 
 @node fileEchoFlavour, fileAreaDefaults, Link Keywords, Link Keywords
@@ -683,8 +653,9 @@ This statement can only be repeated for different links.
 @code{fileAreaDefaults -lw 100 -g Z 2:5097/31.1}
 @end table
 
+Set defaults for filearea definitions that follow. All options are possible, 
 Set defaults for filearea definitions that follow. All options are possible,
-except areatag and path. 
+except areatag and path.
 Settings in the filearea definition override @code{fileAreaDefaults}
 See also @xref{echoAreaDefaults,,,hpt}. Defaults are switched off
 with empty @code{fileAreaDefaults}.
@@ -771,7 +742,7 @@ This statement can only be repeated for different links.
 @code{AutoFileCreateSubdirs on}
 @end table
 
-Whether to autocreate areas like /filebase/gfd.app.edit (off) or /filebase/gfd/app/edit (on).
+Whether to autocreate areas like /filebase/gfd.app.edit (off) or /filebase/gfd/app/edit (on). 
 If you want to configure this globally instead of on per-link basis, set this in the deflink
 section. For more information see 'AutoAreaCreateSubdirs' in the hpt manual.
 
@@ -802,7 +773,7 @@ This statement can only be repeated for different links.
 @end table
 
 This boolean switch will change on a per link basis how TIC files are processed. By default
-this switch is ON. htick will then operate only on FSC87-compliant keywords and ignore unknown
+this switch is ON. htick will then operate only on FSC87-compliant keywords and ignore unknown 
 keywords in the TIC file processed. If this switch is set to OFF all implemented keywords will
 be used which can (and, in interaction with some tick processors, WILL) lead to severe problems.
 Unknown keywords found in a TIC file will make htick stop processing that file. If you don't
@@ -901,7 +872,7 @@ This statement can only be repeated for different links.
 * FileArea::                     definition of FileArea
 @end menu
 
-@node FileArea, Announce System, FileArea Definition, FileArea Definition
+@node FileArea, Keyword Index, FileArea Definition, FileArea Definition
 @subsection FileArea
 @findex FileArea
 @table @asis
@@ -913,321 +884,35 @@ This statement can only be repeated for different links.
 
 Same as EchoArea, most options are valid:
 
-@table @asis
-@item -a <address>
-Our own address for this area.
+a) -a <address>  Our own address
 
-@item -d "<string>"
-Description for this filearea.
+b) -lr <number>  "Read level": Min link level for sending files from this filearea to this link.
 
-@item -g <group>
-Group for this filearea.
+c) -lw <number>  "Write level": Min link level allowed to post into this filearea files received from link.
 
-@item -h
-Hide area (non visible in %LIST and in announce).
+d) -h            Hide area (non visible in %LIST and in announce)
 
-@item -lr <number>
-"Read level": Min link level for sending files from this filearea to this link.
+e) -manual       Disallow remote subscribe (disable subscribe areafix command).
 
-@item -lw <number>
-"Write level": 
-Min link level allowed to post into this filearea files received from link.
+f) -mandatory    Disallow remote unsubscribe (disable unsubscribe areafix command).
 
-@item -mandatory
-Disallow remote unsubscribe (disable unsubscribe areafix command).
+g) -sendorig     Set: send files from PassFileAreaDir for non passthrough areas.
 
-@item -manual
-Disallow remote subscribe (disable subscribe areafix command).
+h) -nopause      %PAUSE has no effect to this filearea
 
-@item -noCRC
-Disable CRC check for incoming files.
+j) -noCRC        Disable CRC check for incoming files
 
-@item -nodiz
-Do not try to get file description from <fileDescName> (for packed files).
+k) -g <group>    Group for this filearea
 
-@item -nopause
-%PAUSE has no effect to this filearea.
+l) -d "<string>" Description for this filearea
 
-@item -noreplace
-Don't replace exisiting files in this filearea.
+m) -noreplace    Don't replace exisiting files in this filearea.
 
-@item -p <integer>
-Purge after n days. Setting to 0 to disables purging.
+n) -nodiz	 Do not try to get file description from <fileDescName> (for packed files).
 
-@item -sendorig
-Send files from PassFileAreaDir for non passthrough areas.
+o) -p <integer>  Purge after n days. Setting to 0 to disables purging.
 
-@end table
-
-@node Announce System, AnnounceSpool, FileArea, Configuration Reference
-@section Announce System
-
-Htick announces is selective, its may be difference for several fileareas.
-Token @code{AnnAreaTag} start new section of announce definition, other tokens
-defines file areas lists to include into announce and describes announce message.
-
-To post announces run @code{htick announce}.
-
-You may turn announces off: for this comment out or remove @code{AnnounceSpool}
-definition from config.
-
-
-@menu
-* AnnounceSpool::      Directory for accumulating report information.
-* AnnAreaTag::         Name of area of file where annouce will be placed.
-* AnnInclude::         Array of fileecho masks that will be announced in this
-                       annAreaTag.
-* AnnExclude::         Array of filearea masks that won't be announced in this
-                       annAreaTag.
-* AnnTo::              Announce message destination name.
-* AnnFrom::            Announce message originator name.
-* AnnSubj::            Announce message subject.
-* AnnAdrTo::           Announce message destination address (use for netmail
-                       area only)
-* AnnAdrFrom::         Announce message originate address.
-* AnnOrigin::          Origin line in announce message.
-* AnnMessFlags::       Announce message attributes (k/s loc hld ...).
-* AnnFileRFrom::       Show in announce: address of system which file received
-                       from
-* AnnFileOrigin::      Show in announce: address of system who hatched file.
-* Announces example::  Example for understanding announces (from real config).
-@end menu
-
-@node AnnounceSpool, AnnAreaTag, Announce System, Announce System
-@subsection AnnounceSpool
-@findex AnnounceSpool
-@table @asis
-@item Syntax:
-@code{AnnounceSpool <path>}
-@item Example:
-@code{AnnounceSpool /var/spool/fido/announce}
-@end table
-
-Directory for accumulating report information.
-
-This statement cannot be repeated.
-
-@node AnnAreaTag, AnnInclude, AnnounceSpool, Announce System
-@subsection AnnAreaTag
-@findex AnnAreaTag
-@table @asis
-@item Syntax:
-@code{AnnAreaTag <AREATAG|@@filename>}
-@item Example:
-@code{AnnounceSpool local.announce}
-@end table
-
-Begins new announce definition section. <AREATAG> is name of area where annouce will be placed
-<@@filename> is filename with leading '@@' where annouce will be placed. Begins new announce
-definition section.
-
-
-
-@node AnnInclude, AnnExclude, AnnAreaTag, Announce System
-@subsection AnnInclude
-@findex AnnInclude
-@table @asis
-@item Syntax:
-@code{AnnInclude <fileecho mask list>}
-@item Example:
-@code{AnnInclude *}
-@end table
-
-Array of fileecho names|masks that will be announced in this annAreaTag. Default: all fileareas.
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnExclude, AnnTo, AnnInclude, Announce System
-@subsection AnnExclude
-@findex AnnExclude
-@table @asis
-@item Syntax:
-@code{AnnExclude <fileecho mask list>}
-@item Example:
-@code{AnnExclude aftnged}
-@end table
-
-Array of filearea names|masks that won't be announced in this annAreaTag
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnTo, AnnFrom, AnnExclude, Announce System
-@subsection AnnTo
-@findex AnnTo
-@table @asis
-@item Syntax:
-@code{AnnTo <string>}
-@item Example:
-@code{AnnTo All}
-@end table
-
-Announce message destination name.
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnFrom, AnnSubj, AnnTo, Announce System
-@subsection AnnFrom
-@findex AnnFrom
-@table @asis
-@item Syntax:
-@code{AnnFrom <string>}
-@item Example:
-@code{AnnFrom Announce Robot}
-@end table
-
-Announce message originator name.
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnSubj, AnnAdrTo, AnnFrom, Announce System
-@subsection AnnSubj
-@findex AnnSubj
-@table @asis
-@item Syntax:
-@code{AnnSubj <string>}
-@item Example:
-@code{AnnSubj New files arrived}
-@end table
-
-Announce message subject.
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnAdrTo, AnnAdrFrom, AnnSubj, Announce System
-@subsection AnnAdrTo
-@findex AnnAdrTo
-@table @asis
-@item Syntax:
-@code{AnnAdrTo <address>}
-@item Example:
-@code{AnnAdrTo 2:5097/31.1}
-@end table
-
-Announce message destination address (use for netmail area).
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnAdrFrom, AnnOrigin, AnnAdrTo, Announce System
-@subsection AnnAdrFrom
-@findex AnnAdrFrom
-@table @asis
-@item Syntax:
-@code{AnnAdrFrom <address>}
-@item Example:
-@code{AnnAdrFrom 2:5097/31}
-@end table
-
-Announce message originate address.
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnOrigin, AnnMessFlags, AnnAdrFrom, Announce System
-@subsection AnnOrigin
-@findex AnnOrigin
-@table @asis
-@item Syntax:
-@code{AnnOrigin <string>}
-@item Example:
-@code{AnnOrigin News files!}
-@end table
-
-Origin line in announce message
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnMessFlags, AnnFileRFrom, AnnOrigin, Announce System
-@subsection AnnMessFlags
-@findex AnnMessFlags
-@table @asis
-@item Syntax:
-@code{AnnMessFlags <string>}
-@item Example:
-@code{AnnMessFlags loc hld}
-@end table
-
-Announce message flags (k/s loc hld ...)
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnFileRFrom, AnnFileOrigin, AnnMessFlags, Announce System
-@subsection AnnFileRFrom
-@findex AnnFileRFrom
-@table @asis
-@item Syntax:
-@code{AnnFileRFrom <on|off>}
-@item Example:
-@code{AnnFileRFrom on}
-@end table
-
-Show in announce: address of system which file is received from
-
-This statement can be repeated only for different AnnAreaTag.
-
-@node AnnFileOrigin, Announces example, AnnFileRFrom, Announce System
-@subsection AnnFileOrigin
-@findex AnnFileOrigin
-@table @asis
-@item Syntax:
-@code{AnnFileOrigin <on|off>}
-@item Example:
-@code{AnnFileOrigin on}
-@end table
-
-Show in announce: address of system who hatched file
-
-This statement can be repeated only for different AnnAreaTag.
-
-
-@node Announces example, Keyword Index, AnnFileOrigin, Announce System
-@subsection Announces example
-@findex Announces example
-
-The following text is taken from a real confige file.
-
-@example
-#= Announces definitions =====================================
-AnnounceSpool   E:\FIDO\EXCH\report
-
-# report all arrived files to file e:\fido\rep.txt
-AnnAreaTag      @@e:\fido\rep.txt
-AnnFileOrigin   on
-
-# report into area 'seumbieky.news'
-# files posted to 'union.*' group of fileechos
-AnnAreaTag      seumbieky.news
-AnnInclude      union.*
-AnnSubj         New mp3's arrives
-AnnTo           United mp3 fans
-AnnFrom         Fullfeed Distribution Site
-AnnOrigin       *** seumbieky forever ***
-AnnFileOrigin   on
-AnnFileRfrom    on
-
-# report 'uue.*' group of fileechos into area 'seumbieky.news'
-AnnAreaTag      seumbieky.news
-AnnInclude      uue.*
-
-# report into area 'seumbieky.news'
-# all other exept of 'uue.* and union.*' groups
-AnnAreaTag      seumbieky.news
-AnnExclude      uue.* union.*
-
-# report via netmail to defined address
-AnnAreaTag      netmail
-AnnInclude      union.*
-AnnSubj         New mp3's arrives
-AnnTo           Max Inda Houze
-Annadrto        2:464/108
-AnnFrom         Fullfeed Distribution Site
-Annadrfrom      2:464/910.108
-AnnOrigin       *** seumbieky forever ***
-AnnMessFlags    k/s loc hld
-AnnFileOrigin   on
-AnnFileRfrom    on
-#= Announces definitions ends ================================
-@end example
-
-@node Keyword Index, , Announces example, Top
+@node Keyword Index, , FileArea, Top
 @appendix Configuration File Keyword Index
 @printindex fn
 
