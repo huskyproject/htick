@@ -1,3 +1,8 @@
+2003-03-21 Friday 06:34  stas_degteff
+
+	* src/: fcommon.c (1.68), filelist.c (1.39): include
+	huskylib/dirlayer.h
+
 2003-03-18 Tuesday 13:11  stas_degteff
 
 	* src/: clean.c (1.18), fcommon.c (1.67), filelist.c (1.38),
