@@ -638,7 +638,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        stricmp(config->fileAreaBaseDir,"Passthrough"))
    {
        sprintf(buff,"%s%s",config->fileAreaBaseDir,fileechoFileName);
-       if (!_createDirectoryTree(buff))
+       if (_createDirectoryTree(buff))
        {
            if (!quiet) fprintf(stderr, "cannot make all subdirectories for %s\n",
                    fileechoFileName);
