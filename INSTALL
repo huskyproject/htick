@@ -5,7 +5,7 @@ huskybse package FIRST!
 Unix:
 -----
 
-0. the smapi and the fidoconfig package is required for the hpt package
+0. the smapi and the fidoconfig package are required for the htick package.
 
 1. Put the htick package in the directory where the other packages of fido
    linux reside:

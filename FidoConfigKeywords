@@ -101,6 +101,19 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     If file not recieved, then remove TIC
 
+    f) FileFixFSC87Subset 
+
+    This boolean switch will change on a per link basis how TIC files 
+    are processed. By default this switch is ON. htick will then operate
+    only on FSC87-compliant keywords and ignore unknown keywords in the
+    TIC file processed. 
+    If this switch is set to OFF all implemented keywords will be used
+    which can (and, in interaction with some tick processors, WILL) lead
+    to severe problems. Unknown keywords found in a TIC file will make 
+    htick stop processing that file.
+    If you don't know what all this is about set FileFixFSC87Subset to
+    ON for all your links. It won't hurt.
+
 9) SaveTic <FileEchoMask> <DirToSaveTic>
 
 <DirToSaveTic> - where put TIC for fileecho[es] <FileEchoMask>
