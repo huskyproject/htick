@@ -53,6 +53,7 @@
 #include <areafix.h>
 #include <hatch.h>
 #include <scan.h>
+#include <add_desc.h>
 
 unsigned char RetFix;
 
@@ -917,4 +918,182 @@ void ffix(s_addr addr, char *cmd)
 	} else w_log(LL_ERR, "FileFix: no such link in config: %s!", aka2str(addr));
     }
     else scan();
+}
+
+/* file echo autocreation */
+
+int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
+{
+   FILE *f;
+   char *NewAutoCreate;
+   char *fileName;
+   char *bDir = NULL;
+
+   char *fileechoFileName = NULL;
+   char buff[255], myaddr[20], hisaddr[20];
+   s_link *creatingLink;
+   s_addr *aka;
+   s_message *msg;
+   s_filearea *area;
+   FILE *echotosslog;
+
+   creatingLink = getLinkFromAddr(config, pktOrigAddr);
+
+   fileechoFileName = makeMsgbFileName(config, c_area);
+
+    // translating name of the area to lowercase/uppercase
+    if (config->createAreasCase == eUpper) strUpper(c_area);
+    else strLower(c_area);
+
+    // translating filename of the area to lowercase/uppercase
+    if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
+    else strLower(fileechoFileName);
+
+    bDir = (creatingLink->fileBaseDir) ? 
+        creatingLink->fileBaseDir : config->fileAreaBaseDir;
+
+
+   if (creatingLink->autoFileCreateSubdirs &&
+       strcasecmp(bDir,"passthrough"))
+   {
+       if (creatingLink->autoFileCreateSubdirs)
+       {
+           char *cp;
+           for (cp = fileechoFileName; *cp; cp++)
+           {
+               if (*cp == '.')
+               {
+                   *cp = PATH_DELIM;
+               }
+           }
+       }
+
+       sprintf(buff,"%s%s",bDir,fileechoFileName);
+       if (_createDirectoryTree(buff))
+       {
+           if (!quiet) fprintf(stderr, "cannot make all subdirectories for %s\n",
+                   fileechoFileName);
+           return 1;
+       }
+   }
+
+
+   fileName = creatingLink->autoFileCreateFile;
+   if (fileName == NULL) fileName = getConfigFileName();
+
+   f = fopen(fileName, "a");
+   if (f == NULL) {
+      f = fopen(getConfigFileName(), "a");
+      if (f == NULL)
+         {
+            if (!quiet) fprintf(stderr,"autocreate: cannot open config file\n");
+            return 1;
+         }
+   }
+
+   aka = creatingLink->ourAka;
+
+   /* making local address and address of uplink */
+   strcpy(myaddr,aka2str(*aka));
+   strcpy(hisaddr,aka2str(pktOrigAddr));
+
+   /* write new line in config file */
+
+   if (creatingLink->LinkGrp)
+   {
+     sprintf(buff, "FileArea %s %s%s -a %s -g %s ",
+	     c_area,  bDir,
+	     (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
+	     myaddr,
+	     creatingLink->LinkGrp);
+   }
+   else
+   {
+     sprintf(buff, "FileArea %s %s%s -a %s ",
+	     c_area, bDir,
+	     (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
+	     myaddr);
+   }
+
+   if (creatingLink->autoFileCreateDefaults) {
+      NewAutoCreate=(char *) scalloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));
+      strcpy(NewAutoCreate,creatingLink->autoFileCreateDefaults);
+   } else NewAutoCreate = (char*)scalloc(1, sizeof(char));
+
+   if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
+     if (desc) {
+       char *tmp;
+       tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
+       sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
+       nfree (NewAutoCreate);
+       NewAutoCreate=tmp;
+     }
+   } else {
+     if (desc) {
+       char *tmp;
+       tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
+       fileName[0]='\0';
+       sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
+       fileName++;
+       fileName=strrchr(fileName,'\"')+1; //"
+       strcat(tmp,fileName);
+       nfree(NewAutoCreate);
+       NewAutoCreate=tmp;
+     }
+   }
+
+   if ((NewAutoCreate != NULL) && (strlen(buff)+strlen(NewAutoCreate))<255) {
+      strcat(buff, NewAutoCreate);
+   }
+
+   nfree(NewAutoCreate);
+
+   sprintf (buff+strlen(buff)," %s",hisaddr);
+
+   fprintf(f, "%s\n", buff);
+
+   fclose(f);
+
+   /* add new created echo to config in memory */
+   parseLine(buff,config);
+
+   w_log( '8', "FileArea '%s' autocreated by %s", c_area, hisaddr);
+
+   /* report about new filearea */
+   if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
+      if (getNetMailArea(config, config->ReportTo) != NULL) {
+         msg = makeMessage(area->useAka,
+                           area->useAka, 
+                           versionStr, 
+                           config->sysop, 
+                           "Created new fileareas", 1,
+                           config->filefixKillReports);
+         msg->text = createKludges(config->disableTID,NULL, area->useAka,area->useAka,versionStr);
+      } else {
+         msg = makeMessage(area->useAka,
+                           area->useAka,
+                           versionStr,
+                           "All", "Created new fileareas", 0,
+                           config->filefixKillReports);
+         msg->text = createKludges(config->disableTID,config->ReportTo, area->useAka, area->useAka,versionStr);
+      } /* endif */
+      xstrcat(&msg->text, "\001FLAGS NPD\r");
+      sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
+          (area->description) ? area->description : "");
+      msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
+      strcat(msg->text, buff);
+      writeMsgToSysop(msg, config->ReportTo);
+      freeMsgBuffers(msg);
+      nfree(msg);
+      if (config->echotosslog != NULL) {
+         echotosslog = fopen (config->echotosslog, "a");
+         fprintf(echotosslog,"%s\n",config->ReportTo);
+         fclose(echotosslog);
+      }
+   } else {
+   } /* endif */
+
+   if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, hisaddr);
+
+   return 0;
 }

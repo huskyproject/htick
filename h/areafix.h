@@ -52,5 +52,6 @@
 
 int  processFileFix(s_message *msg);
 void ffix(s_addr addr, char *cmd);
+int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc);
 
 #endif
