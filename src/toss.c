@@ -1184,8 +1184,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                busy = 0;
 
                if (createOutboundFileName(filearea->downlinks[i]->link,
-                   cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
-                   FLOFILE)==1)
+                     filearea->downlinks[i]->link->fileEchoFlavour,
+                     FLOFILE)==1)
                   busy = 1;
 
                if (busy) {
@@ -1386,7 +1386,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 		busy = 0; // FIXME: see below
 //               if (createFlo(to_link, cvtFlavour2Prio(to_link->fileEchoFlavour))==0) {
                 if (createOutboundFileName(to_link,
-	    	    cvtFlavour2Prio(to_link->fileEchoFlavour), FLOFILE)==0) {
+                     to_link->fileEchoFlavour, FLOFILE)==0) {
                   strcpy(linkfilepath,to_link->floFile);
                   if (!busy) { // FIXME: it always not busy!!!
                      *(strrchr(linkfilepath,PATH_DELIM))=0;
@@ -1679,9 +1679,7 @@ void checkTmpDir(void)
          link = getLinkFromAddr(config, tic.to);
 	 // createFlo doesn't  support ASO!!!
          //if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) {
-	 if (createOutboundFileName(link,
-				    cvtFlavour2Prio(link->fileEchoFlavour),
-				    FLOFILE)==0) {
+        if (createOutboundFileName(link, link->fileEchoFlavour, FLOFILE)==0) {
 	     filearea=getFileArea(config,tic.area);
 	     if (filearea!=NULL) {
                if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
@@ -1781,7 +1779,7 @@ void cleanPassthroughDir(void)
    if (config->separateBundles) {
       for (i = 0; i < config->linkCount; i++) {
          busy = 0;
-         if (createOutboundFileName(&(config->links[i]), NORMAL, FLOFILE) == 1)
+         if (createOutboundFileName(&(config->links[i]), normal, FLOFILE) == 1)
             busy = 1;
          strcpy(tmpdir, config->links[i].floFile);
          sprintf(strrchr(tmpdir, '.'), ".sep");

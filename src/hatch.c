@@ -198,8 +198,7 @@ int send(char *filename, char *area, char *addr)
 
    busy = 0;
 
-   if (createOutboundFileName(link,
-       cvtFlavour2Prio(link->fileEchoFlavour), FLOFILE)==1)
+   if (createOutboundFileName(link,link->fileEchoFlavour, FLOFILE)==1)
       busy = 1;
 
    if (busy) {
