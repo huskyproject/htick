@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <add_descr.h>
 #include <fidoconfig.h>
 #include <common.h>
@@ -35,7 +36,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 int removeDesc (char *descr_file_name, char *file_name)
 {
     FILE *f1, *f2;
-    char hlp[263] = "", tmp[263], *token, descr_file_name_tmp[256];
+    char hlp[264] = "", tmp[264], *token, descr_file_name_tmp[256];
     int flag = 0;
 
    f1 = fopen (descr_file_name, "r");
@@ -125,5 +126,61 @@ int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
    }
    fprintf (ann_file, "Created  %-52s %s\n", c_area, hisaddr);
    fclose (ann_file);
+   return 0;
+}
+
+int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
+{
+    FILE *f1;
+    char hlp[264] = "", tmp[264], *token;
+    int flag = 0;
+
+   f1 = fopen (descr_file_name, "r");
+   if (f1 == NULL) return 1;
+
+   while (!feof(f1)) {
+         fgets(hlp,sizeof hlp,f1);
+
+         if (hlp[0]==0 || hlp[0]==10 || hlp[0]==13)
+            continue;
+
+         if (hlp[strlen(hlp)-1]=='\r')
+            hlp[strlen(hlp)-1]=0;
+
+         if (hlp[strlen(hlp)-1]=='\n')
+            hlp[strlen(hlp)-1]=0;
+
+	 if (flag && (*hlp == '\t' || *hlp == ' ' || *hlp == '>')) {
+	    token=stripLeadingChars(hlp, " >");
+	    if (*token == '>') token++;
+            tic->desc=
+            realloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+            tic->desc[tic->anzdesc]=strdup(token);
+            tic->anzdesc++;
+	    continue;
+	 }
+	 else
+	    flag = 0;
+
+	 strcpy(tmp,hlp);
+         token = strtok(tmp, " \t\0");
+
+         if (token==NULL)
+            continue;
+
+         if (stricmp(token,file_name) == 0) {
+            token=stripLeadingChars(strtok(NULL, "\0"), " ");
+	    if (token != NULL) {
+               tic->desc=
+               realloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+               tic->desc[tic->anzdesc]=strdup(token);
+               tic->anzdesc++;
+	    }
+	    flag = 1;
+	 }
+	 hlp[0] = '\0';
+   }
+
+   fclose (f1);
    return 0;
 }
