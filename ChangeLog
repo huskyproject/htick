@@ -1,3 +1,34 @@
+2002-10-29 Tuesday 12:18  stas_degteff
+
+	* doc/htick.texi (1.6): Fix Announces example
+
+2002-10-29 Tuesday 12:04  stas_degteff
+
+	* doc/htick.texi (1.5): Comment out 'dupe cheking' feature in
+	manual: not implemented yet
+
+2002-10-29 Tuesday 12:00  stas_degteff
+
+	* doc/htick.texi (1.4): Small fix manual
+
+2002-10-29 Tuesday 11:27  stas_degteff
+
+	* doc/htick.texi (1.3): Update htick manual
+
+2002-10-29 Tuesday 09:20  stas_degteff
+
+	* FidoConfigKeywords (1.46), doc/htick.texi (1.2): Update
+	fileDescName token description. Thanks to Valery Kondakoff
+
+2002-10-29 Tuesday 07:35  mche
+
+	* src/report.c (1.22): fix bug with recoding descriptions
+
+2002-10-28 Monday 23:32  pgul
+
+	* src/: areafix.c (1.98), report.c (1.21): Change createKludges()
+	args
+
 2002-10-28 Monday 07:03  mche
 
 	* src/htick.c (1.78): fix output of version string
