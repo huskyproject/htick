@@ -303,13 +303,13 @@ void filelist()
         if (config->fileAreas[i].pass != 1 && !(config->fileAreas[i].hide))
         {
             printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].pathName, config->fileAreas[i].description, f, 0);
-            fprintf(d, "%s\n",config->fileAreas[i].pathName);
+            if(d) fprintf(d, "%s\n",config->fileAreas[i].pathName);
         }
     }
     
     for (i=0; i<config->bbsAreaCount; i++) {
         printFileArea(config->bbsAreas[i].areaName, config->bbsAreas[i].pathName, config->bbsAreas[i].description, f, 1);
-        fprintf(d, "%s\n",config->bbsAreas[i].pathName);
+        if(d) fprintf(d, "%s\n",config->bbsAreas[i].pathName);
     }
     
     fprintf(f,"=============================================================================\n");
