@@ -32,6 +32,7 @@
 #include <global.h>
 #include <fcommon.h>
 #include <toss.h>
+#include <seenby.h>
 #include <fidoconf/log.h>
 #include <fidoconf/crc.h>
 #include <fidoconf/common.h>
