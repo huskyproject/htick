@@ -31,19 +31,17 @@
 #include <process.h>
 #endif
 
-#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <smapi/progprot.h>
+
+#if !defined(__TURBOC__) && !defined(__MSVC__)
 #include <unistd.h>
 #endif
 
-#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
+
+#if defined(__MSVC__)
 #include <process.h>
 #define P_WAIT		_P_WAIT
-#define chdir   _chdir
-#define getcwd  _getcwd
 #endif
-
-
-#include <smapi/progprot.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

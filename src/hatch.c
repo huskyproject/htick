@@ -55,10 +55,6 @@
 #include <fcommon.h>
 #include <toss.h>
 
-#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
-#define getcwd  _getcwd
-#endif
-
 
 typedef enum _descrMacro {BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;
 
