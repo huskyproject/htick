@@ -556,6 +556,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                 Addlink(link, NULL, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+                if(cmNotifyLink)
+                forwardRequestToLink(area->areaName,"",link,NULL,0);
                 break;
             case 3: /* report that area not found for hidden areas */
                 break;
@@ -622,6 +624,8 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			changeconfig (getConfigFileName(),  area, link, 1);
 			xscatprintf(&report, "%s Unlinked\r",area->areaName);
 			w_log( '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
+            if(cmNotifyLink)
+            forwardRequestToLink(area->areaName,"",link,NULL,1);
 			break;
 		case 1: if (strstr(line, "*")) continue;
 			xscatprintf(&report, "%s Not linked\r",line);

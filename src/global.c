@@ -57,6 +57,7 @@ int       cmSend = 0;
 int       cmFlist = 0;
 int       cmClean = 0;
 int       cmAfix = 0;
+int       cmNotifyLink = 0;
 
 char      *flistfile = NULL;
 char      *dlistfile = NULL;

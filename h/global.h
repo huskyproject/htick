@@ -78,6 +78,7 @@ extern int       cmAnnounce;
 extern int       cmAnnNewFileecho;
 extern int       cmClean;
 extern int       cmAfix;
+extern int       cmNotifyLink;
 
 extern char      *flistfile;
 extern char      *dlistfile;
