@@ -287,7 +287,7 @@ int main(int argc, char **argv)
 #endif
 
 
-   printf("Husky Tick v%u.%02u by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR);
+   printf("Husky Tick v%u.%02u%s%s by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR, VER_SERVICE, VER_BRANCH);
 
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
