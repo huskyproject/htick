@@ -57,20 +57,13 @@
 #  include <dir.h>
 #endif
 
-/*
-#include <smapi/typedefs.h>
-#include <smapi/stamp.h>
-#include <huskylib/huskylib.h>
-#include <smapi/ffind.h>
-#include <huskylib/patmat.h>
-*/
-
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
 #include <huskylib/dirlayer.h>
 #include <huskylib/adcase.h>
 #include <huskylib/xstr.h>
 #include <huskylib/recode.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 
 #include <fcommon.h>
 #include <global.h>

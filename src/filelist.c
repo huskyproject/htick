@@ -33,10 +33,11 @@
 #include <huskylib/huskylib.h>
 
 #include <huskylib/log.h>
-#include <fidoconf/common.h>
 #include <huskylib/dirlayer.h>
 #include <huskylib/adcase.h>
 #include <huskylib/xstr.h>
+
+#include <fidoconf/common.h>
 #include <fidoconf/afixcmd.h>
 
 #include "add_desc.h"
