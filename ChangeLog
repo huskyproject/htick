@@ -1,3 +1,8 @@
+2004-07-26 Monday 05:17  andr_lukyanov
+
+	* src/filelist.c (htick-1_4-stable.2): do not add directories to
+	filelist
+
 2004-06-07 Monday 11:44  sfpavel
 
 	* debian/: changelog, compat, control, rules
@@ -954,9 +959,9 @@
 
 2002-09-25 Wednesday 07:27  mche
 
-	* src/areafix.c (1.91): feature: FileFixEchoLimit patch by <Àëåêñåé
-	Ñóõîòèí <pscorporation@mail.ru>>
-
+	* src/areafix.c (1.91): feature: FileFixEchoLimit patch by <Ã€Ã«Ã¥ÃªÃ±Ã¥Ã© Ã‘Ã³ÃµÃ®Ã²Ã¨Ã­
+	<pscorporation@mail.ru>>
+        
 2002-09-24 Tuesday 13:20  pgul
 
 	* src/: areafix.c (1.90), report.c (1.17): disableTID changed to
