@@ -113,6 +113,8 @@ int to_us(const s_addr destAddr)
 
 void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka)
 {
+   static time_t preTime=0L;
+   time_t curTime;
 
    *buff = 0;
    if (area != NULL)
@@ -124,12 +126,19 @@ void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_a
           destAka->point);
    };
 
+   curTime = time(NULL);
+   while (curTime == preTime) {
+      sleep(1);
+      curTime = time(NULL);
+   }
+   preTime = curTime;
+
    if (ourAka->point)
       sprintf(buff + strlen(buff),"\001MSGID: %u:%u/%u.%u %08lx\r",
-          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) time(NULL));
+          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) curTime);
    else
       sprintf(buff + strlen(buff),"\001MSGID: %u:%u/%u %08lx\r",
-              ourAka->zone,ourAka->net,ourAka->node,(unsigned long) time(NULL));
+              ourAka->zone,ourAka->net,ourAka->node,(unsigned long) curTime);
 
    sprintf(buff + strlen(buff), "\001PID: %s\r", versionStr);
 }
