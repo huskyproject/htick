@@ -1,3 +1,7 @@
+2003-04-02 Wednesday 18:09  mche
+
+	* src/: clean.c (1.19), filelist.c (1.41): fix MSVC compilation
+
 2003-03-31 Monday 20:56  d_sergienko
 
 	* Makefile (1.20): -lfidoconfig -> -lfidoconf
