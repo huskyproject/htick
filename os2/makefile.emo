@@ -1,0 +1,27 @@
+# makefile for PGCC/EMX 1.1.1
+DEBUG   = 0
+CC      = gcc 
+INSTDIR = /usr/local/bin
+MANDIR  = /usr/local/man
+
+OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj
+SRC_DIR = ../src/
+
+ifeq ($(DEBUG), 1)
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O3 -s -DUNIX
+# LFLAGS  = -L../../fidoconfig -L../../smapi 
+  LFLAGS  =
+else
+  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I../../fidoconfig -I../../smapi -Wall -Os -mpentium -s -DOS2
+# LFLAGS  = -L../../smapi -L../../fidoconfig
+  LFLAGS  = -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -L../../smapi -L../../fidoconfig -lwrap
+endif
+
+all: $(OBJS) \
+     htick.exe 
+
+%.obj: $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+
+htick.exe: $(OBJS)
+	$(CC) $(LFLAGS) -o htick.exe $(OBJS) -lsmapiemo -lfidoconfig

@@ -34,7 +34,7 @@
 #include <stdio.h>
 #include <typesize.h>
 
-struct log {
+struct htick_log {
 // char *fileName;       // name of the file where the log will be stored.
    char *keysAllowed;    // only log-data with one of these keys will be stored
    char *appName;        // name of the application which has created this log entry
@@ -43,7 +43,7 @@ struct log {
    char firstLinePrinted;// First line in Log File printed ?
 };
 
-typedef struct log s_log;
+typedef struct htick_log s_log;
 
 s_log *openLog(char *fileName, char *appN, char *keys);
 /*DOC
@@ -54,14 +54,14 @@ s_log *openLog(char *fileName, char *appN, char *keys);
   FZ:     openLog fills the s_log struct, opens the logfile and returns the struct
 */
 
-void closeLog(s_log *log);
+void closeLog(s_log *htick_log);
 /*DOC
   Input:  log is a pointer to a s_log
   Output: ./.
   FZ:     closes the logFile and frees all mem use by log.
 */
 
-void writeLogEntry(s_log *log, char key, char *logString);
+void writeLogEntry(s_log *htick_log, char key, char *logString);
 /*DOC
   Input:  log is a pointer to a s_log
           key is the key under which the log-entry will be stored

@@ -33,6 +33,9 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#ifdef __EMX__
+#include <sys/types.h>
+#endif
 #include <sys/stat.h>
 #include <unistd.h>
 #ifdef __IBMC__
@@ -56,7 +59,7 @@ int createLockFile(char *lockfile) {
         if ((f=fopen(lockfile,"a")) == NULL)
            {
                    fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-                   writeLogEntry(log, '9', "createLockFile: cannot create lock file");
+                   writeLogEntry(htick_log, '9', "createLockFile: cannot create lock file");
                    return 1;
            }
 
@@ -230,7 +233,7 @@ int createDirectoryTree(const char *pathName) {
          if (mymkdir(start) != 0) {
             buff = (char *) malloc(strlen(start)+30);
             sprintf(buff, "Could not create directory %s", start);
-            writeLogEntry(log, '5', buff);
+            writeLogEntry(htick_log, '5', buff);
             free(buff);
             free(start);
             return 1;
@@ -238,7 +241,7 @@ int createDirectoryTree(const char *pathName) {
       } else if(!S_ISDIR(buf.st_mode)) {
          buff = (char *) malloc(strlen(start)+30);
          sprintf(buff, "%s is a file not a directory", start);
-         writeLogEntry(log, '5', buff);
+         writeLogEntry(htick_log, '5', buff);
          free(buff);
          free(start);
          return 1;
@@ -319,7 +322,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
            tolog = (char*) malloc (strlen(link->name)+40+1);
            sprintf(tolog,"link %s is busy.", link->name);
 
-           writeLogEntry(log, '7', tolog);
+           writeLogEntry(htick_log, '7', tolog);
            free (link->floFile); link->floFile = NULL;
            free (link->bsyFile); link->bsyFile = NULL;
            free (tolog);
@@ -336,9 +339,9 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
                                    free(link->bsyFile);
                                    link->bsyFile=NULL;
                            }
-                           writeLogEntry(log, '9', "cannot create *.bsy file");
-                           writeLogEntry(log, '1', "End");
-                           closeLog(log);
+                           writeLogEntry(htick_log, '9', "cannot create *.bsy file");
+                           writeLogEntry(htick_log, '1', "End");
+                           closeLog(htick_log);
                            disposeConfig(config);
                            exit(1);
                    }

@@ -30,7 +30,7 @@
 
 #include <global.h>
 
-s_log     *log;
+s_log     *htick_log;
 s_fidoconfig *config;
 
 const int VER_MAJOR = 0;

@@ -106,20 +106,20 @@ void processConfig()
    */
 
    // open Logfile
-   log = NULL;
+   htick_log = NULL;
    if (config->logFileDir != NULL) {
      buff = (char *) malloc(strlen(config->logFileDir)+9+1); /* 9 for htick.log */
      strcpy(buff, config->logFileDir),
      strcat(buff, "htick.log");
      if (config->loglevels==NULL)
-        log = openLog(buff, versionStr, "123456789");
+        htick_log = openLog(buff, versionStr, "123456789");
        else
-        log = openLog(buff, versionStr, config->loglevels);
+        htick_log = openLog(buff, versionStr, config->loglevels);
 
      free(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
-   if (log==NULL) printf("Could not open logfile: %s\n", buff);
-   writeLogEntry(log, '1', "Start");
+   if (htick_log==NULL) printf("Could not open logfile: %s\n", buff);
+   writeLogEntry(htick_log, '1', "Start");
 
    if (config->addrCount == 0) printf("at least one addr must be defined\n");
    if (config->linkCount == 0) printf("at least one link must be specified\n");
@@ -129,9 +129,9 @@ void processConfig()
        config->linkCount == 0 ||
        config->fileAreaBaseDir == NULL) {
       if (config->lockfile != NULL) remove(config->lockfile);
-      writeLogEntry(log, '9', "wrong config file");
-      writeLogEntry(log, '1', "End");
-      closeLog(log);
+      writeLogEntry(htick_log, '9', "wrong config file");
+      writeLogEntry(htick_log, '1', "End");
+      closeLog(htick_log);
       disposeConfig(config);
       exit(1);
    }
@@ -152,9 +152,9 @@ int main(int argc, char **argv)
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
-      writeLogEntry(log, '9', "MsgApiOpen Error");
+      writeLogEntry(htick_log, '9', "MsgApiOpen Error");
           if (config->lockfile != NULL) remove(config->lockfile);
-      closeLog(log);
+      closeLog(htick_log);
       disposeConfig(config);
       exit(1);
    } /*endif */
@@ -166,8 +166,8 @@ int main(int argc, char **argv)
    MsgCloseApi();
 
 //   if (config->lockfile != NULL) remove(config->lockfile);
-   writeLogEntry(log, '1', "End");
-   closeLog(log);
+   writeLogEntry(htick_log, '1', "End");
+   closeLog(htick_log);
    disposeConfig(config);
    return 0;
 }

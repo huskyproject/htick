@@ -141,7 +141,7 @@ void scanNMArea(void)
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
-      writeLogEntry(log, '1', "Scanning NetmailArea");
+      writeLogEntry(htick_log, '1', "Scanning NetmailArea");
 
       // scan all Messages for filefix
       for (i=1; i<= highMsg; i++) {
@@ -179,7 +179,7 @@ void scanNMArea(void)
 
       MsgCloseArea(netmail);
    } else {
-      writeLogEntry(log, '9', "Could not open NetmailArea");
+      writeLogEntry(htick_log, '9', "Could not open NetmailArea");
    } /* endif */
 }
 

@@ -217,7 +217,7 @@ char *list(s_message *msg, s_link *link) {
 	strcat(report, addline);
 
 	sprintf(addline,"filefix: list sent to %s",link->name);
-	writeLogEntry(log, '8', addline);
+	writeLogEntry(htick_log, '8', addline);
 
 	return report;
 }
@@ -250,7 +250,7 @@ char *help(s_link *link) {
 		fclose(f);
 
 		sprintf(addline,"filefix: help sent to %s",link->name);
-		writeLogEntry(log, '8', addline);
+		writeLogEntry(htick_log, '8', addline);
 
 		return help;
 	}
@@ -284,7 +284,7 @@ char *available(s_link *link) {
                 fclose(f);                                                      
                                                                                 
                 sprintf(addline,"areafix: Available Area List sent to %s",link->name);                                                                          
-                writeLogEntry(log, '8', addline);                               
+                writeLogEntry(htick_log, '8', addline);                               
                                    
                 return avail;                                                   
         }                                                                       
@@ -411,7 +411,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                         area->downlinkCount++;
                         sprintf(addline,"area %s subscribed\r",area->areaName);
                         sprintf(logmsg,"filefix: %s subscribed to %s",link->name,area->areaName);
-                        writeLogEntry(log, '8', logmsg);
+                        writeLogEntry(htick_log, '8', logmsg);
                         break;
 		default: continue;
                 }
@@ -465,7 +465,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			removelink(link, area);
 			sprintf(addline,"area %s unsubscribed\r",area->areaName);
 			sprintf(logmsg,"filefix: %s unsubscribed from %s",link->name,area->areaName);
-			writeLogEntry(log, '8', logmsg);
+			writeLogEntry(htick_log, '8', logmsg);
 			break;
 		default: continue;
 		}
@@ -596,7 +596,7 @@ int processFileFix(s_message *msg)
 	writeNetmail(msg);
 
 	sprintf(logmsg,"filefix: sucessfully done for %s",link->name);
-	writeLogEntry(log, '8', logmsg);
+	writeLogEntry(htick_log, '8', logmsg);
 	
 	free(tmp);
 	return 0;

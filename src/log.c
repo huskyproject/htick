@@ -59,97 +59,97 @@ s_log *openLog(char *fileName, char *appN, char *keys)
    return temp;
 }
 
-void closeLog(s_log *log)
+void closeLog(s_log *htick_log)
 {
-   if (log != NULL) {
-      if (log->open != 0) {
-         if (log->firstLinePrinted)
-            fprintf(log->logFile, "\n");
-         fclose(log->logFile);
-         log->open = 0;
+   if (htick_log != NULL) {
+      if (htick_log->open != 0) {
+         if (htick_log->firstLinePrinted)
+            fprintf(htick_log->logFile, "\n");
+         fclose(htick_log->logFile);
+         htick_log->open = 0;
       } /* endif */
-      free(log->appName);
-      free(log->keysAllowed);
-      free(log);
-      log = NULL;
+      free(htick_log->appName);
+      free(htick_log->keysAllowed);
+      free(htick_log);
+      htick_log = NULL;
    }
 }
 
-void writeLogEntry(s_log *log, char key, char *logString)
+void writeLogEntry(s_log *htick_log, char key, char *logString)
 {
    time_t     currentTime;
    struct tm  *locTime;
 
-   if (NULL != log) {
-     if (0 != log->open && NULL != strchr(log->keysAllowed, key)) 
+   if (NULL != htick_log) {
+     if (0 != htick_log->open && NULL != strchr(htick_log->keysAllowed, key)) 
         {
-        if (!log->firstLinePrinted)
+        if (!htick_log->firstLinePrinted)
            {
            /* make first line of log */
-           fprintf(log->logFile, "----------  ");
+           fprintf(htick_log->logFile, "----------  ");
 
            currentTime = time(NULL);
            locTime = localtime(&currentTime);
            switch (locTime->tm_wday) {
-           case 0: fprintf(log->logFile, "Sun");
+           case 0: fprintf(htick_log->logFile, "Sun");
               break;
-           case 1: fprintf(log->logFile, "Mon");
+           case 1: fprintf(htick_log->logFile, "Mon");
               break;
-           case 2: fprintf(log->logFile, "Tue");
+           case 2: fprintf(htick_log->logFile, "Tue");
               break;
-           case 3: fprintf(log->logFile, "Wed");
+           case 3: fprintf(htick_log->logFile, "Wed");
               break;
-           case 4: fprintf(log->logFile, "Thu");
+           case 4: fprintf(htick_log->logFile, "Thu");
               break;
-           case 5: fprintf(log->logFile, "Fri");
+           case 5: fprintf(htick_log->logFile, "Fri");
               break;
-           case 6: fprintf(log->logFile, "Sat");
+           case 6: fprintf(htick_log->logFile, "Sat");
               break;
            default:
              break;
            } /* endswitch */
 
-           fprintf(log->logFile, " %2u ", locTime->tm_mday);
+           fprintf(htick_log->logFile, " %2u ", locTime->tm_mday);
 
            switch (locTime->tm_mon) {
-           case 0: fprintf(log->logFile, "Jan");
+           case 0: fprintf(htick_log->logFile, "Jan");
               break;
-           case 1: fprintf(log->logFile, "Feb");
+           case 1: fprintf(htick_log->logFile, "Feb");
               break;
-           case 2: fprintf(log->logFile, "Mar");
+           case 2: fprintf(htick_log->logFile, "Mar");
               break;
-           case 3: fprintf(log->logFile, "Apr");
+           case 3: fprintf(htick_log->logFile, "Apr");
               break;
-           case 4: fprintf(log->logFile, "May");
+           case 4: fprintf(htick_log->logFile, "May");
               break;
-           case 5: fprintf(log->logFile, "Jun");
+           case 5: fprintf(htick_log->logFile, "Jun");
               break;
-           case 6: fprintf(log->logFile, "Jul");
+           case 6: fprintf(htick_log->logFile, "Jul");
               break;
-           case 7: fprintf(log->logFile, "Aug");
+           case 7: fprintf(htick_log->logFile, "Aug");
               break;
-           case 8: fprintf(log->logFile, "Sep");
+           case 8: fprintf(htick_log->logFile, "Sep");
               break;
-           case 9: fprintf(log->logFile, "Oct");
+           case 9: fprintf(htick_log->logFile, "Oct");
               break;
-           case 10: fprintf(log->logFile, "Nov");
+           case 10: fprintf(htick_log->logFile, "Nov");
               break;
-           case 11: fprintf(log->logFile, "Dec");
+           case 11: fprintf(htick_log->logFile, "Dec");
               break;
            default:
              break;
            } /* endswitch */
 
-           fprintf(log->logFile, " %02u, %s\n", locTime->tm_year % 100,
-                   log->appName);
+           fprintf(htick_log->logFile, " %02u, %s\n", locTime->tm_year % 100,
+                   htick_log->appName);
 
-           log->firstLinePrinted=1;
+           htick_log->firstLinePrinted=1;
            }
 
         currentTime = time(NULL);
         locTime = localtime(&currentTime);
-        fprintf(log->logFile, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
-        fflush(log->logFile);
+        fprintf(htick_log->logFile, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
+        fflush(htick_log->logFile);
      } /* endif */
    } /* endif */
 }
