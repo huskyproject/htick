@@ -102,12 +102,6 @@ void writeNetmail(s_message *msg, char *areaName)
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
 
       if (msgHandle != NULL) {
-/*
-         if (config->intab != NULL) {
-            recodeToInternalCharset(msg->text);
-            recodeToInternalCharset(msg->subjectLine);
-         }
-*/
          msgHeader = createXMSG(config,msg,NULL,0,NULL);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
@@ -131,48 +125,59 @@ void writeNetmail(s_message *msg, char *areaName)
 
 void writeTic(char *ticfile,s_ticfile *tic)
 {
-   FILE *tichandle;
-   unsigned int i;
+    FILE *tichandle;
+    unsigned int i;
+    s_filearea *filearea = NULL;
 
-   tichandle=fopen(ticfile,"wb");
+    tichandle=fopen(ticfile,"wb");
+    
+    fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
+    fprintf(tichandle,"File %s\r\n",tic->file);
+    fprintf(tichandle,"Area %s\r\n",tic->area);
+    
+    filearea=getFileArea(config,tic->area);
 
-   fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
-   fprintf(tichandle,"File %s\r\n",tic->file);
-   fprintf(tichandle,"Area %s\r\n",tic->area);
-   if (tic->areadesc)
-      fprintf(tichandle,"Areadesc %s\r\n",tic->areadesc);
-
-   for (i=0;i<tic->anzdesc;i++)
-      fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
-
-   for (i=0;i<tic->anzldesc;i++)
-       fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
-
-   if (tic->replaces)
-      fprintf(tichandle,"Replaces %s\r\n",tic->replaces);
-   if (tic->from.zone!=0)
-      fprintf(tichandle,"From %s\r\n",aka2str(tic->from));
-   if (tic->to.zone!=0)
-      fprintf(tichandle,"To %s\r\n",aka2str(tic->to));
-   if (tic->origin.zone!=0)
-      fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
-   if (tic->size!=0)
-      fprintf(tichandle,"Size %u\r\n",tic->size);
-   if (tic->date!=0)
-      fprintf(tichandle,"Date %lu\r\n",tic->date);
-   if (tic->crc!=0)
-      fprintf(tichandle,"Crc %08lX\r\n",tic->crc);
-
-   for (i=0;i<tic->anzpath;i++)
-       fprintf(tichandle,"Path %s\r\n",tic->path[i]);
-
-   for (i=0;i<tic->anzseenby;i++)
-       fprintf(tichandle,"Seenby %s\r\n",aka2str(tic->seenby[i]));
-
-   if (tic->password)
-      fprintf(tichandle,"Pw %s\r\n",tic->password);
-
-     fclose(tichandle);
+    if(!tic->areadesc && filearea && filearea->description)
+    {
+        tic->areadesc = sstrdup(filearea->description);
+        if (config->outtab) {
+            recodeToTransportCharset(tic->areadesc);
+        }
+    }
+    if (tic->areadesc)
+        fprintf(tichandle,"Areadesc %s\r\n",tic->areadesc);
+    
+    for (i=0;i<tic->anzdesc;i++)
+        fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
+    
+    for (i=0;i<tic->anzldesc;i++)
+        fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
+    
+    if (tic->replaces)
+        fprintf(tichandle,"Replaces %s\r\n",tic->replaces);
+    if (tic->from.zone!=0)
+        fprintf(tichandle,"From %s\r\n",aka2str(tic->from));
+    if (tic->to.zone!=0)
+        fprintf(tichandle,"To %s\r\n",aka2str(tic->to));
+    if (tic->origin.zone!=0)
+        fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
+    if (tic->size!=0)
+        fprintf(tichandle,"Size %u\r\n",tic->size);
+    if (tic->date!=0)
+        fprintf(tichandle,"Date %lu\r\n",tic->date);
+    if (tic->crc!=0)
+        fprintf(tichandle,"Crc %08lX\r\n",tic->crc);
+    
+    for (i=0;i<tic->anzpath;i++)
+        fprintf(tichandle,"Path %s\r\n",tic->path[i]);
+    
+    for (i=0;i<tic->anzseenby;i++)
+        fprintf(tichandle,"Seenby %s\r\n",aka2str(tic->seenby[i]));
+    
+    if (tic->password)
+        fprintf(tichandle,"Pw %s\r\n",tic->password);
+    
+    fclose(tichandle);
 }
 
 void disposeTic(s_ticfile *tic)
@@ -843,9 +848,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return(2);
    }
-   if(!tic.areadesc && filearea->description)
-       tic.areadesc = sstrdup(filearea->description);
-
    /* Check CRC Value and reject faulty files depending on noCRC flag */
    if (!filearea->noCRC) {
       crc = filecrc32(ticedfile);
@@ -1115,15 +1117,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	    hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
 	if (hmsg != NULL) {
 
-	    // recode from TransportCharset to internal Charset
-	    if (msg->recode == 0 && config->intab != NULL) {
-		    recodeToInternalCharset((CHAR*)msg->fromUserName);
-		    recodeToInternalCharset((CHAR*)msg->toUserName);
-		    recodeToInternalCharset((CHAR*)msg->subjectLine);
-		    recodeToInternalCharset((CHAR*)msg->text);
-            msg->recode = 1;
-	    }
-
+        
 	    textWithoutArea = msg->text;
 
 	    if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {

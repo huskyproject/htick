@@ -81,10 +81,16 @@ void doSaveTic4Report(s_ticfile *tic)
 
     if (tic->anzldesc>0) {
         for (i=0;i<tic->anzldesc;i++)
+        {
+            if (config->intab != NULL) recodeToInternalCharset(tic->ldesc[i]);
             fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
+        }
     } else {
         for (i=0;i<tic->anzdesc;i++)
+        {
+            if (config->intab != NULL) recodeToInternalCharset(tic->desc[i]);
             fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
+        }
     }
     if (tic->origin.zone!=0)
         fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
