@@ -1259,7 +1259,7 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
           (area->description) ? area->description : "");
       msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
       strcat(msg->text, buff);
-      writeMsgToSysop(msg, config->ReportTo);
+      writeMsgToSysop(msg, config->ReportTo, NULL);
       freeMsgBuffers(msg);
       nfree(msg);
       if (config->echotosslog != NULL) {

@@ -157,6 +157,29 @@ void buildAccessList()
     }
 }
 
+void parseRepMessAttr()
+{
+    UINT i;
+    long attr;
+    ps_anndef RepDef;
+    char* flag = NULL;
+
+    for(i = 0; i < config->ADCount; i++)    
+    {
+        RepDef = &(config->AnnDefs[i]);
+        if(!RepDef->annmessflags)
+            continue;
+        flag = strtok(RepDef->annmessflags, " \t");
+        while(flag)
+        {
+            attr=str2attr(flag);
+            if ( attr != -1L )
+                RepDef->attributes |= attr;
+            flag = strtok(NULL, " \t");
+        }
+    }
+}
+
 /* report generation */
 
 
@@ -278,6 +301,8 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         netmail,
         config->filefixKillReports);
     
+    msg->attributes = pRepDef->attributes;
+
     msg->text = createKludges(  
         config->disableTID,
         netmail ? NULL : pRepDef->annAreaTag, 
@@ -353,9 +378,7 @@ void reportNewFiles()
     s_message *msg = NULL;
     FILE      *echotosslog;
     ps_anndef RepDef;
-    
-    MakeDefaultRepDef();
-    
+  
     for(i = 0; i < config->ADCount; i++)    
     {
         RepDef = &(config->AnnDefs[i]);
@@ -392,7 +415,7 @@ void reportNewFiles()
             xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
             xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r", fileSizeTotal, fileCountTotal);
             
-            writeMsgToSysop(msg, RepDef->annAreaTag);
+            writeMsgToSysop(msg, RepDef->annAreaTag, RepDef->annorigin);
             freeMsgBuffers(msg);
             nfree(msg);
             if (config->echotosslog != NULL) {
@@ -413,6 +436,8 @@ void report()
     if(Report)
     {
         buildAccessList();
+        MakeDefaultRepDef();
+        parseRepMessAttr();
         reportNewFiles();
         freeReportInfo();
     }

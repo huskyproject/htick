@@ -1357,11 +1357,15 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr)
     return 0;
 }
 
-void writeMsgToSysop(s_message *msg, char *areaName)
+void writeMsgToSysop(s_message *msg, char *areaName, char* origin)
 {
    s_area       *echo;
 
-   xstrscat(&(msg->text), " \r--- ", versionStr,"\r * Origin: ", (config->name) ? config->name : "", " (", aka2str(msg->origAddr), ")\r", NULL);
+   xscatprintf(&(msg->text), " \r--- %s\r * Origin: %s (%s)\r", 
+       (config->tearline) ? config->tearline : "",
+       (config->origin) ? config->origin : config->name,
+       aka2str(msg->origAddr));
+
    msg->textLength = strlen(msg->text);
    if (msg->netMail == 1) writeNetmail(msg, areaName);
    else {

@@ -262,3 +262,11 @@ Field ADRTO:    in announce message  (must be present if AnnAreaTag is netmail a
 
 Field ADRFROM:  in announce message
 
+34) Annorigin <string>
+
+Origin in announce message
+
+35) AnnMessFlags <string>
+
+Flags like k/s loc hld ... that will have announce message
+
