@@ -38,10 +38,10 @@
 #endif
 #include <sys/types.h>
 #include <signal.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 #if ((defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__TURBOC__) || defined(__DJGPP__)) || defined(__MINGW32__)
-#  include <sys/stat.h>
 #  include <io.h>
-#  include <fcntl.h>
 #endif
 
 #ifdef OS2
