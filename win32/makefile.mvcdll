@@ -73,7 +73,7 @@ clean:
 	-$(RM) $(RMOPT) *$(_OBJ)
 
 distclean: clean
-	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) *$(_LIB) $(_EXP) $(PROGRAMS)
 	-$(RM) $(RMOPT) $(LIBNAME).html
 
 install: programs doc
