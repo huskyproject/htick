@@ -587,7 +587,6 @@ int readCheck(s_filearea *echo, s_link *link)
    */
 
   int i;
-  int found = 0;
 
   for (i=0; i<echo->downlinkCount; i++)
   {
@@ -599,23 +598,17 @@ int readCheck(s_filearea *echo, s_link *link)
   /* pause */
   if (link->Pause) return 3;
 
-  if (strcmp(echo->group, "\060") != 0)
-  {
-    if (link->numAccessGrp > 0)
-    {
-      for (i = 0; i < link->numAccessGrp; i++)
-	if (strcmp(echo->group, link->AccessGrp[i]) == 0) found = 1;
+    if (strcmp(echo->group,"0")) {
+		if (link->numAccessGrp) {
+			if (config->numPublicGroup) {
+				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
+					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
+					return 1;
+			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
+		} else if (config->numPublicGroup) {
+			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
+		} else return 1;
     }
-
-    if (config->numPublicGroup > 0)
-    {
-      for (i = 0; i < config->numPublicGroup; i++)
-	if (strcmp(echo->group, config->PublicGroup[i]) == 0) found = 1;
-    }
-  }
-  else found = 1;
-
-  if (found == 0) return 1;
 
   if (echo->levelread > link->level) return 2;
 
@@ -1017,7 +1010,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
       time(&acttime);
       strcpy(timestr,asctime(gmtime(&acttime)));
       timestr[strlen(timestr)-1]=0;
-      if (timestr[8]==' ') timestr[8]='0';
 
       sprintf(hlp,"%s %lu %s UTC %s",
               addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
@@ -1062,25 +1054,25 @@ int processTic(char *ticfile, e_tossSecurity sec)
          case 4:
             sprintf(logstr,"Link %s not subscribe to File Area %s",
                     addr2string(&old_from), tic.area);
-            writeLogEntry(htick_log,'9',logstr);
+            writeLogEntry(htick_log,'7',logstr);
 	    break;
          case 3:
             sprintf(logstr,"Not export to link %s, %s",
                     filearea->downlinks[i]->link->name,
                     addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
+            writeLogEntry(htick_log,'7',logstr);
 	    break;
          case 2:
             sprintf(logstr,"Link %s, %s no access level",
             filearea->downlinks[i]->link->name,
             addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
+            writeLogEntry(htick_log,'7',logstr);
 	    break;
          case 1:
             sprintf(logstr,"Link %s, %s no access group",
             filearea->downlinks[i]->link->name,
             addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
+            writeLogEntry(htick_log,'7',logstr);
 	    break;
          }
 
@@ -1090,7 +1082,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         tic.file,
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
+            writeLogEntry(htick_log,'7',logstr);
          } else {
             memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
             memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
