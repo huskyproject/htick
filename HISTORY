@@ -1,6 +1,5 @@
 HTICK 1.4-stable
-
-This file describe changes between htick-1.0-stable and htick-1.4-stable
+Changes between htick-1.0-stable and htick-1.4-stable
 
 1. MAJOR feature improvements:
    - configurable announces about received files;
@@ -44,10 +43,63 @@ This file describe changes between htick-1.0-stable and htick-1.4-stable
    - delNotRecievedTIC renamed to delNotReceivedTIC (spelling fix)
 
 3. IMPORTANT bugfixes:
+   - fix forward subscribe;
+   - fix CR-LF for autocreated "echoarea" lines;
    - fixed bug with missed files in report;
    - recode filearea descriptions;
    - save modification time for files in fileechoes;
    - set 'Loc' flag on messages from FileFix.
+
+
+
+HTICK 1.0-stable (started 25.06.2002)
+
+This file describe changes between htick-0.9 and htick-1.0
+
+1. MAJOR feature improvements:
+   - amiga style outbound suppurt;
+   - cygwin port;
+   - build htick/win32 with dlls (MS Visual C/C++);
+   - new command line option: -q (quiet mode);
+   - new log messages: 0-9A-D - user-level, E-Z - debug-level;
+   - do filefix	before toss;
+   - fileboxes support;
+   - filefix from command line
+   - use hardlinks if posible (unixes, NT);
+   - Debuan Linux package;
+   - man pages install & uninstall;
+   - statistics generator (perl script);
+   - forward requests to uplink;
+   - '%avail' filefix command;
+   - pause fileechoes only;
+   - filelist building.
+
+2. CONFIG changes:
+   - FileFixFSC87Subset : ignore unknown keywords in tic-file
+   - FileForwardRequest :
+   - RemoteFileRobotName (in link definition) : Name of remote file (tic) robot
+     (need for FileForwardRequest);
+   - FileDescName : file with archive description (usually file_id.diz);
+   - FileAreaDefaults : default parameters for autocreate filearea;
+   - BBSArea : BBS files directory (for file list building);
+   - FileEchoFlavour (in link definition) : set outbound flavor for fileecho
+     files (Imm, Crash, Direct, Hold, Normal);
+   - filearea option '-nodiz' : do not try to get description from
+     <fileDescName>;
+   - syntax of token 'SaveTic' expanded;
+   - new token for link  "LinkFileFaseDir" : Where autocreated file echos
+     will be placed (may be "passthrough");
+   - pause statement syntax expanded;
+
+3. IMPORTANT bugfixes:
+   - don't toss .tic with HIDDEN attribute set (non-unix version)
+   - fixed inbound file searching according to fsc
+   - fix memory fault if charset tables not defined in config;
+   - fix problem with autocreating;
+   - fix hatching from fileechodir: don't delete file;
+   - areadesc set into TIC at 'htick hatch';
+   - set 'Loc' flag on messages from FileFix.
+   - add own seen-by when hatch.
 
 
 $Id$
