@@ -1,3 +1,8 @@
+2002-04-30 Tuesday 14:11  mche
+
+	* src/hatch.c (1.46), src/toss.c (1.144), h/fcommon.h (1.15):
+	fixed-length strings removed
+
 2002-04-26 Friday 17:18  mche
 
 	* src/: areafix.c (1.54), toss.c (1.143): fillCmdStatement moved to
