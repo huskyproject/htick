@@ -48,10 +48,10 @@ char *print_ch(int len, char ch)
 
 const int VER_MAJOR   = 1;
 const int VER_MINOR   = 0;
-const int VER_PATCH   = 2;
+const int VER_PATCH   = 4;
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
-const char *VER_BRANCH  = "-stable";
+const char *VER_BRANCH  = "-release";
 
 /* The service version string is empty for the first release done from a    */
 /* release candidate branch.  If subsequent service releases are necessary, */
