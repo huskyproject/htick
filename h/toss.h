@@ -47,6 +47,7 @@ enum TIC_state {
 };
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
+void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea);
 void disposeTic(s_ticfile *tic);
 int writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
