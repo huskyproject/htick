@@ -330,11 +330,15 @@ int processFileFix(s_message *msg)
 	/*  find link */
 	link=getLinkFromAddr(config, msg->origAddr);
 
+	w_log(LL_AREAFIX, "FileFix: request from %s", aka2str(link->hisAka));
+	
 	/*  this is for me? */
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
 	
 	/*  ignore msg for other link (maybe this is transit...) */
 	if (notforme) {
+		w_log(LL_AREAFIX, "Destination address (%s) of the message belongs to set of our addresses but differs from ourAka setting for link",
+			  aka2str(msg->destAddr));
 		return 2;
 	}
 
@@ -447,7 +451,7 @@ int processFileFix(s_message *msg)
 		RetMsg(msg, link, report, "Filefix reply: node change request");
 	}
 
-	w_log( '8', "FileFix: sucessfully done for %s",aka2str(link->hisAka));
+	w_log( '8', "FileFix: successfully done for %s",aka2str(link->hisAka));
     /*  send msg to the links (forward requests to areafix) */
     sendAreafixMessages();
 	return 1;
