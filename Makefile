@@ -31,19 +31,19 @@ htick$(EXE): $(OBJS)
 	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS) $(LIBS)
 
 clean:
-	-$(RM) *$(OBJ)
-	-$(RM) *~
-	-$(RM) core
-	-$(RM) htick$(EXE)
+	-$(RM) $(RMOPT) *$(OBJ)
+	-$(RM) $(RMOPT) *~
+	-$(RM) $(RMOPT) core
+	-$(RM) $(RMOPT) htick$(EXE)
 
 distclean: clean
-	-$(RM) htick$(EXE)
-	-$(RM) *.1.gz
-	-$(RM) *.log
+	-$(RM) $(RMOPT) htick$(EXE)
+	-$(RM) $(RMOPT) *.1.gz
+	-$(RM) $(RMOPT) *.log
 
 install: htick$(EXE)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(BINDIR)
 
 uninstall:
-	$(RM) $(BINDIR)$(DIRSEP)htick$(EXE)
+	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)htick$(EXE)
 
