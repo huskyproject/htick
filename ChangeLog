@@ -1,3 +1,7 @@
+2002-07-29 Monday 10:54  mche
+
+	* src/toss.c (1.201): fix OS/2 compilation
+
 2002-07-26 Friday 16:27  mche
 
 	* src/areafix.c (1.79): fix know hpt areafix bugs
