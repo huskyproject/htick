@@ -161,9 +161,6 @@ void processConfig()
    unsigned long pid;
    
    FILE *f;
-   char pass_area[13];
-
-   sprintf(pass_area,"Passthrough%c",PATH_DELIM);
 
    config = readConfig();
    if (NULL == config) {
@@ -216,8 +213,6 @@ void processConfig()
    if (config->addrCount == 0) printf("at least one addr must be defined\n");
    if (config->linkCount == 0) printf("at least one link must be specified\n");
    if (config->fileAreaBaseDir == NULL) printf("you must set FileAreaBaseDir in fidoconfig first\n");
-   if (stricmp(config->fileAreaBaseDir,pass_area) == 0) 
-      config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=0;
    if (config->passFileAreaDir == NULL) printf("you must set PassFileAreaDir in fidoconfig first\n");
    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
        printf("parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
