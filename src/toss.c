@@ -935,21 +935,21 @@ int processTic(char *ticfile, e_tossSecurity sec)
       sprintf(logstr,"Not import from link %s, %s",
               from_link->name,
               addr2string(&from_link->hisAka));
-      writeLogEntry(htick_log,'6',logstr);
+      writeLogEntry(htick_log,'9',logstr);
       disposeTic(&tic);
       return(3);
    case 2:
       sprintf(logstr,"Link %s, %s no access level",
       from_link->name,
       addr2string(&from_link->hisAka));
-      writeLogEntry(htick_log,'6',logstr);
+      writeLogEntry(htick_log,'9',logstr);
       disposeTic(&tic);
       return(3);
    case 1:
       sprintf(logstr,"Link %s, %s no access group",
       from_link->name,
       addr2string(&from_link->hisAka));
-      writeLogEntry(htick_log,'6',logstr);
+      writeLogEntry(htick_log,'9',logstr);
       disposeTic(&tic);
       return(3);
    }
@@ -1203,57 +1203,56 @@ int processTic(char *ticfile, e_tossSecurity sec)
    return(0);
 }
 
-void processDir(char *directory, e_tossSecurity sec)                     
-{                                                                        
-   DIR            *dir;                                                  
-   struct dirent  *file;                                                 
-   char           *dummy;                                                
-   int            rc;  
-   int            ticFile;                                               
-                   
-   if (directory==NULL) return;                                          
-                                                                         
-   dir = opendir(directory);                                             
-                                                                         
-   while ((file = readdir(dir)) != NULL) {                               
-#ifdef DEBUG_HPT                                                         
-      printf("testing %s\n", file->d_name);                              
-#endif                                                                   
-                                                                         
-      ticFile = 0;                                             
-                                                                         
-      dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1); 
-      strcpy(dummy, directory);                                          
-      strcat(dummy, file->d_name);                              
-                                                                
-      if (patimat(file->d_name, "*.TIC") == 1)
-         {
+void processDir(char *directory, e_tossSecurity sec)
+{
+   DIR            *dir;
+   struct dirent  *file;
+   char           *dummy;
+   int            rc;
+   int            ticFile;
+
+   if (directory==NULL) return;
+
+   dir = opendir(directory);
+
+   while ((file = readdir(dir)) != NULL) {
+#ifdef DEBUG_HPT
+      printf("testing %s\n", file->d_name);
+#endif
+
+      ticFile = 0;
+
+      dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+      strcpy(dummy, directory);
+      strcat(dummy, file->d_name);
+
+      if (patimat(file->d_name, "*.TIC") == 1) {
          rc=processTic(dummy,sec);
-                                                                
-         switch (rc) {                                          
+
+         switch (rc) {
             case 1:  /* pktpwd problem */
-               changeFileSuffix(dummy, "sec");                  
-               break;                                           
+               changeFileSuffix(dummy, "sec");
+               break;
             case 2:  /* could not open file */
-               changeFileSuffix(dummy, "acs");                  
-               break;                                           
+               changeFileSuffix(dummy, "acs");
+               break;
             case 3:  /* not/wrong pkt */
-               changeFileSuffix(dummy, "bad");                  
-               break;         
+               changeFileSuffix(dummy, "bad");
+               break;
             case 4:  /* not to us */
-               changeFileSuffix(dummy, "ntu");       
-               break;                                
+               changeFileSuffix(dummy, "ntu");
+               break;
             case 5:  /* file not recieved */
-               break;                                
-            default:                                 
-               remove (dummy);                       
-               break;                                
-         }       
-         }                                          
-      free(dummy);                                   
-   }                                                 
-   closedir(dir);                                    
-}                                                    
+               break;
+            default:
+               remove (dummy);
+               break;
+         } /* switch */
+      } /* if */
+      free(dummy);
+   } /* while */
+   closedir(dir);
+}
 
 void checkTmpDir(s_link link,char ***filesInTic,unsigned int *filesCount)
 {
