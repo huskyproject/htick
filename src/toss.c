@@ -868,14 +868,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
 
-   crc = filecrc32(ticedfile);
-   if (tic.crc != crc) {
-      sprintf(logstr,"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
-      writeLogEntry(htick_log,'9',logstr);
-      disposeTic(&tic);
-      return(3);
-   }
-
    filearea=getFileArea(config,tic.area);
 
    if (filearea==NULL && from_link->autoFileCreate) {
@@ -897,6 +889,18 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(2);
    } 
 
+   /* Check CRC Value and reject faulty files depending on noCRC flag */
+
+   if (!filearea->noCRC) {
+     crc = filecrc32(ticedfile);
+     if (tic.crc != crc) {
+        sprintf(logstr,"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
+        writeLogEntry(htick_log,'9',logstr);
+        disposeTic(&tic);
+        return(3);
+     }
+   }
+   
    writeAccess = writeCheck(filearea,&tic.from);
 
    switch (writeAccess) {
@@ -1106,13 +1110,20 @@ int processTic(char *ticfile, e_tossSecurity sec)
                free(sepDir);
             }
 
-            newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-            writeTic(newticfile,&tic);   
+	    /* Don't create TICs for everybody */
+	    if (!filearea->downlinks[i]->link->noTIC) {
+              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+              writeTic(newticfile,&tic);   
+	    } 
+	    else newticfile = NULL;
 
             if (!busy) {
                flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
                fprintf(flohandle,"%s\n",newticedfile);
-               fprintf(flohandle,"^%s\n",newticfile);
+	       
+	       if (newticfile != NULL)
+                 fprintf(flohandle,"^%s\n",newticfile);
+	       
                fclose(flohandle);
 
                remove(filearea->downlinks[i]->link->bsyFile);
