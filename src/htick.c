@@ -57,6 +57,7 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
+#include <fidoconf/log.h>
 
 #include <smapi/progprot.h>
 #include <htick.h>
@@ -102,7 +103,8 @@ int processCommandLine(int argc, char **argv)
 " clean                   Clean passthrough dir\n"
 "\n"
 "Not all features are implemented yet, you are welcome to implement them :)\n"
-);
+            );
+      return 0;
   }
 
    while (i < argc-1) {
@@ -120,7 +122,7 @@ int processCommandLine(int argc, char **argv)
          }
          cmHatch = 1;
          i++;
-         strcpy(hatchfile, argv[i++]);
+         strcpy(hatchfile, (argv[i]!=NULL)?argv[i++]:"");
          // Check filename for 8.3, warn if not
          basename = strrchr(hatchfile, PATH_DELIM);
          if (basename==NULL) basename = hatchfile; else basename++;
@@ -129,7 +131,7 @@ int processCommandLine(int argc, char **argv)
          if (extdelim - basename > 8 || strlen(extdelim) > 4) {
             printf("Warning: hatching file with non-8.3 name!\n");
          }
-         strcpy(hatcharea, argv[i++]);
+         strcpy(hatcharea, (argv[i]!=NULL)?argv[i++]:"");
          if (i < argc) {
            strcpy(hatchdesc, argv[i]);
 #ifdef __NT__
@@ -142,9 +144,9 @@ int processCommandLine(int argc, char **argv)
       } else if (stricmp(argv[i], "send") == 0) {
          cmSend = 1;
          i++;
-         strcpy(sendfile, argv[i++]);
-         strcpy(sendarea, argv[i++]);
-         strcpy(sendaddr, argv[i]);
+         strcpy(sendfile, (argv[i]!=NULL)?argv[i++]:"");
+         strcpy(sendarea, (argv[i]!=NULL)?argv[i++]:"");
+         strcpy(sendaddr, (argv[i]!=NULL)?argv[i]:"");
          continue;
       } else if (stricmp(argv[i], "replace") == 0) {
          hatchReplace = 1;
@@ -252,14 +254,18 @@ void processConfig()
      buff = (char *) smalloc(strlen(config->logFileDir)+9+1); /* 9 for htick.log */
      strcpy(buff, config->logFileDir),
      strcat(buff, "htick.log");
-     if (config->loglevels==NULL)
+/*     if (config->loglevels==NULL)
         htick_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
        else
-        htick_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
+       htick_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
+*/
+     htick_log = openLog(buff, versionStr, config);
 
-     nfree(buff);
-   } else printf("You have no logFileDir in your config, there will be no log created");
-   if (htick_log==NULL) printf("Could not open logfile: %s\n", buff);
+   } else
+       printf("You have no logFileDir in your config, there will be no log created");
+
+   nfree(buff);
+
    writeLogEntry(htick_log, '1', "Start");
 
    if (config->addrCount == 0) printf("at least one addr must be defined\n");

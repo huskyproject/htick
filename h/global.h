@@ -32,7 +32,7 @@
 #define GLOBAL_H
 
 #include <fidoconf/fidoconf.h>
-#include <log.h>
+#include <fidoconf/log.h>
 
 extern s_log     *htick_log;
 extern s_fidoconfig *config;

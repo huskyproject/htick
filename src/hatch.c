@@ -7,7 +7,7 @@
 #include <global.h>
 #include <fcommon.h>
 #include <toss.h>
-#include <log.h>
+#include <fidoconf/log.h>
 #include <crc32.h>
 #include <fidoconf/common.h>
 #include <add_desc.h>

@@ -6,9 +6,9 @@ else
 include ../huskymak.cfg
 endif
 
-OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
-          scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
-          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
+OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
+          scan$(OBJ) areafix$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
+	  hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
 SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)

@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <filelist.h>
 #include <toss.h>
-#include <log.h>
+#include <fidoconf/log.h>
 #include <global.h>
 #include <string.h>
 #include <fcommon.h>

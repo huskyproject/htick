@@ -42,7 +42,7 @@
 #include <fcommon.h>
 #include <smapi/patmat.h>
 #include <scan.h>
-#include <log.h>
+#include <fidoconf/log.h>
 #include <global.h>
 #include <version.h>
 #include <areafix.h>
