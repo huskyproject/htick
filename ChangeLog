@@ -1,3 +1,11 @@
+2002-04-11 Thursday 16:36  mche
+
+	* src/toss.c (1.139): filebox support reduced
+
+2002-04-11 Thursday 09:22  pavel.gulchouck
+
+	* src/toss.c (1.138): unused variable removed
+
 2002-04-09 Tuesday 18:31  mche
 
 	* src/strsep.c (1.4): no message
