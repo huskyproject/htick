@@ -251,6 +251,70 @@ void disposeTic(s_ticfile *tic)
    nfree(tic->ldesc);
 }
 
+/* Check TIC file validity
+ */
+int checkTic(const char *ticfilename,const s_ticfile *tic)
+{
+  int nRet=0;
+
+  if(!tic->file){
+    w_log(LL_ERR,"File name not presents in TIC %s", ticfilename);
+    nRet++;
+  }
+
+  if(!tic->area){
+    w_log(LL_ERR,"Filearea name not presents in TIC %s", ticfilename);
+    nRet++;
+  }
+
+  if(!tic->crc){
+    w_log(LL_SECURITY,"CRC not presents in TIC %s", ticfilename);
+  }
+
+  if(!tic->size){
+    w_log(LL_ALERT,"File size not presents in TIC %s", ticfilename);
+    nRet++;
+  }
+
+  if(!tic->to.zone && !tic->to.net && !tic->to.node){
+    w_log(LL_ERR,"'To' address not presents in TIC %s", ticfilename);
+    nRet++;
+  }else if(!tic->to.zone || !tic->to.net){
+    w_log(LL_ERR,"'To' address is illegal in TIC %s", ticfilename);
+    nRet++;
+  }
+
+  if(!tic->from.zone && !tic->from.net && !tic->from.node){
+    w_log(LL_ERR,"'From' address not presents in TIC %s", ticfilename);
+    nRet++;
+  }else if(!tic->from.zone || !tic->from.node){
+    w_log(LL_ERR,"'From' address is illegal in TIC %s", ticfilename);
+    nRet++;
+  }
+
+  if(!tic->origin.zone && !tic->origin.net && !tic->origin.node){
+    w_log(LL_ERR,"Originating address not presents in TIC %s", ticfilename);
+    nRet++;
+  }else if(!tic->origin.zone || !tic->origin.node){
+    w_log(LL_ERR,"Originating address is illegal in TIC %s", ticfilename);
+    nRet++;
+  }
+
+  if(!tic->path){
+    w_log(LL_ALERT,"PATH line(s) not presents in TIC %s", ticfilename);
+  }
+
+  if(!tic->seenby){
+    w_log(LL_ALERT,"SEENBY line(s) not presents in TIC %s", ticfilename);
+  }
+
+  if(!tic->password){  /* Mandatory field (FSC-87) */
+    w_log(LL_SECURITY,"PW not presents in TIC %s", ticfilename);
+  }
+
+  return nRet;
+}
+
 /* Read tic-file and store values into 2nd parameter.
  * Return 1 if success and 0 if error
  */
@@ -379,7 +443,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         tic->desc[0] = sstrdup("no desc");
         tic->anzdesc = 1;
     }
-    
+
     return 1;
 }
 
@@ -750,6 +814,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if(!parseTic(ticfile,&tic))
      return TIC_NotOpen;
 
+   if( checkTic(ticfile,&tic) ) return TIC_WrongTIC;
+
    if ( tic.file && strpbrk(tic.file, "/\\:") )
    {
        w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic.file,ticfile);
@@ -1076,6 +1142,7 @@ void checkTmpDir(void)
         if (stricmp(file->d_name+8, ".TIC") == 0) {
             memset(&tic,0,sizeof(tic));
             if(!parseTic(ticfile,&tic)) continue;
+            if( checkTic(ticfile,&tic) ) continue;
             link = getLinkFromAddr(config, tic.to);
             if(!link) continue;
             /*  createFlo doesn't  support ASO!!! */
