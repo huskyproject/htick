@@ -1074,6 +1074,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     
     char *fileechoFileName = NULL;
     char *buff= NULL;
+    char CR;
     s_link *creatingLink;
     s_message *msg;
     s_filearea *area;
@@ -1181,32 +1182,38 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     {
         xscatprintf(&buff," %s",aka2str(*dwLink));
     }
+    
+    /* add new created echo to config in memory */
+    parseLine(buff,config);
+    RebuildFileAreaTree(config);
+
     /*  fix if dummys del \n from the end of file */
-    fseek (f, -1L, SEEK_END);
+    fseek (f, -2L, SEEK_END);
+    CR = getc (f); /*   may be it is CR aka '\r'  */
     if (getc(f) != '\n') {
         fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
         fputs (cfgEol(), f);
     } else {
         fseek (f, 0L, SEEK_END);
     }
-    configlen = ftell(f); /* config file length */
+    configlen = ftell(f); /* config length */
+    
+    /* correct EOL in memory */
+    if(CR == '\r')
+        xstrcat(&buff,"\r\n"); /* DOS EOL */
+    else
+        xstrcat(&buff,"\n");   /* UNIX EOL */
+
     /*  add line to config */
-    if (fprintf(f, "%s%s", buff, cfgEol()) != (int)(strlen(buff)+strlen(cfgEol())) ||
-        fflush(f) != 0) {
-	w_log(LL_ERR, "Error creating filearea %s, config write failed: %s!",
-	      c_area, strerror(errno));
-	fseek(f, configlen, SEEK_SET);
-	setfsize(fileno(f), configlen);
-	fclose(f);
-	nfree(buff);
-	return 1;
+    if ( fprintf(f, "%s", buff) != (int)(strlen(buff)) || fflush(f) != 0) 
+    {
+        w_log(LL_ERR, "Error creating area %s, config write failed: %s!",
+            c_area, strerror(errno));
+        fseek(f, configlen, SEEK_SET);
+        setfsize(fileno(f), configlen);
     }
     fclose(f);
-    
-    /* add new created echo to config in memory */
-    parseLine(buff,config);
     nfree(buff);
-    RebuildFileAreaTree(config);
 
     w_log( '8', "FileArea '%s' autocreated by %s", c_area, aka2str(*pktOrigAddr));
     
