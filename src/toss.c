@@ -504,7 +504,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        if (!filearea->sendorig) {
            if( fexist(filename) ){
               if (move_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
+               w_log( LL_ERROR,"File %s not moveable to %s: %s",
+                      filename, newticedfile, strerror(errno) );
                 return(2);
               } else {
                 w_log('6',"Moved %s to %s",filename,newticedfile);
@@ -514,7 +515,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        } else {
            if( fexist(filename) ){
              if (copy_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
+               w_log( LL_ERROR,"File %s not moveable to %s: %s",
+                      filename, newticedfile, strerror(errno) );
                return(2);
              } else {
                w_log('6',"Put %s to %s",filename,newticedfile);
@@ -525,7 +527,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
            strcat(newticedfile,MakeProperCase(tic->file));
            if( fexist(filename) ){
              if (move_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
+               w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                      filename, newticedfile, strerror(errno) );
                return(2);
              } else {
                w_log('6',"Moved %s to %s",filename,newticedfile);
@@ -536,7 +539,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    } else if (strcasecmp(filename,newticedfile) != 0){
        if( fexist(filename) ){
          if (copy_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
-               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
+               w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                      filename, newticedfile, strerror(errno) );
            return(2);
          } else {
              w_log('6',"Put %s to %s",filename,newticedfile);
@@ -1098,7 +1102,8 @@ void checkTmpDir(void)
                   if( !fexist(ticfile) )
                      w_log(LL_ERROR,"File %s not found",ticfile);
                   else if (move_file(ticfile,newticfile,1)!=0) { /* overwrite existing file if not same */
-                     w_log(LL_ERROR,"File %s not moveable to %s", ticfile, newticfile);
+                     w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                            ticfile, newticfile, strerror(errno) );
                      error = 1;
                   }
                } else remove(ticfile);
