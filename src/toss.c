@@ -998,7 +998,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    filearea=getFileArea(config,tic.area);
 
    if (filearea==NULL && from_link->autoFileCreate) {
-      autoCreate(tic.area,tic.from,tic.areadesc);
+      autoCreate(tic.area,tic.areadesc,&(tic.from),NULL);
       filearea=getFileArea(config,tic.area);
    }
 

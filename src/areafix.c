@@ -57,6 +57,8 @@
 
 unsigned char RetFix;
 
+char *hpt_stristr(char *str, char *find);
+
 char *errorRQ(char *line)
 {
    char *report = NULL, err[] = "Error line";
@@ -427,8 +429,99 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     return 0;
 }
 
+// subscribe if (act==0),  unsubscribe if (act==1)
+int forwardRequestToLink( char *areatag,  char *descr,
+                          s_link *uplink, s_link *dwlink,
+                          int act)
+{
+    s_message *msg;
+    char *base, pass[]="passthrough";
+    
+    if (uplink->msg == NULL) {
+        msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, 
+            uplink->RemoteRobotName ? uplink->RemoteRobotName : "filefix",
+            uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
+            config->filefixKillReports);
+        msg->text = createKludges(config->disableTID,NULL, 
+            uplink->ourAka, &(uplink->hisAka),
+            versionStr);
+        uplink->msg = msg;
+    } else msg = uplink->msg;
+    
+    if (act==0) {
+        if (getFileArea(config, areatag) == NULL) {
+            base = uplink->fileBaseDir;
+            if (config->createFwdNonPass == 0) uplink->fileBaseDir = pass;
+            // create from own address
+            if (isOurAka(config,dwlink->hisAka)) {
+                uplink->msgBaseDir = base;
+            }
+            autoCreate(areatag, descr, &(uplink->hisAka), &(dwlink->hisAka));
+            uplink->msgBaseDir = base;
+        }
+        xstrscat(&msg->text, "+", areatag, "\r", NULL);
+    } else  {
+        xscatprintf(&(msg->text), "-%s\r", areatag);
+    }
+    return 0;
+}
+
+
+static int compare_links_priority(const void *a, const void *b) {
+    int ia = *((int*)a);
+    int ib = *((int*)b);
+    if(config->links[ia].forwardFilePriority < config->links[ib].forwardFilePriority) return -1;
+    else if(config->links[ia].forwardFilePriority > config->links[ib].forwardFilePriority) return 1;
+    else return 0;
+}
+
+int forwardRequest(char *areatag, s_link *dwlink) {
+    unsigned int i, rc = 1;
+    s_link *uplink;
+    int *Indexes;
+    unsigned int Requestable = 0;
+
+    /* From Lev Serebryakov -- sort Links by priority */
+    Indexes = smalloc(sizeof(int)*config->linkCount);
+    for (i = 0; i < config->linkCount; i++) {
+	if (config->links[i].forwardFileRequests) Indexes[Requestable++] = i;
+    }
+    qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
+    for (i = 0; i < Requestable; i++) {
+	uplink = &(config->links[Indexes[i]]);
+    
+    if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
+        grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1) 
+    {
+        if (uplink->forwardFileRequestFile!=NULL) {
+            char *descr = NULL;
+            // first try to find the areatag in forwardRequestFile
+            if (IsAreaAvailable(areatag,uplink->forwardFileRequestFile,&descr,1))
+            {
+                forwardRequestToLink(areatag,descr,uplink,dwlink,0);
+                rc = 0;
+            }
+            else  
+            { rc = 2; }// found link with freqfile, but there is no areatag
+            nfree(descr);
+        } else {
+            rc = 0;
+        }//(uplink->forwardRequestFile!=NULL) 
+        if (rc==0) { 
+            nfree(Indexes);
+            return rc;
+        }
+        
+    }   // if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
+    }   // for (i = 0; i < Requestable; i++) {
+    // link with "forwardFileRequests on" not found
+    nfree(Indexes);
+    return rc;
+}
+
+
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
-	unsigned int i, c, rc=4;
+	unsigned int i, c, rc=4,found=0;
 	char *line, *report = NULL;
 	s_filearea *area;
 
@@ -471,13 +564,25 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			w_log( '8', "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
 			continue;
 		}
-	}
-	
-	if (!report) {
-	    xscatprintf(&report,"%s Not found\r",line);
-	    w_log( '8', "FileFix: filearea %s is not found",line);
-	}
-	return report;
+        found = 1;
+    }
+    if(rc == 4 && link->denyFRA==0 && !found)
+    {
+        // try to forward request
+        if ((rc=forwardRequest(line, link))==2) {
+            xscatprintf(&report, "%s no uplinks to forward\r", line);
+            w_log( LL_AREAFIX, "Filefix: %s - no uplinks to forward", line);
+        }
+        else if (rc==0) {
+            xscatprintf(&report, "%s request forwarded\r", line);
+            w_log( LL_AREAFIX, "Filefix: %s - request forwarded", line);
+        }
+    }
+    if (!report) {
+        xscatprintf(&report,"%s Not found\r",line);
+        w_log( '8', "FileFix: filearea %s is not found",line);
+    }
+    return report;
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
@@ -765,6 +870,30 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     free(tmpmsg);
 }
 
+void sendFilefixMessages()
+{
+    s_link *link = NULL;
+    s_message *linkmsg;
+    unsigned int i;
+
+    for (i = 0; i < config->linkCount; i++) {
+        if (config->links[i].msg == NULL) continue;
+        link = &(config->links[i]);
+        linkmsg = link->msg;
+        
+        xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
+        linkmsg->textLength = strlen(linkmsg->text);
+        
+        w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
+        
+        writeNetmail(linkmsg, config->robotsArea);
+
+        freeMsgBuffers(linkmsg);
+        nfree(linkmsg);
+        link->msg = NULL;
+    }
+}
+
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
@@ -893,7 +1022,8 @@ int processFileFix(s_message *msg)
 	}
 
 	w_log( '8', "FileFix: sucessfully done for %s",aka2str(link->hisAka));
-	
+    // send msg to the links (forward requests to areafix)
+    sendFilefixMessages();
 	return 1;
 }
 
@@ -922,22 +1052,21 @@ void ffix(s_addr addr, char *cmd)
 
 /* file echo autocreation */
 
-int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
+int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
 {
    FILE *f;
-   char *NewAutoCreate;
-   char *fileName;
+   char *NewAutoCreate = NULL;
+   char *fileName = NULL;
    char *bDir = NULL;
 
    char *fileechoFileName = NULL;
-   char buff[255], myaddr[20], hisaddr[20];
+   char *buff= NULL, hisaddr[20];
    s_link *creatingLink;
-   s_addr *aka;
    s_message *msg;
    s_filearea *area;
    FILE *echotosslog;
 
-   creatingLink = getLinkFromAddr(config, pktOrigAddr);
+   creatingLink = getLinkFromAddr(config, *pktOrigAddr);
 
    fileechoFileName = makeMsgbFileName(config, c_area);
 
@@ -968,13 +1097,15 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
            }
        }
 
-       sprintf(buff,"%s%s",bDir,fileechoFileName);
+       xscatprintf(&buff,"%s%s",bDir,fileechoFileName);
        if (_createDirectoryTree(buff))
        {
            if (!quiet) fprintf(stderr, "cannot make all subdirectories for %s\n",
                    fileechoFileName);
+           nfree(buff);
            return 1;
        }
+       nfree(buff);
    }
 
 
@@ -991,67 +1122,48 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
          }
    }
 
-   aka = creatingLink->ourAka;
-
-   /* making local address and address of uplink */
-   strcpy(myaddr,aka2str(*aka));
-   strcpy(hisaddr,aka2str(pktOrigAddr));
+   /* making address of uplink */
+   strcpy(hisaddr,aka2str(*pktOrigAddr));
 
    /* write new line in config file */
 
-   if (creatingLink->LinkGrp)
+   xscatprintf(&buff, "FileArea %s %s%s -a %s ",
+       c_area, bDir,
+       (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
+       aka2str(*(creatingLink->ourAka))
+       );
+
+   if ( creatingLink->LinkGrp &&
+       !(creatingLink->autoFileCreateDefaults && (hpt_stristr(creatingLink->autoFileCreateDefaults, "-g ")!=NULL))
+       )
    {
-     sprintf(buff, "FileArea %s %s%s -a %s -g %s ",
-	     c_area,  bDir,
-	     (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
-	     myaddr,
-	     creatingLink->LinkGrp);
-   }
-   else
-   {
-     sprintf(buff, "FileArea %s %s%s -a %s ",
-	     c_area, bDir,
-	     (strcasecmp(bDir,"passthrough") == 0) ? "" : fileechoFileName,
-	     myaddr);
+       xscatprintf(&buff,"-g %s ",creatingLink->LinkGrp);
    }
 
    if (creatingLink->autoFileCreateDefaults) {
-      NewAutoCreate=(char *) scalloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));
-      strcpy(NewAutoCreate,creatingLink->autoFileCreateDefaults);
-   } else NewAutoCreate = (char*)scalloc(1, sizeof(char));
-
-   if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
-     if (desc) {
-       char *tmp;
-       tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
-       sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
-       nfree (NewAutoCreate);
-       NewAutoCreate=tmp;
-     }
-   } else {
-     if (desc) {
-       char *tmp;
-       tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
-       fileName[0]='\0';
-       sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
-       fileName++;
-       fileName=strrchr(fileName,'\"')+1; //"
-       strcat(tmp,fileName);
+       NewAutoCreate = sstrdup(creatingLink->autoFileCreateDefaults);
+       if ((fileName=strstr(NewAutoCreate,"-d ")) !=NULL ) {
+           if (descr) {
+               *fileName = '\0';
+               xscatprintf(&buff,"%s-d \"%s\"",NewAutoCreate,descr);
+           } else {
+               xstrcat(&buff, NewAutoCreate);
+           }
+       } else if (descr) {
+           xscatprintf(&buff,"%s-d \"%s\"",NewAutoCreate,descr);
+       }
        nfree(NewAutoCreate);
-       NewAutoCreate=tmp;
-     }
+   }
+   else if (descr) 
+   {
+       xscatprintf(&buff,"-d \"%s\"",descr);
    }
 
-   if ((NewAutoCreate != NULL) && (strlen(buff)+strlen(NewAutoCreate))<255) {
-      strcat(buff, NewAutoCreate);
-   }
-
-   nfree(NewAutoCreate);
-
-   sprintf (buff+strlen(buff)," %s",hisaddr);
-
+   xscatprintf(&buff," %s",hisaddr);
+   
+   if(dwLink) xscatprintf(&buff," %s",aka2str(*dwLink));
+   
    fprintf(f, "%s\n", buff);
-
    fclose(f);
 
    /* add new created echo to config in memory */

@@ -50,8 +50,8 @@
 #endif
 #define ERROR   255
 
-int  processFileFix(s_message *msg);
-void ffix(s_addr addr, char *cmd);
-int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc);
+int   processFileFix(s_message *msg);
+void  ffix(s_addr addr, char *cmd);
+int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink);
 
 #endif
