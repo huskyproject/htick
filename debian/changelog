@@ -1,3 +1,11 @@
+htick (1.0.4-1) stable; urgency=low
+
+  * hpucode 1.0.4 release
+  * New maintainer's E-mail
+  * Debhelper V4
+
+ -- Pavel Andreew <sfpavel@users.sourceforge.net>  Fri, 30 May 2003 14:28:33 +0600
+
 htick (1.0.2-1) stable; urgency=low
 
   * htick 1.0.2 release

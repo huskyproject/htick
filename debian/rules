@@ -8,10 +8,9 @@
 #export DH_VERBOSE=1
 
 # This is the debhelper compatability version to use.
-export DH_COMPAT=3
+export DH_COMPAT=4
 export DEBIAN=1
 export PACKAGE=htick
-export VERSION=1.0
 # Next Line to build debug-versions !
 # export DEB_BUILD_OPTIONS=nostrip
 
