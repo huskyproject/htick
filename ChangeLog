@@ -1,3 +1,20 @@
+2002-01-05 Saturday 13:37  mche
+
+	* win32/makefile.mvcdll (1.1): build htick with dlls
+
+2002-01-05 Saturday 13:36  mche
+
+	* src/areafix.c (1.46): changed external varibles to external
+	functions
+
+2002-01-05 Saturday 12:05  mche
+
+	* src/fcommon.c (1.32): add defenition of getpid for MSVC compiler
+
+2002-01-05 Saturday 12:03  mche
+
+	* h/fcommon.h (1.8): add defenition of truncate for MSVC compiler
+
 2002-01-02 Wednesday 13:17  ml
 
 	* h/log.h (1.7), src/areafix.c (1.45), src/fcommon.c (1.31),
