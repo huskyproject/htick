@@ -84,6 +84,11 @@
 #endif
 #endif
 
+#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
+#include <dos.h>
+#include <process.h>
+#endif
+
 s_newfilereport **newFileReport = NULL;
 unsigned newfilesCount = 0;
 
@@ -518,6 +523,29 @@ char *hpt_stristr(char *str, char *find)
     return ((char *)str);
 }
 
+#ifdef __WATCOMC__
+void *mk_lst(char *a) {
+    char *p=a, *q=a, **list=NULL, end=0, num=0;
+
+    while (*p && !end) {
+	while (*q && !isspace(*q)) q++;
+	if (*q=='\0') end=1;
+	*q ='\0';
+	list = (char **) realloc(list, ++num*sizeof(char*));
+	list[num-1]=(char*)p;
+	if (!end) {
+	    p=q+1;
+	    while(isspace(*p)) p++;
+	}
+	q=p;
+    }
+    list = (char **) realloc(list, (++num)*sizeof(char*));
+    list[num-1]=NULL;
+
+    return list;
+}
+#endif
+
 int parseFileDesc(char *fileName,s_ticfile *tic)
 {
    FILE *filehandle, *dizhandle;
@@ -525,6 +553,9 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
    int  i, j, found;
    signed int cmdexit;
    char cmd[256];
+#ifdef __WATCOMC__
+    const char * const *list;
+#endif
 
     // find what unpacker to use
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
