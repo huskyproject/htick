@@ -1189,6 +1189,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return(2);
    }
+   if(!tic.areadesc && filearea->description)
+       tic.areadesc = sstrdup(filearea->description);
 
    /* Check CRC Value and reject faulty files depending on noCRC flag */
    if (!filearea->noCRC) {
