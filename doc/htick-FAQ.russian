@@ -95,10 +95,11 @@ A: (ML)
     DK - Dmitriy Kazimirow, 2:5004/73
     mk - mihail kapitanov, 2:465/239
     sv - sergei volodchenkov, 2:5030/1197.10
-    aim - andrey i mavlyanov, 2:5030/1159
+    am - andrey i mavlyanov, 2:5030/1159
     SD - Stas Degteff, 2:5080/102
-    PA  - Pavel Andreew, 2:5080/59
-    DP  - Dmitry Pankov, 2:5022/81
+    PA - Pavel Andreew, 2:5080/59
+    DP - Dmitry Pankov, 2:5022/81
+    AS - Alexander N. Skovpen
 
 /------/
 
@@ -262,8 +263,8 @@ smapi/fidoconf  -  latest  от 9.10.2002  то совать туда,  например,  hpt  от
 
 A: (PG)
 
-mingw32 (это который используется при -mno-cygwin) - это просто RTL,
-напоминающая POSIX более, чем msvc, watcom и пр. С ее помощью применение
+mingw32 (он же используется в cygwin gcc с опцией -mno-cygwin) - это просто
+RTL, напоминающая POSIX более, чем msvc, watcom и пр. С ее помощью применение
 напильника обычно может привести к компиляции небольших юниксных утилит под
 windows. В результате получаются полноценные виндовые exe-шники. Сам по себе
 gcc+mingw32 является полнофункциональным компилятором, который можно
@@ -279,6 +280,14 @@ cygwin1.dll. Применяются для той же цели (портирование unix utils), но требуют
 глюков).
 
 Поправьте, если я в чем-то ошибаюсь.
+
+A: (AS)
+
+Поправлю: cygwin1.dll используется, только если используются цигвиновые
+библиотеки, требующие этот файл... У меня скомпилированы:
+fidoconf, hpt, htick, smapi, hpucode, hptsqfix, hptkill, sqpack, emailpkt...
+Из них cygwin1.dll требуется только для emailpkt, так как он использует
+-luser32 и бинарники у mingw и cygwin примерно одного размера.
 
 /------/
 
