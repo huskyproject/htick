@@ -47,7 +47,7 @@ struct newfilereport {
 };
 typedef struct newfilereport s_newfilereport;
 
-void writeMsgToSysop(s_message *msg);
+void writeMsgToSysop(s_message *msg, char *areaName);
 void reportNewFiles(void);
 void disposeTic(s_ticfile *tic);
 void writeTic(char *ticfile,s_ticfile *tic);
@@ -55,7 +55,7 @@ void checkTmpDir(s_link link,char ***filesInTic,unsigned int *filesCount);
 int foundInArray(char **filesInTic, unsigned int filesCount, char *name);
 void processTmpDir(void);
 void toss(void);
-void writeNetmail(s_message *msg);
+void writeNetmail(s_message *msg, char *areaName);
 char *addr2string(s_addr *addr);
 int readCheck(s_filearea *echo, s_link *link);
 

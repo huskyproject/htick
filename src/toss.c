@@ -224,7 +224,7 @@ XMSG createXMSG(s_message *msg)
    return msgHeader;
 }
 
-void writeNetmail(s_message *msg)
+void writeNetmail(s_message *msg, char *areaName)
 {
    HAREA  netmail;
    HMSG   msgHandle;
@@ -233,30 +233,32 @@ void writeNetmail(s_message *msg)
    char   *ctrlBuf;               /* Kludgelines */
    XMSG   msgHeader;
    char *slash;
+   s_area *nmarea;
 #ifdef UNIX
    char limiter = '/';
 #else
    char limiter = '\\';
 #endif
 
+   if ((nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
    /* create Directory Tree if necessary */
-   if (config->netMailAreas[0].msgbType == MSGTYPE_SDM)
-      createDirectoryTree(config->netMailAreas[0].fileName);
+   if (nmarea->msgbType == MSGTYPE_SDM)
+      createDirectoryTree(nmarea->fileName);
    else {
       /* squish area */
-      slash = strrchr(config->netMailAreas[0].fileName, limiter);
+      slash = strrchr(nmarea->fileName, limiter);
       *slash = '\0';
-      createDirectoryTree(config->netMailAreas[0].fileName);
+      createDirectoryTree(nmarea->fileName);
       *slash = limiter;
    }
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_CRIFNEC, config->netMailAreas[0].msgbType);
+   netmail = MsgOpenArea((unsigned char *) nmarea->fileName, MSGAREA_CRIFNEC, nmarea->msgbType);
 
    if (netmail != NULL) {
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
 
       if (msgHandle != NULL) {
-         config->netMailAreas[0].imported = 1; /* area has got new messages */
+         nmarea->imported = 1; /* area has got new messages */
 /*
          if (config->intab != NULL) {
             recodeToInternalCharset(msg->text);
@@ -274,13 +276,13 @@ void writeNetmail(s_message *msg)
          writeLogEntry(htick_log, '6', "Wrote Netmail to: %u:%u/%u.%u",
                  msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
       } else {
-         writeLogEntry(htick_log, '9', "Could not write message to netMailAreas[0]");
+         writeLogEntry(htick_log, '9', "Could not write message to %s", areaName);
       } /* endif */
 
       MsgCloseArea(netmail);
    } else {
 /*     printf("%u\n", msgapierr); */
-      writeLogEntry(htick_log, '9', "Could not open netMailAreas[0]");
+      writeLogEntry(htick_log, '9', "Could not open netmailarea %s", areaName);
    } /* endif */
 }
 
@@ -550,7 +552,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    /* report about new filearea */
    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
-      if (stricmp(config->ReportTo, "netmail")==0) {
+      if (getNetMailArea(config, config->ReportTo) != NULL) {
          msg = makeMessage(area->useAka, area->useAka, versionStr, config->sysop, "Created new fileareas", 1);
          msg->text = (char *)calloc(300, sizeof(char));
          createKludges(msg->text, NULL, area->useAka, area->useAka);
@@ -562,7 +564,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName, area->description);
       msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
       strcat(msg->text, buff);
-      writeMsgToSysop(msg);
+      writeMsgToSysop(msg, config->ReportTo);
       freeMsgBuff(msg);
       free(msg);
       if (config->echotosslog != NULL) {
@@ -1487,21 +1489,18 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
    return rc;
 }
 
-void writeMsgToSysop(s_message *msg)
+void writeMsgToSysop(s_message *msg, char *areaName)
 {
-   char tmp[81], *ptr;
+   char tmp[81];
    s_area	*echo;
 
    sprintf(tmp, " \r--- %s\r * Origin: %s (%s)\r", versionStr, config->name, addr2string(&(msg->origAddr)));
    msg->text = (char*)realloc(msg->text, strlen(tmp)+strlen(msg->text)+1);
    strcat(msg->text, tmp);
    msg->textLength = strlen(msg->text);
-   if (msg->netMail == 1) writeNetmail(msg);
+   if (msg->netMail == 1) writeNetmail(msg, areaName);
    else {
-      ptr = strchr(msg->text, '\r');
-      strncpy(tmp, msg->text+5, (ptr-msg->text)-5);
-      tmp[ptr-msg->text-5]=0;
-      echo = getArea(config, tmp);
+      echo = getArea(config, areaName);
       if (echo != &(config->badArea)) {
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
 	    msg->recode = 1;
@@ -1610,7 +1609,7 @@ void reportNewFiles()
          if (newFileReport[i] != NULL) {
             if (newFileReport[i]->useAka == &(config->addr[c])) {
                if (msg == NULL) {
-                  if (stricmp(annArea, "netmail") == 0) {
+                  if (getNetMailArea(config, annArea) != NULL) {
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, config->sysop, "New Files", 1);
@@ -1683,7 +1682,7 @@ void reportNewFiles()
          } /* endif */
       } /* endfor */
       if (msg) {
-         writeMsgToSysop(msg);
+         writeMsgToSysop(msg, annArea);
          freeMsgBuff(msg);
          free(msg);
       } else {

@@ -1170,7 +1170,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
     tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName, subj, 1);
     preprocText(report, tmpmsg);
     
-    writeNetmail(tmpmsg);
+    writeNetmail(tmpmsg, config->netMailAreas[0].areaName);
     
     freeMsgBuff(tmpmsg);
     free(tmpmsg);
