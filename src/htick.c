@@ -132,10 +132,10 @@ int processHatchParams(int i, int argc, char **argv)
         }
         i++;
     }
-    if( argc-i < 2 || (stricmp(argv[i], "desc") != 0))
-    {
+    if(stricmp(argv[i], "desc") != 0)
         return 1;
-    }
+    else if( argc-i < 2 )
+        return 1;
     i++;
     nfree(hatchInfo->desc[0]);
     hatchInfo->desc[0] = sstrdup( argv[i] );
