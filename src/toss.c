@@ -502,34 +502,51 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    if (isToss == 1) {
        if (!filearea->sendorig) {
-           if (move_file(filename,newticedfile)!=0) {
-               w_log(LL_ERROR,"File %s not found or not moveable",filename);
-               return(2);
-           } else {
-               w_log('6',"Moved %s to %s",filename,newticedfile);
-           }
+           if( fexist(filename) ){
+              unlink(newticedfile);
+              if (move_file(filename,newticedfile)!=0) {
+               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
+                return(2);
+              } else {
+                w_log('6',"Moved %s to %s",filename,newticedfile);
+              }
+           }else
+              w_log(LL_ERROR,"File %s not found",filename);
        } else {
-           if (copy_file(filename,newticedfile)!=0) {
-               w_log(LL_ERROR,"File %s not found or not moveable",filename);
+           if( fexist(filename) ){
+             unlink(newticedfile);
+             if (copy_file(filename,newticedfile)!=0) {
+               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
                return(2);
-           } else {
+             } else {
                w_log('6',"Put %s to %s",filename,newticedfile);
-           }
+             }
+           }else
+              w_log(LL_ERROR,"File %s not found",filename);
            strcpy(newticedfile,config->passFileAreaDir);
            strcat(newticedfile,MakeProperCase(tic->file));
-           if (move_file(filename,newticedfile)!=0) {
-               w_log(LL_ERROR,"File %s not found or not moveable",filename);
+           if( fexist(newticedfile) ){
+             unlink(newticedfile);
+             if (move_file(filename,newticedfile)!=0) {
+               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
                return(2);
-           } else {
+             } else {
                w_log('6',"Moved %s to %s",filename,newticedfile);
-           }
+             }
+           }else
+              w_log(LL_ERROR,"File %s not found",filename);
        }
-   } else if (strcasecmp(filename,newticedfile) != 0 &&
-              copy_file(filename,newticedfile)!=0) {
-       w_log(LL_ERROR,"File %s not found or not moveable",filename);
-       return(2);
-   } else {
-       w_log('6',"Put %s to %s",filename,newticedfile);
+   } else if (strcasecmp(filename,newticedfile) != 0){
+       if( fexist(newticedfile) ){
+         unlink(newticedfile);
+         if (copy_file(filename,newticedfile)!=0) {
+               w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
+           return(2);
+         } else {
+             w_log('6',"Put %s to %s",filename,newticedfile);
+         }
+       }else
+          w_log(LL_ERROR,"File %s not found",filename);
    }
 
    if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz && isToss)
@@ -1029,13 +1046,13 @@ void processDir(char *directory, e_tossSecurity sec)
 void checkTmpDir(void)
 {
     char tmpdir[256], newticedfile[256], newticfile[256];
-    DIR            *dir;
-    struct dirent  *file;
-    char           *ticfile;
-    s_link         *link;
+    DIR            *dir=NULL;
+    struct dirent  *file=NULL;
+    char           *ticfile=NULL;
+    s_link         *link=NULL;
     s_ticfile      tic;
-    s_filearea *filearea;
-    FILE *flohandle;
+    s_filearea *filearea=NULL;
+    FILE *flohandle=NULL;
     int error = 0;
 
    w_log('6',"Checking tmp dir");
@@ -1071,8 +1088,10 @@ void checkTmpDir(void)
                   }
                   _createDirectoryTree(newticfile);
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
-                  if (move_file(ticfile,newticfile)!=0) {
-                     w_log(LL_ERROR,"File %s not found or not moveable",ticfile);
+                  if( !fexist(newticfile) )
+                     w_log(LL_ERROR,"File %s not found",newticfile);
+                  else if (move_file(ticfile,newticfile)!=0) {
+                     w_log(LL_ERROR,"File %s not moveable to %s", ticfile, newticfile);
                      error = 1;
                   }
                } else remove(ticfile);
