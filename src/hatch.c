@@ -42,7 +42,7 @@
 #include <fidoconf/adcase.h>
 #include <fidoconf/xstr.h>
 #include <filecase.h>
-#include "report.h"
+#include <seenby.h>
 
 
 void hatch()
@@ -92,6 +92,8 @@ void hatch()
     tic.size = stbuf.st_size;
     
     tic.origin = tic.from = *filearea->useAka;
+
+    seenbyAdd(&tic.seenby,&tic.anzseenby,filearea->useAka);
     
     if(filearea->description)
     tic.areadesc = sstrdup(filearea->description);
@@ -204,10 +206,12 @@ int send(char *filename, char *area, char *addr)
     tic.anzpath++;
     
     // Adding Downlink to Seen-By
+    /*
     tic.seenby=srealloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
     memcpy(&tic.seenby[tic.anzseenby], &link->hisAka, sizeof(s_addr));
     tic.anzseenby++;
-    
+    */
+    seenbyAdd(&tic.seenby,&tic.anzseenby,&link->hisAka);
     // Forward file to
 
     PutFileOnLink(sendfile, &tic, link);

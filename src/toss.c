@@ -260,10 +260,9 @@ int parseTic(char *ticfile,s_ticfile *tic)
             else if (stricmp(token,"origin")==0) string2addr(param,&tic->origin);
             else if (stricmp(token,"magic")==0);
             else if (stricmp(token,"seenby")==0) {
-               tic->seenby=
-                  srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
-               string2addr(param,&tic->seenby[tic->anzseenby]);
-               tic->anzseenby++;
+               s_addr Aka;
+               string2addr(param,&Aka);
+               seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
             }
             else if (stricmp(token,"path")==0) {
                tic->path=
@@ -700,27 +699,33 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       memcpy(&old_from,&tic->from,sizeof(s_addr));
       memcpy(&old_to,&tic->to,sizeof(s_addr));
    }
-
+   
    for (i=0;i<filearea->downlinkCount;i++) {
-      s_link* downlink = filearea->downlinks[i]->link;
-      if ( addrComp(tic->from,downlink->hisAka)!=0 &&
-           ( (isToss==1 && addrComp(tic->to,downlink->hisAka)!=0) || isToss==0 ) &&
-           addrComp(tic->origin,downlink->hisAka)!=0 &&
-           ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka)!=0) || isToss==0) 
-         ) {
-         // Adding Downlink to Seen-By 
-         tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
-         memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(s_addr));
-         tic->anzseenby++;
-      }
+       s_link* downlink = filearea->downlinks[i]->link;
+       if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
+           (readCheck(filearea, downlink) == 0)
+           )
+       {  // if link is not in seen-by list & 
+           // if link can recive files from filearea
+           // Adding Downlink to Seen-By 
+           /*
+           tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
+           memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(s_addr));
+           tic->anzseenby++;
+           */
+           seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
+       }
    }
+
+   seenbySort(tic->seenby,tic->anzseenby);
 
    /* Checking to whom I shall forward */
    for (i=0;i<filearea->downlinkCount;i++) {
       s_link* downlink = filearea->downlinks[i]->link;
-      if (addrComp(old_from,downlink->hisAka)!=0 &&
-            addrComp(old_to,downlink->hisAka)!=0 &&
-            addrComp(tic->origin,downlink->hisAka)!=0) {
+      if (  addrComp(old_from,downlink->hisAka)   !=0 &&
+            addrComp(old_to,downlink->hisAka)     !=0 &&
+            addrComp(tic->origin,downlink->hisAka)!=0)
+      {
          /* Forward file to */
 
          readAccess = readCheck(filearea, downlink);
