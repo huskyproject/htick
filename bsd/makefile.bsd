@@ -1,7 +1,7 @@
 CC      = gcc
 DEBUG   = 0
 
-OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_desc.o seenby.o recode.o crc32.o hatch.o filelist.o filecase.o
+OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o
 SRC_DIR = ../src/
 
 CFLAGS  = -c -I../h -I../.. -Wall -O3 -s -DUNIX

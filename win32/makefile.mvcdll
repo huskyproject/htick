@@ -11,16 +11,12 @@ SMAPIL=	..\..\smapi\smapimvc.lib
 HTICKL=	htickmvc.lib
 
 OBJS    = global.obj \
-          log.obj \
           toss.obj \
           fcommon.obj \
           scan.obj \
           areafix.obj \
-          strsep.obj \
           add_desc.obj \
           seenby.obj \
-          recode.obj \
-          crc32.obj \
           hatch.obj \
           filelist.obj\
           filecase.obj
