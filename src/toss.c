@@ -1087,7 +1087,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                memcpy(&tic->to,&filearea->downlinks[i]->link->hisAka,
                       sizeof(s_addr));
                if (filearea->downlinks[i]->link->ticPwd!=NULL)
-                  strcpy(tic->password,filearea->downlinks[i]->link->ticPwd);
+                  strncpy(tic->password,filearea->downlinks[i]->link->ticPwd,sizeof(tic->password));
+               else tic->password[0]='\0';
 
                busy = 0;
 
