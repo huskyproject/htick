@@ -97,6 +97,26 @@
 #include "report.h"
 
 /* tic keywords calculated crc */
+#define CRC_CREATED      0xACDA
+#define CRC_FILE         0x9AF9
+#define CRC_AREADESC     0xD824
+#define CRC_DESC         0x717B
+#define CRC_AREA         0x825A
+#define CRC_CRC          0x5487
+#define CRC_REPLACES     0xCE24
+#define CRC_ORIGIN       0xE52A
+#define CRC_FROM         0xFD30
+#define CRC_TO           0x7B50
+#define CRC_PATH         0x5411
+#define CRC_SEENBY       0xF84C
+#define CRC_PW           0x24AD
+#define CRC_SIZE         0x94CE
+#define CRC_DATE         0x54EA
+#define CRC_DESTINATION  0x6F36
+#define CRC_MAGIC        0x7FF4
+#define CRC_LDESC        0xEB38
+
+/*
 #if defined (__sun__)
 
 #define CRC_CREATED      0x11DB
@@ -138,7 +158,7 @@
 #define CRC_DESTINATION 0x6F36
 #define CRC_MAGIC       0x7FF4
 #define CRC_LDESC       0xEB38
- 
+
 #else
 
 #define CRC_CREATED     0x4EC6
@@ -161,7 +181,7 @@
 #define CRC_LDESC       0x5394
 
 #endif
-
+*/
 /* processTic(), sendToLinks() results */
 #define TIC_OK         0
 #define TIC_security   1
@@ -341,16 +361,16 @@ int parseTic(char *ticfile,s_ticfile *tic)
         tichandle = fdopen(fh,"r");
     }
 #endif
-    
+
     if(!tichandle){
         w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
         return 0;
     }
-    
+
     while ((line = readLine(tichandle)) != NULL) {
         line = trimLine(line);
-        
-        if (*line==0 || *line==10 || *line==13 || *line==';' || *line=='#') 
+
+        if (*line==0 || *line==10 || *line==13 || *line==';' || *line=='#')
             continue;
 
         if (config->MaxTicLineLength) {
@@ -363,7 +383,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         if (token) {
             key = strcrc16(strUpper(token), 0);
             /* calculate crc16 of tic                                   */
-            /* w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);*/
+            w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);/**/
             param=stripLeadingChars(strtok(NULL, "\0"), "\t");
             if(!param)
             {
@@ -434,7 +454,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         if (config->MaxTicLineLength) nfree(linecut);
         nfree(line);
     } /* endwhile */
-    
+
     fclose(tichandle);
 
     if (!tic->anzdesc) {
@@ -442,7 +462,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         tic->desc[0] = sstrdup("no desc");
         tic->anzdesc = 1;
     }
-    
+
     return 1;
 }
 
@@ -600,7 +620,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     char *comm;
     char *p;
     unsigned int minLinkCount;
-    
+
     if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
     else minLinkCount = 1;             /*  only downlink */
 
@@ -609,21 +629,21 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         w_log(LL_ERROR,"File %s not found",filename);
         return TIC_NotRecvd;
     }
-    
+
     if (!filearea->pass)
         strcpy(fileareapath,filearea->pathName);
     else
         strcpy(fileareapath,config->passFileAreaDir);
     p = strrchr(fileareapath,PATH_DELIM);
     if(p) strLower(p+1);
-    
+
     _createDirectoryTree(fileareapath);
-    
+
     if (isToss == 1 && tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
         /* Delete old file[s] */
         int num_files;
         char *repl;
-        
+
         repl = strrchr(tic->replaces,PATH_DELIM);
         if (repl==NULL) repl = tic->replaces;
         else repl++;
@@ -632,16 +652,16 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             w_log(LL_DEL,"Removed %d file[s]. Filemask: %s",num_files,repl);
         }
     }
-    
-    
+
+
     strcpy(newticedfile,fileareapath);
     strcat(newticedfile,MakeProperCase(tic->file));
-    
+
     if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
         w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
         return(3);
     }
-    
+
     if (isToss == 1) {
         if (!filearea->sendorig) {
             /* overwrite existing file if not same */
@@ -654,7 +674,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             }
         } else {
             /* overwrite existing file if not same */
-            if (copy_file(filename,newticedfile,1)!=0) { 
+            if (copy_file(filename,newticedfile,1)!=0) {
                 w_log( LL_ERROR,"File %s not moveable to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
@@ -664,7 +684,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
             /* overwrite existing file if not same */
-            if (move_file(filename,newticedfile,1)!=0) { 
+            if (move_file(filename,newticedfile,1)!=0) {
                 w_log( LL_ERROR, "File %s not moveable to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
@@ -674,7 +694,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         }
     } else if (strcasecmp(filename,newticedfile) != 0) {
             /* overwrite existing file if not same */
-        if (copy_file(filename,newticedfile,1)!=0) { 
+        if (copy_file(filename,newticedfile,1)!=0) {
             w_log( LL_ERROR, "File %s not moveable to %s: %s",
                 filename, newticedfile, strerror(errno) );
             return TIC_NotOpen;
@@ -684,7 +704,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         if (filearea->sendorig) {
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
-			if (copy_file(filename,newticedfile,1)!=0) { 
+			if (copy_file(filename,newticedfile,1)!=0) {
 				w_log( LL_ERROR, "File %s not moveable to %s: %s",
 					filename, newticedfile, strerror(errno) );
 				return TIC_NotOpen;
@@ -693,14 +713,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 			}
         }
     }
-    
+
     if (tic->anzldesc==0 && config->fDescNameCount && !filearea->nodiz && isToss)
         GetDescFormDizFile(newticedfile, tic);
-    
-    
+
+
     if (config->announceSpool) doSaveTic4Report(tic);
-    
-    
+
+
     if (!filearea->pass) {
         strcpy(descr_file_name, filearea->pathName);
         strcat(descr_file_name, "files.bbs");
@@ -711,22 +731,22 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         else
             add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
     }
-    
+
     if (filearea->downlinkCount>=minLinkCount) {
         /* Adding path & seenbys */
         time(&acttime);
         strcpy(timestr,asctime(gmtime(&acttime)));
         timestr[strlen(timestr)-1]=0;
         if (timestr[8]==' ') timestr[8]='0';
-        
-        
+
+
         tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
         tic->path[tic->anzpath] = NULL;
         xscatprintf(&tic->path[tic->anzpath],"%s %lu %s UTC %s",
             aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
         tic->anzpath++;
     }
-    
+
     if (isToss == 1) {
         /*  Save seenby structure */
         old_seenby = smalloc(tic->anzseenby*sizeof(hs_addr));
@@ -735,7 +755,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         memcpy(&old_from,&tic->from,sizeof(hs_addr));
         memcpy(&old_to,&tic->to,sizeof(hs_addr));
     }
-    
+
     for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
         if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
@@ -756,9 +776,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     /* (dmitry) FixMe: Put correct AKA here if To: missing in tic */
     if(isOurAka(config, tic->to) && seenbyComp(tic->seenby, tic->anzseenby, tic->to))
         seenbyAdd(&tic->seenby, &tic->anzseenby, &tic->to);
-    
+
     seenbySort(tic->seenby,tic->anzseenby);
-    
+
     /* Checking to whom I shall forward */
     for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
@@ -767,7 +787,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             addrComp(tic->origin,downlink->hisAka)!=0)
         {
             /* Forward file to */
-            
+
             readAccess = readCheck(filearea, downlink);
             switch (readAccess) {
             case 0: break;
@@ -792,7 +812,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                     aka2str(downlink->hisAka));
                 break;
             }
-            
+
             if (readAccess == 0) {
                 if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0)
                 {
@@ -828,7 +848,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             nfree(comm);
         }
     }
-    
+
     if (isToss == 1) nfree(old_seenby);
     return(0);
 }
@@ -1151,8 +1171,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
-   
-   if(rc == 0)   
+
+   if(rc == 0)
        doSaveTic(ticfile,&tic,filearea);
 
    disposeTic(&tic);
@@ -1225,12 +1245,12 @@ void checkTmpDir(void)
     s_filearea *filearea=NULL;
     FILE *flohandle=NULL;
     int error = 0;
-    
+
     w_log('6',"Checking tmp dir");
     strcpy(tmpdir, config->busyFileDir);
     dir = opendir(tmpdir);
     if (dir == NULL) return;
-    
+
     while ((file = readdir(dir)) != NULL) {
         if (strlen(file->d_name) != 12) continue;
         /* if (!file->d_size) continue; */
@@ -1274,7 +1294,7 @@ void checkTmpDir(void)
                         if (!link->noTIC)
                             fprintf(flohandle,"^%s\n",newticfile);
                         fclose(flohandle);
-                        
+
                         w_log('6',"Forwarding save file %s for %s",
                             tic.file, aka2str(link->hisAka));
                     }
