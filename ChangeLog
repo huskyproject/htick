@@ -1,3 +1,7 @@
+2003-12-01 Monday 19:05  mche
+
+	* src/filelist.c (1.46): undo previous patch
+
 2003-11-30 Sunday 18:58  mche
 
 	* src/filelist.c (1.45): fix build
