@@ -24,13 +24,14 @@ void formatDesc(char **desc, int *count)
 //Why?
 {
     int i;
-    char **newDesc = NULL, *tmp, tmpDesc[265], *ch, buff[94], *tmp1;
+    char **newDesc = NULL, *tmp, *tmpDesc, *ch, buff[94], *tmp1;
 
    for (i = 0; i < (*count); i++ ) {
       newDesc = realloc(newDesc,sizeof(char *)*(i+1));
       memset(buff, 0, sizeof buff);
       if (strlen(desc[i]) <= LenDesc) {
 	 newDesc[i] = (char *) malloc(strlen(desc[i])+1);
+	 strcpy(newDesc[i], desc[i]);
 	 continue;
       }
       tmp = strdup(desc[i]);
@@ -38,36 +39,42 @@ void formatDesc(char **desc, int *count)
       ch = strtok(tmp, " \t\0");
       if (strlen(ch)>LenDesc) {
 	 newDesc[i] = (char *) malloc(strlen(ch)+1);
+	 strcpy(newDesc[i], ch);
 	 ch = strtok(NULL,"\0");
 	 if (ch != NULL) {
             if ((*count) == (i+1)) {
                desc = realloc(desc,sizeof(char *) * ((*count)+1) );
 	       (*count)++;
-	       desc[i+1] = strdup(ch);
+	       desc[i+1] = (char *) malloc(strlen(ch)+1);
+	       strcpy(desc[i+1], ch);
 	    } else {
-	       strcpy(tmpDesc,desc[i+1]);
+	       tmpDesc = strdup(desc[i+1]);
                desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
                sprintf(desc[i+1],"%s %s",ch,tmpDesc);
+	       free(tmpDesc);
             }
 	 }
          free(tmp);
 	 continue;
       }
       while (ch != NULL) {
-         if (strlen(buff)+strlen(ch)>46) {
-	    newDesc[i] = strdup(buff);
+         if (strlen(buff)+strlen(ch)>LenDesc) {
+	    newDesc[i] = (char *) malloc(strlen(buff)+1);
+	    strcpy(newDesc[i], buff);
 	    if ((*count) == (i+1)) {
-	       desc=realloc(desc,(*count)+1*sizeof(*desc));
+               desc = realloc(desc,sizeof(char *) * ((*count)+1) );
 	       (*count)++;
-	       desc[i+1] = strdup(ch);
+	       desc[i+1] = (char *) malloc(strlen(ch)+1);
+	       strcpy(desc[i+1], ch);
 	       ch = strtok(NULL,"\0");
 	       if (ch != NULL) {
-	          strcpy(tmpDesc,desc[i+1]);
+	          tmpDesc = strdup(desc[i+1]);
                   desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
                   sprintf(desc[i+1],"%s %s",tmpDesc,ch);
+		  free(tmpDesc);
 	       }
 	    } else {
-	       strcpy(tmpDesc,desc[i+1]);
+	       tmpDesc = strdup(desc[i+1]);
 	       tmp1 = strtok(NULL,"\0");
 	       if (tmp1 == NULL) {
                   desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
@@ -76,6 +83,7 @@ void formatDesc(char **desc, int *count)
                   desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+strlen(tmp1)+2);
                   sprintf(desc[i+1],"%s %s %s",ch,tmp1,tmpDesc);
 	       }
+	       free(tmpDesc);
             }
 	    ch = NULL;
             free(tmp);
@@ -89,7 +97,8 @@ void formatDesc(char **desc, int *count)
    }
    for (i = 0; i < (*count); i++ ) {
       free(desc[i]);
-      desc[i] = strdup(newDesc[i]);
+      desc[i] = (char *) malloc(strlen(newDesc[i])+1);
+      strcpy(desc[i], newDesc[i]);
       free(newDesc[i]);
    }
    if ((*count) > 0) free(newDesc);
