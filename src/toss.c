@@ -270,7 +270,11 @@ int parseTic(char *ticfile,s_ticfile *tic)
     {
         int fh = 0;
         /* insure that ticfile won't be removed while parsing */
+#ifdef __DJGPP__
+        fh = open( ticfile, O_RDWR | O_BINARY | SH_DENYWR);
+#else
         fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
+#endif
         if( fh<0 ){
             w_log(LL_ERROR, "Can't open '%s': %s (sopen())", ticfile, strerror(errno));
             return 0;
