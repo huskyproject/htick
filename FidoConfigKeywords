@@ -216,3 +216,7 @@ If no LDESC defined in tic file, use <name> file from archive fill it.
 24) RemoteFileRobotName <name>
 
 Name of remote file (tic) robot (need for FileForwardRequest)
+
+25) AnnounceSpool (path)
+
+Place for accumulating report information
