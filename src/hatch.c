@@ -276,7 +276,7 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
                 w_log(LL_FILESENT,"    to: %s",linkfilepath);
             } else {
                 w_log('9',"File %s not found or not copyable",newticedfile);
-                if (!busy) remove(downlink->bsyFile);
+                if (!busy && downlink->bsyFile) remove(downlink->bsyFile);
                 nfree(downlink->bsyFile);
                 nfree(downlink->floFile);
                 nfree(linkfilepath);
@@ -301,7 +301,7 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
             w_log(LL_LINK,"Forwarding %s for %s", tic->file,
                   aka2str(downlink->hisAka));
 
-        if (!busy) remove(downlink->bsyFile);
+        if (!busy && downlink->bsyFile) remove(downlink->bsyFile);
     }
     nfree(downlink->bsyFile);
     nfree(downlink->floFile);

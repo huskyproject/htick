@@ -387,7 +387,7 @@ int main(int argc, char **argv)
    closeLog();
    if (config->lockfile) {
       close(lock_fd);
-      remove(config->lockfile);
+      if (config->lockfile) remove(config->lockfile);
    }
    disposeConfig(config);
    nfree(versionStr);
