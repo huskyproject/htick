@@ -287,7 +287,9 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    FILE *f; // bsy file for current link
-   char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
+   char name[32], bsyname[32], zoneSuffix[6], pntDir[14];
+   int namelen;
+   e_bundleFileNameStyle bundleNameStyle;
 
 #ifdef UNIX
    char limiter='/';
@@ -295,15 +297,32 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    char limiter='\\';
 #endif
 
-   if (link->hisAka.point != 0) {
-      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, limiter);
-      sprintf(name, "%08x.flo", link->hisAka.point);
+   if (link->linkBundleNameStyle != eUndef)
+      bundleNameStyle = link->linkBundleNameStyle;
+   else if (config->bundleNameStyle != eUndef)
+      bundleNameStyle = config->bundleNameStyle;
+   else
+      bundleNameStyle = eUndef;
+
+   if (bundleNameStyle == eAmiga) {
+	 pntDir[0] = 0;
+	 sprintf(name, "%u.%u.%u.%u.flo",
+		 link->hisAka.zone, link->hisAka.net,
+		 link->hisAka.node, link->hisAka.point);
    } else {
-      pntDir[0] = 0;
-      sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
+      if (link->hisAka.point != 0) {
+	 sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, limiter);
+	 sprintf(name, "%08x.flo", link->hisAka.point);
+      } else {
+	 pntDir[0] = 0;
+	 sprintf(name, "%04x%04x.flo", link->hisAka.net, link->hisAka.node);
+      }
    }
 
-   if (link->hisAka.zone != config->addr[0].zone) {
+   namelen = strlen(name);
+
+   if ((link->hisAka.zone != config->addr[0].zone) &&
+       (bundleNameStyle != eAmiga)) {
       // add suffix for other zones
       sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, limiter);
    } else {
@@ -312,31 +331,31 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    switch (typ) {
       case PKT:
-         name[9] = 'o'; name[10] = 'u'; name[11] = 't';
+         name[namelen-4] = 'o'; name[namelen-3] = 'u'; name[namelen-2] = 't';
          break;
       case REQUEST:
-         name[9] = 'r'; name[10] = 'e'; name[11] = 'q';
+         name[namelen-4] = 'r'; name[namelen-3] = 'e'; name[namelen-2] = 'q';
          break;
       case FLOFILE: break;
    } /* endswitch */
 
    if (typ != REQUEST) {
       switch (prio) {
-         case CRASH :    name[9] = 'c';
+         case CRASH :    name[namelen-4] = 'c';
                          break;
-         case HOLD  :    name[9] = 'h';
+         case HOLD  :    name[namelen-4] = 'h';
                          break;
-	 case DIRECT:    name[9] = 'd';
+	 case DIRECT:    name[namelen-4] = 'd';
 	                 break;
-	 case IMMEDIATE: name[9] = 'i';
+	 case IMMEDIATE: name[namelen-4] = 'i';
 	                 break;
          case NORMAL:    break;
       } /* endswitch */
    } /* endif */
 
    // create floFile
-   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+namelen+1);
+   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+namelen+1);
    strcpy(link->floFile, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
    strcat(link->floFile, pntDir);
@@ -346,7 +365,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    // create bsyFile
    strcpy(bsyname, name);
-   bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
+   bsyname[namelen-4]='b';bsyname[namelen-3]='s';bsyname[namelen-2]='y';
    strcat(link->bsyFile, bsyname);
 
    // maybe we have session with this link?
