@@ -1,3 +1,13 @@
+2002-09-18 Wednesday 15:02  mche
+
+	* src/add_desc.c (1.18), h/add_desc.h (1.5), h/global.h (1.17),
+	man/htick.1 (1.6), src/global.c (1.21), src/htick.c (1.69),
+	src/toss.c (1.209): "announce to file" functionality was removed
+
+2002-09-18 Wednesday 10:18  pgul
+
+	* src/seenby.c (1.10): Fix compiler warning
+
 2002-09-17 Tuesday 17:44  d_sergienko
 
 	* HISTORY (1.4): info about 'Loc' flag
