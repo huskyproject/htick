@@ -6,7 +6,7 @@ LINK    = WLINK
 OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj add_descr.obj seenby.obj recode.obj crc32.obj hatch.obj filelist.obj
 SRC_DIR = ..\src
 
-CFLAGS  = -zq -wx -bt=nt -zp=1 -j -i=..\..;..\h -oneatx -5
+CFLAGS  = -zq -wx -bt=nt -j -i=..\..;..\h -oneatx -5
 
 all: $(OBJS) htick.exe
 
@@ -16,4 +16,4 @@ $(OBJS): $(SRC_DIR)\*.c
 
 htick.exe: $(OBJS)
    @echo linking htick
-  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj Library ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME htick.exe
+  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj Library ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fconfwcw.lib NAME htick.exe
