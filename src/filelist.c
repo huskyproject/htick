@@ -45,10 +45,122 @@
 #include "filelist.h"
 #include "toss.h"
 
+typedef struct _FileDescEntry {
+  char *filename;
+  char **desc;        /*  Short Description of file */
+  UINT anzdesc;        /*  Number of Desc Lines */
+}  FileDescEntry;
+
 
 static BigSize totalfilessize;
 unsigned int totalfilesnumber = 0;
+static tree* DescTree = NULL;
+static FileDescEntry fdesccmp;
+char* DescNA="Description not avaliable";
 
+int DescTreeDeleteEntry(char *entry) {
+    if(entry)
+    {
+        FileDescEntry  *entxt;
+        UINT i;
+
+        entxt = (FileDescEntry *)entry;
+        nfree(entxt->filename);
+        for (i=0;i<entxt->anzdesc;i++)
+            nfree(entxt->desc[i]);
+        nfree(entxt->desc);
+        nfree(entxt);
+    }
+    return 1;
+}
+
+int DescTreeCompareEntries(char *p_e1, char *p_e2)
+{
+    FileDescEntry* e1 = (FileDescEntry*)p_e1;
+    FileDescEntry* e2 = (FileDescEntry*)p_e2;
+    return strcmp(e1->filename,e2->filename);
+}
+
+
+int ParseBBSFile(const char* fbbsname)
+{
+    FILE *filehandle;
+    char *line = NULL, *tmp = NULL, *token = NULL, *p =NULL;
+    int flag = 0, rc = 1;
+    FileDescEntry *fdesc = NULL;
+
+
+    if (DescTree) {
+        tree_mung(&DescTree, DescTreeDeleteEntry);
+    }
+    tree_init(&DescTree, 1);
+
+
+    filehandle = fopen (fbbsname, "r+b");
+    if (filehandle == NULL) return 1;
+
+    while ((line = readLine(filehandle)) != NULL) {
+
+        if (flag && (*line == '\t' || *line == ' ' || *line == '>')) {
+            token=stripLeadingChars(line, " >");
+            if (*token == '>') token++;
+            fdesc->desc = srealloc(fdesc->desc,(fdesc->anzdesc+1)*sizeof(*fdesc->desc));
+            fdesc->desc[fdesc->anzdesc]=sstrdup(token);
+            fdesc->anzdesc++;
+            nfree(line);
+            continue;
+        }
+        else
+        {
+            flag = 0;
+            if(rc ==0)
+            {
+                tree_add(&DescTree, DescTreeCompareEntries, (char *)fdesc, DescTreeDeleteEntry);
+            }
+        }
+        tmp = sstrdup(line);
+        token = tmp;
+        p = token;
+        while(p && *p != '\0' && !isspace(*p)) p++;
+        if(p && *p != '\0') {
+            *p = '\0';
+        } else {
+            p = NULL;
+        }
+
+        fdesc = scalloc(1,sizeof(FileDescEntry));
+        fdesc->filename = sstrdup(token);
+
+        if(p == NULL) {
+            token = "";
+        }   else      {
+            p++;
+            while(p && *p != '\0' &&isspace(*p)) p++;
+            if(p && *p != '\0')
+                token = p;
+            else
+                token = "";
+        }
+        if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10 && token[0] == '[') {
+            while(']' != *p)p++;
+            p++;
+            while(p && !isspace(*p)) p++;
+            token = p;
+        }
+        fdesc->anzdesc = 0;
+        fdesc->desc = srealloc(fdesc->desc,(fdesc->anzdesc+1)*sizeof(*fdesc->desc));
+        fdesc->desc[fdesc->anzdesc]=sstrdup(token);
+        fdesc->anzdesc++;
+        flag = 1; rc = 0;
+        nfree(line); nfree(tmp);
+    }
+    if(rc ==0)
+    {
+        tree_add(&DescTree, DescTreeCompareEntries, (char *)fdesc, DescTreeDeleteEntry);
+    }
+    fclose (filehandle);
+    return rc;
+}
 
 void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, int year, int countdesc, char **desc)
 {
@@ -106,8 +218,8 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     char *fbbsline;
     husky_DIR *dir;
     char      *file;
-    s_ticfile tic;
     struct stat stbuf;
+    FileDescEntry *fdesc;
     time_t fileTime;
     struct tm *locTime;
     unsigned int totalnumber = 0;
@@ -129,6 +241,8 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     if (dir == NULL) return;
     
     w_log( LL_INFO, "Processing: %s",area_areaName);
+
+    ParseBBSFile(fbbsname);
     
     while ((file = husky_readdir(dir)) != NULL) {
         if (strcmp(file,".") == 0 || strcmp(file,"..") == 0)
@@ -147,26 +261,29 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
             fprintf(f,"-----------------------------------------------------------------------------\n");
             flag = 1;
         }
-        memset(&tic,0,sizeof(tic));
-        if (GetDescFormBbsFile(fbbsname, file, &tic) == 1) {
-            tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
-            tic.desc[tic.anzdesc]=sstrdup("Description not avaliable");
-            tic.anzdesc = 1;
-            add_description(fbbsname, file, tic.desc, 1);
+        fdesccmp.filename = file;
+        fdesc = (FileDescEntry*)tree_srch(&DescTree, DescTreeCompareEntries, (char*)(&fdesccmp));
+        if (!fdesc) {
+            add_description(fbbsname, file, &DescNA, 1);
         }
         stat(filename,&stbuf);
         fileTime = stbuf.st_mtime > 0 ? stbuf.st_mtime : 0;
         locTime = localtime(&fileTime);
         IncBigSize(&bs, (ULONG)stbuf.st_size);
         totalnumber++;
-        putFileInFilelist(f, file, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, tic.anzdesc, tic.desc);
-        disposeTic(&tic);
+        if (fdesc) {
+            putFileInFilelist(f, file, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, fdesc->anzdesc, fdesc->desc);
+        } else {
+            putFileInFilelist(f, file, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, 1, &DescNA);
+        }
     }
     husky_closedir(dir);
     if (flag) {
         fprintf(f,"-----------------------------------------------------------------------------\n");
         fprintf(f,"Total files in area: %6d, total size: %10s bytes\n\n",totalnumber,PrintBigSize(&bs));
     }
+
+    /* collect information about files in files.bbs that realy do not exist */
     if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
     while ((fbbsline = readLine(fbbs)) != NULL) {
         if (*fbbsline == 0 || *fbbsline == 10 || *fbbsline == 13
@@ -196,6 +313,8 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         nfree(fbbsline);
     }
     fclose(fbbs);
+
+    /* remove descriptions from files.bbs on files that realy do not exist */
     if (removeCount > 0) {
         for (i=0; i<removeCount; i++) {
             removeDesc(fbbsname,removeFiles[i]);
