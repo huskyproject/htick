@@ -1,3 +1,9 @@
+2003-12-12 Friday 08:07  mche
+
+	* h/toss.h (1.25): bugfixes for areafix
+	
+	patch by Andrew Ladutsko 2:450/210
+
 2003-12-11 Thursday 11:14  mche
 
 	* src/hatch.c (1.85): doSaveTic for hatched files
