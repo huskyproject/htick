@@ -37,25 +37,25 @@
 #include <fidoconf/fidoconf.h>
 
 struct ticfiletype {
-                char file[50];      // Name of the file affected by Tic
-                char area[50];      // Name of File Area
-                char areadesc[100]; // Description of File Area
+                char *file;         // Name of the file affected by Tic
+                char *area;         // Name of File Area
+                char *areadesc;     // Description of File Area
                 char **desc;        // Short Description of file
-                int anzdesc;        // Number of Desc Lines
-                char replaces[50];  // Replaces File
+                unsigned int anzdesc;        // Number of Desc Lines
+                char *replaces;     // Replaces File
                 int size;           // Size of file
                 unsigned long crc;  // CRC of File
                 unsigned long date; // Date
                 s_addr from;        // From Addr
                 s_addr to;          // To Addr
                 s_addr origin;      // Origin
-                char password[50];  // Password
+                char *password;     // Password
                 char **ldesc;       // Array of Pointer to Strings with ldescs
-                int anzldesc;       // Number of Ldesc Lines
+                unsigned int anzldesc;       // Number of Ldesc Lines
                 s_addr *seenby;     // Array of Pointer to Seenbys
-                int anzseenby;      // Number of seenbys
+                unsigned int anzseenby;      // Number of seenbys
                 char **path;        // Array of Pointer to Strings with Path
-                int anzpath;        // Numer of Path lines
+                unsigned int anzpath;        // Numer of Path lines
                 };
 
 typedef struct ticfiletype s_ticfile;

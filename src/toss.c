@@ -297,7 +297,7 @@ void writeNetmail(s_message *msg, char *areaName)
 void writeTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;
-   int i;
+   unsigned int i;
 
    tichandle=fopen(ticfile,"wb");
 
@@ -342,9 +342,14 @@ void writeTic(char *ticfile,s_ticfile *tic)
 
 void disposeTic(s_ticfile *tic)
 {
-   int i;
+   unsigned int i;
 
    nfree(tic->seenby);
+   nfree(tic->file);
+   nfree(tic->area);
+   nfree(tic->areadesc);
+   nfree(tic->replaces);
+   nfree(tic->password);
 
    for (i=0;i<tic->anzpath;i++)
       nfree(tic->path[i]);
@@ -381,17 +386,17 @@ int parseTic(char *ticfile,s_ticfile *tic)
          param=stripLeadingChars(strtok(NULL, "\0"), "\t");
          if (token && param) {
             if (stricmp(token,"created")==0);
-            else if (stricmp(token,"file")==0) strcpy(tic->file,param);
-            else if (stricmp(token,"areadesc")==0) strcpy(tic->areadesc,param);
-            else if (stricmp(token,"area")==0) strcpy(tic->area,param);
+            else if (stricmp(token,"file")==0) tic->file = sstrdup(param);
+            else if (stricmp(token,"areadesc")==0) tic->areadesc = sstrdup(param);
+            else if (stricmp(token,"area")==0) tic->area = sstrdup(param);
             else if (stricmp(token,"desc")==0) {
                tic->desc=
                srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
                tic->desc[tic->anzdesc]=sstrdup(param);
                tic->anzdesc++;
             }
-            else if (stricmp(token,"replaces")==0) strcpy(tic->replaces,param);
-            else if (stricmp(token,"pw")==0) strcpy(tic->password,param);
+            else if (stricmp(token,"replaces")==0) tic->replaces = sstrdup(param);
+            else if (stricmp(token,"pw")==0) tic->password = sstrdup(param);
             else if (stricmp(token,"size")==0) tic->size=atoi(param);
             else if (stricmp(token,"crc")==0) tic->crc = strtoul(param,NULL,16);
             else if (stricmp(token,"date")==0) tic->date=atoi(param);
@@ -957,7 +962,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    int busy;
    char *newticfile;
    FILE *flohandle;
-   int minLinkCount;
+   unsigned int minLinkCount;
 
 
    if (isToss == 1) minLinkCount = 2; // uplink and downlink
@@ -2017,7 +2022,7 @@ static int compare_filereport(const void *a, const void *b)
 
 void reportNewFiles()
 {
-   int       b,  fileCount;
+   unsigned  int       b,  fileCount;
    unsigned  int i, c;
    UINT32    fileSize;
    s_message *msg;

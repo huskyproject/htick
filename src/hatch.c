@@ -42,19 +42,19 @@ void hatch()
    }
 
    newticfile = strrchr(hatchfile,PATH_DELIM);
-   if (newticfile) strcpy(tic.file, newticfile+1);
-   else strcpy(tic.file,hatchfile);
+   if (newticfile) tic.file = sstrdup(newticfile+1);
+   else tic.file = sstrdup(hatchfile);
 
    MakeProperCase(tic.file);
 
-   strcpy(tic.area,hatcharea);
+   tic.area = sstrdup(hatcharea);
    filearea=getFileArea(config,tic.area);
 
    if (config->outtab != NULL) recodeToTransportCharset(hatchdesc);
    tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(&tic.desc));
    tic.desc[tic.anzdesc]=sstrdup(hatchdesc);
    tic.anzdesc++;
-   if (hatchReplace) strcpy(tic.replaces,replaceMask);
+   if (hatchReplace) tic.replaces = sstrdup(replaceMask);
 /*
    if (filearea==NULL) {
       autoCreate(tic.area,tic.from,tic.areadesc);
@@ -140,9 +140,9 @@ int send(char *filename, char *area, char *addr)
          return 3;
    }
 
-   newticfile = strrchr(sendfile,PATH_DELIM);
-   if (newticfile) strcpy(tic.file, newticfile+1);
-   else strcpy(tic.file,sendfile);
+   newticfile = strrchr(hatchfile,PATH_DELIM);
+   if (newticfile) tic.file = sstrdup(newticfile+1);
+   else tic.file = sstrdup(hatchfile);
 
    if (filearea->sendorig) {
       strcpy(tmpfile,config->passFileAreaDir);
