@@ -36,7 +36,7 @@
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
-#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
 #include <unistd.h>
 #endif
 
@@ -200,14 +200,14 @@ XMSG createXMSG(s_message *msg)
    if (subject != msg->subjectLine)
      free(subject);
        
-   msgHeader.orig.zone  = msg->origAddr.zone;
-   msgHeader.orig.node  = msg->origAddr.node;
-   msgHeader.orig.net   = msg->origAddr.net;
-   msgHeader.orig.point = msg->origAddr.point;
-   msgHeader.dest.zone  = msg->destAddr.zone;
-   msgHeader.dest.node  = msg->destAddr.node;
-   msgHeader.dest.net   = msg->destAddr.net;
-   msgHeader.dest.point = msg->destAddr.point;
+   msgHeader.orig.zone  = (word)msg->origAddr.zone;
+   msgHeader.orig.node  = (word)msg->origAddr.node;
+   msgHeader.orig.net   = (word)msg->origAddr.net;
+   msgHeader.orig.point = (word)msg->origAddr.point;
+   msgHeader.dest.zone  = (word)msg->destAddr.zone;
+   msgHeader.dest.node  = (word)msg->destAddr.node;
+   msgHeader.dest.net   = (word)msg->destAddr.net;
+   msgHeader.dest.point = (word)msg->destAddr.point;
 
    memset(&(msgHeader.date_written), 0, 8);    /* date to 0 */
 

@@ -32,7 +32,7 @@
 #include <string.h>
 #include <ctype.h>
 #ifndef __IBMC__
-#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
 #include <unistd.h>
 #endif
 #endif
