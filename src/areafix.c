@@ -124,7 +124,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     }
     if (config->filefixKillReports) msg->attributes |= MSGKILL;
     
-    strftime(msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
+    fts_time(msg->datetime, localtime(&time_cur));
     
     
     return msg;
