@@ -199,7 +199,7 @@ void purgeFileEchos()
         if (dir == NULL) 
             continue;
 
-        while ((file = readdir(dir)) != NULL) {
+        while ((file = husky_readdir(dir)) != NULL) {
             if (patimat(file, "*.BBS") == 1)
                 continue;
 

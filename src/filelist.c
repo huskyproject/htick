@@ -201,7 +201,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     
     w_log( LL_INFO, "Processing: %s",area_areaName);
     
-    while ((file = readdir(dir)) != NULL) {
+    while ((file = husky_readdir(dir)) != NULL) {
         if (strcmp(file,".") == 0 || strcmp(file,"..") == 0)
             continue;
         nfree(filename);
