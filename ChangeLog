@@ -1,3 +1,27 @@
+2002-10-22 Tuesday 14:12  stas_degteff
+
+	* src/htick.c (1.74): Add DPMI build info
+
+2002-10-22 Tuesday 14:08  stas_degteff
+
+	* src/htick.c (1.73): Fix openLog() call
+
+2002-10-22 Tuesday 12:24  mche
+
+	* src/htick.c (1.72): fix comments
+
+2002-10-22 Tuesday 12:07  stas_degteff
+
+	* src/htick.c (1.71): Optimise openLog() usage
+
+2002-10-22 Tuesday 10:49  sfpavel
+
+	* debian/changelog (1.13): New debian package
+
+2002-10-22 Tuesday 07:18  mche
+
+	* src/toss.c (1.225): security fix
+
 2002-10-21 Monday 10:12  mche
 
 	* src/toss.c (1.224): correct previous patch
