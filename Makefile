@@ -1,3 +1,8 @@
+# Makefile for the Husky build environment
+#
+# Require Husky-Makefile-Config
+# Use GNU version of make (gmake).
+
 # include Husky-Makefile-Config
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
