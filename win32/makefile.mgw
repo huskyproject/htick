@@ -30,7 +30,7 @@ OBJS    = htick.o    \
           filelist.o \
           filecase.o \
           report.o   \
-          clean.o    \
+          clean.o
 
 all: $(TARGET)
 

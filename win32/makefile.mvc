@@ -26,7 +26,7 @@ OBJS    = global.obj \
           filelist.obj\
           filecase.obj\
           report.obj\
-			 clean.obj
+          clean.obj
 
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
