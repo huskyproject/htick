@@ -1,0 +1,14 @@
+htick for Debian
+----------------
+
+English Readers: Try Babelfish or wait until someone translates this. :)
+
+This is now the UNSTABLE Version of htick !
+
+In der Datei FidoConfKeywords sind nochmal alle Schluesselwoerter der Fidoconf
+aufgelistet die htick unterstuetzt.
+
+Die Datei config.sample ist eine weitere Beispiel-Fidoconfig, die so
+bei htick mitgeliefert wurde.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>, Sat, 31 Mar 2001 01:02:01 +0200

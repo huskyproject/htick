@@ -1,0 +1,21 @@
+htick (0.9u-1) unstable; urgency=low
+
+  * This is now the cvs-Version, UNSTABLE htick.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Wed, 11 Apr 2001 22:02:55 +0200
+ 
+htick (0.9a-2) unstable; urgency=low
+
+  * man-page for htick written and added.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Thu,  5 Apr 2001 01:12:52 +0200
+
+htick (0.9a-1) unstable; urgency=low
+
+  * Initial Release.
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sat, 31 Mar 2001 01:02:01 +0200
+
+Local variables:
+mode: debian-changelog
+End:
