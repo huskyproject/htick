@@ -299,26 +299,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
   return(1);
 }
 
-char *hpt_stristr(char *str, char *find)
-{
-    char ch, sc, *str1, *find1;
-
-    find++;
-    if ((ch = *(find-1)) != 0) {
-	do {
-	    do {
-		str++;
-		if ((sc = *(str-1)) == 0) return (NULL);
-	    } while (tolower((unsigned char) sc) != tolower((unsigned char) ch));
-			
-	    for(str1=str,find1=find; *find1 && *str1 && tolower(*find1)==tolower(*str1); str1++,find1++);
-			
-	} while (*find1);
-	str--;
-    }
-    return ((char *)str);
-}
-
 #if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
 void *mk_lst(char *a) {
     char *p=a, *q=a, **list=NULL, end=0, num=0;
@@ -375,7 +355,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
 	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
 	w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
     chdir(config->tempInbound);
-    if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
+    if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
     {
         cmdexit = 1;
 #ifdef USE_HPT_ZLIB

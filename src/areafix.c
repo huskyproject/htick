@@ -61,7 +61,6 @@
 
 unsigned char RetFix;
 
-char *hpt_stristr(char *str, char *find);
 
 char *errorRQ(char *line)
 {
@@ -1176,7 +1175,7 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
         );
     
     if ( creatingLink->LinkGrp &&
-        !(creatingLink->autoFileCreateDefaults && (hpt_stristr(creatingLink->autoFileCreateDefaults, "-g ")!=NULL))
+        !(creatingLink->autoFileCreateDefaults && (fc_stristr(creatingLink->autoFileCreateDefaults, "-g ")!=NULL))
         )
     {
         xscatprintf(&buff,"-g %s ",creatingLink->LinkGrp);
