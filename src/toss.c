@@ -1214,6 +1214,11 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
+   if (!tic.size) {
+      writeLogEntry(htick_log,'6',"File %s from filearea %s has zero size",tic.file,tic.area);
+      disposeTic(&tic);
+      return(5);
+   }
 
    filearea=getFileArea(config,tic.area);
 
@@ -1339,6 +1344,7 @@ void checkTmpDir(void)
 
    while ((file = readdir(dir)) != NULL) {
       if (strlen(file->d_name) != 12) continue;
+      if (!file->d_size) continue;
       ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
       strcpy(ticfile, tmpdir);
       strcat(ticfile, file->d_name);

@@ -1166,14 +1166,14 @@ char *textHead(void)
     return text_head;
 }
 
-void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
+void RetMsg(s_area *afixarea, s_message *msg, s_link *link, char *report, char *subj)
 {
     s_message *tmpmsg;
     
     tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName, subj, 1);
     preprocText(report, tmpmsg);
     
-    writeNetmail(tmpmsg, config->netMailAreas[0].areaName);
+    writeNetmail(tmpmsg, afixarea->areaName);
     
     freeMsgBuff(tmpmsg);
     free(tmpmsg);
@@ -1182,7 +1182,7 @@ void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-int processFileFix(s_message *msg)
+int processFileFix(s_area *afixarea, s_message *msg)
 {
 	int security=1, notforme = 0;
 	s_link *link = NULL;
@@ -1221,37 +1221,30 @@ int processFileFix(s_message *msg)
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:
-					RetMsg(msg, link, preport, "FileFix reply: list request");
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: list request");
 					break;
 				case HELP:
-					RetMsg(msg, link, preport, "FileFix reply: help request");
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: help request");
 					break;
-				case ADD:
-					if (report == NULL) report = textHead();
-					report = areastatus(preport, report);
-					break;
-				case DEL:
+				case ADD: case DEL:
 					if (report == NULL) report = textHead();
 					report = areastatus(preport, report);
 					break;
 				case UNLINK:
-					RetMsg(msg, link, preport, "FileFix reply: unlinked request");
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: unlinked request");
 					break;
 				case LINKED:
-					RetMsg(msg, link, preport, "FileFix reply: linked request");
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: linked request");
 					writeLogEntry(htick_log, '8', "FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
 					break;
-				case PAUSE:
-					RetMsg(msg, link, preport, "FileFix reply: node change request");
-					break;
-				case RESUME:
-					RetMsg(msg, link, preport, "FileFix reply: node change request");
+				case PAUSE: case RESUME:
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: node change request");
 					break;
 				case INFO:
-					RetMsg(msg, link, preport, "FileFix reply: link information");
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: link information");
 					break;
 				case RESEND:
-					RetMsg(msg, link, preport, "FileFix reply: resend request");
+					RetMsg(afixarea, msg, link, preport, "FileFix reply: resend request");
  					break;
 				case ERROR:
 					if (report == NULL) report = textHead();
@@ -1296,7 +1289,7 @@ int processFileFix(s_message *msg)
 		report=(char*) malloc(strlen(tmp)+1);
 		strcpy(report,tmp);
 		
-		RetMsg(msg, link, report, "security violation");
+		RetMsg(afixarea, msg, link, report, "security violation");
 		free(report);
 		
 		writeLogEntry(htick_log, '8', "FileFix: security violation from %s", aka2str(link->hisAka));
@@ -1312,7 +1305,7 @@ int processFileFix(s_message *msg)
 		report=(char*)realloc(report, strlen(report)+strlen(preport)+1);
 		strcat(report, preport);
 		free(preport);
-		RetMsg(msg, link, report, "node change request");
+		RetMsg(afixarea, msg, link, report, "node change request");
 		free(report);
 	}
 

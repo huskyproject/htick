@@ -125,7 +125,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    free(kludgeLines);
 }
 
-void scanNMArea(void)
+void scanNMArea(s_area *afixarea)
 {
    HAREA           netmail;
    HMSG            msg;
@@ -137,11 +137,11 @@ void scanNMArea(void)
    // int from_us;
    s_message       filefixmsg;
 
-   netmail = MsgOpenArea((unsigned char *) config->netMailAreas[0].fileName, MSGAREA_NORMAL, config->netMailAreas[0].msgbType);
+   netmail = MsgOpenArea((unsigned char *) afixarea->fileName, MSGAREA_NORMAL, afixarea->msgbType);
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
-      writeLogEntry(htick_log, '1', "Scanning NetmailArea");
+      writeLogEntry(htick_log, '1', "Scanning %s", afixarea->areaName);
 
       // scan all Messages for filefix
       for (i=1; i<= highMsg; i++) {
@@ -167,7 +167,7 @@ void scanNMArea(void)
             convertMsgHeader(xmsg, &filefixmsg);
             convertMsgText(msg, &filefixmsg, config->addr[j]);
             
-            if (processFileFix(&filefixmsg) != 2) {
+            if (processFileFix(afixarea, &filefixmsg) != 2) {
 		xmsg.attr |= MSGREAD;
 		MsgWriteMsg(msg, 0, &xmsg, NULL, 0, 0, 0, NULL);
 	    }
@@ -185,12 +185,18 @@ void scanNMArea(void)
 
       MsgCloseArea(netmail);
    } else {
-      writeLogEntry(htick_log, '9', "Could not open NetmailArea");
+      writeLogEntry(htick_log, '9', "Could not open %s", afixarea->areaName);
    } /* endif */
 }
 
 void scan(void)
 {
-  scanNMArea();
+   s_area *afixarea;
+
+  if ((afixarea = getNetMailArea(config, config->robotsArea)) == NULL) {
+     afixarea = &(config->netMailAreas[0]);
+  }
+
+  scanNMArea(afixarea);
 }
 
