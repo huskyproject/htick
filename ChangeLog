@@ -1,3 +1,13 @@
+2002-07-09 Tuesday 18:57  mche
+
+	* src/clean.c (1.3), src/htick.c (1.66), man/htick.1 (1.2): added
+	purging for file echos
+
+2002-07-09 Tuesday 18:45  mche
+
+	* src/clean.c (1.2), src/htick.c (1.65), FidoConfigKeywords (1.30),
+	h/htick.h (1.4), h/toss.h (1.17): added purging for file echos
+
 2002-07-08 Monday 17:59  mche
 
 	* src/clean.c (1.1), src/toss.c (1.199), Makefile (1.13),
