@@ -519,10 +519,10 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     if (!downlink->noTIC) {
         newticfile = makeUniqueDosFileName(linkfilepath,"tic",config);
         if (!writeTic(newticfile,tic)) {
-            /* try to toss into config->tempOutbound */
+            /* try to toss into config->busyFileDir */
             w_log( LL_CRIT, "Can't write into: %s",linkfilepath);
             nfree(newticfile); nfree(linkfilepath);
-            xstrcat(&linkfilepath, config->tempOutbound);
+            xstrcat(&linkfilepath, config->busyFileDir);
             newticfile = makeUniqueDosFileName(linkfilepath,"tic",config);
             if (!writeTic(newticfile,tic)) {
                 w_log( LL_CRIT, "Can't write into: %s",linkfilepath);
@@ -535,22 +535,26 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     else  newticfile = NULL;
     
     if (needUseFileBoxForLinkAka(config,downlink,aka)) {
-        xstrcat(&linkfilepath, tic->file);
-        if (link_file(newticedfile,linkfilepath ) == 0)
+        /* do not copy file into busyFileDir */
+        if (strcasecmp( linkfilepath, config->busyFileDir ) = 1)
         {
-            if(copy_file(newticedfile, linkfilepath, 1)==0) { /* overwrite existing file if not same */
-                w_log(LL_FILESENT,"Copied: %s",newticedfile);
-                w_log(LL_FILESENT,"    to: %s",linkfilepath);
+            xstrcat(&linkfilepath, tic->file);
+            if (link_file(newticedfile,linkfilepath ) == 0)
+            {
+                if(copy_file(newticedfile, linkfilepath, 1)==0) { /* overwrite existing file if not same */
+                    w_log(LL_FILESENT,"Copied: %s",newticedfile);
+                    w_log(LL_FILESENT,"    to: %s",linkfilepath);
+                } else {
+                    w_log('9',"File %s not found or not copyable",newticedfile);
+                    if (!busy && downlink->bsyFile) remove(downlink->bsyFile);
+                    nfree(downlink->bsyFile);
+                    nfree(downlink->floFile);
+                    nfree(linkfilepath);
+                }
             } else {
-                w_log('9',"File %s not found or not copyable",newticedfile);
-                if (!busy && downlink->bsyFile) remove(downlink->bsyFile);
-                nfree(downlink->bsyFile);
-                nfree(downlink->floFile);
-                nfree(linkfilepath);
+                w_log(LL_FILESENT,"Linked: %s",newticedfile);
+                w_log(LL_FILESENT,"    to: %s",linkfilepath);
             }
-        } else {
-            w_log(LL_FILESENT,"Linked: %s",newticedfile);
-            w_log(LL_FILESENT,"    to: %s",linkfilepath);
         }
     } else if (!busy) {
         flohandle=fopen(downlink->floFile,"a");
