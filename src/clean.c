@@ -67,17 +67,15 @@ int htick_deleteEntry(char *p_e1)
 void addFileToTree(char* dir, char *filename)
 {
     s_ticfile tic;
-
+    
     if (patimat(filename, "*.TIC") == 1) {
         char  *ticfile = NULL;
         xstrscat(&ticfile,dir,filename,NULL);
         memset(&tic,0,sizeof(tic));
         parseTic(ticfile,&tic);
         if(tic.file) {
-	    if (!fileTree)
-		tree_init(&fileTree, 1);
-    	    tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
-	}
+            tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
+        }
         disposeTic(&tic);
         nfree(ticfile);
     }
@@ -90,6 +88,8 @@ void cleanPassthroughDir(void)
     char           *ticfile = NULL;
     w_log( LL_FUNC, "cleanPassthroughDir(): begin" );
     
+    tree_init(&fileTree, 1);
+
     /* check busyFileDir */
     if (direxist(config->busyFileDir)) {
         dir = opendir(config->busyFileDir);
