@@ -25,16 +25,18 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
-#include <process.h>
+#ifndef __GNUC__
+#  include <process.h>
+#endif
 
 #include <smapi/compiler.h>
 
 #ifdef HAS_DOS_H
-#include <dos.h>
+#  include <dos.h>
 #endif
 
 #if HAS_UNISTD_H
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 
 #include <smapi/progprot.h>
