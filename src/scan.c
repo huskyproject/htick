@@ -132,6 +132,7 @@ void scanNMArea(s_area *afixarea)
    hs_addr         dest;
    int             for_us;
    s_message       filefixmsg;
+   int			   result = 0;
 
    memset (&filefixmsg,'\0',sizeof(s_message));
    netmail = MsgOpenArea((unsigned char *) afixarea->fileName, MSGAREA_NORMAL, (word)afixarea->msgbType);
@@ -160,7 +161,8 @@ void scanNMArea(s_area *afixarea)
                 convertMsgHeader(xmsg, &filefixmsg);
                 convertMsgText(msg, &filefixmsg, config->addr[j]);
                 
-                if (processFileFix(&filefixmsg) != 2) {
+				result = processFileFix(&filefixmsg);
+				if (result != 2) {
                     xmsg.attr |= MSGREAD;
                     MsgWriteMsg(msg, 0, &xmsg, NULL, 0, 0, 0, NULL);
                 }
@@ -168,7 +170,11 @@ void scanNMArea(s_area *afixarea)
                 freeMsgBuffers(&filefixmsg);
                 
                 MsgCloseMsg(msg);
-                if (robot->killRequests) MsgKillMsg(netmail, i);
+				if (robot->killRequests && result == 1)
+				{
+					MsgKillMsg(netmail, i);
+					--i;
+				}
             }
             else
                 MsgCloseMsg(msg);
