@@ -122,9 +122,15 @@ Execute some command on receiving file. Command get full filepath as parameter.
     
     Where autocreated file echos will be placed (may be "passthrough")
 
-9) SaveTic <FileEchoMask> <DirToSaveTic>
+9) SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>
 
 <DirToSaveTic> - where put TIC for fileecho[es] <FileEchoMask>
+<FileOption>   - save files with tics
+                 may be:
+                 1) empty - files will not be copied
+                 2) -l    - link files from fileechodir to <DirToSaveTic> 
+                 3) -c    - copy files from fileechodir to <DirToSaveTic>
+                 -l,-c works only for non-Passthrough file echos 
 
 10) originInAnnounce
 
