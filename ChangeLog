@@ -2,6 +2,12 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Jan 29 18:17:00 2000
+Georgi:
+* if FileAreaBaseDir is "Passthrough", then autocreated filearea is Passthrough
+* "htick hatch": added support filemask for replace field in TIC
+
+----- cvs ci ------
 Fri Jan 28 21:40:00 CET 2000
 sms:
 * changed groups from chars to strings

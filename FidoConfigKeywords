@@ -1,22 +1,29 @@
-FileAreaBaseDir <directory>
+1) FileAreaBaseDir <directory>
 
 Where the directories for all File areas shall be made at autocreate
 Same as MsgBaseDir
 
-PassFileAreaDir <directory>
+2) PassFileAreaDir <directory>
 
 Where shall be put files from Passthrough File areas (and TICs)
 
-AutoFileCreateDefaults <string> 
+3) AutoFileCreateDefaults <string> 
 
 Defaults for File Area Autocreate
 
-FileFixHelp <file>
+4) FileDescPos <number>
+
+Position in files.bbs for description, if description more then 1 line
+Reccomended 13
+
+5) fileLDescString <string>
+
+String before description, if description for file more then 1 line.
+
+6) FileFixHelp <file>
 
 Help file for FileFix  (Same as AreaFixHelp for AreaFix)
 
-FileArea <name> <fileareapath> <uplink> [options] <downlinks>
+7) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
 
 Same as EchoArea, most options are valid
-
-

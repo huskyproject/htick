@@ -57,6 +57,7 @@ extern char      flistfile[256];
 extern char      hatchfile[256];
 extern char      hatcharea[256];
 extern char      hatchdesc[256];
+extern char      replaceMask[256];
 extern char      sendfile[256];
 extern char      sendarea[256];
 extern char      sendaddr[256];

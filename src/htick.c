@@ -77,14 +77,15 @@ void processCommandLine(int argc, char **argv)
 " [annfile <file>]        Announce new files in text file (toss and hatch)\n"
 " [annfecho <file>]       Announce new fileecho in text file\n"
 " scan                    Scanning Netmail area for mails to filefix\n"
-" hatch <file> <area>\n" 
-" <description> [replace] Hatch file into Area, using Description for file,\n"
-"                         if \"replace\", then fill replace field in TIC\n"
+" hatch <file> <area> [<description>]\n" 
+" [replace [<filemask>]]  Hatch file into Area, using Description for file,\n"
+"                         if exist \"replace\", then fill replace field in TIC;\n"
+"                         if not exist <filemask>, then put <file> in field\n"
 " filelist <file>         Generate filelist which includes all files in base\n"
-" purge <days>            Purge files older than <days> days\n"
 " send <file> <filearea>\n"
 "      <address>          Send file from filearea to address\n"
-" request <Adress> <file> Request file from adress\n"
+" purge <days>            Purge files older than <days> days (not implemented)\n"
+" request <Adress> <file> Request file from adress (not implemented)\n"
 "\n"
 "Not all features are implemented yet, you are welcome to implement them :)\n"
 );  
@@ -121,6 +122,10 @@ void processCommandLine(int argc, char **argv)
          continue;
       } else if (stricmp(argv[i], "replace") == 0) {
          hatchReplace = 1;
+         if (i < argc-1) {
+	    i++;
+	    strcpy(replaceMask, argv[i]);
+	 } else strcpy(replaceMask, hatchfile);
          continue;
       } else if (stricmp(argv[i], "filelist") == 0) {
          cmFlist = 1;
@@ -160,6 +165,9 @@ void processConfig()
    unsigned long pid;
    
    FILE *f;
+   char pass_area[13];
+
+   sprintf(pass_area,"Passthrough%c",PATH_DELIM);
 
    config = readConfig();
    if (NULL == config) {
@@ -212,6 +220,8 @@ void processConfig()
    if (config->addrCount == 0) printf("at least one addr must be defined\n");
    if (config->linkCount == 0) printf("at least one link must be specified\n");
    if (config->fileAreaBaseDir == NULL) printf("you must set FileAreaBaseDir in fidoconfig first\n");
+   if (stricmp(config->fileAreaBaseDir,pass_area) == 0) 
+      config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=0;
    if (config->passFileAreaDir == NULL) printf("you must set PassFileAreaDir in fidoconfig first\n");
 
    if (config->addrCount == 0 ||

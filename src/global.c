@@ -59,6 +59,7 @@ char      flistfile[256];
 char      hatchfile[256];
 char      hatcharea[256];
 char      hatchdesc[256];
+char      replaceMask[256];
 
 char      sendfile[256];
 char      sendarea[256];

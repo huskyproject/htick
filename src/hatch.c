@@ -60,7 +60,7 @@ void hatch()
    tic.desc=realloc(tic.desc,(tic.anzdesc+1)*sizeof(&tic.desc));
    tic.desc[tic.anzdesc]=strdup(hatchdesc);
    tic.anzdesc++;
-   if (hatchReplace) strcpy(tic.replaces,tic.file);
+   if (hatchReplace) strcpy(tic.replaces,replaceMask);
 /*
    if (filearea==NULL) {
       autoCreate(tic.area,tic.from,tic.areadesc);
