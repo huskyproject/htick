@@ -1,3 +1,16 @@
+2003-02-04 Tuesday 21:05  d_sergienko
+
+	* src/report.c (1.37): comment out unused Tics4del array
+
+2003-02-04 Tuesday 10:35  mche
+
+	* src/clean.c (1.14): fix tree initialization
+
+2003-02-04 Tuesday 08:26  d_sergienko
+
+	* src/clean.c (1.13): 
+	fixed work with trees
+
 2003-02-03 Monday 11:32  mche
 
 	* src/clean.c (1.12): use tree_deinit for free memory alocated by
