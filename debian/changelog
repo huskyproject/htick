@@ -1,3 +1,9 @@
+htick (1.0.0-20020815-2) stable; urgency=low
+
+  * debian/copyright: new http-location of sources
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Mon, 26 Aug 2002 12:09:54 +0600
+
 htick (1.0.0-20020815-1) stable; urgency=low
 
   * Take sources from new CVS at sourceforge.net
