@@ -1,3 +1,16 @@
+2002-11-29 Friday 14:15  mche
+
+	* src/areafix.c (1.105): fix xstrscat() usage
+
+2002-11-29 Friday 09:06  stas_degteff
+
+	* os2/makefile.wco (1.16): Insert comma to object files list
+
+2002-11-29 Friday 08:13  pgul
+
+	* doc/htick.texi (1.16): filefixKillReports changed to
+	filefixReportsAttr
+
 2002-11-28 Thursday 13:43  mche
 
 	* src/report.c (1.34): fix xstrscat() usage
