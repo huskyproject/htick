@@ -1,3 +1,8 @@
+2002-10-25 Friday 21:51  stas_degteff
+
+	* doc/: Makefile (1.1), htick.texi (1.1), makefile.unx (1.1): Htick
+	manual written by Tema Zelikin 2:5097/31
+
 2002-10-25 Friday 11:30  stas_degteff
 
 	* h/areafix.h (1.14), h/fcommon.h (1.19), h/filecase.h (1.2),
