@@ -130,23 +130,35 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     return msg;
 }
 
-int subscribeCheck(s_filearea area, s_message *msg, s_link *link) {
-	int i;
-	for (i = 0; i<area.downlinkCount;i++) {
-		if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
-	}
-	if (area.group != '\060') {
-	    if (link->AccessGrp) {
-			if (config->PublicGroup) {
-				if (strchr(link->AccessGrp, area.group) == NULL &&
-					strchr(config->PublicGroup, area.group) == NULL) return 2;
-			} else if (strchr(link->AccessGrp, area.group) == NULL) return 2;
-	    } else if (config->PublicGroup) {
-			if (strchr(config->PublicGroup, area.group) == NULL) return 2;
-		} else return 2;
-        }
-	if (area.hide) return 3;
-	return 1;
+int subscribeCheck(s_filearea area, s_message *msg, s_link *link)
+{
+  int i;
+  int found = 0;
+
+  for (i = 0; i<area.downlinkCount;i++)
+  {
+    if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
+  }
+
+  if (strcmp(area.group, "\060") != 0)
+  {
+    if (link->numAccessGrp > 0)
+    {
+      for (i = 0; i < link->numAccessGrp; i++)
+	if (strcmp(area.group, link->AccessGrp[i]) == 0) found = 1;
+    }
+
+    if (config->numPublicGroup > 0)
+    {
+      for (i = 0; i < config->numPublicGroup; i++)
+	if (strcmp(area.group, config->PublicGroup[i]) == 0) found = 1;
+    }
+  }
+  else found = 1;
+
+  if (found == 0) return 2;
+  if (area.hide) return 3;
+  return 1;
 }
 
 
@@ -315,22 +327,29 @@ void addlink(s_link *link, s_filearea *area) {
     area->downlinks[area->downlinkCount] = (s_arealink*)calloc(1, sizeof(s_arealink));
     area->downlinks[area->downlinkCount]->link = link;
     
-    if (link->optGrp) test = strchr(link->optGrp, area->group);
+    if (link->numOptGrp > 0)
+    {
+      unsigned int i;
+
+      test = NULL;
+      for (i = 0; i < link->numOptGrp; i++)
+        if (strcmp(area->group, link->optGrp[i]) == 0) test = link->optGrp[i];
+    }
     area->downlinks[area->downlinkCount]->export = 1;
     area->downlinks[area->downlinkCount]->import = 1;
     area->downlinks[area->downlinkCount]->mandatory = 0;
     if (link->export) if (*link->export==0) {
-	    if (link->optGrp == NULL || (link->optGrp && test)) {
+	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
 		area->downlinks[area->downlinkCount]->export = 0;
 	    }
 	} 
     if (link->import) if (*link->import==0) {
-	    if (link->optGrp == NULL ||  (link->optGrp && test)) {
+	    if (link->numOptGrp == 0 ||  (link->numOptGrp && test)) {
 		area->downlinks[area->downlinkCount]->import = 0;
 	    }
 	} 
     if (link->mandatory) if (*link->mandatory==1) {
-	    if (link->optGrp == NULL || (link->optGrp && test)) {
+	    if (link->numOptGrp == 0 || (link->numOptGrp && test)) {
 		area->downlinks[area->downlinkCount]->mandatory = 1;
 	    }
 	} 

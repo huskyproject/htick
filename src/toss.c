@@ -575,86 +575,110 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    return 0;                                                        
 }              
 
-int readCheck(s_filearea *echo, s_link *link) {
+int readCheck(s_filearea *echo, s_link *link)
+{
 
-    /* rc == '\x0000' access o'k
-       rc == '\x0001' no access group
-       rc == '\x0002' no access level
-       rc == '\x0003' no access export
-       rc == '\x0004' not linked
-    */
-    
-    int i;
+  /* rc == '\x0000' access o'k
+   rc == '\x0001' no access group
+   rc == '\x0002' no access level
+   rc == '\x0003' no access export
+   rc == '\x0004' not linked
+   */
 
-    for (i=0; i<echo->downlinkCount; i++) {
-	if (link == echo->downlinks[i]->link) break;
-    }
-    if (i == echo->downlinkCount) return 4;
+  int i;
+  int found = 0;
 
-    /* pause */
-    if (link->Pause) return 3;
-    
-    if (echo->group && echo->group != '\060') {
-	if (link->AccessGrp) {
-	    if (config->PublicGroup) {
-		if (strchr(link->AccessGrp, echo->group) == NULL &&
-		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
-	} else if (config->PublicGroup) {
-		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	       } else return 1;
+  for (i=0; i<echo->downlinkCount; i++)
+  {
+    if (link == echo->downlinks[i]->link) break;
+  }
+
+  if (i == echo->downlinkCount) return 4;
+
+  /* pause */
+  if (link->Pause) return 3;
+
+  if (strcmp(echo->group, "\060") != 0)
+  {
+    if (link->numAccessGrp > 0)
+    {
+      for (i = 0; i < link->numAccessGrp; i++)
+	if (strcmp(echo->group, link->AccessGrp[i]) == 0) found = 1;
     }
-    
-    if (echo->levelread > link->level) return 2;
-    
-    if (i < echo->downlinkCount) {
-	if (echo->downlinks[i]->export == 0) return 3;
+
+    if (config->numPublicGroup > 0)
+    {
+      for (i = 0; i < config->numPublicGroup; i++)
+	if (strcmp(echo->group, config->PublicGroup[i]) == 0) found = 1;
     }
-    
-    return 0;
+  }
+  else found = 1;
+
+  if (found == 0) return 1;
+
+  if (echo->levelread > link->level) return 2;
+
+  if (i < echo->downlinkCount)
+  {
+    if (echo->downlinks[i]->export == 0) return 3;
+  }
+
+  return 0;
 }
 
-int writeCheck(s_filearea *echo, s_addr *aka) {
+int writeCheck(s_filearea *echo, s_addr *aka)
+{
 
-    /* rc == '\x0000' access o'k
-       rc == '\x0001' no access group
-       rc == '\x0002' no access level
-       rc == '\x0003' no access import
-       rc == '\x0004' not linked
-    */
+  /* rc == '\x0000' access o'k
+   rc == '\x0001' no access group
+   rc == '\x0002' no access level
+   rc == '\x0003' no access import
+   rc == '\x0004' not linked
+   */
 
-    int i;
+  int i;
+  int found = 0;
 
-    s_link *link;
-    
-    if (!addrComp(*aka,*echo->useAka)) return 0;
-    
-    link = getLinkFromAddr (*config,*aka);
-    if (link == NULL) return 4;
-    
-    for (i=0; i<echo->downlinkCount; i++) {
-	if (link == echo->downlinks[i]->link) break;
+  s_link *link;
+
+  if (!addrComp(*aka,*echo->useAka)) return 0;
+
+  link = getLinkFromAddr (*config,*aka);
+  if (link == NULL) return 4;
+
+  for (i=0; i<echo->downlinkCount; i++)
+  {
+    if (link == echo->downlinks[i]->link) break;
+  }
+
+  if (i == echo->downlinkCount) return 4;
+
+  if (strcmp(echo->group, "\060") != 0)
+  {
+    if (link->numAccessGrp > 0)
+    {
+      for (i = 0; i < link->numAccessGrp; i++)
+	if (strcmp(echo->group, link->AccessGrp[i]) == 0) found = 1;
     }
-    if (i == echo->downlinkCount) return 4;
-    
-    if (echo->group != '\060') {
-	if (link->AccessGrp) {
-	    if (config->PublicGroup) {
-		if (strchr(link->AccessGrp, echo->group) == NULL &&
-		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
-	} else if (config->PublicGroup) {
-		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
-	       } else return 1;
+
+    if (config->numPublicGroup > 0)
+    {
+      for (i = 0; i < config->numPublicGroup; i++)
+	if (strcmp(echo->group, config->PublicGroup[i]) == 0) found = 1;
     }
+  }
+  else found = 1;
+
+  if (found == 0) return 1;
+
+  if (echo->levelwrite > link->level) return 2;
     
-    if (echo->levelwrite > link->level) return 2;
-    
-    if (i < echo->downlinkCount) {
-	if (echo->downlinks[i]->import == 0) return 3;
-    }
-    
-    return 0;
+  if (i < echo->downlinkCount)
+  {
+    if (echo->downlinks[i]->import == 0) return 3;
+  }
+
+  return 0;
 }
 
 int createFlo(s_link *link, e_prio prio)

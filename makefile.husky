@@ -1,15 +1,15 @@
 # include Husky-Makefile-Config
-include ../../huskymak.cfg
+include ../huskymak.cfg
 
 OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
           scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
           recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ)
-SRC_DIR = ../src/
+SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../smapi -I$(INCDIR) -Wall -ggdb -O2
+  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -ggdb -O2
 else
-  CFLAGS  = -c -I../h -I../../smapi -I$(INCDIR) -Wall -O3 -s
+  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -O3 -s
 endif
 
 ifeq ($(SHORTNAME), 1)

@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Fri Jan 28 21:40:00 CET 2000
+sms:
+* changed groups from chars to strings
+
+----- cvs ci ------
 Sun Jan 23 13:52:00 2000
 Georgi:
 * fixed bug in function removeDesc
