@@ -1,3 +1,7 @@
+2003-06-15 Sunday 10:21  mche
+
+	* src/report.c (1.41): round big file sizes to Mb in htick reports
+
 2003-06-14 Saturday 14:23  mche
 
 	* h/fcommon.h (1.22), src/fcommon.c (1.71), src/filelist.c (1.42):
