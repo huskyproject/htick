@@ -1,3 +1,17 @@
+2004-03-27 Saturday 21:30  mche
+
+	* doc/htick.texi (1.28), src/clean.c (1.21): new option
+	DaysToKeepTics in SaveTic
+
+2004-03-27 Saturday 20:36  mche
+
+	* src/filelist.c (1.50): speedup filelist generation
+
+2004-03-27 Saturday 12:02  mche
+
+	* src/: hatch.c (1.89), toss.c (1.282): fix bug in doSaveTic when
+	hatch
+
 2004-03-16 Tuesday 08:45  mche
 
 	* src/toss.c (1.281): new CRC values tested on MSVC OK
