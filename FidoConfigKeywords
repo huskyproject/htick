@@ -269,3 +269,8 @@ Origin in announce message
 35) AnnMessFlags <string>
 
 Flags like k/s loc hld ... that will have announce message
+
+36) FileAreaCreatePerms <mode>
+
+Define permissions for newly created filearea directories (UNIX filesystems 
+	only)
