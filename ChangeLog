@@ -1,3 +1,12 @@
+2002-05-20 Monday 14:35  mche
+
+	* src/: fcommon.c (1.48), toss.c (1.172): hardlinks on WinNT 4.0
+
+2002-05-20 Monday 12:03  mche
+
+	* src/: hatch.c (1.50), toss.c (1.171): getting file_id.diz
+	improved
+
 2002-05-18 Saturday 17:04  mche
 
 	* src/add_desc.c (1.8): added log message for getDesc() loglevel
