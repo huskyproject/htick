@@ -1,3 +1,7 @@
+2003-01-12 Sunday 15:11  mche
+
+	* htick.dsp (1.2): define INTEL for MSVC in compiler.h
+
 2003-01-10 Friday 18:06  mche
 
 	* src/: add_desc.c (1.23), hatch.c (1.74): remove macro
