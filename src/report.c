@@ -372,16 +372,20 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
 void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
 {
     char *tmp = NULL;
+    static BigSize bs;
+    memset(&bs,0,sizeof(BigSize));
+    IncBigSize(&bs, (ULONG)tic->size);
+
     tic->anzpath = 1; /* mark tic file as deleted */
     if(strlen(tic->file) > 12)
-        xscatprintf(&(msg->text)," %s\r%23ld ",
+        xscatprintf(&(msg->text)," %s\r% 23s ",
         tic->file,
-        tic->size
+        PrintBigSize(&bs)
         );
     else
-        xscatprintf(&(msg->text)," %-12s %9ld ",
+        xscatprintf(&(msg->text)," %-12s % 9s ",
         tic->file,  
-        tic->size
+        PrintBigSize(&bs)
         );
     
     if (tic->anzldesc > 0) {
@@ -434,19 +438,18 @@ int IsAreaMatched(char* areaname, ps_anndef pRepDef)
 void reportNewFiles()
 {
     UINT      fileCountTotal = 0;
-    UINT32    fileSizeTotal = 0;
+    BigSize   fileSizeTotal,bs;
     UINT      i,j,ii;
     s_message *msg = NULL;
     FILE      *echotosslog;
     FILE      *rp;
     ps_anndef RepDef;
     char      *cp=NULL;
-
     for(i = 0; i < config->ADCount; i++)    
     {
         RepDef = &(config->AnnDefs[i]);
         fileCountTotal = 0;
-        fileSizeTotal = 0;
+        memset(&fileSizeTotal,0,sizeof(BigSize));
         for(j = 0; j < aCount; j++)
         {
             if(!IsAreaMatched(aList[j].farea->areaName,RepDef))
@@ -466,16 +469,18 @@ void reportNewFiles()
             {
                 ReportOneFile(msg, RepDef, &(Report[ii]));
             }
+            memset(&bs,0,sizeof(BigSize));
+            IncBigSize(&bs, (ULONG)aList[j].fSize);
             xscatprintf(&(msg->text), " %s\r", print_ch(77, '-'));
-            xscatprintf(&(msg->text), " %u bytes in %u file(s)\r", aList[j].fSize, aList[j].fCount);
+            xscatprintf(&(msg->text), " %s bytes in %u file(s)\r", PrintBigSize(&bs), aList[j].fCount);
             fileCountTotal += aList[j].fCount;
-            fileSizeTotal  += aList[j].fSize;
+            IncBigSize(&fileSizeTotal, aList[j].fSize);
         }
         if(!msg) continue;
         
         xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
-        xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r\r",
-            fileSizeTotal, fileCountTotal);
+        xscatprintf(&(msg->text), ">Total %s bytes in %u file(s)\r\r",
+            PrintBigSize(&fileSizeTotal), fileCountTotal);
         
         if(msg->netMail > 1)
         {
