@@ -104,6 +104,17 @@
 #define CRC_MAGIC       0xD858
 #define CRC_LDESC       0x5394
 
+
+/* processTic(), sendToLinks() results */
+#define TIC_OK         0
+#define TIC_security   1
+#define TIC_NotOpen    2
+#define TIC_WrongTIC   3
+#define TIC_CantRename 3
+#define TIC_NotForUs   4
+#define TIC_NotRecvd   5
+
+
 void writeNetmail(s_message *msg, char *areaName)
 {
    HAREA  netmail;
@@ -238,11 +249,11 @@ int parseTic(char *ticfile,s_ticfile *tic)
 #if defined(UNIX) || defined(__DJGPP__)
     tichandle=fopen(ticfile,"r");
 #else
-    // insure that ticfile won't be removed while parsing
+    /* insure that ticfile won't be removed while parsing */
     int fh = 0;
     fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
     if( fh<0 ){
-        w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
+        w_log(LL_ERROR, "Can't open '%s': %s (sopen())", ticfile, strerror(errno));
         return 0;
     }
     tichandle = fdopen(fh,"r");
@@ -813,12 +824,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if ( tic.file && strpbrk(tic.file, "/\\:") )
    {
        w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic.file,ticfile);
-       return 1;
+       return TIC_security;
    }
    if ( tic.replaces && strpbrk(tic.replaces, "/\\:") )
    {
        w_log( LL_ALERT, "Directory separator found in 'Replace' token: '%s' of %s TIC file",tic.replaces,ticfile);
-       return 1;
+       return TIC_security;
    }
 
    w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
@@ -860,13 +871,13 @@ int processTic(char *ticfile, e_tossSecurity sec)
                }
                doSaveTic(ticfile,&tic,NULL);
                disposeTic(&tic);
-               return(0);
+               return TIC_OK;
             }
          }
          /* not to us and no forward */
          w_log(LL_ERROR,"Tic File adressed to %s, not to us", aka2str(tic.to));
          disposeTic(&tic);
-         return(4);
+         return TIC_NotForUs;
       }
    }
 
@@ -876,7 +887,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       w_log(LL_ERROR,"Link for Tic From Adress '%s' not found",
               aka2str(tic.from));
       disposeTic(&tic);
-      return(1);
+      return TIC_security;
    }
 
    if (tic.password && ((from_link->ticPwd==NULL) ||
@@ -884,7 +895,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       w_log(LL_ERROR,"Wrong Password %s from %s",
               tic.password,aka2str(tic.from));
       disposeTic(&tic);
-      return(1);
+      return TIC_security;
    }
 
    strcpy(ticedfile,ticfile);
@@ -899,11 +910,11 @@ int processTic(char *ticfile, e_tossSecurity sec)
       if (from_link->delNotRecievedTIC) {
          w_log('6',"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
          disposeTic(&tic);
-         return(0);
+         return TIC_OK;
       } else {
          w_log('6',"File %s from filearea %s not received, wait",tic.file,tic.area);
          disposeTic(&tic);
-         return(5);
+         return TIC_NotRecvd;
       }
    }
 
@@ -911,7 +922,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if(hidden(ticedfile)) {
       w_log('6',"File %s from filearea %s not completely received, wait",tic.file,tic.area);
       disposeTic(&tic);
-      return(5);
+      return TIC_NotRecvd;
    }
 #endif
 
@@ -938,7 +949,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
         if (!quiet) fprintf(stderr,"Cannot open File Area %s, autocreate not allowed !\n",tic.area);
       }
       disposeTic(&tic);
-      return(2);
+      return TIC_NotOpen;
    }
    /* Check CRC Value and reject faulty files depending on noCRC flag */
    if (!filearea->noCRC) {
@@ -989,14 +1000,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
-                  return(3);
+                  return TIC_NotRecvd;
               }
               if (rename(realfile, ticedfile) != 0) {
                   w_log('9',"Can't file %s rename to %s", realfile, ticedfile);
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
-                  return(3);
+                  return TIC_CantRename;
               }
               if (rename(findfile, realfile) != 0) {
                   remove(findfile);
@@ -1006,7 +1017,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
           } else {
               w_log(LL_ERROR,"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
               disposeTic(&tic);
-              return(3);
+              return TIC_WrongTIC;
           }
       }
    }
@@ -1017,7 +1028,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (!tic.size) {
       w_log('6',"File %s from filearea %s has zero size",tic.file,tic.area);
       disposeTic(&tic);
-      return(5);
+      return TIC_NotRecvd;
    }
 
    writeAccess = writeCheck(filearea,&tic.from);
@@ -1028,24 +1039,24 @@ int processTic(char *ticfile, e_tossSecurity sec)
       w_log(LL_ERROR,"Link %s not subscribed to File Area %s",
               aka2str(tic.from), tic.area);
       disposeTic(&tic);
-      return(3);
+      return TIC_WrongTIC;
    case 3:
       w_log(LL_ERROR,"Not import from link %s",
               aka2str(from_link->hisAka));
       disposeTic(&tic);
-      return(3);
+      return TIC_WrongTIC;
    case 2:
       w_log(LL_ERROR,"Link %s no access level",
       aka2str(from_link->hisAka));
       disposeTic(&tic);
-      return(3);
+      return TIC_WrongTIC;
    case 1:
       w_log(LL_ERROR,"Link %s no access group",
       aka2str(from_link->hisAka));
       disposeTic(&tic);
-      return(3);
+      return TIC_WrongTIC;
    }
-   
+
    rc = sendToLinks(1, filearea, &tic, ticedfile);
    
    if(rc == 0)   
@@ -1083,21 +1094,21 @@ void processDir(char *directory, e_tossSecurity sec)
             rc=processTic(dummy,sec);
 
             switch (rc) {
-               case 1:  /* pktpwd problem */
+               case TIC_security:  /* pktpwd problem */
                   changeFileSuffix(dummy, "sec");
                   break;
-               case 2:  /* could not open file */
+               case TIC_NotOpen:   /* could not open file */
                   changeFileSuffix(dummy, "acs");
                   break;
-               case 3:  /* not/wrong pkt */
+               case TIC_WrongTIC:  /* not/wrong pkt */
                   changeFileSuffix(dummy, "bad");
                   break;
-               case 4:  /* not to us */
+               case TIC_NotForUs:  /* not to us */
                   changeFileSuffix(dummy, "ntu");
                   break;
-               case 5:  /* file not recieved */
+               case TIC_NotRecvd:  /* file not recieved */
                   break;
-               default:
+               default:            /* OK */
                   remove (dummy);
                   break;
             } /* switch */
