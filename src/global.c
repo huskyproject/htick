@@ -68,6 +68,7 @@ int       hatchReplace = 0;
 int       cmSend = 0;
 int       cmFlist = 0;
 int       cmClean = 0;
+int       cmAfix = 0;
 
 char      flistfile[256];
 
@@ -91,3 +92,6 @@ char      announcenewfileecho[256];
 
 int       lock_fd;
 char      *_lockfile=NULL;
+
+s_addr    afixAddr = {0,0,0,0};
+char      *afixCmd = NULL;

@@ -51,6 +51,7 @@
 
 #include <toss.h>
 #include <fidoconf/common.h>
+#include <fidoconf/afixcmd.h>
 
 
 void cvtAddr(const NETADDR aka1, s_addr *aka2)
@@ -159,30 +160,29 @@ void scanNMArea(s_area *afixarea)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
          // if for filefix - process it
-         if ((stricmp((char*)xmsg.to,"filefix")==0 ||
-              stricmp((char*)xmsg.to,"allfix")==0 ||
-              stricmp((char*)xmsg.to,"filemgr")==0 ||
-              stricmp((char*)xmsg.to,"htick")==0 ||
-              stricmp((char*)xmsg.to,"filescan")==0)
-             && for_us && (xmsg.attr & MSGREAD) != MSGREAD)
+            if ((stricmp((char*)xmsg.to,"filefix")==0 ||
+                stricmp((char*)xmsg.to,"allfix")==0 ||
+                stricmp((char*)xmsg.to,"filemgr")==0 ||
+                stricmp((char*)xmsg.to,"htick")==0 ||
+                stricmp((char*)xmsg.to,"filescan")==0)
+                && for_us && (xmsg.attr & MSGREAD) != MSGREAD)
             {
-            convertMsgHeader(xmsg, &filefixmsg);
-            convertMsgText(msg, &filefixmsg, config->addr[j]);
-            
-            if (processFileFix(afixarea, &filefixmsg) != 2) {
-		xmsg.attr |= MSGREAD;
-		MsgWriteMsg(msg, 0, &xmsg, NULL, 0, 0, 0, NULL);
-	    }
-
-	    freeMsgBuff(&filefixmsg);
-
-            MsgCloseMsg(msg);
-	    if (config->filefixKillRequests) MsgKillMsg(netmail, i);
-//              i--;
+                convertMsgHeader(xmsg, &filefixmsg);
+                convertMsgText(msg, &filefixmsg, config->addr[j]);
+                
+                if (processFileFix(&filefixmsg) != 2) {
+                    xmsg.attr |= MSGREAD;
+                    MsgWriteMsg(msg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+                }
+                
+                freeMsgBuffers(&filefixmsg);
+                
+                MsgCloseMsg(msg);
+                if (config->filefixKillRequests) MsgKillMsg(netmail, i);
             }
-           else
-            MsgCloseMsg(msg);
-         
+            else
+                MsgCloseMsg(msg);
+            
       } /* endfor */
 
       MsgCloseArea(netmail);

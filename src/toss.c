@@ -587,7 +587,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
       strcat(msg->text, buff);
       writeMsgToSysop(msg, config->ReportTo);
-      freeMsgBuff(msg);
+      freeMsgBuffers(msg);
       nfree(msg);
       if (config->echotosslog != NULL) {
          echotosslog = fopen (config->echotosslog, "a");
@@ -1928,7 +1928,7 @@ void reportNewFiles()
       } /* endfor */
       if (msg) {
          writeMsgToSysop(msg, annArea);
-         freeMsgBuff(msg);
+         freeMsgBuffers(msg);
          nfree(msg);
       } else {
       } /* endif */

@@ -53,16 +53,9 @@
 #include <toss.h>
 #include <areafix.h>
 #include <hatch.h>
+#include <scan.h>
 
 unsigned char RetFix;
-
-void freeMsgBuff(s_message *msg)
-{
-    free(msg->subjectLine);
-    free(msg->toUserName);
-    free(msg->fromUserName);
-    free(msg->text);
-}
 
 char *errorRQ(char *line)
 {
@@ -119,154 +112,7 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 	
 	return rc;
 }
-/*
-int delLinkFromArea(FILE *f, char *fileName, char *str) {
-    long curpos, endpos, linelen=0, len;
-    char *buff = NULL, *sbuff = NULL, *ptr = NULL, *tmp = NULL, *line = NULL;
-	
-    fseek(f, getCurConfPos(), SEEK_SET);
-    curpos = ftell(f);
-    buff = readLine(f);
-    buff = trimLine(buff);
-    len = strlen(buff);
 
-	sbuff = buff;
-
-	while ( (ptr = strstr(sbuff, str)) != NULL) {
-		if (isspace(ptr[strlen(str)]) || ptr[strlen(str)]=='\000') break;
-		sbuff = ptr+1;
-	}
-	
-	line = ptr;
-	
-    if (ptr) {
-	curpos += (ptr-buff-1);
-	while (ptr) {
-	    tmp = strseparate(&ptr, " \t");
-	    if (ptr == NULL) {
-		linelen = (buff+len+1)-line;
-		break;
-	    }
-	    if (*ptr != '-') {
-		linelen = ptr-line;
-		break;
-	    }
-	    else {
-		if (strncasecmp(ptr, "-r", 2)) {
-		    if (strncasecmp(ptr, "-w", 2)) {
-			if (strncasecmp(ptr, "-mn", 3)) {
-			    linelen = ptr-line;
-			    break;
-			}
-		    }
-		}
-	    }
-	}
-	fseek(f, 0L, SEEK_END);
-	endpos = ftell(f);
-	len = endpos-(curpos+linelen);
-	buff = (char*)srealloc(buff, len+1);
-	memset(buff, 0, len+1);
-	fseek(f, curpos+linelen, SEEK_SET);
-	len = fread(buff, sizeof(char), (size_t) len, f);
- 	fseek(f, curpos, SEEK_SET);
-//	fputs(buff, f);
-	fwrite(buff, sizeof(char), (size_t) len, f);
-#if defined(__WATCOMC__) || defined(__MINGW32__)
-	fflush( f );
-	fTruncate( fileno(f), endpos-linelen );
-	fflush( f );
-#else
-	truncate(fileName, endpos-linelen);
-#endif
-    }
-    free(buff);
-    return 0;
-}
-
-// add string to file
-int addstring(FILE *f, char *aka) {
-	char *cfg;
-	long areapos,endpos,cfglen,len;
-
-	//current position
-#ifndef UNIX
-	// in dos and win32 by default \n translates into 2 chars 
-	fseek(f,-2,SEEK_CUR);
-#else                                                   
-	fseek(f,-1,SEEK_CUR);
-#endif
-	areapos=ftell(f);
-	
-	// end of file
-	fseek(f,0l,SEEK_END);
-	endpos=ftell(f);
-	cfglen=endpos-areapos;
-	
-	// storing end of file...
-	cfg = (char*) scalloc((size_t) cfglen+1, sizeof(char));
-	fseek(f,-cfglen,SEEK_END);
-	len = fread(cfg,sizeof(char),(size_t) cfglen,f);
-	
-	// write config
-	fseek(f,-cfglen,SEEK_END);
-	fputs(" ",f);
-	fputs(aka,f);
-//	fputs(cfg,f);
-	fwrite(cfg,sizeof(char),(size_t) len,f);
-	fflush(f);
-	
-	free(cfg);
-	return 0;
-}
-
-int delstring(FILE *f, char *fileName, char *straka, int before_str) {
-	int al,i=1;
-	char *cfg, c, j='\040';
-	long areapos,endpos,cfglen;
-
-	al=strlen(straka);
-
-	// search for the aka string
-	while ((i!=0) && ((j!='\040') || (j!='\011'))) {
-		for (i=al; i>0; i--) {
-			fseek(f,-2,SEEK_CUR);
-			c=fgetc(f);
-			if (straka[i-1]!=tolower(c)) {j = c; break;}
-		}
-	}
-	
-	//current position
-	areapos=ftell(f);
-
-	// end of file
-	fseek(f,0l,SEEK_END);
-	endpos=ftell(f);
-	cfglen=endpos-areapos-al;
-	
-	// storing end of file...
-	cfg=(char*) scalloc((size_t) cfglen+1,sizeof(char));
-	fseek(f,-cfglen-1,SEEK_END);
-	cfglen = fread(cfg,sizeof(char),(size_t) (cfglen+1),f);
-	
-	// write config
-	fseek(f,-cfglen-al-1-before_str,SEEK_END);
-	fwrite(cfg, sizeof(char), cfglen, f);
-
-#if defined(__WATCOMC__) || defined(__MINGW32__)
-	fflush( f );
-	fTruncate( fileno(f), endpos-al-before_str);
-	fflush( f );
-#else
-	truncate(fileName, endpos-al-before_str);
-#endif
-	
-	fseek(f,areapos-1,SEEK_SET);
-
-	free(cfg);
-	return 0;
-}
-*/
 void addlink(s_link *link, s_filearea *area) {
     s_arealink *arealink;
 
@@ -905,7 +751,7 @@ char *textHead(void)
     return text_head;
 }
 
-void RetMsg(s_area *afixarea, s_message *msg, s_link *link, char *report, char *subj)
+void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     s_message *tmpmsg;
     
@@ -913,16 +759,16 @@ void RetMsg(s_area *afixarea, s_message *msg, s_link *link, char *report, char *
                          subj, 1,config->filefixKillReports);
     preprocText(report, tmpmsg);
     
-    writeNetmail(tmpmsg, afixarea->areaName);
+    writeNetmail(tmpmsg, config->robotsArea);
     
-    freeMsgBuff(tmpmsg);
+    freeMsgBuffers(tmpmsg);
     free(tmpmsg);
 }
 
 //-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
 
 
-int processFileFix(s_area *afixarea, s_message *msg)
+int processFileFix(s_message *msg)
 {
 	int security=1, notforme = 0;
 	s_link *link = NULL;
@@ -942,14 +788,14 @@ int processFileFix(s_area *afixarea, s_message *msg)
 
 
 	// security ckeck. link,araefixing & password.
-	if (link != NULL) {
-		if (link->FileFix==1) {
-			if (link->fileFixPwd!=NULL) {
-				if (stricmp(link->fileFixPwd,msg->subjectLine)==0) security=0;
-                                else security=3;
-                        }
-		} else security=2;
-	} else security=1;
+    if (link != NULL) {
+        if (link->FileFix==1) {
+            if (link->fileFixPwd!=NULL) {
+                if (stricmp(link->fileFixPwd,msg->subjectLine)==0) security=0;
+                else security=3;
+            }
+        } else security=2;
+    } else security=1;
 
 	if (!security) {
 		
@@ -961,30 +807,30 @@ int processFileFix(s_area *afixarea, s_message *msg)
 			if (preport != NULL) {
 				switch (RetFix) {
 				case LIST:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: list request");
+					RetMsg(msg, link, preport, "FileFix reply: list request");
 					break;
 				case HELP:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: help request");
+					RetMsg(msg, link, preport, "FileFix reply: help request");
 					break;
 				case ADD: case DEL:
 					if (report == NULL) report = textHead();
 					report = areastatus(preport, report);
 					break;
 				case UNLINK:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: unlinked request");
+					RetMsg(msg, link, preport, "FileFix reply: unlinked request");
 					break;
 				case LINKED:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: linked request");
+    					RetMsg(msg, link, preport, "FileFix reply: linked request");
 					w_log( '8', "FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
 					break;
 				case PAUSE: case RESUME:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: node change request");
+					RetMsg(msg, link, preport, "FileFix reply: node change request");
 					break;
 				case INFO:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: link information");
+					RetMsg(msg, link, preport, "FileFix reply: link information");
 					break;
 				case RESEND:
-					RetMsg(afixarea, msg, link, preport, "FileFix reply: resend request");
+					RetMsg(msg, link, preport, "FileFix reply: resend request");
  					break;
 				case ERROR:
 					if (report == NULL) report = textHead();
@@ -1027,7 +873,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 		}
 		
 	
-		RetMsg(afixarea, msg, link, report, "security violation");
+		RetMsg(msg, link, report, "security violation");
 		free(report);
 		
 		w_log( '8', "FileFix: security violation from %s", aka2str(link->hisAka));
@@ -1042,11 +888,34 @@ int processFileFix(s_area *afixarea, s_message *msg)
 		preport=linked(msg, link, 0);
 		xstrcat(&report, preport);
 		free(preport);
-		RetMsg(afixarea, msg, link, report, "node change request");
+		RetMsg(msg, link, report, "node change request");
 		free(report);
 	}
 
 	w_log( '8', "FileFix: sucessfully done for %s",aka2str(link->hisAka));
 	
 	return 1;
+}
+
+void ffix(s_addr addr, char *cmd)
+{
+    s_link          *link   = NULL;
+    s_message	    *tmpmsg = NULL;
+
+    if (cmd) {
+	link = getLinkFromAddr(config, addr);
+	if (link) {
+	    tmpmsg = makeMessage(&addr, link->ourAka, link->name,
+				 link->RemoteRobotName ?
+				 link->RemoteRobotName : "Filefix",
+				 link->fileFixPwd ?
+				 link->fileFixPwd : "", 1,
+                 config->areafixKillReports);
+	    tmpmsg->text = cmd;
+        processFileFix(tmpmsg);
+	    tmpmsg->text=NULL;
+	    freeMsgBuffers(tmpmsg);
+	} else w_log(LL_ERR, "FileFix: no such link in config: %s!", aka2str(addr));
+    }
+    else scan();
 }

@@ -74,6 +74,7 @@
 #include <scan.h>
 #include <hatch.h>
 #include <filelist.h>
+#include <areafix.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
 /* we can't include windows.h for several reasons ... */
@@ -86,134 +87,146 @@ int __stdcall SetFileApisToOEM(void);
 
 int processCommandLine(int argc, char **argv)
 {
-   int i = 0;
-   int rc = 1;
-   char *basename, *extdelim;
-
-   if (argc == 1) {
-      printf(
-"\nUsage: htick [-q] <command>\n"
-"\n"
-" -q                      Quiet mode (display only urgent messages to console)\n"
-"\n"
-"Commands:\n"
-" toss                    Reading *.tic and tossing files\n"
-" [announce <area>]       Announce new files in area (toss and hatch)\n"
-" [annfile <file>]        Announce new files in text file (toss and hatch)\n"
-" [annfecho <file>]       Announce new fileecho in text file\n"
-" scan                    Scanning Netmail area for mails to filefix\n"
-" hatch <file> <area> [<description>]\n"
-" [replace [<filemask>]]  Hatch file into Area, using Description for file,\n"
-"                         if exist \"replace\", then fill replace field in TIC;\n"
-"                         if not exist <filemask>, then put <file> in field\n"
-" filelist <file>         Generate filelist which includes all files in base\n"
-" send <file> <filearea>\n"
-"      <address>          Send file from filearea to address\n"
-" clean                   Clean passthrough dir\n"
-"\n"
-"Not all features are implemented yet, you are welcome to implement them :)\n"
+    int i = 0;
+    int rc = 1;
+    char *basename, *extdelim;
+    
+    if (argc == 1) {
+        printf(
+            "\nUsage: htick [-q] <command>\n"
+            "\n"
+            " -q                      Quiet mode (display only urgent messages to console)\n"
+            "\n"
+            "Commands:\n"
+            " toss                    Reading *.tic and tossing files\n"
+            " [announce <area>]       Announce new files in area (toss and hatch)\n"
+            " [annfile <file>]        Announce new files in text file (toss and hatch)\n"
+            " [annfecho <file>]       Announce new fileecho in text file\n"
+            " scan                    Scanning Netmail area for mails to filefix\n"
+            " hatch <file> <area> [<description>]\n"
+            " [replace [<filemask>]]  Hatch file into Area, using Description for file,\n"
+            "                         if exist \"replace\", then fill replace field in TIC;\n"
+            "                         if not exist <filemask>, then put <file> in field\n"
+            " filelist <file>         Generate filelist which includes all files in base\n"
+            " send <file> <filearea>\n"
+            "      <address>          Send file from filearea to address\n"
+            " clean                   Clean passthrough dir\n"
+            " ffix [<addr> command]   process filefix\n"
+            "\n"
+            "Not all features are implemented yet, you are welcome to implement them :)\n"
             );
-      return 0;
-  }
-
-   while (i < argc-1) {
-      i++;
-      if ( !strcmp(argv[i], "-q") ) {
-         quiet=1;
-         continue;
-      }
-      if (0 == stricmp(argv[i], "toss")) {
-         cmToss = 1;
-         continue;
-      } else if (stricmp(argv[i], "scan") == 0) {
-         cmScan = 1;
-         continue;
-      } else if (stricmp(argv[i], "hatch") == 0) {
-         if (argc-i < 3) {
-            fprintf(stderr, "Insufficient number of arguments\n");
-            return(0);
-         }
-         cmHatch = 1;
-         i++;
-         strcpy(hatchfile, (argv[i]!=NULL)?argv[i++]:"");
-         // Check filename for 8.3, warn if not
-         basename = strrchr(hatchfile, PATH_DELIM);
-         if (basename==NULL) basename = hatchfile; else basename++;
-         if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
-
-         if (extdelim - basename > 8 || strlen(extdelim) > 4) {
-            if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
-         }
-         strcpy(hatcharea, (argv[i]!=NULL)?argv[i++]:"");
-         if (i < argc) {
-           strcpy(hatchdesc, argv[i]);
+        return 0;
+    }
+    
+    while (i < argc-1) {
+        i++;
+        if ( !strcmp(argv[i], "-q") ) {
+            quiet=1;
+            continue;
+        }
+        if (0 == stricmp(argv[i], "toss")) {
+            cmToss = 1;
+            continue;
+        } else if (stricmp(argv[i], "scan") == 0) {
+            cmScan = 1;
+            continue;
+        } else if (stricmp(argv[i], "hatch") == 0) {
+            if (argc-i < 3) {
+                fprintf(stderr, "Insufficient number of arguments\n");
+                return(0);
+            }
+            cmHatch = 1;
+            i++;
+            strcpy(hatchfile, (argv[i]!=NULL)?argv[i++]:"");
+            // Check filename for 8.3, warn if not
+            basename = strrchr(hatchfile, PATH_DELIM);
+            if (basename==NULL) basename = hatchfile; else basename++;
+            if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
+            
+            if (extdelim - basename > 8 || strlen(extdelim) > 4) {
+                if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
+            }
+            strcpy(hatcharea, (argv[i]!=NULL)?argv[i++]:"");
+            if (i < argc) {
+                strcpy(hatchdesc, argv[i]);
 #ifdef __NT__
-           CharToOem(hatchdesc, hatchdesc);
+                CharToOem(hatchdesc, hatchdesc);
 #endif
-         }
-         else
-           strcpy(hatchdesc, "-- description missing --");
-         continue;
-      } else if (stricmp(argv[i], "send") == 0) {
-         cmSend = 1;
-         i++;
-         strcpy(sendfile, (argv[i]!=NULL)?argv[i++]:"");
-         strcpy(sendarea, (argv[i]!=NULL)?argv[i++]:"");
-         strcpy(sendaddr, (argv[i]!=NULL)?argv[i]:"");
-         continue;
-      } else if (stricmp(argv[i], "replace") == 0) {
-         hatchReplace = 1;
-         if (i < argc-1) {
-	    i++;
-	    strcpy(replaceMask, argv[i]);
-	 } else strcpy(replaceMask, (strrchr(hatchfile,PATH_DELIM)) ?
-	                             strrchr(hatchfile,PATH_DELIM)+1 :
-				     hatchfile);
-         continue;
-      } else if (stricmp(argv[i], "filelist") == 0) {
-         cmFlist = 1;
-	 if (i < argc-1) {
+            }
+            else
+                strcpy(hatchdesc, "-- description missing --");
+            continue;
+        } else if (stricmp(argv[i], "ffix") == 0) {
+            if (i < argc-1) {
+                i++;
+                string2addr(argv[i], &afixAddr);
+                if (i < argc-1) {
+                    i++;
+                    xstrcat(&afixCmd,argv[i]);
+                } else printf("parameter missing after \"%s\"!\n", argv[i]);
+            }
+            cmAfix = 1;
+            continue;
+        } else if (stricmp(argv[i], "send") == 0) {
+            cmSend = 1;
             i++;
-            strcpy(flistfile, argv[i]);
-         } else flistfile[0] = 0;
-         continue;
-      } else if (stricmp(argv[i], "announce") == 0) {
-	 if (i < argc-1) {
-            i++;
-            cmAnnounce = 1;
-            strcpy(announceArea, argv[i]);
-         } else {
-	    fprintf(stderr, "Insufficient number of arguments\n");
-	 }
-         continue;
-      } else if (stricmp(argv[i], "annfile") == 0) {
-	 if (i < argc-1) {
-            i++;
-            cmAnnFile = 1;
-            strcpy(announcefile, argv[i]);
-         } else {
-	    fprintf(stderr, "Insufficient number of arguments\n");
-	 }
-         continue;
-      } else if (stricmp(argv[i], "annfecho") == 0) {
-	 if (i < argc-1) {
-            i++;
-            cmAnnNewFileecho = 1;
-            strcpy(announcenewfileecho, argv[i]);
-         } else {
-	    fprintf(stderr, "Insufficient number of arguments\n");
-	 }
-         continue;
-      } else if (stricmp(argv[i], "clean") == 0) {
-         cmClean = 1;
-         continue;
-      } else {
-         fprintf(stderr, "Unrecognized Commandline Option %s!\n", argv[i]);
-         rc = 0;
-      }
-
+            strcpy(sendfile, (argv[i]!=NULL)?argv[i++]:"");
+            strcpy(sendarea, (argv[i]!=NULL)?argv[i++]:"");
+            strcpy(sendaddr, (argv[i]!=NULL)?argv[i]:"");
+            continue;
+        } else if (stricmp(argv[i], "replace") == 0) {
+            hatchReplace = 1;
+            if (i < argc-1) {
+                i++;
+                strcpy(replaceMask, argv[i]);
+            } else strcpy(replaceMask, (strrchr(hatchfile,PATH_DELIM)) ?
+                strrchr(hatchfile,PATH_DELIM)+1 :
+            hatchfile);
+            continue;
+        } else if (stricmp(argv[i], "filelist") == 0) {
+            cmFlist = 1;
+            if (i < argc-1) {
+                i++;
+                strcpy(flistfile, argv[i]);
+            } else flistfile[0] = 0;
+            continue;
+        } else if (stricmp(argv[i], "announce") == 0) {
+            if (i < argc-1) {
+                i++;
+                cmAnnounce = 1;
+                strcpy(announceArea, argv[i]);
+            } else {
+                fprintf(stderr, "Insufficient number of arguments\n");
+            }
+            continue;
+        } else if (stricmp(argv[i], "annfile") == 0) {
+            if (i < argc-1) {
+                i++;
+                cmAnnFile = 1;
+                strcpy(announcefile, argv[i]);
+            } else {
+                fprintf(stderr, "Insufficient number of arguments\n");
+            }
+            continue;
+        } else if (stricmp(argv[i], "annfecho") == 0) {
+            if (i < argc-1) {
+                i++;
+                cmAnnNewFileecho = 1;
+                strcpy(announcenewfileecho, argv[i]);
+            } else {
+                fprintf(stderr, "Insufficient number of arguments\n");
+            }
+            continue;
+        } else if (stricmp(argv[i], "clean") == 0) {
+            cmClean = 1;
+            continue;
+        } else {
+            fprintf(stderr, "Unrecognized Commandline Option %s!\n", argv[i]);
+            rc = 0;
+        }
+        
    } /* endwhile */
-return rc;
+   return rc;
 }
 
 void processConfig()
@@ -349,12 +362,15 @@ int main(int argc, char **argv)
 
    checkTmpDir();
 
-   if (cmScan) scan();
-   if (cmToss) toss();
+   if (cmScan)  scan();
+   if (cmToss)  toss();
    if (cmHatch) hatch();
-   if (cmSend) send(sendfile, sendarea, sendaddr);
+   if (cmSend)  send(sendfile, sendarea, sendaddr);
    if (cmFlist) filelist();
    if (cmClean) cleanPassthroughDir();
+   if (cmAfix)  ffix(afixAddr, afixCmd);
+   nfree(afixCmd);
+
 
    // deinit SMAPI
    MsgCloseApi();

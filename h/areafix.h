@@ -50,8 +50,7 @@
 #endif
 #define ERROR   255
 
-
-void freeMsgBuff(s_message *msg);
-int processFileFix(s_area* afixarea, s_message *msg);
+int  processFileFix(s_message *msg);
+void ffix(s_addr addr, char *cmd);
 
 #endif
