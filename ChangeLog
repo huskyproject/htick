@@ -1,3 +1,12 @@
+2003-09-18 Thursday 10:41  sfpavel
+
+	* Makefile (htick-1_4-stable.1): Fix static building
+
+2003-09-18 Thursday 06:30  sfpavel
+
+	* debian/changelog (htick-1_4-stable.6): New stable version:
+	1.4-RC2
+
 2003-05-25 Sunday 22:52  d_sergienko
 
 	* BUGS, h/hatch.h, h/toss.h, src/hatch.c, src/toss.c
