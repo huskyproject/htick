@@ -278,7 +278,16 @@ void processConfig()
       exit(1);
    };
 
-   w_log( LL_START, "Start");
+  // open Logfile
+   htick_log = NULL;
+   if (config->logFileDir != NULL) {
+     buff = (char *) smalloc(strlen(config->logFileDir)+strlen(LogFileName)+1);
+     strcpy(buff, config->logFileDir),
+     strcat(buff, LogFileName);
+     htick_log = openLog(buff, versionStr, config);
+     if (htick_log && quiet) htick_log->logEcho = 0;
+   } else
+       fprintf(stderr, "You have no logFileDir in your config, there will be no log created");
 
    if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
    if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
@@ -333,17 +342,9 @@ void processConfig()
       }
    }
 
-   // open Logfile
-   htick_log = NULL;
-   if (config->logFileDir != NULL) {
-     buff = (char *) smalloc(strlen(config->logFileDir)+strlen(LogFileName)+1);
-     strcpy(buff, config->logFileDir),
-     strcat(buff, LogFileName);
-     htick_log = openLog(buff, versionStr, config);
-     if (htick_log && quiet) htick_log->logEcho = 0;
-   } else
-       fprintf(stderr, "You have no logFileDir in your config, there will be no log created");
 
+   w_log( LL_START, "Start");
+   
    nfree(buff);
 
    if (config->busyFileDir == NULL) {
