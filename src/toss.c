@@ -598,9 +598,9 @@ int processTic(char *ticfile, e_tossSecurity sec)
    char hlp[100],timestr[40];
    time_t acttime;
    s_link *from_link;
-   s_addr *old_seenby;
+   s_addr *old_seenby = NULL;
    s_addr old_from, old_to;
-   int old_anzseenby;
+   int old_anzseenby = 0;
    int busy;
    unsigned long crc;
    struct stat stbuf;
@@ -676,11 +676,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    if (filearea!=NULL) {
-      strcpy(fileareapath,filearea->pathName);
-      if (filearea->pathName[strlen(filearea->pathName)-1]!=PATH_DELIM) {
-         filearea->pathName = (char*)realloc(filearea->pathName, strlen(filearea->pathName)+2);
-         sprintf(hlp, "%c", PATH_DELIM);
-         strcat(filearea->pathName,hlp);
+      if (filearea->pass != 1) {
+         strcpy(fileareapath,filearea->pathName);
+      } else {
+         strcpy(fileareapath,config->passFileAreaDir);
       }
    } else {
       sprintf(logstr,"Cannot open oder create File Area %s",tic.area);
@@ -721,13 +720,9 @@ int processTic(char *ticfile, e_tossSecurity sec)
    strLower(fileareapath);
    createDirectoryTree(fileareapath);
 
-   if (tic.replaces[0]!=0) {
+   if (tic.replaces[0]!=0 && filearea->pass !=1 ) {
       // Delete old file
       strcpy(newticedfile,fileareapath);
-      if (fileareapath[strlen(fileareapath)-1]!=PATH_DELIM) {
-         sprintf(hlp, "%c", PATH_DELIM);
-         strcat(newticedfile,hlp);
-      }
       strcat(newticedfile,tic.replaces);
       strLower(newticedfile);
 
@@ -737,62 +732,66 @@ int processTic(char *ticfile, e_tossSecurity sec)
       }
    }
 
-   strcpy(newticedfile,fileareapath);
-   if (fileareapath[strlen(fileareapath)-1]!=PATH_DELIM) {
-      sprintf(hlp, "%c", PATH_DELIM);
-      strcat(newticedfile,hlp);
-   }
-   strcat(newticedfile,tic.file);
-   strLower(newticedfile);
+   if (filearea->pass != 1 || (filearea->pass == 1 && filearea->downlinkCount>0)) {
 
-   if (move_file(ticedfile,newticedfile)!=0) {
-      strLower(ticedfile);
-      if (move_file(ticedfile,newticedfile)==0) {
+      strcpy(newticedfile,fileareapath);
+      strcat(newticedfile,tic.file);
+      strLower(newticedfile);
+
+      if (move_file(ticedfile,newticedfile)!=0) {
+         strLower(ticedfile);
+         if (move_file(ticedfile,newticedfile)==0) {
+            sprintf(logstr,"Moved %s to %s",ticedfile,newticedfile);
+            writeLogEntry(htick_log,'6',logstr);
+         } else {
+            sprintf(logstr,"File %s not found or moveable",ticedfile);
+            writeLogEntry(htick_log,'9',logstr);
+            disposeTic(&tic);
+            return(2);
+         }
+      } else {
          sprintf(logstr,"Moved %s to %s",ticedfile,newticedfile);
          writeLogEntry(htick_log,'6',logstr);
-      } else {
-         sprintf(logstr,"File %s not found or moveable",ticedfile);
-         writeLogEntry(htick_log,'9',logstr);
-         disposeTic(&tic);
-         return(2);
       }
-   } else {
-      sprintf(logstr,"Moved %s to %s",ticedfile,newticedfile);
-      writeLogEntry(htick_log,'6',logstr);
    }
 
-   strcpy(descr_file_name, fileareapath);
-   if (fileareapath[strlen(fileareapath)-1]!=PATH_DELIM) {
-      sprintf(hlp, "%c", PATH_DELIM);
-      strcat(descr_file_name, hlp);
+   if (filearea->pass != 1) {
+      strcpy(descr_file_name, fileareapath);
+      strcat(descr_file_name, "files.bbs");
+      strLower(descr_file_name);
+      removeDesc(descr_file_name,tic.file);
+      if (tic.anzldesc>0)
+         add_description (descr_file_name, tic.file, tic.ldesc, tic.anzldesc);
+      else
+         add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
    }
-   strcat(descr_file_name, "files.bbs");
-   strLower(descr_file_name);
-     
-   removeDesc(descr_file_name,tic.file);
-   if (tic.anzldesc>0) add_description (descr_file_name, tic.file, tic.ldesc, tic.anzldesc);
-   else add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
-   if (cmAnnFile) if (tic.anzldesc>0) announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
-                  else announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
 
-   // Adding path & seenbys
-   time(&acttime);
-   strcpy(timestr,asctime(localtime(&acttime)));
-   timestr[strlen(timestr)-1]=0;
+   if (cmAnnFile)
+      if (tic.anzldesc>0)
+         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
+      else
+         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
 
-   sprintf(hlp,"%s %lu %s %s",
+   if (filearea->downlinkCount>0) {
+      // Adding path & seenbys
+      time(&acttime);
+      strcpy(timestr,asctime(localtime(&acttime)));
+      timestr[strlen(timestr)-1]=0;
+
+      sprintf(hlp,"%s %lu %s %s",
               addr2string(filearea->useAka), time(NULL), timestr,versionStr);
 
-   tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
-   tic.path[tic.anzpath]=strdup(hlp);
-   tic.anzpath++;
+      tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
+      tic.path[tic.anzpath]=strdup(hlp);
+      tic.anzpath++;
 
-   //Save seenby structure
-   old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
-   memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
-   old_anzseenby = tic.anzseenby;
-   memcpy(&old_from,&tic.from,sizeof(s_addr));
-   memcpy(&old_to,&tic.to,sizeof(s_addr));
+      //Save seenby structure
+      old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
+      memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
+      old_anzseenby = tic.anzseenby;
+      memcpy(&old_from,&tic.from,sizeof(s_addr));
+      memcpy(&old_to,&tic.to,sizeof(s_addr));
+   }
 
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
@@ -857,7 +856,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
                *(strrchr(linkfilepath,'.'))=0;
                strcat(linkfilepath,".htk");
                createDirectoryTree(linkfilepath);
-            } else *(strrchr(linkfilepath,PATH_DELIM))=0;
+            } else {
+	       if (filearea->pass != 1)
+		  *(strrchr(linkfilepath,PATH_DELIM))=0;
+	       else
+	          strcpy(linkfilepath,config->passFileAreaDir);
+	    }
 
             // separate bundles
             if (config->separateBundles && !busy) {
@@ -898,7 +902,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
                writeLogEntry(htick_log,'6',logstr);
             }
-
+            free(filearea->downlinks[i]->link->floFile);
          } // if Seenby
       } // Forward file
    }
@@ -994,14 +998,8 @@ int createFlo(s_link *link, e_prio prio)
     FILE *f; // bsy file for current link
     char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
 
-#ifdef UNIX
-    char limiter='/';
-#else
-    char limiter='\\';
-#endif
-
    if (link->hisAka.point != 0) {
-      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, limiter);
+      sprintf(pntDir, "%04x%04x.pnt%c", link->hisAka.net, link->hisAka.node, PATH_DELIM);
       sprintf(name, "%08x.flo", link->hisAka.point);
    } else {
       pntDir[0] = 0;
@@ -1010,7 +1008,7 @@ int createFlo(s_link *link, e_prio prio)
 
    if (link->hisAka.zone != config->addr[0].zone) {
       // add suffix for other zones
-      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, limiter);
+      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
    } else {
       zoneSuffix[0] = 0;
    }
@@ -1025,7 +1023,7 @@ int createFlo(s_link *link, e_prio prio)
       case IMMEDIATE: name[9] = 'i';
                       break;
       case NORMAL:    break;
-   } /* endswitch */
+   }
 
    // create floFile
    link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
@@ -1049,11 +1047,11 @@ int createFlo(s_link *link, e_prio prio)
    } else {
       if ((f=fopen(link->bsyFile,"a")) == NULL) {
          fprintf(stderr,"cannot create *.bsy file for %s\n",link->name);
-         if (config->lockfile != NULL) {
-            remove(link->bsyFile);
-            free(link->bsyFile);
-            link->bsyFile=NULL;
-         }
+         remove(link->bsyFile);
+         free(link->bsyFile);
+         link->bsyFile=NULL;
+         free(link->floFile);
+         if (config->lockfile != NULL) remove(config->lockfile);
          writeLogEntry(htick_log, '9', "cannot create *.bsy file");
          writeLogEntry(htick_log, '1', "End");
          closeLog(htick_log);
@@ -1096,11 +1094,8 @@ void checkTmpDir(s_link link)
             parseTic(ticfile,&tic);
             filearea=getFileArea(config,tic.area);
             if (filearea!=NULL) {
-               strcpy(newticedfile,filearea->pathName);
-               if (newticedfile[strlen(newticedfile)-1]!=PATH_DELIM) {
-                  sprintf(logstr, "%c", PATH_DELIM);
-                  strcat(newticedfile,logstr);
-	       }
+               if (filearea->pass != 1) strcpy(newticedfile,filearea->pathName);
+	       else strcpy(newticedfile,config->passFileAreaDir);
                strcat(newticedfile,tic.file);
                strLower(newticedfile);
 
@@ -1110,9 +1105,10 @@ void checkTmpDir(s_link link)
                   sprintf(newticfile+strlen(newticfile), ".sep%c", PATH_DELIM);
                   createDirectoryTree(newticfile);
                } else {
-                  *(strrchr(newticfile,PATH_DELIM)+1)=0;
+	          if (filearea->pass != 1) *(strrchr(newticfile,PATH_DELIM)+1)=0;
+		  else strcpy(newticfile,config->passFileAreaDir);
                } /* endif */
-      
+
                strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
                move_file(ticfile,newticfile);
 
@@ -1129,16 +1125,96 @@ void checkTmpDir(s_link link)
                writeLogEntry(htick_log,'6',logstr);
 	    }
 	 }
+	 disposeTic(&tic);
          free(ticfile);
       } //while
-   closedir(dir);
-   remove(link.bsyFile);
-   if (tmpdir[strlen(tmpdir)-1] == PATH_DELIM) {
-      tmpdir[strlen(tmpdir)-1] = 0;
-   } else {
-   } /* endif */
-   rmdir(tmpdir);
+      closedir(dir);
+      remove(link.bsyFile);
+      free(link.bsyFile);
+      if (tmpdir[strlen(tmpdir)-1] == PATH_DELIM) {
+         tmpdir[strlen(tmpdir)-1] = 0;
+      } /* endif */
+      rmdir(tmpdir);
    } // if
+   free(link.floFile);
+}
+
+int foundInArray(char **filesInTic, unsigned int filesCount, char *name)
+{
+    unsigned int i, rc = 0;
+
+   for (i = 0; i < filesCount; i++)
+      if (patimat(filesInTic[i],name) == 1) {
+         rc = 1;
+	 break;
+      }
+   return rc;
+}
+
+void checkPassthroughDir()
+{
+    DIR            *dir;
+    struct dirent  *file;
+    char           *ticfile;
+    s_ticfile tic;
+    char **filesInTic = NULL;
+    unsigned int filesCount = 0, i;
+    char logstr[200];
+
+   dir = opendir(config->passFileAreaDir);
+   if (dir == NULL) return;
+
+   while ((file = readdir(dir)) != NULL) {
+      if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
+      ticfile = (char *) malloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
+      strcpy(ticfile, config->passFileAreaDir);
+      strcat(ticfile, file->d_name);
+      if (patimat(file->d_name, "*.TIC") == 1) {
+         memset(&tic,0,sizeof(tic));
+         parseTic(ticfile,&tic);
+         if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
+	    filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
+	    filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
+            strcpy(filesInTic[filesCount], tic.file);
+	    filesCount++;
+	 }
+	 disposeTic(&tic);
+      }
+      free(ticfile);
+   }
+   closedir(dir);
+
+   dir = opendir(config->passFileAreaDir);
+   if (dir == NULL) return;
+
+   while ((file = readdir(dir)) != NULL) {
+      if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
+      ticfile = (char *) malloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
+      strcpy(ticfile, config->passFileAreaDir);
+      strcat(ticfile, file->d_name);
+      if (patimat(file->d_name, "*.TIC") != 1) {
+         if (filesCount == 0) {
+            sprintf(logstr,"Remove file %s from passthrough dir", ticfile);
+            writeLogEntry(htick_log,'6',logstr);
+            remove(ticfile);
+	    free(ticfile);
+	    continue;
+         }
+         if (!foundInArray(filesInTic,filesCount,file->d_name)) {
+            sprintf(logstr,"Remove file %s from passthrough dir", ticfile);
+            writeLogEntry(htick_log,'6',logstr);
+            remove(ticfile);
+	 }
+      }
+      free(ticfile);
+   }
+   closedir(dir);
+
+   if (filesCount > 0) {
+      for (i=0; i<filesCount; i++)
+	free(filesInTic[i]);
+      free(filesInTic);
+   }
 }
 
 void processTmpDir()
@@ -1146,6 +1222,7 @@ void processTmpDir()
     int i;
 
    for (i = 0; i < config->linkCount; i++) checkTmpDir(config->links[i]);
+   checkPassthroughDir();
 }
 
 int putMsgInArea(s_area *echo, s_message *msg, int strip)
