@@ -445,7 +445,7 @@ This statement cannot be repeated.
 @end table
 
 What to do with short names when toss or hatch.
-Short name we mean a DOS-like name: 8.3, without mixed case.
+Saying 'short name' we mean a DOS-like name: 8.3, without mixed case.
 
 This statement cannot be repeated.
 
