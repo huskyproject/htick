@@ -345,15 +345,13 @@ int parseTic(char *ticfile,s_ticfile *tic)
     
     fclose(tichandle);
 
-    if(( linecut = strrchr(tic->file, '/') )) {
-      w_log( LL_ALERT, "Directory separator found in TIC's file clause, possible hack attack: %s", tic->file);
+    if( (linecut = strrchr(tic->file, '/')) || 
+        (linecut = strrchr(tic->file, '\\'))
+      ) {
+      w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic->file,ticfile);
       strcpy(tic->file, linecut);
-      return 0;
-    }
-    if(( linecut = strrchr(tic->file, '\\') )) {
-      w_log( LL_ALERT, "Directory separator found in TIC's file clause, possible hack attack: %s", tic->file);
-      strcpy(tic->file, linecut);
-      return 0;
+      w_log( LL_ALERT, "'File' token truncated to: '%s'",tic->file);
+
     }
 
     if (!tic->anzdesc) {
