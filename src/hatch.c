@@ -54,6 +54,9 @@
 #define getcwd  _getcwd
 #endif
 
+#if defined (UNIX)
+#include <unistd.h>
+#endif
 
 
 typedef enum _descrMacro {BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;

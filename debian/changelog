@@ -1,3 +1,10 @@
+htick (1.1.0-20020826-1) unstable; urgency=low
+
+  * New cvs version
+  * debian/copyright: new http-location of sources
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Mon, 26 Aug 2002 14:33:28 +0600
+
 htick (1.1.0-20020822-1) unstable; urgency=low
 
   * New maintainer
