@@ -65,8 +65,6 @@
 
 unsigned char RetFix;
 
-int limitCheck(s_link *link, s_message *msg);
-
 char *errorRQ(char *line)
 {
    char *report = NULL, err[] = "Error line";
@@ -74,54 +72,6 @@ char *errorRQ(char *line)
    return report;
 }
 
-int subscribeCheck(s_area area, s_message *msg, s_link *link)
-{
-  unsigned int i;
-  int found = 0;
-
-  for (i = 0; i<area.downlinkCount;i++)
-  {
-    if (addrComp(msg->origAddr, area.downlinks[i]->link->hisAka)==0) return 0;
-  }
-
-  if (area.group)
-  {
-    if (link->numAccessGrp > 0)
-    {
-      for (i = 0; i < link->numAccessGrp; i++)
-	if (strcmp(area.group, link->AccessGrp[i]) == 0) found = 1;
-    }
-
-    if (config->numPublicGroup > 0)
-    {
-      for (i = 0; i < config->numPublicGroup; i++)
-	if (strcmp(area.group, config->PublicGroup[i]) == 0) found = 1;
-    }
-  }
-  else found = 1;
-
-  if (found == 0) return 2;
-  if (area.hide) return 3;
-  return 1;
-}
-
-
-int subscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
-	int rc=4;
-	
-	if (!areaname) return rc;
-	
-	if (patimat(area->areaName,areaname)==1) {
-		rc=subscribeCheck(*area, msg, link);
-		/*  0 - already subscribed */
-		/*  1 - need subscribe */
-		/*  2 - no access group */
-		/*  3 - area is hidden */
-		if (area->manual) rc = 2;
-	} else rc = 4; /*  this is another area */
-	
-	return rc;
-}
 
 int unsubscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *link) {
 	int rc=4;
@@ -129,7 +79,7 @@ int unsubscribeAreaCheck(s_area *area, s_message *msg, char *areaname, s_link *l
 	if (!areaname) return rc;
 	
 	if (patimat(area->areaName,areaname)==1) {
-		rc=subscribeCheck(*area, msg, link);
+		rc=subscribeCheck(area, link);
 		/*  0 - already subscribed */
 		/*  1 - need subscribe */
 		/*  2 - no access group */
@@ -151,7 +101,7 @@ char *unlinked(s_message *msg, s_link *link)
     xscatprintf(&report, "Unlinked areas to %s\r\r", aka2str(link->hisAka));
 
     for (i=n=0; i<config->fileAreaCount; i++) {
-	rc=subscribeCheck(area[i], msg, link);
+	rc=subscribeCheck(&(area[i]), link);
 	if (rc == 1) {
         xscatprintf(&report, " %s\r", area[i].areaName);
         n++;
@@ -182,7 +132,7 @@ char *list(s_message *msg, s_link *link) {
 
    for (i=active=avail=0; i< config->fileAreaCount; i++) {
 
-      rc=subscribeCheck(config->fileAreas[i],msg, link);
+      rc=subscribeCheck(&(config->fileAreas[i]),link);
       if (rc < 2) {
          if (config->fileAreas[i].description!=NULL)
             desclen=strlen(config->fileAreas[i].description);
@@ -238,7 +188,7 @@ char *linked(s_message *msg, s_link *link, int action)
 							
 
     for (i=n=0; i<config->fileAreaCount; i++) {
-	rc=subscribeCheck(config->fileAreas[i], msg, link);
+	rc=subscribeCheck(&(config->fileAreas[i]), link);
 	if (rc==0) {
         if (action == 1) {
             readdeny =  e_readCheck(config, &config->fileAreas[i], link);
@@ -529,9 +479,9 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	report=(char*)scalloc(1, sizeof(char));
 
 	for (i=0; i<config->fileAreaCount; i++) {
-		rc=subscribeAreaCheck(&(config->fileAreas[i]),msg,line, link);
+		rc=subscribeAreaCheck(&(config->fileAreas[i]),line, link);
 		if (rc == 4) continue;
- 		if (rc!=0 && limitCheck(link,msg)) rc = 6; /* areas limit exceed for link */
+ 		if (rc!=0 && limitCheck(link)) rc = 6; /* areas limit exceed for link */
 		
 		area = &(config->fileAreas[i]);
 		
@@ -567,7 +517,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
                 continue;
 		}
     }
-    if (rc!=0 && limitCheck(link,msg)) rc = 6; /* areas limit exceed for link */
+    if (rc!=0 && limitCheck(link)) rc = 6; /* areas limit exceed for link */
     if(rc == 4 && link->denyFRA==0 && !found)
     {
         /*  try to forward request */
@@ -1276,26 +1226,5 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
 
     w_log( LL_FUNC, "%s::autoCreate() rc=0", __FILE__ );
     return 0;
-}
-
-/* test link for areas quantity limit exceed
- * return 0 if not limit exceed
- * else return not zero
- */
-int limitCheck(s_link *link, s_message *msg) {
- register unsigned int i,n;
-
- w_log(LL_FUNC,"areafix.c::limitCheck()");
-
- if (link->ffixEchoLimit==0) return 0;
-
- for (i=n=0; i<config->fileAreaCount; i++)
-	if (0==subscribeCheck(config->fileAreas[i], msg, link))	
-	    n++;
-
- i = n >= link->ffixEchoLimit ;
-
- w_log(LL_FUNC,"areafix.c::limitCheck() rc=%u", i);
- return i;
 }
 
