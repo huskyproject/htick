@@ -1,3 +1,11 @@
+2002-05-16 Thursday 11:54  pavel.gulchouck
+
+	* src/fcommon.c (1.47): Do not try to use hardlinks under OS/2
+
+2002-05-16 Thursday 08:32  mche
+
+	* src/fcommon.c (1.46):  #include <stdio.h>
+
 2002-05-15 Wednesday 19:23  mche
 
 	* src/toss.c (1.167): fix cygwin compilation
