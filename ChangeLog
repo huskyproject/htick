@@ -1,3 +1,7 @@
+2002-02-28 Thursday 09:57  mche
+
+	* src/toss.c (1.128): added sorting of report
+
 2002-02-07 Thursday 05:39  stas
 
 	* src/htick.c (1.47): Fix memory fault (initCharsets() &
