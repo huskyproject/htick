@@ -1,3 +1,8 @@
+2002-05-13 Monday 12:25  mche
+
+	* src/toss.c (1.160): feature: if "SaveTic" defined htick will try
+	to create hardlink to ticked file in "DirToSaveTic"
+
 2002-05-12 Sunday 13:08  mche
 
 	* src/hatch.c (1.48): fixed %resend command
