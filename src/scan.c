@@ -39,8 +39,6 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 
-#include <pkt.h>
-
 #include <fcommon.h>
 #include <smapi/patmat.h>
 #include <scan.h>

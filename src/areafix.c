@@ -48,7 +48,6 @@
 
 #include <fcommon.h>
 #include <global.h>
-#include <pkt.h>
 #include <version.h>
 #include <toss.h>
 #include <areafix.h>

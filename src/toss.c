@@ -77,7 +77,6 @@
 #include <fcommon.h>
 #include <global.h>
 #include <toss.h>
-#include <pkt.h>
 #include <areafix.h>
 #include <version.h>
 #include <add_desc.h>
