@@ -1,3 +1,11 @@
+2002-11-28 Thursday 13:43  mche
+
+	* src/report.c (1.34): fix xstrscat() usage
+
+2002-11-28 Thursday 06:43  stas_degteff
+
+	* doc/htick.texi (1.15): Describe command line parameters
+
 2002-11-27 Wednesday 15:40  pgul
 
 	* src/: areafix.c (1.104), report.c (1.33): Use filefixReportsAttr
