@@ -1,3 +1,7 @@
+2003-01-15 Wednesday 11:55  mche
+
+	* src/add_desc.c (1.26): Move cmdcall()
+
 2003-01-14 Tuesday 06:50  mche
 
 	* src/add_desc.c (1.25): remove usless variable
