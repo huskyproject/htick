@@ -909,7 +909,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    /* Recieve file? */
    if (!fexist(ticedfile)) {
-      if (from_link->delNotRecievedTIC) {
+      if (from_link->delNotReceivedTIC) {
          w_log('6',"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
          disposeTic(&tic);
          return TIC_OK;
