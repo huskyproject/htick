@@ -1,3 +1,8 @@
+2002-06-14 Friday 12:37  mche
+
+	* src/: areafix.c (1.69), toss.c (1.188): fix hatching from
+	filechodir
+
 2002-06-13 Thursday 09:36  stas
 
 	* misc/: README (1.1), filefix.866 (1.1), filefix.hlp (1.8),
