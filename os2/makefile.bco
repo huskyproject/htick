@@ -1,0 +1,39 @@
+CC      = bcc
+
+OBJ=.obj
+OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
+          scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
+          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ) filecase$(OBJ)
+
+SRC_DIR = ..\src
+
+!IF $(DEBUG) == 1
+CFLAGS = -v -w -O2 -DDEBUG_HPT -I..\h -I..\..  -I..\..\smapi -I..\..\fidoconf -DOS2
+LFLAGS  =  -v -w -L..\..\smapi -L..\..\fidoconf
+!ELSE
+CFLAGS  =  -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DOS2
+LFLAGS  =  -w -L..\..\smapi -L..\..\fidoconf
+!ENDIF
+
+
+
+all: $(OBJS) \
+     htick.exe \
+
+htick.exe: $(OBJS)
+	$(CC) $(LFLAGS) @&&!
+$(OBJS)
+fconfbco.lib
+smapibco.lib
+!
+
+
+{..\src}.c.obj:
+	$(CC) $(CFLAGS) -c $<
+
+clean:
+	-del *.obj 
+	-del *.bak
+
+distclean: clean
+	-del *.exe
