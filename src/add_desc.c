@@ -35,7 +35,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
         dlc[i+1] = ']';
         dlc[i+2] = '\x00';
         //fprintf (descr_file, "%s", dlc);
-        xstrscat(&desc_line, " ", dlc, NULL);
+        xstrcat(&desc_line, dlc);
     }
     if(strlen(desc_line) + strlen(description[0]) < 80 && count_desc == 1)
     {
