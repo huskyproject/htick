@@ -2,8 +2,14 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
-Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
+Sat Jan 22 22:28:00 2000
+Georgi:
+* fixed bug in patch from Nestyurkin Nikolay
+* added support hatching in Passthrough filearea
+
+----- cvs ci ------
 Sat Jan 22 15:38:40 2000
+Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 * added support tokens FileDescPos and FileLDescString
 Georgi:
 * fixed segmentation fault if field Desc in TIC > 255 chars

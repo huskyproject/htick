@@ -1359,7 +1359,8 @@ void processTmpDir()
     char **filesInTic = NULL;
     unsigned int filesCount = 0;
     
-   for (i = 0; i < config->linkCount; i++) checkTmpDir(config->links[i],&filesInTic,&filesCount);
+   for (i = 0; i < config->linkCount; i++) 
+      checkTmpDir(config->links[i],&filesInTic,&filesCount);
    checkPassthroughDir(&filesInTic,&filesCount);
 }
 

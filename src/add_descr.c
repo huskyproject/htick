@@ -28,10 +28,8 @@ int add_description (char *descr_file_name, char *file_name, char **description,
       else {
          if (config->fileDescPos == 0 )
 	    config->fileDescPos = 1;
-	 if (config->fileLDescString == NULL) 
-	    strcpy(config->fileLDescString, "");
          fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '), 
-	         config->fileLDescString, desc_line);
+	         (config->fileLDescString == NULL) ? "" : config->fileLDescString, desc_line);
       }
       free(desc_line);
    }
@@ -43,7 +41,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 int removeDesc (char *descr_file_name, char *file_name)
 {
     FILE *f1, *f2;
-    char hlp[265] = "", tmp[265], *token, descr_file_name_tmp[256];
+    char *line, *tmp, *token, descr_file_name_tmp[256], *LDescString;
     int flag = 0;
 
    f1 = fopen (descr_file_name, "r");
@@ -58,33 +56,39 @@ int removeDesc (char *descr_file_name, char *file_name)
       return 1;
    }
 
-   while (!feof(f1)) {
-         fgets(hlp,sizeof hlp,f1);
+   if (config->fileLDescString == NULL) 
+      LDescString = strdup(">");
+   else
+      LDescString = strdup(config->fileLDescString);
 
-         if (hlp[0]==0 || hlp[0]==10 || hlp[0]==13 || hlp[0]==';')
+   while ((line = readLine(f1)) != NULL) {
+      line = trimLine(line);
+
+      if (*line == 0 || *line == 10 || *line == 13)
             continue;
 
-         if (hlp[strlen(hlp)-1]=='\r')
-            hlp[strlen(hlp)-1]=0;
+         if (line[strlen(line)-1]=='\r')
+            line[strlen(line)-1]=0;
 
-	 if (flag && (*hlp == '\t' || *hlp == ' ' || *hlp == '>'))
+	 if (flag && (*line == '\t' || *line == ' ' || *line == *LDescString))
 	    continue;
 	 else
 	    flag = 0;
 
-	 strcpy(tmp,hlp);
-         token = strtok(tmp, " \t\n\0");
+         tmp = strdup(line);
+         token = strtok(tmp, " \t\0");
 
-         if (token==NULL)
-            continue;
-
-         if (stricmp(token,file_name) != 0)
-	    fputs(hlp, f2);
-	 else
-	   flag = 1;
-	 hlp[0] = '\0';
+         if (token != NULL) {
+            if (stricmp(token,file_name) != 0)
+	       fputs(line, f2);
+	    else
+	       flag = 1;
+	 }
+      free(tmp);
+      free(line);
    }
 
+   free(LDescString);
    fclose (f1);
    fclose (f2);
    remove(descr_file_name);

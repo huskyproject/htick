@@ -67,9 +67,7 @@ void hatch()
       filearea=getFileArea(config,tic.area);
    }
 */
-   if (filearea!=NULL) {
-      strcpy(fileareapath,filearea->pathName);
-   } else {
+   if (filearea == NULL) {
       sprintf(logstr,"Cannot open or create File Area %s",tic.area);
       writeLogEntry(htick_log,'9',logstr);
       fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
@@ -77,8 +75,13 @@ void hatch()
       return;
    } 
 
-   strLower(fileareapath);
-   createDirectoryTree(fileareapath);
+   if (filearea->pass != 1) {
+      strcpy(fileareapath,filearea->pathName);
+      strLower(fileareapath);
+      createDirectoryTree(fileareapath);
+   } else {
+      strcpy(fileareapath,config->passFileAreaDir);
+   }
 
    stat(hatchfile,&stbuf);
    tic.size = stbuf.st_size;
@@ -101,12 +104,14 @@ void hatch()
       writeLogEntry(htick_log,'6',logstr);
    }
 
-   strcpy(descr_file_name, fileareapath);
-   strcat(descr_file_name, "files.bbs");
-   adaptcase(descr_file_name);
+   if (filearea->pass != 1) {
+      strcpy(descr_file_name, fileareapath);
+      strcat(descr_file_name, "files.bbs");
+      adaptcase(descr_file_name);
+      removeDesc(descr_file_name,tic.file);
+      add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
+   }
 
-   removeDesc(descr_file_name,tic.file);
-   add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
    if (cmAnnFile) announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
 
    if (filearea->downlinkCount > 0) {
@@ -135,7 +140,7 @@ void hatch()
          // Forward file to
          memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
          memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
-         sizeof(s_addr));
+                sizeof(s_addr));
          strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
 
          busy = 0;
@@ -153,7 +158,12 @@ void hatch()
 	    strcat(linkfilepath,".htk");
             createDirectoryTree(linkfilepath);
 	 }
-	 else *(strrchr(linkfilepath,PATH_DELIM))=0;
+	 else {
+            if (filearea->pass != 1) 
+	       *(strrchr(linkfilepath,PATH_DELIM))=0;
+	    else
+	       strcpy(linkfilepath, config->passFileAreaDir);
+	 }
 
          // separate bundles
          if (config->separateBundles && !busy) {
