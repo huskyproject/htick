@@ -6,10 +6,10 @@ SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../.. -Wall -g -D__NT__ -mno-cygwin
-  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o -g
+  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin  -g
 else
   CFLAGS  = -c -I../h -I../.. -O3 -Wall -pedantic -D__NT__ -mno-cygwin
-  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o
+  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin 
 endif
   CDEFS=  $(CFLAGS)
 # uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
@@ -24,7 +24,7 @@ all: $(OBJS) \
 	$(CC) $(CDEFS) $(SRC_DIR)$*.c
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapicyg -lfidoconfigcyg -lmingwex
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfigcyg -lsmapicyg -lmingwex
 
 clean:
 	-rm -f *.o
