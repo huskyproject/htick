@@ -1,3 +1,7 @@
+2002-11-21 Thursday 05:46  stas_degteff
+
+	* doc/htick.texi (htick-1_0-stable.5): Fix typo error
+
 2002-11-20 Wednesday 10:17  stas_degteff
 
 	* doc/htick.texi (htick-1_0-stable.4): Fix spelling (about long
