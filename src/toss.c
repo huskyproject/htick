@@ -815,7 +815,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       }
    }
 
-   if (!filearea->pass || (filearea->pass && filearea->downlinkCount>=minLinkCount)) {
+   //if (!filearea->pass || (filearea->pass && filearea->downlinkCount>=minLinkCount)) {
 
       strcpy(newticedfile,fileareapath);
       strcat(newticedfile,MakeProperCase(tic->file));
@@ -841,7 +841,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          } else {
             writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
          }
-   }
+   //}
 
    if (!filearea->pass) {
       strcpy(descr_file_name, filearea->pathName);
