@@ -1,3 +1,13 @@
+2003-05-28 Wednesday 17:37  mche
+
+	* src/: hatch.c (1.82), htick.c (1.99): fix bug when htick have no
+	permissions to write into filebox it write into tempOutbound
+	instead
+
+2003-05-28 Wednesday 17:31  d_sergienko
+
+	* src/toss.c (1.273): fixed return value
+
 2003-05-25 Sunday 23:05  d_sergienko
 
 	* h/hatch.h (1.7), h/toss.h (1.24), src/hatch.c (1.81), src/toss.c
