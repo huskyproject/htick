@@ -2,6 +2,12 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Wed Jul 14  20:48:50
+Georgi:
+* bugfix if link is busy
+* small change FileFix
+* small bugfix in write file in files.bbs
+
 Sun Jul 11  12:27:35
 Georgi:
 * small bugfix with recoding in posting announce and FileFix

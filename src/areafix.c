@@ -162,7 +162,7 @@ int subscribeCheck(s_filearea area, s_message *msg, s_link *link) {
 	    } else if (config->PublicGroup) {
 			if (strchr(config->PublicGroup, area.group) == NULL) return 2;
 		} else return 2;
-	if (area.hide || area.manual) return 3;
+	if (area.hide) return 3;
 	return 1;
 }
 
@@ -178,9 +178,9 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 		// 1 - need subscribe
 		// 2 - no access group
 		// 3 - area is hidden
-	} else rc = 4;
+		if (area->manual) rc = 2;
+	} else rc = 4; // this is another area
 	
-	// this is another area
 	return rc;
 }
 
@@ -370,7 +370,7 @@ void removelink(s_link *link, s_filearea *area) {
 
 char *unlinked(s_message *msg, s_link *link)
 {
-    int i, rc;
+    int i, rc, n;
     char *report, addline[256];
     s_filearea *area;
     
@@ -380,7 +380,7 @@ char *unlinked(s_message *msg, s_link *link)
     report=(char*)calloc(strlen(addline)+1, sizeof(char));
     strcpy(report, addline);
     
-    for (i=0; i<config->fileAreaCount; i++) {
+    for (i=n=0; i<config->fileAreaCount; i++) {
 	rc=subscribeCheck(area[i], msg, link);
 	if (rc == 1) {
 	    report=(char*)realloc(report, strlen(report)+
@@ -388,8 +388,13 @@ char *unlinked(s_message *msg, s_link *link)
 	    strcat(report, " ");
 	    strcat(report, area[i].areaName);
 	    strcat(report, "\r");
+	    n++;
 	}
     }
+    sprintf(addline, "\r%u areas unlinked\r", n);
+    report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
+    strcat(report, addline);
+
     sprintf(addline,"FileFix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
     writeLogEntry(htick_log, '8', addline);
 
@@ -398,8 +403,16 @@ char *unlinked(s_message *msg, s_link *link)
 
 char *list(s_message *msg, s_link *link) {
 
-	int i,j,active,avail,rc,arealen,desclen,len;
+	int i,j,active,avail,rc,desclen,len;
+	int areaslen[config->fileAreaCount];
+	int maxlen;
 	char *report, addline[256];
+
+	maxlen = 0;
+	for (i=0; i< config->fileAreaCount; i++) {
+	   areaslen[i]=strlen(config->fileAreas[i].areaName);
+	   if (areaslen[i]>maxlen) maxlen = areaslen[i];
+	}
 	
 	sprintf(addline, "Available fileareas for %s\r\r", aka2str(link->hisAka));
 
@@ -408,21 +421,25 @@ char *list(s_message *msg, s_link *link) {
 
 	for (i=active=avail=0; i< config->fileAreaCount; i++) {
 
-	    if (config->fileAreas[i].hide == 0) {
-	       rc=subscribeCheck(config->fileAreas[i],msg, link);
-	       if (rc < 2) {
-			arealen=strlen(config->fileAreas[i].areaName);
+	    rc=subscribeCheck(config->fileAreas[i],msg, link);
+	    if (rc < 2) {
 			if (config->fileAreas[i].description!=NULL)
 			       desclen=strlen(config->fileAreas[i].description);
 			else
 			       desclen=0;
 
-			len=strlen(report)+arealen+(35-arealen)+desclen+4;
+			len=strlen(report)+areaslen[i]+(maxlen-areaslen[i])+desclen+6;
 
 			report=(char*) realloc(report, len);
 				
 			if (rc==0) {
-				strcat(report,"* ");
+				if (atoi(config->fileAreas[i].wgrp) <= link->level
+				    && atoi(config->fileAreas[i].rgrp) <= link->level)
+				    strcat(report,"& ");
+				else if (atoi(config->fileAreas[i].rgrp) <= link->level)
+				    strcat(report,"+ ");
+				else if (atoi(config->fileAreas[i].wgrp) <= link->level)
+				    strcat(report,"* ");
 				active++;
 				avail++;
 			} else {
@@ -433,16 +450,18 @@ char *list(s_message *msg, s_link *link) {
 			if (desclen!=0)
 			{
 			       strcat(report," ");
-			       for (j=0;j<33-arealen;j++) strcat(report,".");
+			       for (j=0;j<(maxlen)-areaslen[i];j++) strcat(report,".");
                                strcat(report," ");
                                strcat(report,config->fileAreas[i].description);
 			}
 			strcat(report,"\r");
-	       }
 	    }
 	}
 	
-	sprintf(addline,"\r'*' = area active for %s\r%i areas available, %i areas active\r", aka2str(link->hisAka), avail, active);
+	sprintf(addline,"\r '+'  You are receive files from this area.
+	\r '*'  You can send files to this file echo.
+	\r '&'  You can send and receive files.
+	\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
 	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
 	strcat(report, addline);
 
@@ -504,7 +523,10 @@ char *help(s_link *link) {
 		fseek(f,0l,SEEK_SET);
 		fread(help,1,(size_t) endpos,f);
 		
-		for (i=0; i<endpos; i++) if (help[i]=='\n') help[i]='\r';
+		for (i=0; i<endpos; i++) {
+		   if (help[i]=='\r' && (i+1)<endpos && help[i+1]=='\n') help[i]=' ';
+		   if (help[i]=='\n') help[i]='\r';
+		}
 
 		fclose(f);
 
@@ -629,6 +651,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			writeLogEntry(htick_log, '8', logmsg);
     			break;
 		    case 1: 
+		    case 3: 
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
 			sprintf(addline,"%s Added\r",area->areaName);
@@ -636,7 +659,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			writeLogEntry(htick_log, '8', logmsg);
 			break;
 		    default :
-			sprintf(logmsg,"FileFix: area %s -- no access for %s",
+			sprintf(logmsg,"FileFix: filearea %s -- no access for %s",
 					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			continue;
@@ -648,7 +671,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (*report == 0) {
 	    sprintf(addline,"%s Not found\r",line);
-	    sprintf(logmsg,"FileFix: area %s is not found",line);
+	    sprintf(logmsg,"FileFix: filearea %s is not found",line);
 	    writeLogEntry(htick_log, '8', logmsg);
 	    report=(char*)realloc(report, strlen(addline)+1);
 	    strcpy(report, addline);
@@ -704,7 +727,6 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 						 area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			continue;
-//			break;
 		}
 		
 		report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
@@ -959,6 +981,8 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"list")==0) return LIST;
 		if (stricmp(line,"help")==0) return HELP;
 		if (stricmp(line,"unlinked")==0) return UNLINK;
+		if (stricmp(line,"linked")==0) return LINKED;
+		if (stricmp(line,"query")==0) return LINKED;
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
 		if (stricmp(line,"info")==0) return INFO;
@@ -996,6 +1020,9 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		break;
 	case UNLINK: report = unlinked (msg, link);
 		RetFix=UNLINK;
+		break;
+	case LINKED: report = linked (msg, link);
+		RetFix=LINKED;
 		break;
 	case PAUSE: report = pause_link (msg, link);
 		RetFix=PAUSE;
@@ -1098,7 +1125,6 @@ int processFileFix(s_message *msg)
 
 	// this is for me?
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
-	else security=4; // link == NULL;
 	
 	// ignore msg for other link (maybe this is transit...)
 	if (notforme) {
@@ -1141,6 +1167,11 @@ int processFileFix(s_message *msg)
 					break;
 				case UNLINK:
 					RetMsg(msg, link, preport, "unlinked request");
+					break;
+				case LINKED:
+					RetMsg(msg, link, preport, "linked request");
+					sprintf(tmp,"FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
+					writeLogEntry(htick_log, '8', tmp);
 					break;
 				case PAUSE:
 					RetMsg(msg, link, preport, "node change request");

@@ -503,15 +503,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    //write new line in config file                                              
                             
-/*   sprintf(buff, "FileArea %s %s%s%s -a %s %s ", 
-           c_area,
-           config->fileAreaBaseDir, 
-           config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=='/'?
-                  "":"/",
-           c_area, 
-           myaddr, 
-           hisaddr); */
-
    sprintf(buff, "FileArea %s %s%s -a %s ",
            c_area,
            config->fileAreaBaseDir,
@@ -524,7 +515,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    } else NewAutoCreate = (char*)calloc(1, sizeof(char));
 
    if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
-     if (desc!=NULL) {
+     if (desc[0] != 0) {
        char *tmp;
        tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
@@ -532,7 +523,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        NewAutoCreate=tmp;
      }
    } else {
-     if (desc!=NULL) {
+     if (desc[0] != 0) {
        char *tmp;
        tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
        fileName[0]='\0';
@@ -705,15 +696,17 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return(3);
    }
-/*
-   if (from_link->import == 0) {
-      sprintf(logstr,"Not import from link %s, %s",
-              from_link->name,
-              addr2string(&from_link->hisAka));
-      writeLogEntry(htick_log,'6',logstr);
-      disposeTic(&tic);
-      return(3);
-   }
+
+   for (i = 0; i < filearea->downlinkCount; i++)
+      if (from_link == filearea->downlinks[i]->link)
+        if (filearea->downlinks[i]->import == 0) {
+           sprintf(logstr,"Not import from link %s, %s",
+                   from_link->name,
+                   addr2string(&from_link->hisAka));
+           writeLogEntry(htick_log,'6',logstr);
+           disposeTic(&tic);
+           return(3);
+	} else break;
 
    if (atoi(filearea->wgrp) > from_link->level) {
       sprintf(logstr,"Link %s, %s have little level",
@@ -723,7 +716,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return(3);
    }
-*/
+
    strLower(fileareapath);
    createDirectoryTree(fileareapath);
 
@@ -831,17 +824,17 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
-	 } else /*if (filearea->downlinks[i]->export == 0) {
+	 } else if (filearea->downlinks[i]->export == 0) {
             sprintf(logstr,"Not export to link %s, %s",
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
 	 } else if (atoi(filearea->rgrp) > filearea->downlinks[i]->link->level) {
-            sprintf(logstr,"Link %s, %s have little level",
+            sprintf(logstr,"Link %s, %s not recieve file from this fileecho",
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
-	 } else */{
+	 } else {
             memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
             memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
                     sizeof(s_addr));
@@ -1071,7 +1064,7 @@ int createFlo(s_link *link, e_prio prio)
 
 void checkTmpDir(s_link link)
 {
-    char tmpdir[256], fileareapath[256], newticedfile[256], newticfile[256];
+    char tmpdir[256], newticedfile[256], newticfile[256];
     char logstr[200];
     DIR            *dir;
     struct dirent  *file;
@@ -1100,10 +1093,11 @@ void checkTmpDir(s_link link)
             parseTic(ticfile,&tic);
             filearea=getFileArea(config,tic.area);
             if (filearea!=NULL) {
-               strcpy(fileareapath,filearea->pathName);
-//               if (filearea->pathName[strlen(filearea->pathName)-1]!='/')
-//                  strcat(filearea->pathName,"/");
                strcpy(newticedfile,filearea->pathName);
+               if (newticedfile[strlen(newticedfile)-1]!=PATH_DELIM) {
+                  sprintf(logstr, "%c", PATH_DELIM);
+                  strcat(newticedfile,logstr);
+	       }
                strcat(newticedfile,tic.file);
                strLower(newticedfile);
 
