@@ -2,155 +2,144 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <filelist.h>
-#include <toss.h>
 #include <fidoconf/log.h>
 #include <global.h>
 #include <string.h>
-#include <fcommon.h>
 #include <fidoconf/common.h>
 #include <smapi/progprot.h>
-#include <add_desc.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/xstr.h>
+//#include <fcommon.h>
+#include <add_desc.h>
+#include <filelist.h>
+#include <toss.h>
+
 
 unsigned long totalfilessize = 0;
 unsigned int totalfilesnumber = 0;
 
+/*
 #define LenDesc 46
 
-void formatDesc(char **desc, int *count)
-//Don't work. :-((
-//Why?
+char** formatDesc(char **desc, int *count)
 {
     int i;
-    char **newDesc = NULL, *tmp, *tmpDesc, *ch, buff[94], *tmp1;
+    char *descLine=NULL;
+    char *begin,*end;
+    
+    for(i = 0; i < (*count); i++ )
+    {
+        if(strlen(desc[i]) > LenDesc)
+            break;
+    }
+    if(i == *count)
+    {
+        printf("%s\n",desc[0]);
+        return desc;
+    }
 
-   for (i = 0; i < (*count); i++ ) {
-      newDesc = srealloc(newDesc,sizeof(char *)*(i+1));
-      memset(buff, 0, sizeof buff);
-      if (strlen(desc[i]) <= LenDesc) {
-	 newDesc[i] = (char *) smalloc(strlen(desc[i])+1);
-	 strcpy(newDesc[i], desc[i]);
-	 continue;
-      }
-      tmp = sstrdup(desc[i]);
-
-      ch = strtok(tmp, " \t\0");
-      if (strlen(ch)>LenDesc) {
-	 newDesc[i] = (char *) smalloc(strlen(ch)+1);
-	 strcpy(newDesc[i], ch);
-	 ch = strtok(NULL,"\0");
-	 if (ch != NULL) {
-            if ((*count) == (i+1)) {
-               desc = srealloc(desc,sizeof(char *) * ((*count)+1) );
-	       (*count)++;
-	       desc[i+1] = (char *) smalloc(strlen(ch)+1);
-	       strcpy(desc[i+1], ch);
-	    } else {
-	       tmpDesc = sstrdup(desc[i+1]);
-               desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
-               sprintf(desc[i+1],"%s %s",ch,tmpDesc);
-	       free(tmpDesc);
+    for(i = 0; i < (*count); i++ )
+    {
+        if(strlen(desc[i]) < LenDesc)
+            xstrcat(&desc[i],"\r");
+        if(i == 0)
+            xstrcat(&descLine,desc[i]);
+        else
+            xstrscat(&descLine, " " , desc[i],NULL);
+        nfree(desc[i]);
+    }
+    begin = end =descLine; i = 0;
+    while(*end)
+    {
+        if(end == "\r")
+        {
+            *end     = '\0';
+            if(i == *count)
+            {
+                (*count)++;
+                desc = srealloc(desc,sizeof(char *) * (*count) );
             }
-	 }
-         free(tmp);
-	 continue;
-      }
-      while (ch != NULL) {
-         if (strlen(buff)+strlen(ch)>LenDesc) {
-	    newDesc[i] = (char *) smalloc(strlen(buff)+1);
-	    strcpy(newDesc[i], buff);
-	    if ((*count) == (i+1)) {
-               desc = srealloc(desc,sizeof(char *) * ((*count)+1) );
-	       (*count)++;
-	       desc[i+1] = (char *) smalloc(strlen(ch)+1);
-	       strcpy(desc[i+1], ch);
-	       ch = strtok(NULL,"\0");
-	       if (ch != NULL) {
-	          tmpDesc = sstrdup(desc[i+1]);
-                  desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
-                  sprintf(desc[i+1],"%s %s",tmpDesc,ch);
-		  free(tmpDesc);
-	       }
-	    } else {
-	       tmpDesc = sstrdup(desc[i+1]);
-	       tmp1 = strtok(NULL,"\0");
-	       if (tmp1 == NULL) {
-                  desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
-                  sprintf(desc[i+1],"%s %s",ch,tmpDesc);
-	       } else {
-                  desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+strlen(tmp1)+2);
-                  sprintf(desc[i+1],"%s %s %s",ch,tmp1,tmpDesc);
-	       }
-	       free(tmpDesc);
+            desc[i] = sstrdup(begin);
+            begin = end = end + 1;
+            i++;
+            continue;
+        }
+        if(end-begin > LenDesc)
+        {   
+            end--;
+            while(!isspace(*(end)) && end+1 > begin)
+                end--;
+            *end     = '\0';
+            if(i == *count)
+            {
+                (*count)++;
+                desc = srealloc(desc,sizeof(char *) * (*count) );
             }
-	    ch = NULL;
-            free(tmp);
-	    continue;
-	 }
-         if (buff[0] == 0) sprintf(buff, "%s", ch);
-         else sprintf(buff+strlen(buff), " %s", ch);
-         ch = strtok(NULL, " \t\0");
-      }
-      free(tmp);
-   }
-   for (i = 0; i < (*count); i++ ) {
-      free(desc[i]);
-      desc[i] = (char *) smalloc(strlen(newDesc[i])+1);
-      strcpy(desc[i], newDesc[i]);
-      free(newDesc[i]);
-   }
-   if ((*count) > 0) free(newDesc);
-   return;
+            desc[i] = sstrdup(begin);
+            begin = end = end + 1;
+            i++;
+            continue;
+        }
+        end++;
+    }
+    if(i == *count)
+    {
+        (*count)++;
+        desc = srealloc(desc,sizeof(char *) * (*count) );
+    }
+    desc[i] = sstrdup(begin);
+    printf("%s\n",descLine);
+    nfree(descLine);
+    return desc;
 }
+*/
 
 void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, int year, int countdesc, char **desc)
 {
     int i;
-
-   fprintf(f,"%-12s",filename);
-   fprintf(f,"%8lu ",(unsigned long) size);
-   fprintf(f, "%02u-", day);
-   switch (month) {
-   case 0: fprintf(f, "Jan");
-      break;
-   case 1: fprintf(f, "Feb");
-      break;
-   case 2: fprintf(f, "Mar");
-      break;
-   case 3: fprintf(f, "Apr");
-      break;
-   case 4: fprintf(f, "May");
-      break;
-   case 5: fprintf(f, "Jun");
-      break;
-   case 6: fprintf(f, "Jul");
-      break;
-   case 7: fprintf(f, "Aug");
-      break;
-   case 8: fprintf(f, "Sep");
-      break;
-   case 9: fprintf(f, "Oct");
-      break;
-   case 10: fprintf(f, "Nov");
-      break;
-   case 11: fprintf(f, "Dec");
-      break;
-   default:
-      break;
-   }
-   fprintf(f, "-%02u", year % 100);
-   if (countdesc == 0) fprintf(f," Description not avaliable\n");
-   else {
-      //formatDesc(desc, &countdesc);
-      for (i=0;i<countdesc;i++) {
-         if (i == 0) fprintf(f," %s\n",desc[i]);
-	 else fprintf(f,"                               %s\n",desc[i]);
-      }
-   }
-   return;
+    
+    fprintf(f,"%-12s",filename);
+    fprintf(f,"%8lu ",(unsigned long) size);
+    fprintf(f, "%02u-", day);
+    switch (month) {
+    case 0: fprintf(f, "Jan");
+        break;
+    case 1: fprintf(f, "Feb");
+        break;
+    case 2: fprintf(f, "Mar");
+        break;
+    case 3: fprintf(f, "Apr");
+        break;
+    case 4: fprintf(f, "May");
+        break;
+    case 5: fprintf(f, "Jun");
+        break;
+    case 6: fprintf(f, "Jul");
+        break;
+    case 7: fprintf(f, "Aug");
+        break;
+    case 8: fprintf(f, "Sep");
+        break;
+    case 9: fprintf(f, "Oct");
+        break;
+    case 10: fprintf(f, "Nov");
+        break;
+    case 11: fprintf(f, "Dec");
+        break;
+    default:
+        break;
+    }
+    fprintf(f, "-%02u", year % 100);
+    if (countdesc == 0) fprintf(f," Description not avaliable\n");
+    else {
+        //desc = formatDesc(desc, &countdesc);
+        for (i=0;i<countdesc;i++) {
+            if (i == 0) fprintf(f," %s\n",desc[i]);
+            else fprintf(f,"                               %s\n",desc[i]);
+        }
+    }
+    return;
 }
 
 void printFileArea(char *area_areaName, char *area_pathName, char *area_description, FILE *f, int bbs) {
@@ -179,7 +168,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     
     dir = opendir(fileareapath);
     if (dir == NULL) return;
-
+    
     w_log( LL_INFO, "Processing: %s",area_areaName);
     
     while ((file = readdir(dir)) != NULL) {
@@ -206,7 +195,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
             add_description(fbbsname, file->d_name, tic.desc, 1);
         }
         stat(filename,&stbuf);
-        fileTime = stbuf.st_mtime;
+        fileTime = stbuf.st_mtime > 0 ? stbuf.st_mtime : 0;
         locTime = localtime(&fileTime);
         totalsize += stbuf.st_size;
         totalnumber++;
@@ -263,31 +252,31 @@ void filelist()
 {
     FILE *f;
     unsigned int i;
-
-   w_log( LL_INFO, "Start filelist...");
-
-   if (strlen(flistfile) == 0) {
-      w_log('6',"Not found output file");
-      return;
-   }
-
-   if ( (f = fopen(flistfile,"w")) == NULL ) {
-         w_log('6',"Could not open for write file %s",flistfile);
-         return;
-   }
-
-   for (i=0; i<config->fileAreaCount; i++) {
-      if (config->fileAreas[i].pass != 1 && !(config->fileAreas[i].hide))
-         printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].pathName, config->fileAreas[i].description, f, 0);
-   }
-
-   for (i=0; i<config->bbsAreaCount; i++) {
-      printFileArea(config->bbsAreas[i].areaName, config->bbsAreas[i].pathName, config->bbsAreas[i].description, f, 1);
-   }
-
-   fprintf(f,"=============================================================================\n");
-   fprintf(f,"Total files in filelist: %4d, total size: %10lu bytes\n",totalfilesnumber,totalfilessize);
-   fprintf(f,"=============================================================================\n\n");
-
-   fclose(f);
+    
+    w_log( LL_INFO, "Start filelist...");
+    
+    if (strlen(flistfile) == 0) {
+        w_log('6',"Not found output file");
+        return;
+    }
+    
+    if ( (f = fopen(flistfile,"w")) == NULL ) {
+        w_log('6',"Could not open for write file %s",flistfile);
+        return;
+    }
+    
+    for (i=0; i<config->fileAreaCount; i++) {
+        if (config->fileAreas[i].pass != 1 && !(config->fileAreas[i].hide))
+            printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].pathName, config->fileAreas[i].description, f, 0);
+    }
+    
+    for (i=0; i<config->bbsAreaCount; i++) {
+        printFileArea(config->bbsAreas[i].areaName, config->bbsAreas[i].pathName, config->bbsAreas[i].description, f, 1);
+    }
+    
+    fprintf(f,"=============================================================================\n");
+    fprintf(f,"Total files in filelist: %4d, total size: %10lu bytes\n",totalfilesnumber,totalfilessize);
+    fprintf(f,"=============================================================================\n\n");
+    
+    fclose(f);
 }
