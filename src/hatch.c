@@ -118,9 +118,10 @@ void hatch()
 
       // Adding path
       time(&acttime);
-      strcpy(timestr,asctime(localtime(&acttime)));
+      strcpy(timestr,asctime(gmtime(&acttime)));
       timestr[strlen(timestr)-1]=0;
-      sprintf(tmp,"%s %lu %s %s",
+      if (timestr[8]==' ') timestr[8]='0';
+      sprintf(tmp,"%s %lu %s UTC %s",
               addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
       tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
       tic.path[tic.anzpath]=strdup(tmp);
@@ -317,6 +318,7 @@ int send(char *filename, char *area, char *addr)
    time(&acttime);
    strcpy(timestr,asctime(gmtime(&acttime)));
    timestr[strlen(timestr)-1]=0;
+   if (timestr[8]==' ') timestr[8]='0';
    sprintf(tmp,"%s %lu %s UTC %s",
            addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
    tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));

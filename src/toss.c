@@ -1017,6 +1017,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       time(&acttime);
       strcpy(timestr,asctime(gmtime(&acttime)));
       timestr[strlen(timestr)-1]=0;
+      if (timestr[8]==' ') timestr[8]='0';
 
       sprintf(hlp,"%s %lu %s UTC %s",
               addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);

@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sun Feb 13 15:59:24 NOVT 2000
+max (patch from Alex Bronin):
+* UTC time in path while hatching
+
+----- cvs ci ------
 Sat Feb 12 23:53:44 NOVT 2000
 max:
 * compiling without warnings under win32
