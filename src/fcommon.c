@@ -68,7 +68,7 @@
 
 //#include <process.h>
 #include <toss.h>
-#include <add_descr.h>
+#include <add_desc.h>
 
 int createLockFile(char *lockfile) {
         FILE *f;
