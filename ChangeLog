@@ -2,6 +2,11 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Mon Jul  5 22:39:33 NOVST 1999
+max:
+* small bugfix in recode.c
+
+----- cvs ci ------
 Thu Jul 01  15:30:55
 Georgi:
 * Fixed bug with seenby
