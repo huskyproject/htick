@@ -529,8 +529,8 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
         grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1)
     {
+        char *descr = NULL;
         if (uplink->forwardFileRequestFile!=NULL) {
-            char *descr = NULL;
             // first try to find the areatag in forwardRequestFile
             if (IsAreaAvailable(areatag,uplink->forwardFileRequestFile,&descr,1))
             {
