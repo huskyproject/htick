@@ -6,7 +6,7 @@ LINK    = WLINK
 OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj add_descr.obj seenby.obj recode.obj crc32.obj hatch.obj filelist.obj
 SRC_DIR = ..\src
 
-CFLAGS  = -zq -wx -bt=nt -zp=1 -j -i=..\..\fidoconfig;..\..\smapi;..\h -oneatx -5
+CFLAGS  = -zq -wx -bt=nt -zp=1 -j -i=..\..;..\h -oneatx -5
 
 all: $(OBJS) htick.exe
 

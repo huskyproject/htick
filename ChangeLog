@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Mon Mar 20 08:56:28 MSK 2000
+max (patch from Serguei Revtov):
+* change legacy SUN & Win makefiles to compile with new includes, simplifying
+
+----- cvs ci ------
 Wed Mar 01 09:10:00 IZH 2000
 Georgi:
 * now working filearea option nopause
