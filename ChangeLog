@@ -1,3 +1,13 @@
+2002-09-20 Friday 17:30  d_sergienko
+
+	* FidoConfigKeywords (1.39), src/areafix.c (1.89): added
+	autoFileCreateFlag functionality
+
+2002-09-20 Friday 16:47  d_sergienko
+
+	* FidoConfigKeywords (1.38), misc/config (1.5), src/areafix.c
+	(1.88): replace areafixFromName to filefixFromName
+
 2002-09-19 Thursday 08:45  sfpavel
 
 	* dos/makefile.djg (1.6), src/toss.c (1.210): Fix DJGPP build
