@@ -1162,7 +1162,10 @@ This statement can be repeated only for different AnnAreaTag.
 @subsection Announces example
 @findex Announces example
 
-@code{
+The following text is taken from a real confige file.
+
+@example
+#= Announces definitions =====================================
 AnnounceSpool   E:\FIDO\EXCH\report
 
 # report all arrived files to file e:\fido\rep.txt
@@ -1201,7 +1204,8 @@ AnnOrigin       *** seumbieky forever ***
 AnnMessFlags    k/s loc hld
 AnnFileOrigin   on
 AnnFileRfrom    on
-}
+#= Announces definitions ends ================================
+@end example
 
 @node Keyword Index, , Announces example, Top
 @appendix Configuration File Keyword Index
