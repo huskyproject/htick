@@ -416,9 +416,7 @@ char *available(s_link *link) {
 }
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
-    FILE *f_conf;
     char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL, *tmpPtr =NULL;
-    long endpos, cfglen;
     long strbeg = 0, strend = -1;
 
     areaName = area->areaName;
@@ -438,6 +436,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
                 if (stricmp(token, areaName)==0) {
                     fileName = sstrdup(getCurConfName());
                     strend = get_hcfgPos();
+                    if(strbeg > strend) strbeg = 0;
                     break;
                 }
             }
@@ -453,26 +452,6 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
         nfree(fileName);
         return 1; // impossible
     }
-
-    if ((f_conf=fopen(fileName,"r+b")) == NULL)
-    {
-        if (!quiet) fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
-        nfree(cfgline);
-        nfree(fileName);
-        return 1;
-    }
-    nfree(fileName);
-
-    fseek(f_conf, 0L, SEEK_END);
-    endpos = ftell(f_conf);
-    cfglen = endpos - strend;
-    line = (char*) smalloc((size_t) cfglen+1);
-    fseek(f_conf, strend, SEEK_SET);
-    cfglen = fread(line, sizeof(char), cfglen, f_conf);
-    line[cfglen]='\0';
-    fseek(f_conf, strbeg, SEEK_SET);
-    setfsize( fileno(f_conf), strbeg );
-
     switch (action) {
     case 0:
         xstrscat(&cfgline, " ", aka2str(link->hisAka), NULL);
@@ -482,10 +461,10 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
         break;
     default: break;
     }
-    fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
-    fclose(f_conf);
-    nfree(line);
+    InsertCfgLine(fileName, cfgline, strbeg, strend);
     nfree(cfgline);
+    nfree(fileName);
+    
     return 0;
 }
 
