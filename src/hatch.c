@@ -101,6 +101,7 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
     char **tmpArray = NULL;
     UINT i;
 
+    memset(&tmptic,0,sizeof(s_ticfile));    
     if(tic->anzdesc > 0)
     {
         SdescOPT  = getDescOptions(tic->desc[0],&sdFileName);
@@ -122,9 +123,7 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
     }
 
     if(!SdescOPT && !LdescOPT)
-        return;
-
-    memset(&tmptic,0,sizeof(s_ticfile));    
+        goto recode;
 
     if(SdescOPT == BBSONELINE || LdescOPT == BBSONELINE || SdescOPT == BBSMLTLINE || LdescOPT == BBSMLTLINE)
     {
@@ -280,6 +279,7 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
         }
     }
 
+recode:
     if (config->outtab != NULL)
     {
         for( i = 0; i < tic->anzdesc; i++)
