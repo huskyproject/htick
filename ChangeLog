@@ -2,6 +2,13 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Feb 12 16:45:00 IZH 2000
+Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
+* added new keyword:
+  SaveTic <FileEchoMask> <DirToSaveTic>
+  <DirToSaveTic> - where put TIC for fileecho[es] <FileEchoMask>
+
+----- cvs ci ------
 Tue Feb  8 00:07:06 NOVT 2000
 max (patch from Alex Bronin, 2:5049/36):
 * executing command on receiving file
