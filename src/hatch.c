@@ -363,6 +363,7 @@ int send(char *filename, char *area, char *addr)
 /* 2 - filearea not found */
 /* 3 - file not found */
 /* 4 - link not found */
+/* 5 - put on link error */
 {
     s_ticfile tic;
     s_link *link = NULL;
@@ -371,9 +372,11 @@ int send(char *filename, char *area, char *addr)
     char timestr[40];
     struct stat stbuf;
     time_t acttime;
-    
+    int rc;
+
     w_log( LL_INFO, "Start file send (%s in %s to %s)",filename,area,addr);
     
+    rc = 0;
     filearea=getFileArea(area);
     if (filearea == NULL) {
         if (!quiet) fprintf(stderr,"Error: Filearea not found\n");
@@ -459,17 +462,18 @@ int send(char *filename, char *area, char *addr)
     /*  Adding Downlink to Seen-By */
     seenbyAdd(&tic.seenby,&tic.anzseenby,&link->hisAka);
     /*  Forward file to */
-    PutFileOnLink(sendfile, &tic, link);
+    if (!PutFileOnLink(sendfile, &tic, link))
+        rc=5;
 
     disposeTic(&tic);
     nfree(sendfile);
     nfree(tmpfile);
     nfree(descr_file_name);
-    return 0;
+    return rc;
 }
 
 
-void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
+int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
 {
     int   busy = 0;
     char *linkfilepath = NULL;
@@ -514,7 +518,8 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     /* Don't create TICs for everybody */
     if (!downlink->noTIC) {
         newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-        writeTic(newticfile,tic);
+        if (!writeTic(newticfile,tic))
+            return 0;
     }
     else  newticfile = NULL;
     
@@ -562,5 +567,6 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     nfree(downlink->bsyFile);
     nfree(downlink->floFile);
     nfree(linkfilepath);
+    return 1;
 }
 

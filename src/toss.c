@@ -166,13 +166,23 @@ void writeNetmail(s_message *msg, char *areaName)
    } /* endif */
 }
 
-void writeTic(char *ticfile,s_ticfile *tic)
+int writeTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
     unsigned int i;
     s_area *filearea = NULL;
 
-    tichandle=fopen(ticfile,"wb");
+    if (ticfile) {
+        tichandle=fopen(ticfile,"wb");
+        if (!tichandle) {
+            w_log(LL_ERROR, "Unable to open TIC file %s: %s!!!\n", ticfile, strerror(errno));
+            return 0;
+        }
+    } else {
+        w_log(LL_ERROR, "ticfile is NULL, internal error!\n");
+        return 0;
+    }
+
 
     fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
     fprintf(tichandle,"File %s\r\n",tic->file);

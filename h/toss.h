@@ -42,12 +42,13 @@ enum TIC_state {
                   TIC_WrongTIC,
                   TIC_CantRename,
                   TIC_NotForUs,
-                  TIC_NotRecvd
+                  TIC_NotRecvd,
+                  TIC_IOError
 };
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
 void disposeTic(s_ticfile *tic);
-void writeTic(char *ticfile,s_ticfile *tic);
+int writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
 void processTmpDir(void);
 void toss(void);
