@@ -57,6 +57,8 @@
 #if (defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <process.h>
 #define P_WAIT		_P_WAIT
+#define chdir   _chdir
+#define getcwd  _getcwd
 #endif
 
 #include <fidoconf/fidoconf.h>
@@ -68,14 +70,7 @@
 #include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
 
-//#include <smapi/msgapi.h>
-//#include <smapi/typedefs.h>
-//#include <smapi/compiler.h>
-//#include <smapi/patmat.h>
-//#include <smapi/ffind.h>
-//#include <smapi/stamp.h>
 #include <smapi/progprot.h>
-
 
 #include <fcommon.h>
 #include <global.h>
@@ -339,7 +334,7 @@ void *mk_lst(char *a) {
 
 int parseFileDesc(char *fileName,s_ticfile *tic)
 {
-   FILE *filehandle, *dizhandle;
+   FILE *filehandle, *dizhandle = NULL;
    char *line, *dizfile;
    int  j, found;
    unsigned int  i;
@@ -365,41 +360,47 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
 
     // unpack file_id.diz (config->fileDescName)
     if (found) {
+    char buffer[256]="";
+    getcwd( buffer, 256 );
 	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
 	w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
-        if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
-        {
-            cmdexit = 1;
+    chdir(config->tempInbound);
+    if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
+    {
+        cmdexit = 1;
 #ifdef USE_HPT_ZLIB
-            cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+        cmdexit = UnPackWithZlib(fileName, config->tempInbound);
 #endif
-        }
-        else
-        {
+    }
+    else
+    {
 #if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-            list = mk_lst(cmd);
-            cmdexit = spawnvp(P_WAIT, cmd, list);
-            free((char **)list);
-            if (cmdexit != 0) {
+        list = mk_lst(cmd);
+        cmdexit = spawnvp(P_WAIT, cmd, list);
+        free((char **)list);
+        if (cmdexit != 0) {
             w_log( '9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
+            chdir(buffer);
             return 3;
         }
 #else
         if ((cmdexit = system(cmd)) != 0) {
             w_log( '9', "exec failed, code %d", cmdexit);
+            chdir(buffer);
             return 3;
         }
 #endif
     }
+    chdir(buffer);
+   
     } else {
-	w_log( '9', "file %s: cannot find unpacker", fileName);
-	return 3;
+        w_log( '9', "file %s: cannot find unpacker", fileName);
+        return 3;
     };
-
-   dizfile=malloc(strlen(config->tempInbound)+strlen(config->fileDescName)+1);
-   sprintf(dizfile, "%s%s", config->tempInbound, config->fileDescName);
+   xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescName);
    if ((dizhandle=fopen(dizfile,"r")) == NULL) {
       w_log('9',"File %s not found or not moveable",dizfile);
+      nfree(dizfile);
       return 3;
    };
 

@@ -91,7 +91,7 @@ int send(char *filename, char *area, char *addr)
     s_filearea *filearea;
     //s_addr address;
     char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
-    char timestr[40], *linkfilepath=NULL;
+    char timestr[40];
     struct stat stbuf;
     time_t acttime;
     
