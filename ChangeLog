@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Mon May  1 12:40:58 NOVST 2000
+max (patch from Serguei Revtov):
+* "8+3 warn" fixes
+
+----- cvs ci ------
 Mon May 1 3:30:00 MSK 2000
 Nestyurkin Nikolay:
 * new writeLogEntry, like in hpt

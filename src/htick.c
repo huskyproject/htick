@@ -105,7 +105,7 @@ int processCommandLine(int argc, char **argv)
          strcpy(hatchfile, argv[i++]);
          // Check filename for 8.3, warn if not
          basename = strrchr(hatchfile, PATH_DELIM);
-         if (basename==NULL) basename = hatchfile;
+         if (basename==NULL) basename = hatchfile; else basename++;
          if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
 
          if (extdelim - basename > 8 || strlen(extdelim) > 4) {
