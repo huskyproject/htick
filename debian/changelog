@@ -1,3 +1,9 @@
+htick (0.9u-2) unstable; urgency=low
+
+  * Recompiled because big change of smapi-Version (Dependency-Fuck)
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Fri, 13 Apr 2001 15:18:15 +0200
+
 htick (0.9u-1) unstable; urgency=low
 
   * This is now the cvs-Version, UNSTABLE htick.
