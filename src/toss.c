@@ -716,12 +716,16 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
             if (copy_file(ticfile,filename)!=0) {
                 w_log('9',"File %s not found or not moveable",ticfile);
             };
-            if(filearea && !filearea->pass && !filearea->sendorig)
+            if( filearea && 
+               !filearea->pass && !filearea->sendorig && savetic->fileAction)
             {
                 char *from = NULL, *to = NULL;
                 xstrscat(&from, filearea->pathName, tic->file, NULL);
                 xstrscat(&to,   savetic->pathName, tic->file, NULL);
-                link_file(from,to);
+                if( savetic->fileAction == 1)
+                   copy_file(from,to);
+                if( savetic->fileAction == 2)
+                   link_file(from,to);
                 nfree(from); nfree(to);
             }
             break;
