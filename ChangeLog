@@ -1,3 +1,17 @@
+2002-03-26 Tuesday 16:14  mche
+
+	* src/fcommon.c (1.38), src/htick.c (1.53), h/fcommon.h (1.12):
+	exit_htick function added
+
+2002-03-26 Tuesday 11:57  mche
+
+	* src/htick.c (1.52): fixed bug with deletin' lick file
+
+2002-03-26 Tuesday 11:19  d.sergienko
+
+	* src/htick.c (1.51): added sys/stat.h & fcntl.h for all compilers,
+	not only MSVC.
+
 2002-03-25 Monday 16:03  mche
 
 	* src/fcommon.c (1.37), src/global.c (1.14), src/htick.c (1.50),
