@@ -177,3 +177,8 @@ All options are possible, except areatag and path. Different setting in
 filearea definition overrides default.
 See also echoAreaDefaults.
 Defaults are switched off with empty 'fileAreaDefaults'.
+
+23) fileDescName <name>
+
+If no LDESC defined in tic file, use <name> file from archive fill it.
+'unpack' action should be defined for archive and contain $f parameter.

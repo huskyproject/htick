@@ -5,8 +5,8 @@ OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../.. -Wall -ggdb -O2 -DNT -D__NT__ -DWINNT -D__CYG__ -mno-cygwin
-  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin
+  CFLAGS  = -c -I../h -I../.. -Wall -g -O2 -DNT -D__NT__ -DWINNT -D__CYG__ -mno-cygwin
+  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o -g
 else
   CFLAGS  = -c -I../h -I../.. -w -O3 -s -DNT -D__NT__ -DWINNT -D__CYG__ -mno-cygwin
   LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o

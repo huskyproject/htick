@@ -479,6 +479,131 @@ int parseTic(char *ticfile,s_ticfile *tic)
   return(1);
 }
 
+//#ifdef USE_FILE_ID_DIZ
+
+void fillCmdStatement(char *cmd, const char *call, const char *archiv, const char *file, const char *path) {
+    const char *start, *tmp, *add;
+
+    *cmd = '\0';  start = NULL;
+    for (tmp = call; (start = strchr(tmp, '$')) != NULL; tmp = start + 2) {
+	switch(*(start + 1)) {
+	case 'a': add = archiv; break;
+	case 'p': add = path; break;
+	case 'f': add = file; break;
+	default:
+            strncat(cmd, tmp, (size_t) (start - tmp + 1));
+            start--; continue;
+	};
+	strncat(cmd, tmp, (size_t) (start - tmp));
+	strcat(cmd, add);
+    };
+    strcat(cmd, tmp);
+}
+
+char *hpt_stristr(char *str, char *find)
+{
+    char ch, sc, *str1, *find1;
+
+    find++;
+    if ((ch = *(find-1)) != 0) {
+	do {
+	    do {
+		str++;
+		if ((sc = *(str-1)) == 0) return (NULL);
+	    } while (tolower((unsigned char) sc) != tolower((unsigned char) ch));
+			
+	    for(str1=str,find1=find; *find1 && *str1 && tolower(*find1)==tolower(*str1); str1++,find1++);
+			
+	} while (*find1);
+	str--;
+    }
+    return ((char *)str);
+}
+
+int parseFileDesc(char *fileName,s_ticfile *tic)
+{
+   FILE *filehandle, *dizhandle;
+   char *line, *dizfile;
+   int  i, j, found;
+   signed int cmdexit;
+   char cmd[256];
+
+    // find what unpacker to use
+    for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
+	filehandle = fopen(fileName, "rb");
+	if (filehandle == NULL) return 2;
+	// is offset is negative we look at the end
+	fseek(filehandle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
+	if (ferror(filehandle)) { fclose(filehandle); continue; };
+	for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
+	    if ((getc(filehandle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j])
+		found = 0;
+	}
+	fclose(filehandle);
+    }
+
+    // unpack file_id.diz (config->fileDescName)
+    if (found) {
+	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
+	writeLogEntry(htick_log, '6', "file %s: unpacking with \"%s\"", fileName, cmd);
+        if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
+        {
+            cmdexit = 1;
+#ifdef USE_HPT_ZLIB
+            cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+#endif
+        }
+        else
+        {
+#ifdef __WATCOMC__
+            list = mk_lst(cmd);
+            cmdexit = spawnvp(P_WAIT, cmd, list);
+            free((char **)list);
+            if (cmdexit != 0) {
+            writeLogEntry(htick_log, '9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
+            return 3;
+        }
+#else
+        if ((cmdexit = system(cmd)) != 0) {
+            writeLogEntry(htick_log, '9', "exec failed, code %d", cmdexit);
+            return 3;
+        }
+#endif
+    }
+    } else {
+	writeLogEntry(htick_log, '9', "file %s: cannot find unpacker", fileName);
+	return 3;
+    };
+
+   dizfile=malloc(strlen(config->tempInbound)+strlen(config->fileDescName)+1);
+   sprintf(dizfile, "%s%s", config->tempInbound, config->fileDescName);
+   if ((dizhandle=fopen(dizfile,"r")) == NULL) {
+      writeLogEntry(htick_log,'9',"File %s not found or moveable",dizfile);
+      return 3;
+   };
+
+   for (i=0;i<tic->anzldesc;i++)
+      nfree(tic->ldesc[i]);
+   tic->anzldesc=0;
+
+   while ((line = readLine(dizhandle)) != NULL) {
+      tic->ldesc=
+         srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
+      tic->ldesc[tic->anzldesc]=sstrdup(line);
+      tic->anzldesc++;
+      nfree(line);
+   } /* endwhile */
+
+  fclose(dizhandle);
+  remove(dizfile);
+
+  nfree(dizfile);
+
+  return(1);
+}
+
+//#endif
+
                                 /* we do NOT check for a dosish ':' here
                                    because mkdir "C:" is nonsense */
 #define my_isdirsep(x) (((x) == '/') || ((x) == '\\'))
@@ -992,6 +1117,12 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
          }
    //}
+
+//#ifdef USE_FILE_ID_DIZ
+   if (tic->anzldesc==0)
+      if (config->fileDescName)
+         parseFileDesc(newticedfile, tic);
+//#endif
 
    if (!filearea->pass) {
       strcpy(descr_file_name, filearea->pathName);
