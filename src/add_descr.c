@@ -29,7 +29,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
          if (config->fileDescPos == 0 )
 	    config->fileDescPos = 1;
          fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '), 
-	         (config->fileLDescString == NULL) ? "" : config->fileLDescString, desc_line);
+	         (config->fileLDescString == NULL) ? " " : config->fileLDescString, desc_line);
       }
       free(desc_line);
    }
