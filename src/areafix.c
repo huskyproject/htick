@@ -1075,6 +1075,7 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     s_message *msg;
     s_filearea *area;
     FILE *echotosslog;
+    size_t configlen;
 
     w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
     
@@ -1185,7 +1186,17 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     } else {
         fseek (f, 0L, SEEK_END);
     }
-    fprintf(f, "%s%s", buff, cfgEol()); /*  add line to config */
+    configlen = ftell(f); /* config file length */
+    /*  add line to config */
+    if (fprintf(f, "%s%s", buff, cfgEol()) != strlen(buff)+strlen(cfgEol()) ||
+        fflush(f) != 0) {
+	w_log(LL_ERR, "Error creating filearea %s, config write failed: %s!",
+	      c_area, strerror(errno));
+	fseek(f, configlen, SEEK_SET);
+	setfsize(fileno(f), configlen);
+	fclose(f);
+	return 1;
+    }
     fclose(f);
     
     /* add new created echo to config in memory */
