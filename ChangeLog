@@ -2,6 +2,13 @@ htick 0.9
 ---------
 (released on Mon May 22 14:58:56 CEST 2000)
 
+----- cvs ci ------
+Sun May 28 17:35:00 IZH 2000
+Georgi (patch from Lev Serebryakov, 2:5030/661):
+* htick now creates DLC, if addDLC is set and DLCDigits is between 1 and 20.
+* htick now process case of file names according to config
+  (ConvertShortNames, ConvertLongNames tokens)
+
 ----- cvs ci ------	
 Mon May 22 14:52:27 CEST 2000
 mtt:
