@@ -2,6 +2,10 @@ htick 0.9
 ---------
 (released on Mon May 22 14:58:56 CEST 2000)
 
+Sun Aug 13 10:00:00 SAMST 2000
+Georgi (patch from Alex Bronin, 2:5049/36):
+* fixed sendorig bug
+
 Thu Aug 10 13:19:13 MSD 2000
 max (patch from Serguei Revtov):
 * simple MSGID generation fix

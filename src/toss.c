@@ -801,7 +801,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    if (isToss == 1) minLinkCount = 2; // uplink and downlink
    else minLinkCount = 1;             // only downlink
 
-   if (!filearea->pass && !filearea->sendorig)
+   if (!filearea->pass)
       strcpy(fileareapath,filearea->pathName);
    else
       strcpy(fileareapath,config->passFileAreaDir);
@@ -835,17 +835,32 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       }
 
       if (isToss == 1) {
-         if (move_file(filename,newticedfile)!=0) {
-             writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
-             //disposeTic(tic);
-             return(2);
+         if (!filearea->sendorig) {
+            if (move_file(filename,newticedfile)!=0) {
+                writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+                return(2);
+            } else {
+               writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
+            }
          } else {
-             writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
+            if (copy_file(filename,newticedfile)!=0) {
+               writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+               return(2);
+            } else {
+              writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
+            }
+            strcpy(newticedfile,config->passFileAreaDir);
+            strcat(newticedfile,MakeProperCase(tic->file));
+            if (move_file(filename,newticedfile)!=0) {
+               writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+               return(2);
+            } else {
+               writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
+            }
          }
       } else
          if (copy_file(filename,newticedfile)!=0) {
             writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
-            //disposeTic(tic);
             return(2);
          } else {
             writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
