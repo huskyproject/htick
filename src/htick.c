@@ -292,10 +292,11 @@ void processConfig()
 
    w_log( '1', "Start");
 
-   if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined\n");
-   if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified\n");
-   if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first\n");
-   if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first\n");
+   if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
+   if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
+   if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
+   if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first");
+   if (config->announceSpool   == NULL) w_log( LL_CRIT, "You must set AnnounceSpool in fidoconfig first");
    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
        w_log( LL_CRIT, "Parameter MaxTicLineLength (%d) in fidoconfig must be 0 or >80\n",config->MaxTicLineLength);
 
@@ -303,6 +304,7 @@ void processConfig()
        config->linkCount == 0 ||
        config->fileAreaBaseDir == NULL ||
        config->passFileAreaDir == NULL ||
+       config->announceSpool   == NULL ||
        (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
       w_log( LL_CRIT, "Wrong config file, exit.");
       closeLog();
