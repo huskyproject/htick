@@ -359,7 +359,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
             pRepDef->annaddrto   ? pRepDef->annaddrto   : &(config->addr[0]),
             versionStr);
 	if (config->filefixReportsFlags)
-            xstrscat(&(msg->text), "\001FLAGS ", config->filefixReportsFlags, "\r");
+            xstrscat(&(msg->text), "\001FLAGS ", config->filefixReportsFlags, "\r",NULL);
     }
     else /* report to file */
     {
