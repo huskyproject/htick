@@ -58,7 +58,6 @@
 #endif
 
 #include <huskylib/dirlayer.h>
-#include <huskylib/adcase.h>
 #include <huskylib/xstr.h>
 #include <huskylib/recode.h>
 

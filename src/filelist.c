@@ -34,7 +34,6 @@
 
 #include <huskylib/log.h>
 #include <huskylib/dirlayer.h>
-#include <huskylib/adcase.h>
 #include <huskylib/xstr.h>
 
 #include <fidoconf/common.h>

@@ -330,13 +330,13 @@ char *available(s_link *link) {
 	    xscatprintf(&report, "Available File List from %s:\r",
 			aka2str(uplink->hisAka));
 
-	    al = newAreaList();
+	    al = newAreaList(config);
         while ((line = readLine(f)) != NULL) {
             line = trimLine(line);
             if (line[0] != '\0') {
                 running = line;
                 token = strseparate(&running, " \t\r\n");
-                addAreaListItem(al,0,0,token,running);
+                addAreaListItem(al,0,0,token,running,uplink->LinkGrp);
 
             }
 		nfree(line);
@@ -345,7 +345,7 @@ char *available(s_link *link) {
 
 	    if(al->count) {
 		sortAreaList(al);
-		line = formatAreaList(al,78,NULL);
+		line = formatAreaList(al,78,NULL,(config->listEcho==lemGroup)||(config->listEcho==lemGroupName));
 		xstrcat(&report,"\r");
 		xstrcat(&report,line);
 		nfree(line);
