@@ -793,8 +793,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    s_ticfile tic;
    size_t j;
    FILE   *flohandle;
-   DIR    *dir;
-   struct dirent  *file;
+   husky_DIR  *dir;
+   char       *file;
 
    char ticedfile[256], linkfilepath[256];
    char dirname[256], *realfile, *findfile, *pos;
@@ -963,24 +963,24 @@ int processTic(char *ticfile, e_tossSecurity sec)
 #ifdef DEBUG_HPT
                   printf("NoCRC! dirname = %s, findfile = %s\n", dirname, findfile);
 #endif
-                  dir = opendir(dirname);
+                  dir = husky_opendir(dirname);
 
                   if (dir) {
-                      while ((file = readdir(dir)) != NULL) {
-                          if (patimat(file->d_name, findfile)) {
-                              stat(file->d_name,&stbuf);
+                      while ((file = husky_readdir(dir)) != NULL) {
+                          if (patimat(file, findfile)) {
+                              stat(file,&stbuf);
                               if (stbuf.st_size == tic.size) {
-                                  crc = filecrc32(file->d_name);
+                                  crc = filecrc32(file);
                                   if (crc == tic.crc) {
                                       fileisfound = 1;
-                                      sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file->d_name);
+                                      sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file);
                                       break;
                                   }
                               }
 
                           }
                       }
-                      closedir(dir);
+                      husky_closedir(dir);
                   }
               }
           }
@@ -1063,25 +1063,25 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
 void processDir(char *directory, e_tossSecurity sec)
 {
-   DIR            *dir;
-   struct dirent  *file;
+   husky_DIR      *dir;
+   char           *file;
    char           *dummy;
    int            rc;
 
    if (directory == NULL) return;
 
-   dir = opendir(directory);
+   dir = husky_opendir(directory);
    if (dir == NULL) return;
 
-   while ((file = readdir(dir)) != NULL) {
+   while ((file = husky_readdir(dir)) != NULL) {
 #ifdef DEBUG_HPT
-      printf("testing %s\n", file->d_name);
+      printf("testing %s\n", file);
 #endif
 
-      if (patimat(file->d_name, "*.TIC") == 1) {
-         dummy = (char *) smalloc(strlen(directory)+strlen(file->d_name)+1);
+      if (patimat(file, "*.TIC") == 1) {
+         dummy = (char *) smalloc(strlen(directory)+strlen(file)+1);
          strcpy(dummy, directory);
-         strcat(dummy, file->d_name);
+         strcat(dummy, file);
 
 #if !defined(__UNIX__)
          if (!hidden(dummy)) {
@@ -1113,14 +1113,14 @@ void processDir(char *directory, e_tossSecurity sec)
          nfree(dummy);
       } /* if */
    } /* while */
-   closedir(dir);
+   husky_closedir(dir);
 }
 
 void checkTmpDir(void)
 {
     char tmpdir[256], newticedfile[256], newticfile[256];
-    DIR            *dir=NULL;
-    struct dirent  *file=NULL;
+    husky_DIR      *dir=NULL;
+    char           *file=NULL;
     char           *ticfile=NULL;
     s_link         *link=NULL;
     s_ticfile      tic;
@@ -1130,16 +1130,16 @@ void checkTmpDir(void)
     
     w_log('6',"Checking tmp dir");
     strcpy(tmpdir, config->busyFileDir);
-    dir = opendir(tmpdir);
+    dir = husky_opendir(tmpdir);
     if (dir == NULL) return;
     
-    while ((file = readdir(dir)) != NULL) {
-        if (strlen(file->d_name) != 12) continue;
+    while ((file = husky_readdir(dir)) != NULL) {
+        if (strlen(file) != 12) continue;
         /* if (!file->d_size) continue; */
-        ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
+        ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file)+1);
         strcpy(ticfile, tmpdir);
-        strcat(ticfile, file->d_name);
-        if (stricmp(file->d_name+8, ".TIC") == 0) {
+        strcat(ticfile, file);
+        if (stricmp(file+8, ".TIC") == 0) {
             memset(&tic,0,sizeof(tic));
             if(!parseTic(ticfile,&tic)) continue;
             if( checkTic(ticfile,&tic) ) continue;
@@ -1192,7 +1192,7 @@ void checkTmpDir(void)
         } /* if ".TIC" */
         nfree(ticfile);
     } /* while */
-    closedir(dir);
+    husky_closedir(dir);
 }
 
 

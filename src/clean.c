@@ -83,8 +83,8 @@ void addFileToTree(char* dir, char *filename)
 
 void cleanPassthroughDir(void)
 {
-    DIR            *dir;
-    struct dirent  *file;
+    husky_DIR      *dir;
+    char           *filename;
     char           *ticfile = NULL;
     w_log( LL_FUNC, "cleanPassthroughDir(): begin" );
     
@@ -92,12 +92,12 @@ void cleanPassthroughDir(void)
 
     /* check busyFileDir */
     if (direxist(config->busyFileDir)) {
-        dir = opendir(config->busyFileDir);
+        dir = husky_opendir(config->busyFileDir);
         if (dir != NULL) {
-            while ((file = readdir(dir)) != NULL) {
-                addFileToTree(config->busyFileDir, file->d_name);
+            while ((filename = husky_readdir(dir)) != NULL) {
+                addFileToTree(config->busyFileDir, filename);
             }
-            closedir(dir);
+            husky_closedir(dir);
         }
     }
     /* check separateBundles dirs (does anybody use this?) */
@@ -120,13 +120,13 @@ void cleanPassthroughDir(void)
                   sprintf(strrchr(tmpdir, '.'), ".sep");
                   if (direxist(tmpdir)) {
                       sprintf(tmpdir+strlen(tmpdir), "%c", PATH_DELIM);
-                      dir = opendir(tmpdir);
+                      dir = husky_opendir(tmpdir);
                       if (dir == NULL) continue;
                     
-                      while ((file = readdir(dir)) != NULL) {
-                          addFileToTree(tmpdir, file->d_name);
+                      while ((filename = husky_readdir(dir)) != NULL) {
+                          addFileToTree(tmpdir, filename);
                       } /* while */
-                      closedir(dir);
+                      husky_closedir(dir);
                       if(config->links[i].bsyFile){
                         remove(config->links[i].bsyFile);
                         nfree(config->links[i].bsyFile);
@@ -143,25 +143,25 @@ void cleanPassthroughDir(void)
         }
     }
     /* check ticOutbound */
-    dir = opendir(config->ticOutbound);
+    dir = husky_opendir(config->ticOutbound);
     if (dir != NULL) {
-        while ((file = readdir(dir)) != NULL) {
-            addFileToTree(config->ticOutbound, file->d_name);
+        while ((filename = husky_readdir(dir)) != NULL) {
+            addFileToTree(config->ticOutbound, filename);
         }
-        closedir(dir);
+        husky_closedir(dir);
     }
     /* purge passFileAreaDir */
-    dir = opendir(config->passFileAreaDir);
+    dir = husky_opendir(config->passFileAreaDir);
     if (dir != NULL) {
-        while ((file = readdir(dir)) != NULL) {
-            if (patimat(file->d_name, "*.TIC") != 1) {
-                xstrscat(&ticfile,config->passFileAreaDir,file->d_name,NULL);
+        while ((filename = husky_readdir(dir)) != NULL) {
+            if (patimat(filename, "*.TIC") != 1) {
+                xstrscat(&ticfile,config->passFileAreaDir,filename,NULL);
         
                 if (direxist(ticfile)) { /*  do not touch dirs */
                     nfree(ticfile);
                     continue;
                 }
-                if( !tree_srch(&fileTree, htick_compareEntries, file->d_name) )
+                if( !tree_srch(&fileTree, htick_compareEntries, filename) )
                 {
                     w_log(LL_DEL,"Remove file %s from passthrough dir", ticfile);
                     remove(ticfile);
@@ -171,7 +171,7 @@ void cleanPassthroughDir(void)
                 nfree(ticfile);
             }
         }
-        closedir(dir);
+        husky_closedir(dir);
     }
     tree_mung(&fileTree, htick_deleteEntry);
 
@@ -184,10 +184,10 @@ void purgeFileEchos()
     char* filename = NULL;
     time_t tnow;
 
-    DIR            *dir;
-    struct dirent  *file;
+    husky_DIR      *dir;
+    char           *file;
     struct stat    st;
-      
+
     time( &tnow );
 
 
@@ -195,15 +195,15 @@ void purgeFileEchos()
         if(config->fileAreas[i].purge == 0)
             continue;
         w_log(LL_INFO,  "Cleaning %s ...", config->fileAreas[i].areaName);
-        dir = opendir(config->fileAreas[i].fileName);
+        dir = husky_opendir(config->fileAreas[i].fileName);
         if (dir == NULL) 
             continue;
 
         while ((file = readdir(dir)) != NULL) {
-            if (patimat(file->d_name, "*.BBS") == 1)
+            if (patimat(file, "*.BBS") == 1)
                 continue;
 
-            xstrscat(&filename,config->fileAreas[i].fileName,file->d_name,NULL);
+            xstrscat(&filename,config->fileAreas[i].fileName,file,NULL);
             if (direxist(filename)) { /*  do not touch dirs */
                 nfree(filename);
                 continue;
@@ -214,11 +214,11 @@ void purgeFileEchos()
                 nfree(filename);
                 continue;
             }
-            w_log(LL_INFO,  "Deleting file %s that is %d days old", file->d_name,(tnow-st.st_mtime)/86400);
-            removeFileMask(config->fileAreas[i].fileName, file->d_name);
+            w_log(LL_INFO,  "Deleting file %s that is %d days old", file,(tnow-st.st_mtime)/86400);
+            removeFileMask(config->fileAreas[i].fileName, file);
             nfree(filename);
         }
-        closedir(dir);
+        husky_closedir(dir);
     }
 
 }

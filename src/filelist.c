@@ -176,8 +176,8 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     
     char *fileareapath=NULL, *fbbsname=NULL, *filename=NULL;
     char *fbbsline;
-    DIR            *dir;
-    struct dirent  *file;
+    husky_DIR *dir;
+    char      *file;
     s_ticfile tic;
     struct stat stbuf;
     time_t fileTime;
@@ -196,16 +196,16 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     xstrscat(&fbbsname,fileareapath,"files.bbs",NULL);
     adaptcase(fbbsname);
     
-    dir = opendir(fileareapath);
+    dir = husky_opendir(fileareapath);
     if (dir == NULL) return;
     
     w_log( LL_INFO, "Processing: %s",area_areaName);
     
     while ((file = readdir(dir)) != NULL) {
-        if (strcmp(file->d_name,".") == 0 || strcmp(file->d_name,"..") == 0)
+        if (strcmp(file,".") == 0 || strcmp(file,"..") == 0)
             continue;
         nfree(filename);
-        xstrscat(&filename,fileareapath,file->d_name,NULL);
+        xstrscat(&filename,fileareapath,file,NULL);
         if (stricmp(filename, fbbsname) == 0) continue;
         if (!flag) {
             if (bbs) fprintf(f,"BbsArea: %s", area_areaName);
@@ -218,20 +218,21 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
             flag = 1;
         }
         memset(&tic,0,sizeof(tic));
-        if (GetDescFormBbsFile(fbbsname, file->d_name, &tic) == 1) {
+        if (GetDescFormBbsFile(fbbsname, file, &tic) == 1) {
             tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
             tic.desc[tic.anzdesc]=sstrdup("Description not avaliable");
             tic.anzdesc = 1;
-            add_description(fbbsname, file->d_name, tic.desc, 1);
+            add_description(fbbsname, file, tic.desc, 1);
         }
         stat(filename,&stbuf);
         fileTime = stbuf.st_mtime > 0 ? stbuf.st_mtime : 0;
         locTime = localtime(&fileTime);
         totalsize += stbuf.st_size;
         totalnumber++;
-        putFileInFilelist(f, file->d_name, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, tic.anzdesc, tic.desc);
+        putFileInFilelist(f, file, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, tic.anzdesc, tic.desc);
         disposeTic(&tic);
     }
+    husky_closedir(dir);
     if (flag) {
         fprintf(f,"-----------------------------------------------------------------------------\n");
         fprintf(f,"Total files in area: %4d, total size: %10lu bytes\n\n",totalnumber,totalsize);

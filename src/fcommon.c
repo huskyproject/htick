@@ -128,22 +128,22 @@ int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
 
 int removeFileMask(char *directory, char *mask)
 {
-    DIR           *dir;
-    struct dirent *file;
+    husky_DIR     *dir;
+    char          *file;
     char          *removefile = NULL;
     char          *descr_file_name = NULL;
     unsigned int  numfiles = 0;
 
    if (directory == NULL) return(0);
 
-   dir = opendir(directory);
+   dir = husky_opendir(directory);
    if (dir != NULL) {
-      while ((file = readdir(dir)) != NULL) {
-         if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
-         if (patimat(file->d_name, mask) == 1) {
+      while ((file = husky_readdir(dir)) != NULL) {
+         if (stricmp(file,".")==0 || stricmp(file,"..")==0) continue;
+         if (patimat(file, mask) == 1) {
 
             /* remove file */
-            xstrscat(&removefile, directory, file->d_name, NULL);
+            xstrscat(&removefile, directory, file, NULL);
             if(removefile) remove(removefile);
             w_log('6',"Removed file: %s",removefile);
             numfiles++;
@@ -152,11 +152,11 @@ int removeFileMask(char *directory, char *mask)
             /* remove description for file */
             xstrscat(&descr_file_name,directory, "files.bbs",NULL);
             adaptcase(descr_file_name);
-            removeDesc(descr_file_name,file->d_name);
+            removeDesc(descr_file_name,file);
             nfree(descr_file_name);
          }
       }
-      closedir(dir);
+      husky_closedir(dir);
    }
    return(numfiles);
 }

@@ -131,19 +131,19 @@ static int cmp_reportEntry(const void *a, const void *b)
 
 void getReportInfo()
 {
-    DIR            *dir;
-    struct dirent  *file;
+    husky_DIR     *dir;
+    char          *file;
     s_ticfile      tmptic;
     char* fname = NULL;
     UINT i = 0;
 
-    dir = opendir(config->announceSpool);
+    dir = husky_opendir(config->announceSpool);
     
-    while ((file = readdir(dir)) != NULL) {
-        if (patimat(file->d_name, "*.TIC") == 0)
+    while ((file = husky_readdir(dir)) != NULL) {
+        if (patimat(file, "*.TIC") == 0)
             continue;
-        xstrscat(&fname,config->announceSpool,file->d_name,NULL);
-        w_log(LL_DEBUG, "Parsing Report file %s",file->d_name);
+        xstrscat(&fname,config->announceSpool,file,NULL);
+        w_log(LL_DEBUG, "Parsing Report file %s",file);
 
         if( parseTic( fname, &tmptic ) && tmptic.area && tmptic.file )
         {
@@ -166,13 +166,13 @@ void getReportInfo()
             {
                 Report[rCount].ldesc[i]=sstrdup(tmptic.ldesc[i]);
             }
-            xstrscat(&(Report[rCount].password),config->announceSpool,file->d_name,NULL);
+            xstrscat(&(Report[rCount].password),config->announceSpool,file,NULL);
             rCount++;
         }
         disposeTic(&tmptic);
         nfree(fname);
     }
-    closedir(dir);
+    husky_closedir(dir);
     w_log(LL_DEBUG, "Sorting report information. Number of entries: %d",rCount);
     qsort( (void*)Report, rCount, sizeof(s_ticfile), cmp_reportEntry ); 
 }
