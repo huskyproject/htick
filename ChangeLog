@@ -1,3 +1,7 @@
+2003-11-28 Friday 15:48  mche
+
+	* src/filelist.c (1.44): fix filelist processing
+
 2003-10-27 Monday 03:32  andr_lukyanov
 
 	* win32/: makefile.mvc (1.15), makefile.mvcdll (1.17): Fix MSVC
