@@ -445,7 +445,7 @@ MsgBaseDir.
 @findex SaveTic
 @table @asis
 @item Синтаксис:
-@code{SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>}
+@code{SaveTic <FileEchoMask> <FileOption> <DirToSaveTic> <DaysToKeepTics>}
 @item Пример:
 @code{SaveTic husky -l /usr/local/husky}
 @end table
@@ -468,9 +468,11 @@ MsgBaseDir.
 
 @item -c
 копировать файлы из директории файлобласти в <DirToSaveTic>
-@end table
 
-Опции @option{-l} и @option{-c} работают только с не-passthrough файлэхами.
+@item <DaysToKeepTics>
+параметр <DaysToKeepTics> является опциональным. Если он определен, TIC'и, сохраненные в
+<DirToSaveTic>, будут храниться там в течение <DaysToKeepTics> дней.
+
 @end table
 
 Этот оператор может повторяться.
