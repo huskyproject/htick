@@ -2,6 +2,12 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Dec 11 19:40:20 1999 
+Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
+* added token fileEchoFlavour (flavour for fileecho)
+  Warning, please put this token in config, if you use htick!
+
+----- cvs ci ------
 mtt:
 * remove strLower from htick, because its in fidoconfig
 	

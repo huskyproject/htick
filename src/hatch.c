@@ -141,7 +141,7 @@ void hatch()
          busy = 0;
 
          if (createOutboundFileName(filearea->downlinks[i]->link,
-             cvtFlavour2Prio(filearea->downlinks[i]->link->echoMailFlavour),
+             cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
              FLOFILE)==1)
             busy = 1;
 
@@ -320,7 +320,7 @@ int send(char *filename, char *area, char *addr)
    busy = 0;
 
    if (createOutboundFileName(link,
-       cvtFlavour2Prio(link->echoMailFlavour), FLOFILE)==1)
+       cvtFlavour2Prio(link->fileEchoFlavour), FLOFILE)==1)
       busy = 1;
 
    strcpy(linkfilepath,link->floFile);

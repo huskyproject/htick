@@ -783,7 +783,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 	    if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
 	    else { //Forwarding
 	       busy = 0;
-               if (createFlo(to_link, cvtFlavour2Prio(to_link->echoMailFlavour))==0) {
+               if (createFlo(to_link, cvtFlavour2Prio(to_link->fileEchoFlavour))==0) {
         	  strcpy(linkfilepath,to_link->floFile);
         	  if (!busy) {
 		     *(strrchr(linkfilepath,PATH_DELIM))=0;
@@ -1037,7 +1037,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
             busy = 0;
 
             if (createOutboundFileName(filearea->downlinks[i]->link,
-                 cvtFlavour2Prio(filearea->downlinks[i]->link->echoMailFlavour),
+                 cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
                  FLOFILE)==1)
                 busy = 1;
 
@@ -1193,7 +1193,7 @@ void checkTmpDir(s_link link)
     s_filearea *filearea;
     FILE *flohandle;
 
-   if (createFlo(&link, cvtFlavour2Prio(link.echoMailFlavour))==0) {
+   if (createFlo(&link, cvtFlavour2Prio(link.fileEchoFlavour))==0) {
       strcpy(tmpdir,link.floFile);
       *(strrchr(tmpdir,'.'))=0;
       sprintf(tmpdir+strlen(tmpdir), ".htk%c", PATH_DELIM);
