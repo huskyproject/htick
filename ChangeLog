@@ -1,3 +1,9 @@
+2003-04-14 Monday 01:31  andr_lukyanov
+
+	* win32/: makefile.bcw (1.12), makefile.cyg (1.16), makefile.mgw
+	(1.7), makefile.mvc (1.12), makefile.mvcdll (1.12), makefile.wcw
+	(1.23): Fixed compilation with new library structure
+
 2003-04-09 Wednesday 21:33  i_zkh
 
 	* win32/makefile.mvcdll (1.11): Fixed compiling
