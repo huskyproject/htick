@@ -1173,9 +1173,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                      sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
                   } else {
                       // fileBoxes support
-                      if (needUseFileBoxForLink(config,downlink)) {
-                          if (!downlink->fileBox) 
-                              downlink->fileBox = makeFileBoxName (config,downlink);
+                      if (needUseFileBoxForLink(config,downlink) && downlink->fileBox) {
                           xstrcat(&linkfilepath, downlink->fileBox);
                       } else {
                           xstrcat(&linkfilepath, config->ticOutbound);
@@ -1191,7 +1189,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                } else newticfile = NULL;
 
                if (!busy) {
-                   if (needUseFileBoxForLink(config,downlink)) {
+                   if (needUseFileBoxForLink(config,downlink) && downlink->fileBox) {
                        xstrcat(&linkfilepath, tic->file);
                        if (link_file(newticedfile,linkfilepath ) == 0)
                        {
