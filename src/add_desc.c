@@ -237,5 +237,6 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
     }
     
     fclose (f1);
+    w_log(LL_FILE, "getDesc OK for file: %s",file_name);
     return rc;
 }
