@@ -40,7 +40,7 @@
 #  include <unistd.h>
 #endif
 
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

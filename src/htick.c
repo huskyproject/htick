@@ -63,7 +63,7 @@
 
 /* smapi */
 #include <smapi/msgapi.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>

@@ -60,9 +60,9 @@
 /*
 #include <smapi/typedefs.h>
 #include <smapi/stamp.h>
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
 #include <smapi/ffind.h>
-#include <smapi/patmat.h>
+#include <huskylib/patmat.h>
 */
 
 #include <fidoconf/fidoconf.h>

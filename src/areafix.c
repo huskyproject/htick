@@ -46,8 +46,7 @@
 #endif
 
 /* smapi */
-#include <smapi/prog.h>
-#include <smapi/patmat.h>
+#include <huskylib/patmat.h>
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>

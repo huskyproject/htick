@@ -30,7 +30,7 @@
 #include <string.h>
 
 
-#include <smapi/progprot.h>
+#include <huskylib/huskylib.h>
 
 #include <fidoconf/log.h>
 #include <fidoconf/common.h>
