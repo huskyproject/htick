@@ -2,6 +2,11 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Thu Aug 11 22:02:14 NOVST 1999
+max:
+* win32 porting
+
+----- cvs ci ------
 Thu Aug 05 13:40:05 1999
 Georgi:
 * bugfix in %resend

@@ -1,0 +1,1 @@
+wmake -f makefile.wcw

@@ -62,9 +62,10 @@ int createLockFile(char *lockfile) {
                    writeLogEntry(htick_log, '9', "createLockFile: cannot create lock file");
                    return 1;
            }
-	   
-        fprintf(f, "%u\n", getpid());
 
+#ifndef __NT__	   
+        fprintf(f, "%u\n", getpid());
+#endif
         fclose(f);
         return 0;
 }

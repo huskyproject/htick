@@ -116,13 +116,16 @@ int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
           0 else
           */
 
-#ifdef __TURBOC__
+#if defined (__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__)
  int truncate(const char *fileName, long length);
  /*DOC
    Truncates the file at given position
  */
+ int fTruncate( int fd, long length );
+ /*DOC
+   Truncates the file at given position
+ */
 #endif
-
 
 int    createLockFile(char *lockFile);
 #endif

@@ -1,0 +1,19 @@
+# makefile for win32
+
+CC      = wcc386
+LINK    = WLINK
+
+OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj add_descr.obj seenby.obj recode.obj crc32.obj hatch.obj filelist.obj
+SRC_DIR = ..\src
+
+CFLAGS  = -zq -wx -bt=nt -j -i=..\..\fidoconfig;..\..\smapi;..\h -oneatx -5
+
+all: $(OBJS) htick.exe
+
+$(OBJS): $(SRC_DIR)\*.c
+  @echo compiling *.c
+  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
+
+htick.exe: $(OBJS)
+   @echo linking htick
+  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj Library ..\..\smapi\smapiwcw.lib, ..\..\fidoconfig\fidoconfig.lib NAME htick.exe
