@@ -13,7 +13,7 @@ following form and post report by one of these ways:
 Operation system version ____________________________________
 
 Program version _____________________________________________
-(the 1st line from `hpt -h` output)
+(the 1st line from `htick -h` output)
 
 Bug description _____________________________________________
 _____________________________________________________________
