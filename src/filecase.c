@@ -69,8 +69,10 @@ int isDOSLikeName(char *name)
          if (!ec) nl++;
          else el++;
          if(isalpha(*p))
+         {
            if(isupper(*p)) uc++;
            else lc++;
+       }
       }
       p++;
     }
