@@ -59,14 +59,6 @@
 #define P_WAIT		_P_WAIT
 #endif
 
-#include <smapi/msgapi.h>
-#include <smapi/typedefs.h>
-#include <smapi/compiler.h>
-#include <smapi/patmat.h>
-#include <smapi/ffind.h>
-#include <smapi/stamp.h>
-#include <smapi/progprot.h>
-
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/common.h>
@@ -75,6 +67,15 @@
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
+
+//#include <smapi/msgapi.h>
+//#include <smapi/typedefs.h>
+//#include <smapi/compiler.h>
+//#include <smapi/patmat.h>
+//#include <smapi/ffind.h>
+//#include <smapi/stamp.h>
+#include <smapi/progprot.h>
+
 
 #include <fcommon.h>
 #include <global.h>
