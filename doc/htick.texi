@@ -54,7 +54,7 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 @value{HTICK} is a Fidonet fileareas tosser with filefix. Now project is being
 supported by Husky Development Team (see @url{http://husk.sf.net/team.html}).
 
-@value{HTICK} features:
+@value{HTICK} features are:
 @enumerate
 @item Tossing fileareas.
 @item Filefix (on the fly, from command line, limit for areas...).
@@ -684,7 +684,7 @@ This statement cannot be repeated.
 @item Syntax:
 @code{FileFixFromName <string>}
 @item Example:
-@code{FileFixFromName <string>}
+@code{FileFixFromName FileFix}
 @end table
 
 Originator name in filefix replies.
@@ -1273,7 +1273,7 @@ This statement can be repeated only for different AnnAreaTag.
 @item Syntax:
 @code{AnnOrigin <string>}
 @item Example:
-@code{AnnOrigin News files!}
+@code{AnnOrigin New files!}
 @end table
 
 Origin line in announcement message.
