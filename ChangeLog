@@ -1,3 +1,24 @@
+2002-11-14 Thursday 10:18  pgul
+
+	* src/toss.c (1.236): Fix spelling in comment
+
+2002-11-14 Thursday 08:34  stas_degteff
+
+	* HISTORY (1.9): Add info about delNotReceivedTIC
+
+2002-11-14 Thursday 08:21  stas_degteff
+
+	* TODO (1.3): Change delNotReceivedTIC value in TODO
+
+2002-11-14 Thursday 08:20  stas_degteff
+
+	* src/toss.c (1.235): Fix spell in variable name
+
+2002-11-14 Thursday 07:55  stas_degteff
+
+	* doc/htick.texi (1.12): Spelling checked by Igor Zakharoff,
+	2:5030/290.36
+
 2002-11-11 Monday 14:01  stas_degteff
 
 	* doc/htick.texi (1.11): Cosmetic update
