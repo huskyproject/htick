@@ -201,10 +201,11 @@ int processCommandLine(int argc, char **argv)
             quiet=1;
             continue;
         }
-        if ( !strcmp(argv[i], "-c") && ++i<argc ) {
-            if (argv[i]) xstrcat(&cfgFile, argv[i]);
-            else printf("parameter missing after \"%s\"!\n", argv[i-1]);
-            continue;
+        if ( !strcmp(argv[i], "-c") ) {
+		  i++;
+		  if (argv[i]!=NULL) xstrcat(&cfgFile, argv[i]);
+		  else printf("parameter missing after \"%s\"!\n", argv[i-1]);
+		  continue;
         }
         if (stricmp(argv[i], "toss") == 0) {
             cmToss = 1;
