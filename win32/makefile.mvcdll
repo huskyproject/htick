@@ -1,4 +1,5 @@
-# Microsoft Visual C++ Makefile
+# $Id$
+# Legacy makefile for build dll version of htick with Microsoft Visual C++
 
 CC=     cl
 CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h

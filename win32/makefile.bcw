@@ -1,3 +1,6 @@
+# $Id$
+# Legacy makefile for build htick with Borland C
+
 CC      = bcc32
 
 OBJS    = global.obj \

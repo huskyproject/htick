@@ -1,3 +1,5 @@
+# $Id$
+# Legacy makefile for build htick with mingw32 compiler
 
 CC=gcc
 RM=del
