@@ -1,3 +1,12 @@
+2002-09-17 Tuesday 17:44  d_sergienko
+
+	* HISTORY (1.4): info about 'Loc' flag
+
+2002-09-17 Tuesday 17:40  d_sergienko
+
+	* src/toss.c (1.208): set attribute 'Loc' on filefix's reply
+	messages
+
 2002-09-13 Friday 17:30  d_sergienko
 
 	* src/hatch.c (1.65): fixed recoding of descriotion during hatch if
