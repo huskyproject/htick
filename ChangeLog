@@ -1,3 +1,7 @@
+2003-02-08 Saturday 07:10  mche
+
+	* src/toss.c (1.251): fix compilation
+
 2003-02-07 Friday 12:07  sfpavel
 
 	* src/toss.c (1.250, htick-1_4-stable): Change previous patch
