@@ -7,7 +7,7 @@ This file describe changes between htick-1.0-stable and htick-1.1-current
    - purging for file echos with deleting description from files.bbs;
    - New command line option: "-c config-file" - specify alternate config file
      (optional);
-   - Change statistic information in log file.
+   - Change statistics information in log file.
 
 2. CONFIG changes:
    - area definition options -manual & -mandatory are different:
@@ -28,15 +28,16 @@ This file describe changes between htick-1.0-stable and htick-1.1-current
    - AnnMessFlags : announce message flags ("k/s", "loc", "hld", ...);
    - AnnOrigin : origin for announce messages;
    - AnnFileOrigin : show system address that hatch file in announce;
-   - AnnFileRFrom : show system address which file recived from.
-   - AutoFileCreateFlag : create flag when filearea has been autocreated
-   - FileFixNames : set of names on which filefix will respond
+   - AnnFileRFrom : show system address which file recived from;
+   - AutoFileCreateFlag : create flag when filearea has been autocreated;
+   - FileFixNames : set of names on which filefix will respond;
+   - FileFixEchoLimit: limit fileechoes subscribe number for link.
 
 3. IMPORTANT bugfixes:
    - fixed bug with missed files in report;
    - recode filearea descriptions;
    - save modification time for files in fileechoes;
-   - set 'Loc' flag on messages from FileFix;
+   - set 'Loc' flag on messages from FileFix.
 
 
 $Id$
