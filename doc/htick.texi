@@ -684,7 +684,7 @@ This statement cannot be repeated.
 @item Syntax:
 @code{FileFixFromName <string>}
 @item Example:
-@code{FileFixFromName <string>}
+@code{FileFixFromName FileFix}
 @end table
 
 Originator name in filefix replies.
