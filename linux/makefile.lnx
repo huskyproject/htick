@@ -19,7 +19,7 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapilnx -lfidoconfiglnx
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfiglnx -lsmapilnx
 
 clean:
 	-rm -f *.o

@@ -19,7 +19,7 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapibe -lfidoconfigbe
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfigbe -lsmapibe 
 
 clean:
 	-rm -f *.o

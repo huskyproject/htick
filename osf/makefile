@@ -17,7 +17,7 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapiunix -lfidoconfig
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfig -lsmapiunix 
 
 clean:
 	-rm -f *.o

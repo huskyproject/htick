@@ -25,7 +25,7 @@ all: $(OBJS) \
 
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapibsd -lfidoconfigbsd
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfigbsd -lsmapibsd 
 
 clean:
 	-rm -f *.o
