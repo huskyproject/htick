@@ -1,3 +1,7 @@
+2002-06-24 Monday 15:44  stas
+
+	* Makefile (1.10): Install & uninstall man page
+
 2002-06-16 Sunday 13:04  mche
 
 	* src/areafix.c (1.70): "no access" reporting
