@@ -1,3 +1,13 @@
+2004-06-07 Monday 11:44  sfpavel
+
+	* debian/: changelog, compat, control, rules
+	(htick-1_4-stable.[7,1,4,3]): New debian version
+
+2004-06-07 Monday 11:44  sfpavel
+
+	* debian/compat (1.1): file compat was initially added on branch
+	htick-1_4-stable.
+
 2004-06-02 Wednesday 16:12  sfpavel
 
 	* src/toss.c (htick-1_4-stable.10): Fix debug log
