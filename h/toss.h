@@ -35,7 +35,13 @@
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
+void strLower(char *s);
+void disposeTic(s_ticfile *tic);
+void writeTic(char *ticfile,s_ticfile *tic);
+void checkTmpDir(s_link link);
+void processTmpDir(void);
 void toss(void);
 void writeNetmail(s_message *msg);
+char *addr2string(s_addr *addr);
 
 #endif
