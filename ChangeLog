@@ -1,3 +1,13 @@
+2003-01-05 Sunday 16:30  mche
+
+	* src/areafix.c (1.107): fix bug : AutoAreaCreate adds wrong line
+	feed in Win32
+
+2003-01-05 Sunday 10:59  stas_degteff
+
+	* doc/htick.texi (1.18): Describe 'no' prefix for many filearea
+	options
+
 2002-12-31 Tuesday 09:34  stas_degteff
 
 	* h/fcommon.h (1.20), src/clean.c (1.11), src/fcommon.c (1.61),
