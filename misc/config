@@ -11,18 +11,30 @@ if "[module]"=="htick"
 
 AreaFixFromName		FileFix
 
+OriginInAnnounce
 ConvertLongNames	DontTouch
 FileDescName		file_id.diz
 FileAreaCreatePerms	0755
 
 AnnounceSpool		/var/spool/ftn/announce
+
 AnnAreaTag	EXPRESS.INFO
 AnnInclude	*
-AnnExclude	PNT	# hide from announces :-)
+AnnExclude	PNT PVT.*
 AnnTo		All
 AnnFrom		HTick Robot
 AnnSubj		New files!
 AnnAddrFrom	2:5080/159.1
 AnnOrigin	Association of Express Mail Robots
+
+AnnAreaTag	NETMAIL
+AnnInclude	PVT.*
+AnnTo		My Friend
+AnnFrom		HTick Spy
+AnnSubj		New files from PVT fileechoes!
+AnnAddrFrom	2:5080/159.1
+AnnAddrTo	2:5080/159.100
+AnnMessFlags	pvt k/s
+AnnOrigin	Express Mail Spy
 
 endif
