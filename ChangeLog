@@ -1,3 +1,21 @@
+2002-07-17 Wednesday 16:00  stas
+
+	* HISTORY (1.2.2.2): File with major things that change between
+	versions
+
+2002-07-17 Wednesday 14:20  stas
+
+	* HISTORY (1.2.2.1): File with major things that change between
+	versions
+
+2002-07-17 Wednesday 14:00  stas
+
+	* HISTORY (1.2): update documentation
+
+2002-07-16 Tuesday 21:31  stas
+
+	* HISTORY (1.1): Add user-attention file
+
 2002-07-05 Friday 10:22  mche
 
 	* src/areafix.c (1.70.2.2): fix problem with autocreating
