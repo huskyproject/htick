@@ -1,3 +1,14 @@
+2004-12-31 Friday 20:32  val_khokhlov
+
+	* Makefile (1.24), makefile.inc (1.3), h/global.h (1.25),
+	h/htickafix.h (1.1), src/global.c (1.28), src/htick.c (1.103),
+	src/htickafix.c (1.1), src/report.c (1.43), src/scan.c (1.35),
+	src/toss.c (1.285), win32/makefile.bcw (1.13), win32/makefile.cyg
+	(1.19), win32/makefile.mgw (1.8), win32/makefile.mvc (1.16),
+	win32/makefile.mvcdll (1.20), win32/makefile.wcw (1.24): use
+	areafix library in htick (be careful - isn't tested much) and HAPPY
+	NEW YEAR! :-)
+
 2004-12-15 Wednesday 20:10  i_zkh
 
 	* doc/htick.rus.texi (1.6): Added missing keyword fileDescription
