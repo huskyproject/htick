@@ -886,6 +886,7 @@ void preprocText(char *preport, s_message *msg)
     msg->text = createKludges(config->disableTID, 
                               NULL, &msg->origAddr, &msg->destAddr,
                               versionStr);
+    xstrcat(&msg->text, "\001FLAGS NPD\r");
     xstrcat(&msg->text, preport);
     xscatprintf(&msg->text, " \r--- %s FileFix\r", versionStr);
     msg->textLength=(int)strlen(msg->text);

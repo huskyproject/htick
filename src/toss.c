@@ -699,6 +699,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
                            config->filefixKillReports);
          msg->text = createKludges(config->disableTID,config->ReportTo, area->useAka, area->useAka,versionStr);
       } /* endif */
+      xstrcat(msg->text, "\001FLAGS NPD\r");
       sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
           (area->description) ? area->description : "");
       msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
@@ -1964,7 +1965,7 @@ void reportNewFiles()
                                      newFileReport[i]->useAka,
                                      versionStr);
                   } /* endif */
-                  xstrcat(&(msg->text), " ");
+                  xstrcat(&(msg->text), "\001FLAGS NPD\r");
                } /* endif */
 
                fileCount = fileSize = 0;
