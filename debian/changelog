@@ -1,38 +1,8 @@
-htick (0.9u-4) unstable; urgency=low
-
-  * Newest Version from cvs. Has a new keyword :)
-
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sat, 21 Apr 2001 16:41:53 +0200
-
-htick (0.9u-3) unstable; urgency=low
-
-  * Debug enabled. Little slower, much bigger :)
-
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Mon, 16 Apr 2001 15:42:17 +0200
-
-htick (0.9u-2) unstable; urgency=low
-
-  * Recompiled because big change of smapi-Version (Dependency-Fuck)
-
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Fri, 13 Apr 2001 15:18:15 +0200
-
-htick (0.9u-1) unstable; urgency=low
-
-  * This is now the cvs-Version, UNSTABLE htick.
-
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Wed, 11 Apr 2001 22:02:55 +0200
- 
-htick (0.9a-2) unstable; urgency=low
-
-  * man-page for htick written and added.
-
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Thu,  5 Apr 2001 01:12:52 +0200
-
-htick (0.9a-1) unstable; urgency=low
+htick (0.9-1) unstable; urgency=low
 
   * Initial Release.
 
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sat, 31 Mar 2001 01:02:01 +0200
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Thu,  5 Jul 2001 22:32:44 +0200
 
 Local variables:
 mode: debian-changelog

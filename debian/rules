@@ -11,7 +11,8 @@ export DEBIAN=1
 export PACKAGE=htick
 export VERSION=0.9
 # Next Line to build debug-versions !
-export DEB_BUILD_OPTIONS=nostrip
+# export DEB_BUILD_OPTIONS=nostrip
+
 
 configure: configure-stamp
 configure-stamp:
@@ -27,6 +28,8 @@ build-stamp:
 
 	# Add here commands to compile the package.
 	$(MAKE)
+	#/usr/bin/docbook-to-man debian/htick.sgml > htick.1
+
 	touch build-stamp
 
 clean:
@@ -36,14 +39,6 @@ clean:
 
 	# Add here commands to clean up after the build process.
 	-$(MAKE) clean
-	-rm -f configure-stamp
-	-rm -f build-stamp
-	-rm -rf debian/$(PACKAGE)
-	-rm -f debian/postinst.debhelper
-	-rm -f debian/postrm.debhelper
-	-rm -f debian/prerm.debhelper
-	-rm -f debian/substvars
-	-rm -f debian/files
 
 	dh_clean
 
@@ -69,8 +64,13 @@ binary-arch: build install
 	dh_installdocs
 	dh_installexamples
 	dh_installmenu
+#	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_installinit
 	dh_installcron
-	dh_installmanpages
+	dh_installman
 	dh_installinfo
 #	dh_undocumented
 	dh_installchangelogs ChangeLog
@@ -78,7 +78,7 @@ binary-arch: build install
 	dh_strip
 	dh_compress
 	dh_fixperms
-	dh_makeshlibs
+#	dh_makeshlibs
 	dh_installdeb
 #	dh_perl
 	dh_shlibdeps

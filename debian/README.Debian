@@ -1,14 +1,6 @@
 htick for Debian
 ----------------
 
-English Readers: Try Babelfish or wait until someone translates this. :)
+Just a small but very powerful Fileticker for the Husky-Packages.
 
-This is now the UNSTABLE Version of htick !
-
-In der Datei FidoConfKeywords sind nochmal alle Schluesselwoerter der Fidoconf
-aufgelistet die htick unterstuetzt.
-
-Die Datei config.sample ist eine weitere Beispiel-Fidoconfig, die so
-bei htick mitgeliefert wurde.
-
- -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>, Sat, 31 Mar 2001 01:02:01 +0200
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>, Thu,  5 Jul 2001 22:32:44 +0200
