@@ -1,5 +1,6 @@
 - Put a footer-textfile into the announce report
 - Announces templates
+- Announces to *.PKT
 
 - Document tokens (add to tparser & dumpcfg):
     filefixkillreports
