@@ -1,3 +1,12 @@
+2002-07-24 Wednesday 17:01  mche
+
+	* src/areafix.c (1.76): report about rescanable areas by %list
+	command to areafix rescanable areas will have mark 'R'
+
+2002-07-24 Wednesday 09:44  pavel.gulchouck
+
+	* src/fcommon.c (1.53): segfault on remove files fixed
+
 2002-07-23 Tuesday 20:34  d.sergienko
 
 	* FidoConfigKeywords (1.33), src/areafix.c (1.75): + added ability
