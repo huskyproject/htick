@@ -957,7 +957,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
        char *descr = NULL;
        if(tic.areadesc)           descr = sstrdup(tic.areadesc);
        if(config->intab && descr) recodeToInternalCharset(descr);
-       autoCreate(tic.area,descr,&(tic.from),NULL);
+       autoCreate(tic.area, descr, tic.from, NULL);
        filearea=getFileArea(tic.area);
        w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
        nfree(descr);
