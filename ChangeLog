@@ -1,3 +1,7 @@
+2002-11-26 Tuesday 13:02  pgul
+
+	* src/fcommon.c (1.57): Fix EMX warning
+
 2002-11-25 Monday 13:39  mche
 
 	* src/toss.c (1.238): fix origin in announces
