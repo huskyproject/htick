@@ -31,6 +31,7 @@ clean:
 	-rm -f *.o
 	-rm *~
 	-rm core
+	-rm htick
 
 distclean: clean
 	-rm htick
