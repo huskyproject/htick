@@ -83,7 +83,7 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
    /*  recoding subjectLine to TransportCharset */
-   if (config->outtab != NULL) {
+   if ((config->recodeMsgBase) && (config->outtab != NULL)) {
        recodeToTransportCharset((CHAR*)msg->subjectLine);
        recodeToTransportCharset((CHAR*)msg->fromUserName);
        recodeToTransportCharset((CHAR*)msg->toUserName);
@@ -125,6 +125,9 @@ void convertMsgText(HMSG SQmsg, s_message *msg, hs_addr ourAka)
    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text+strlen(msg->text), 0, NULL);
 
    strcat(msg->text, viaLine);
+
+   if ((config->recodeMsgBase) && (config->outtab != NULL))
+       recodeToTransportCharset((CHAR*)msg->text);
 
    free(kludgeLines);
 }
