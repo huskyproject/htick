@@ -836,7 +836,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       if (isToss)
          if (move_file(filename,newticedfile)!=0) {
              writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
-             disposeTic(&tic);
+             disposeTic(tic);
              return(2);
          } else {
              writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
@@ -844,7 +844,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       else
          if (copy_file(filename,newticedfile)!=0) {
             writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
-            disposeTic(&tic);
+            disposeTic(tic);
             return(2);
          } else {
             writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
@@ -857,7 +857,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       adaptcase(descr_file_name);
       removeDesc(descr_file_name,tic->file);
       if (tic->anzldesc>0)
-         add_description (descr_file_name, tic.file, tic->ldesc, tic->anzldesc);
+         add_description (descr_file_name, tic->file, tic->ldesc, tic->anzldesc);
       else
          add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
    }
@@ -977,13 +977,13 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                /* Don't create TICs for everybody */
                if (!filearea->downlinks[i]->link->noTIC || busy) {
                  newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-                 writeTic(newticfile,&tic);   
+                 writeTic(newticfile,tic);
                } else newticfile = NULL;
 
                if (!busy) {
                   flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
                   fprintf(flohandle,"%s\n",newticedfile);
-               
+
                   if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
 
                   fclose(flohandle);
@@ -1093,7 +1093,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    parseTic(ticfile,&tic);
 
    writeLogEntry(htick_log,'6',"File: %s Area: %s From: %s Orig: %u:%u/%u.%u",
-           tic->file, tic.area, addr2string(&tic.from),
+           tic.file, tic.area, addr2string(&tic.from),
            tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
 
    /* Security Check */

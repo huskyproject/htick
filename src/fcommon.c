@@ -50,11 +50,14 @@
 
 #include <global.h>
 #include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>
 #include <smapi/stamp.h>
 #include <smapi/progprot.h>
+#include <smapi/ffind.h>
+#include <smapi/patmat.h>
 
 //#include <process.h>
 #include <toss.h>
