@@ -62,12 +62,12 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     char *desc_line = NULL;
     char *namefile  = NULL;
     int descOnNewLine  = 0;
-    
+
     descr_file = fopen (descr_file_name, "a");
     if (descr_file == NULL) return 1;
-    
+
     namefile = sstrdup(file_name);
-    
+
     MakeProperCase(namefile);
     xscatprintf(&desc_line, "%-12s",namefile);
     /* fprintf (descr_file, "%-12s", namefile); */
@@ -81,7 +81,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
         /* fprintf (descr_file, "%s", dlc); */
         xstrcat(&desc_line, dlc);
     }
-    if((strlen(namefile) > 12) && 
+    if((strlen(namefile) > 12) &&
        (strlen(desc_line) + strlen(description[0]) > 78))
     {
         fprintf (descr_file, "%s\n",desc_line);
@@ -99,9 +99,9 @@ int add_description (char *descr_file_name, char *file_name, char **description,
             descOnNewLine = 1;
         } else {
             if (config->fileDescPos == 0 ) config->fileDescPos = 1;
-            fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '), 
+            fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '),
                 (config->fileLDescString == NULL) ? " " : config->fileLDescString, desc_line);
-            
+
         }
         nfree(desc_line);
     }
@@ -116,43 +116,43 @@ int removeDesc (char *descr_file_name, char *file_name)
     FILE *f1, *f2;
     char *line, *tmp, *token, *descr_file_name_tmp, *LDescString;
     int flag = 0;
-    
+
     line = tmp = token = descr_file_name_tmp = LDescString = NULL ;
     f1 = fopen (descr_file_name, "r");
     if (f1 == NULL) return 1;
-    
+
     /* strcpy(descr_file_name_tmp,descr_file_name); */
     /* strcat(descr_file_name_tmp,".tmp"); */
-    
+
     xstrscat(&descr_file_name_tmp,descr_file_name,".tmp",NULL);
-        
+
     f2 = fopen (descr_file_name_tmp, "w");
     if (f2 == NULL) {
         fclose (f1);
         nfree(descr_file_name_tmp);
         return 1;
     }
-    
-    if (config->fileLDescString == NULL) 
+
+    if (config->fileLDescString == NULL)
         LDescString = sstrdup(">");
     else
         LDescString = sstrdup(config->fileLDescString);
-    
+
     while ((line = readLine(f1)) != NULL) {
         if (*line == 0 || *line == 10 || *line == 13)
             continue;
-        
+
         if (line[strlen(line)-1]=='\r')
             line[strlen(line)-1]=0;
-        
+
         if (flag && (*line == '\t' || *line == ' ' || *line == *LDescString))
             continue;
         else
             flag = 0;
-        
+
         tmp = sstrdup(line);
         token = strtok(tmp, " \t\0");
-        
+
         if (token != NULL) {
             if (stricmp(token,file_name) != 0) {
                 fputs(line, f2);
@@ -164,7 +164,7 @@ int removeDesc (char *descr_file_name, char *file_name)
         nfree(tmp);
         nfree(line);
     }
-    
+
     nfree(LDescString);
     fclose (f1);
     fclose (f2);
@@ -176,7 +176,7 @@ int removeDesc (char *descr_file_name, char *file_name)
 int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
 {
     FILE *ann_file;
-    
+
     if (!fexist(announcenewfileecho)) {
         ann_file = fopen (announcenewfileecho, "w");
         if (ann_file == NULL) return 1;
@@ -199,12 +199,12 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
 
 
     int flag = 0, rc = 1;
-    
+
     filehandle = fopen (descr_file_name, "r+b");
     if (filehandle == NULL) return 1;
-    
+
     while ((line = readLine(filehandle)) != NULL) {
-        
+
         if (flag && (*line == '\t' || *line == ' ' || *line == '>')) {
             token=stripLeadingChars(line, " >");
             if (*token == '>') token++;
@@ -229,22 +229,22 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
         token = tmp;
         p = token;
         while(p && *p != '\0' && !isspace(*p)) p++;
-        if(p && *p != '\0') 
+        if(p && *p != '\0')
             *p = '\0';
         else
             p = NULL;
-        
+
         if (stricmp(token,file_name) == 0) {
             UINT i;
-            
+
             if(p == NULL) {
                 token = "";
             }   else      {
                 p++;
                 while(p && *p != '\0' &&isspace(*p)) p++;
-                if(p && *p != '\0') 
+                if(p && *p != '\0')
                     token = p;
-                else                
+                else
                     token = "";
             }
             if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10 && token[0] == '[') {
@@ -266,7 +266,7 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
         nfree(line);
         nfree(tmp);
     }
-    
+
     fclose (filehandle);
     w_log(LL_FILE, "getDesc OK for file: %s",file_name);
     return rc;
@@ -283,11 +283,11 @@ int GetDescFormFile (char *fileName, s_ticfile *tic)
         w_log(LL_ERROR,"File %s not found",fileName);
         return 3;
     };
-    
+
     for ( i = 0;i < tic->anzldesc;i++)
         nfree(tic->ldesc[i]);
     tic->anzldesc=0;
-    
+
     while ((line = readLine(filehandle)) != NULL) {
         tic->ldesc=
             srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
@@ -323,8 +323,8 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         }
         fclose(filehandle);
     }
-    
-    if (found = 0) {
+
+    if ((found = 0)) {
         w_log( LL_ALERT, "file %s: cannot find unpacker", fileName);
         return 3;
     }
@@ -352,18 +352,18 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
             }
         }
         chdir(buffer);
-        
+
         xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescNames[i]);
-        
+
         found = GetDescFormFile (dizfile, tic);
-        
+
         if( found == 1 )
         {
             remove(dizfile);
             i = config->fDescNameCount;
         }
         nfree(dizfile);
-    }    
+    }
     return found;
 }
 
