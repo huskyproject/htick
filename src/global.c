@@ -44,7 +44,7 @@ char *print_ch(int len, char ch)
 }
 
 const int VER_MAJOR = 0;
-const int VER_MINOR = 03;
+const int VER_MINOR = 9;
 char      versionStr[30];
 
 int       cmToss = 0;

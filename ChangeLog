@@ -1,6 +1,11 @@
 htick 0.03
 ----------
 
+----- cvs ci ------	
+Mon May 22 14:52:27 CEST 2000
+mtt:
+* changed version number to 0.9
+
 ----- cvs ci ------
 Wed May 17 21:40:28 NOVST 2000
 max (patch from Alex Bronin):
