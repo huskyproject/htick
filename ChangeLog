@@ -1,3 +1,35 @@
+2002-08-29 Thursday 13:42  stas_degteff
+
+	* FidoConfigKeywords (1.36): Update previous fix
+
+2002-08-29 Thursday 13:39  stas_degteff
+
+	* FidoConfigKeywords (1.35): Fix documentation (OriginInAnnounce
+	description)
+
+2002-08-29 Thursday 13:30  sfpavel
+
+	* man/htick.1 (1.5), misc/config (1.3): Update sample config
+
+2002-08-29 Thursday 12:59  sfpavel
+
+	* debian/changelog (1.11), debian/dirs (1.3), debian/manpages
+	(1.2), debian/rules (1.9), man/htick.1 (1.4): New debian package
+
+2002-08-29 Thursday 12:38  stas_degteff
+
+	* misc/: README (1.4), config (1.2), fileareas (1.2): Small change
+	in documentation; fix config sample.
+
+2002-08-29 Thursday 12:21  sfpavel
+
+	* misc/: README (1.3), config (1.1), fileareas (1.1): Add config
+	example
+
+2002-08-29 Thursday 11:01  mche
+
+	* src/add_desc.c (1.17): speedup filelist generation
+
 2002-08-27 Tuesday 07:48  mche
 
 	* src/toss.c (1.206): process keyword 'replace' only for tossing
