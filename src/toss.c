@@ -650,7 +650,10 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
         }
     }
-    
+
+    if(seenbyComp(tic->seenby, tic->anzseenby, tic->to))
+        seenbyAdd(&tic->seenby, &tic->anzseenby, &tic->to);
+
     seenbySort(tic->seenby,tic->anzseenby);
     
     /* Checking to whom I shall forward */
