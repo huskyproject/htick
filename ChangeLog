@@ -1,3 +1,10 @@
+2003-01-20 Monday 06:25  stas_degteff
+
+	* h/filelist.h (1.9), src/areafix.c (1.110), src/fcommon.c (1.63),
+	src/filecase.c (1.7), src/hatch.c (1.75), src/htick.c (1.87),
+	src/report.c (1.35), src/toss.c (1.245): Use defines from
+	compiler.h; fix cygwin/mingw build
+
 2003-01-19 Sunday 15:12  mche
 
 	* src/htick.c (1.86): reduce screen output
