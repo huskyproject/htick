@@ -2,6 +2,11 @@ htick 0.9
 ---------
 (released on Mon May 22 14:58:56 CEST 2000)
 
+
+Mon Jun 19 23:45:48 SAMST 2000
+Georgi:
+* fixed some bugs in toss and hatch
+
 ----- cvs ci ------
 Mon Jun 05 12:23:00 SAMST 2000
 Georgi:

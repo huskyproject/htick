@@ -888,10 +888,11 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            (addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) &&
+          ( (isToss==1 && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) ||
+	   isToss==0 ) &&
             addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-            (seenbyComp (tic->seenby, tic->anzseenby,
-               filearea->downlinks[i]->link->hisAka) != 0)) {
+            ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,
+               filearea->downlinks[i]->link->hisAka)!=0) || isToss==0) ) {
          /* Adding Downlink to Seen-By */
          tic->seenby=realloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
          memcpy(&tic->seenby[tic->anzseenby],
@@ -1313,7 +1314,7 @@ void checkTmpDir(void)
                      strcpy(newticfile,link->floFile);
                      sprintf(strrchr(newticfile, '.'), ".sep%c", PATH_DELIM);
                   } else {
-                     strcpy(newticfile,config->passFileAreaDir);
+                     strcpy(newticfile,config->ticOutbound);
                   }
                   createDirectoryTree(newticfile);
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
