@@ -1,3 +1,11 @@
+2002-09-26 Thursday 09:12  pgul
+
+	* src/toss.c (1.211): minor bugfix (incorrect logging)
+
+2002-09-26 Thursday 08:25  stas_degteff
+
+	* HISTORY (1.7): Update changes tracking file.
+
 2002-09-25 Wednesday 07:27  mche
 
 	* src/areafix.c (1.91), FidoConfigKeywords (1.41): feature:
