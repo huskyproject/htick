@@ -12,6 +12,7 @@
 #include <progprot.h>
 #include <add_descr.h>
 #include <dir.h>
+#include <adcase.h>
 
 unsigned long totalfilessize = 0;
 unsigned int totalfilesnumber = 0;

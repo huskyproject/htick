@@ -15,6 +15,7 @@
 #include <recode.h>
 #include <version.h>
 #include <progprot.h>
+#include <adcase.h>
 
 void hatch()
 {
