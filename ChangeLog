@@ -1,3 +1,7 @@
+2004-06-02 Wednesday 16:12  sfpavel
+
+	* src/toss.c (htick-1_4-stable.10): Fix debug log
+
 2004-03-18 Thursday 18:51  stas_degteff
 
 	* src/toss.c (htick-1_4-stable.9): Fix crc32 values
