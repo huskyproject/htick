@@ -1,3 +1,8 @@
+2003-05-18 Sunday 10:38  d_sergienko
+
+	* src/toss.c (htick-1_4-stable.4): add our AKA if it is missed in
+	received tic
+
 2003-05-08 Thursday 21:42  d_sergienko
 
 	* HISTORY, src/clean.c (htick-1_4-stable.[3,1]): when exists
