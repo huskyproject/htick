@@ -592,7 +592,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    _createDirectoryTree(fileareapath);
    
-   if (tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
+   if (isToss == 1 && tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
        /* Delete old file[s] */
        int num_files;
        char *repl;
