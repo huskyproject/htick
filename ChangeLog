@@ -1,3 +1,34 @@
+2002-10-09 Wednesday 09:02  mche
+
+	* src/areafix.c (1.94): functions addlink and removelink are moved
+	to fidoconfig
+
+2002-10-09 Wednesday 08:54  stas_degteff
+
+	* src/toss.c (1.219): Diagnostic improved
+
+2002-10-09 Wednesday 07:20  stas_degteff
+
+	* src/: areafix.c (1.93), toss.c (1.218): Improve and fix
+	diagnostic
+
+2002-10-09 Wednesday 05:21  stas_degteff
+
+	* FidoConfigKeywords (1.45): Fix typo error
+
+2002-10-09 Wednesday 04:58  stas_degteff
+
+	* FidoConfigKeywords (1.44): Update & partially spell check htick
+	documentation.
+
+2002-10-09 Wednesday 03:59  stas_degteff
+
+	* src/report.c (1.19): Cosmetic fix
+
+2002-10-09 Wednesday 03:48  stas_degteff
+
+	* FidoConfigKeywords (1.43): Spell fix
+
 2002-10-08 Tuesday 14:49  mche
 
 	* src/add_desc.c (1.20): correct previous patch
