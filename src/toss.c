@@ -135,9 +135,12 @@ XMSG createXMSGNetmail(s_message *msg)
    union stamp_combo dosdate;
 
       msgHeader.attr = msg->attributes;
-      msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
-      msgHeader.attr |= MSGPRIVATE; // set this flags
-
+      
+      if (to_us(msg->destAddr)==0) {
+          msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); // kill these flags
+          msgHeader.attr |= MSGPRIVATE; // set this flags
+      } else msgHeader.attr |= MSGFWD; // set TRS flag if mail not to us
+      
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
    strcpy((char *) msgHeader.subj,msg->subjectLine);
