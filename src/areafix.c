@@ -1205,8 +1205,27 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
    xscatprintf(&buff," %s",hisaddr);
    
    if(dwLink) xscatprintf(&buff," %s",aka2str(*dwLink));
+
+   if( fseek (f, -2L, SEEK_END) == 0) 
+   {
+       char CR;
+       CR = getc (f); /*   may be it is CR aka '\r'  */
+       if (getc(f) != '\n') {
+           fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
+           fputs (cfgEol(), f);
+       } else {
+           fseek (f, 0L, SEEK_END);
+       }
+       /* correct EOL in memory */
+       if(CR == '\r')
+           xstrcat(&buff,"\r\n"); /* DOS EOL */
+       else
+           xstrcat(&buff,"\n");   /* UNIX EOL */
+   } else {
+       xstrcat(&buff,(char*)cfgEol());   /* config depended EOL */
+   }
    
-   fprintf(f, "%s\n", buff);
+   fprintf(f, "%s", buff);
    fclose(f);
 
    /* add new created echo to config in memory */
