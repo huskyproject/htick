@@ -602,7 +602,9 @@ TIC'и хранятся здесь и удаляются после отправки. По умолчанию: использовать
 @item Синтаксис:
 @code{filefixReportsAttr <attr>}
 @item Пример:
-@code{filefixReportsAttr pvt,kill,loc}
+@code{filefixReportsAttr pvt k/s loc}
+@item или
+@code{filefixReportsAttr pvt,k/s,loc}
 @end table
 
 Установить флаги на ответы filefix.

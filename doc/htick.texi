@@ -593,7 +593,9 @@ This statement cannot be repeated.
 @item Syntax:
 @code{filefixReportsAttr <attr>}
 @item Example:
-@code{filefixReportsAttr pvt,kill,loc}
+@code{filefixReportsAttr pvt k/s loc}
+@item or
+@code{filefixReportsAttr pvt,k/s,loc}
 @end table
 
 Set flags to filefix replies.
