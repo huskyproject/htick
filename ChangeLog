@@ -1,3 +1,17 @@
+2002-05-17 Friday 17:18  mche
+
+	* FidoConfigKeywords (1.21): no message
+
+2002-05-17 Friday 14:28  mche
+
+	* src/toss.c (1.169): report new files in original case
+
+2002-05-17 Friday 07:59  mche
+
+	* FidoConfigKeywords (1.20), src/scan.c (1.18), src/toss.c (1.168):
+	new token for link  "LinkFileFaseDir" Where autocreated file echos
+	will be placed (may be "passthrough")
+
 2002-05-16 Thursday 11:54  pavel.gulchouck
 
 	* src/fcommon.c (1.47): Do not try to use hardlinks under OS/2
