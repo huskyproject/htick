@@ -274,21 +274,23 @@ int main(int argc, char **argv)
    struct _minf m;
 
 #ifdef __linux__
-   sprintf(versionStr, "HTick/LNX v%u.%02u", VER_MAJOR, VER_MINOR);
+   sprintf(versionStr, "HTick/LNX v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #elif defined(__freebsd__)
-   sprintf(versionStr, "HTick/BSD v%u.%02u", VER_MAJOR, VER_MINOR);
+   sprintf(versionStr, "HTick/BSD v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #elif defined(__OS2__)
-    sprintf(versionStr, "HTick/OS2 v%u.%02u", VER_MAJOR, VER_MINOR);
+    sprintf(versionStr, "HTick/OS2 v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #elif defined(__NT__)
-    sprintf(versionStr, "HTick/NT v%u.%02u", VER_MAJOR, VER_MINOR);
+    sprintf(versionStr, "HTick/NT v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #elif defined(__sun__)
-    sprintf(versionStr, "HTick/SUN v%u.%02u", VER_MAJOR, VER_MINOR);
+    sprintf(versionStr, "HTick/SUN v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
+#elif defined(__BEOS__)
+    sprintf(versionStr, "HTick/beos v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #else
-    sprintf(versionStr, "HTick v%u.%02u", VER_MAJOR, VER_MINOR);
+    sprintf(versionStr, "HTick v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
 #endif
 
 
-   printf("Husky Tick v%u.%02u by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR);
+   printf("Husky Tick v%u.%02u%s%s by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR, VER_SERVICE, VER_BRANCH);
 
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
