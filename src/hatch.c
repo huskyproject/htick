@@ -169,9 +169,6 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
         }
     }
 
-    if(!SdescOPT && !LdescOPT)
-        return;
-
     if(SdescOPT == DIZONELINE || LdescOPT == DIZONELINE || SdescOPT == DIZMLTLINE || LdescOPT == DIZMLTLINE)
     {
         if ( GetDescFormDizFile(hatchedFile, &tmptic) == 1 )
