@@ -1,3 +1,7 @@
+2004-12-15 Wednesday 20:10  i_zkh
+
+	* doc/htick.rus.texi (1.6): Added missing keyword fileDescription
+
 2004-11-05 Friday 14:18  mche
 
 	* htick.vcproj (1.4): make files changed for building with perl
