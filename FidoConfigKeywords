@@ -149,3 +149,13 @@ Use in "htick filelist"
 
 This statement sets the flavour which outgoing files in fileechos for this link
 get. For example set fileEchoFlavour for points to hold and for uplink crash.
+
+22) fileAreaDefaults <options> [links]
+
+Set defaults for filearea definitions that follow. Keyword can be repeated.
+All options are possible, except areatag and path. Different setting in
+filearea definition overrides default.
+See also echoAreaDefaults.
+Defaults are switched off with empty 'fileAreaDefaults'.
+
+
