@@ -8,7 +8,7 @@ ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../.. -Wall -g -D__NT__ -mno-cygwin
   LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o -g
 else
-  CFLAGS  = -c -I../h -I../.. -O3 -Wall -pedantic -s -D__NT__ -mno-cygwin
+  CFLAGS  = -c -I../h -I../.. -O3 -Wall -pedantic -D__NT__ -mno-cygwin
   LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin ../../smapi/patmat.o ../../smapi/setfsize.o
 endif
   CDEFS=  $(CFLAGS)
