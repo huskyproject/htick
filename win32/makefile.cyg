@@ -24,7 +24,7 @@ all: $(OBJS) \
 	$(CC) $(CDEFS) $(SRC_DIR)$*.c
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapicyg -lfidoconfigcyg
+	$(CC) $(LFLAGS) -o htick $(OBJS) -lsmapicyg -lfidoconfigcyg -lmingwex
 
 clean:
 	-rm -f *.o
