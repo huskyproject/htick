@@ -977,7 +977,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                        addr2string(&filearea->downlinks[i]->link->hisAka));
             } else {
 //               memcpy(&tic->from,filearea->useAka,sizeof(s_addr));
-               memcpy(&tic->from,&filearea->downlinks[i]->link->ourAka,sizeof(s_addr));
+               memcpy(&tic->from,filearea->downlinks[i]->link->ourAka,sizeof(s_addr));
                memcpy(&tic->to,&filearea->downlinks[i]->link->hisAka,
                       sizeof(s_addr));
                if (filearea->downlinks[i]->link->ticPwd!=NULL)
