@@ -72,7 +72,7 @@
 #include <add_desc.h>
 #include <seenby.h>
 #include <fidoconf/recode.h>
-#include <crc32.h>
+#include <fidoconf/crc.h>
 #include <filecase.h>
 
 #ifndef OS2

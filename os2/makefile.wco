@@ -17,7 +17,7 @@ $(OBJS): $(SRC_DIR)\*.c
 
 htick.exe: $(OBJS)
    @echo linking htick
-  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_desc.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj, filecase.obj Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME htick.exe
+  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_desc.obj, seenby.obj, recode.obj, hatch.obj, filelist.obj, filecase.obj Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME htick.exe
 
 .IGNORE
 
