@@ -33,7 +33,8 @@ This file describe changes between htick-1.0-stable and htick-1.1-current
 3. IMPORTANT bugfixes:
    - fixed bug with missed files in report;
    - recode filearea descriptions;
-   - save modification time for files in fileechoes.
+   - save modification time for files in fileechoes;
+   - set 'Loc' flag on messages from FileFix;
 
 
 $Id$
