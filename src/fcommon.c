@@ -78,6 +78,12 @@
 #include <toss.h>
 #include <add_desc.h>
 
+#ifndef FALSE
+#define FALSE 0
+#endif
+#ifndef TRUE
+#define TRUE 1
+#endif
 
 void exit_htick(char *logstr, int print) {
 
@@ -218,6 +224,9 @@ int link_file(const char *from, const char *to)
    int rc = FALSE;
 #if (_WIN32_WINNT >= 0x0500)
    rc = CreateHardLink(to, from, NULL);
-#  endif
+#elif defined (_UNISTD_H)
+   rc = (link(from, to) == 0);
+#endif
    return rc;
 }
+
