@@ -1,3 +1,8 @@
+2005-03-06 Sunday 18:30  val_khokhlov
+
+	* src/htickafix.c (1.7): fix a bug with empty request message text
+	in filefix replies
+
 2005-03-04 Friday 14:23  mche
 
 	* h/htickafix.h (1.2), htick.vcproj (1.6), htickWithZlib.vcproj
