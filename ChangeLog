@@ -1,3 +1,9 @@
+2003-10-17 Friday 08:06  andr_lukyanov
+
+	* makefile.inc (1.2), dos/makefile.djg (1.8), os2/makefile.emx
+	(1.7), win32/makefile.cyg (1.18): Fix compilation with
+	huskymak.cfg.*
+
 2003-09-19 Friday 06:36  mche
 
 	* src/htick.c (1.101): Fixing fault on missing parameter after -c
