@@ -1,3 +1,12 @@
+2002-06-07 Friday 18:54  mche
+
+	* src/toss.c (1.181): fixed origin in announce
+
+2002-06-07 Friday 11:06  mche
+
+	* src/: fcommon.c (1.52), toss.c (1.180): filearea option added:
+	-nodiz Do not try to get description from <fileDescName>
+
 2002-06-06 Thursday 16:41  mche
 
 	* h/fcommon.h (1.17): filearea option added: -nodiz Do not try to
