@@ -1,6 +1,10 @@
 htick 0.02
 ----------
 
+Mon Jun 21 14:09:03 NOVST 1999                                                  
+max:
++ add separate bundles code (for .tic files)
+
 Sun Jun 20  21:19:00
 Fedor:
 * change areafix.c

@@ -530,7 +530,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    char ticedfile[256],fileareapath[256],
         newticedfile[256],linkfilepath[256],descr_file_name[256];
-   char *newticfile;
+   char *newticfile, sepname[13], *sepDir;
    char logstr[200];
    s_filearea *filearea;
    char hlp[100],timestr[40];
@@ -715,6 +715,22 @@ int processTic(char *ticfile, e_tossSecurity sec)
              strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
              *(strrchr(linkfilepath,limiter))=0;
 
+	    // separate bundles
+	    if (config->separateBundles) {
+          
+	      if (filearea->downlinks[i]->link->hisAka.point != 0)
+	       sprintf(sepname, "%08x.sep", filearea->downlinks[i]->link->hisAka.point);
+	      else
+	       sprintf(sepname, "%04x%04x.sep", filearea->downlinks[i]->link->hisAka.net, filearea->downlinks[i]->link->hisAka.node);
+
+	      sepDir = (char*) malloc(strlen(linkfilepath)+1+strlen(sepname)+1+1);
+	      sprintf(sepDir,"%s%c%s%c",linkfilepath,PATH_DELIM,sepname,PATH_DELIM);
+	      strcpy(linkfilepath,sepDir);
+	      
+              createDirectoryTree(sepDir);
+	      free(sepDir);
+	    }
+						   
              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
              writeTic(newticfile,&tic);   
 
