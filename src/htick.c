@@ -281,7 +281,7 @@ void processConfig()
 
   /* open Logfile */
 
-   htick_log = openLog(buff, versionStr, config);  /* if failed: openLog() prints a message to stderr */
+   htick_log = openLog(LogFileName, versionStr, config);  /* if failed: openLog() prints a message to stderr */
    if (htick_log && quiet) htick_log->logEcho = 0;
 
    if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
