@@ -1,3 +1,12 @@
+2002-08-02 Friday 15:58  mche
+
+	* src/add_desc.c (1.13), src/clean.c (1.5), src/filelist.c (1.32),
+	src/global.c (1.20), src/hatch.c (1.60), src/htick.c (1.68),
+	src/toss.c (1.203), h/add_desc.h (1.4), h/fcommon.h (1.18),
+	h/global.h (1.16), h/hatch.h (1.6), h/toss.h (1.19): new interface
+	for command HATCH added description macroses and separated options
+	for short and long descriptions see documentation for details
+
 2002-07-30 Tuesday 16:00  mche
 
 	* src/: areafix.c (1.80), toss.c (1.202): hpt_stristr() moved to
