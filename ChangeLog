@@ -1,3 +1,11 @@
+2002-06-26 Wednesday 07:26  mche
+
+	* src/htick.c (1.59.2.1): version string reduced
+
+2002-06-26 Wednesday 07:21  mche
+
+	* src/global.c (1.18.2.1): version changed
+
 2002-06-25 Tuesday 17:11  stas
 
 	* BUG-REPORTING (1.1.6.1), BUGS (1.2.2.1), BUGS.rus (1.2.2.1),
