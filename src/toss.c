@@ -817,7 +817,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
 
 void doSaveTic(char *ticfile,s_ticfile *tic)
 {
-   char *filename;
+   char *filename = NULL;
    unsigned int i;
    s_savetic *savetic;
 
