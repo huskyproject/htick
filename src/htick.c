@@ -165,6 +165,7 @@ void start_help(void) {
             "         -c config-file  Specify alternate config file\n"
             "Commands:\n"
             " toss [annfecho <file>] Do tossing. [Announce new fileecho in text file]\n"
+            " toss -b                Toss bad tics\n"
             " clean                  Clean passthrough dir and old files in fileechos\n"
             " ffix [<addr> command]  Process filefix\n"
             " announce               Announce new files\n"
@@ -206,8 +207,14 @@ int processCommandLine(int argc, char **argv)
             cfgfile = argv[i];
             continue;
         }
-        if (0 == stricmp(argv[i], "toss")) {
+        if (stricmp(argv[i], "toss") == 0) {
             cmToss = 1;
+            if (i < argc-1) {
+                if (stricmp(argv[i+1], "-b") == 0) {
+                    cmToss = 2;
+                    i++;
+                }
+            }
             continue;
         } else if (stricmp(argv[i], "scan") == 0) {
             cmScan = 1;

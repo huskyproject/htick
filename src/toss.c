@@ -1058,7 +1058,7 @@ void processDir(char *directory, e_tossSecurity sec)
 {
    husky_DIR      *dir;
    char           *file;
-   char           *dummy;
+   char           *dummy = NULL;
    int            rc;
 
    if (directory == NULL) return;
@@ -1071,35 +1071,44 @@ void processDir(char *directory, e_tossSecurity sec)
       printf("testing %s\n", file);
 #endif
 
-      if (patimat(file, "*.TIC") == 1) {
-         dummy = (char *) smalloc(strlen(directory)+strlen(file)+1);
-         strcpy(dummy, directory);
-         strcat(dummy, file);
+      if(( (cmToss == 1) &&   (patimat(file, "*.TIC") == 1) ) ||
+         ( (cmToss == 2) && ( (patimat(file, "*.BAD") == 1) ||
+                              (patimat(file, "*.SEC") == 1) ||
+                              (patimat(file, "*.ACS") == 1) ||
+                              (patimat(file, "*.NTU") == 1) 
+                            )
+                            )
+                            )
+      {
+         xstrscat(&dummy,directory,file,NULL);
 
 #if !defined(__UNIX__)
          if (!hidden(dummy)) {
 #endif
             rc=processTic(dummy,sec);
-
-            switch (rc) {
+            if (cmToss == 1) {
+                switch (rc) {
                case TIC_security:  /* pktpwd problem */
-                  changeFileSuffix(dummy, "sec", 1);
-                  break;
+                   changeFileSuffix(dummy, "sec", 1);
+                   break;
                case TIC_NotOpen:   /* could not open file */
-                  changeFileSuffix(dummy, "acs", 1);
-                  break;
+                   changeFileSuffix(dummy, "acs", 1);
+                   break;
                case TIC_WrongTIC:  /* not/wrong pkt */
-                  changeFileSuffix(dummy, "bad", 1);
-                  break;
+                   changeFileSuffix(dummy, "bad", 1);
+                   break;
                case TIC_NotForUs:  /* not to us */
-                  changeFileSuffix(dummy, "ntu", 1);
-                  break;
+                   changeFileSuffix(dummy, "ntu", 1);
+                   break;
                case TIC_NotRecvd:  /* file not recieved */
-                  break;
+                   break;
                default:            /* OK */
-                  remove (dummy);
-                  break;
-            } /* switch */
+                   remove (dummy);
+                   break;
+                } /* switch */
+            } else if (rc == TIC_OK) {
+                remove (dummy);
+            }
 #if !defined(__UNIX__)
          }
 #endif
