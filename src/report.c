@@ -317,32 +317,32 @@ void MakeDefaultRepDef()
 s_message* MakeReportMessage(ps_anndef pRepDef)
 {
     s_message *msg = NULL;
-    int netmail = 0; /*  -1 => report to file      */
-                     /*   0 => report to echomail  */
-                     /*   1 => report to netmail   */
+    enum{ dstfile=-1, dstechomail=0, dstnetmail=1
+     }reportDst = dstechomail; /*  report destination  */
+
     if ( pRepDef->annAreaTag[0] == '@' )
-        netmail=-1;
+        reportDst = dstfile;
     else if (stricmp(pRepDef->annAreaTag,"netmail")==0)
-        netmail=1;
+        reportDst = dstnetmail;
     else if (getNetMailArea(config, pRepDef->annAreaTag) != NULL) 
-        netmail=1;
+        reportDst = dstnetmail;
     
-    if( netmail >= 0 )
+    if( reportDst > dstfile ) /* dstechomail or dstnetmail */
     {
         msg = makeMessage(
             pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
             pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]),
             pRepDef->annfrom    ? pRepDef->annfrom    : versionStr, 
-            pRepDef->annto      ? pRepDef->annto      : (netmail ? NULL : "All"),
+            pRepDef->annto      ? pRepDef->annto      : (reportDst ? NULL : "All"), /* reportDst!=dstechomail ? */
             pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
-            netmail,
+            (int)reportDst,
             config->filefixKillReports);
         
         msg->attributes = pRepDef->attributes;
         
         msg->text = createKludges(  
             config->disablePID,
-            netmail ? NULL : pRepDef->annAreaTag, 
+            reportDst ? NULL : pRepDef->annAreaTag,  /* reportDst!=dstechomail ? */
             pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
             pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]), 
             versionStr);
