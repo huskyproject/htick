@@ -44,6 +44,7 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 * Installation::                Installation. @emph{Read this!}
 * Command Line::                Command Line OPTIONS and SWITCHES
 * Configuration Reference::     Explanation of the configuration file.
+* Support::                     Support information.
 * Keyword Index::               Configuration File Keywords Index
 @end menu
 
@@ -80,8 +81,8 @@ The advantages of @value{HTICK} is:
 
 @enumerate
 @item Open Source (GPL)
-@item many supported platforms & operating systems
-@item quick bug fixing
+@item Many supported platforms & operating systems
+@item Quick bug fixing
 @end enumerate
 
 @node Installation, Download, Overview, Top
