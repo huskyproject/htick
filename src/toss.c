@@ -598,10 +598,6 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             }
         }
     } else if (strcasecmp(filename,newticedfile) != 0) {
-        if (filearea->sendorig) {
-            strcpy(newticedfile,config->passFileAreaDir);
-            strcat(newticedfile,MakeProperCase(tic->file));
-        }
             /* overwrite existing file if not same */
         if (copy_file(filename,newticedfile,1)!=0) { 
             w_log( LL_ERROR, "File %s not moveable to %s: %s",
@@ -609,6 +605,17 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             return TIC_NotOpen;
         } else {
             w_log('6',"Put %s to %s",filename,newticedfile);
+        }
+        if (filearea->sendorig) {
+            strcpy(newticedfile,config->passFileAreaDir);
+            strcat(newticedfile,MakeProperCase(tic->file));
+			if (copy_file(filename,newticedfile,1)!=0) { 
+				w_log( LL_ERROR, "File %s not moveable to %s: %s",
+					filename, newticedfile, strerror(errno) );
+				return TIC_NotOpen;
+			} else {
+				w_log('6',"Put %s to %s",filename,newticedfile);
+			}
         }
     }
     
