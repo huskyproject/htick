@@ -1,6 +1,14 @@
 # $Id$
 # Legacy makefile to build htick with Borland C
 
+# DEBUG	= 1
+
+!IF $(DEBUG) == 1
+CFLAGS  = -WC -v -w -O2 -DDEBUG_HPT
+!ELSE
+CFLAGS  = -WC -v -w -O2
+!ENDIF
+
 CC      = bcc32
 
 OBJS    = global.obj \
@@ -19,13 +27,9 @@ OBJS    = global.obj \
 
 SRC_DIR = ..\src
 
-!IF $(DEBUG) == 1
-CFLAGS  = -WC -v -w -O2 -DDEBUG_HPT -I..\h -I..\.. -I..\..\smapi -I..\..\fidoconf -DNT -D__NT__ -DWINNT
-LFLAGS  = -WC -v -w -L..\..\smapi -L..\..\fidoconf
-!ELSE
-CFLAGS  = -WC -v -w -O2 -I..\h -I..\.. -I..\..\smapi  -I..\..\fidoconf -DNT -D__NT__ -DWINNT
-LFLAGS  = -WC -w -L..\..\smapi -L..\..\fidoconf
-!ENDIF
+CDEFS	=  -DNT -D__NT__ -DWINNT
+CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
+LFLAGS  = -WC -v -w -L..\..\huskylib\make -L..\..\smapi\make -L..\..\fidoconf
 
 all: $(OBJS) htick.exe
 
@@ -47,7 +51,7 @@ smapibcw.lib
 !
 
 {..\src}.c.obj:
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) -c $<
 
 clean:
 	del *.obj *.bak

@@ -66,8 +66,10 @@ DLLSUFFIX=
 
 # compiler defines
 override CDEFS	+= $(PERLDEFS) $(HARDLINKS_NT4) $(HARDLINKS_W2K) $(HARDLINKS_XP)
+#
+override CINCL	+= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
 # common compiler options
-override CFLAGS	+= -I$(H_DIR) -I../.. -Wall -mno-cygwin
+override CFLAGS	+= -I$(H_DIR) $(CINCL) -Wall -mno-cygwin
 # common linker options
 override LFLAGS	+= -mno-cygwin
 # options to compile only (link is off)
@@ -84,11 +86,13 @@ override AROPTS	+= rs
 # husky libraries:
 # static versions of husky libraries to build this module
 STATICLIBS	+=../../fidoconf/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(LIB)
-STATICLIBS	+=../../smapi/$(LIBPREFIX)smapi$(LIBSUFFIX)$(LIB)
+STATICLIBS	+=../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(LIB)
+STATICLIBS	+=../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(LIB)
 
 # DLL versions of husky libraries needed to build this module
 DLL_LIBS	+=../../fidoconf/$(DLLPREFIX)fidoconf$(DLLSUFFIX)$(DLL)
-DLL_LIBS	+=../../smapi/$(DLLPREFIX)smapi$(DLLSUFFIX)$(DLL)
+DLL_LIBS	+=../../smapi/make/$(DLLPREFIX)smapi$(DLLSUFFIX)$(DLL)
+DLL_LIBS	+=../../huskylib/make/$(DLLPREFIX)husky$(DLLSUFFIX)$(DLL)
 
 # libraries needed to build binary file
 LIBS	?=

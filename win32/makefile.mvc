@@ -2,7 +2,8 @@
 # Legacy makefile to build htick with Microsoft Visual C++
 
 CC=     cl
-CFLAGS= -nologo -Zp1 -I..\.. -I..\h
+CFLAGS= -nologo -Zp1
+CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
 CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
 
 # uncomment one of these lines if you want to enable hardlinking on NTFS 4.0, 5.0
@@ -12,8 +13,9 @@ CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
 COPT=   -O2
 TLIB=   lib -nologo
 
-FCONFL=	..\..\fidoconf\fconfmvc.lib
-SMAPIL=	..\..\smapi\smapimvc.lib
+LIBS	= ..\..\huskylib\make\huskymvc.lib \
+	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\fconfmvc.lib
+
 HTICKL=	htickmvc.lib
 
 OBJS    = global.obj \
@@ -30,7 +32,7 @@ OBJS    = global.obj \
           clean.obj
 
 {..\src}.c.obj:
-	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
+	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
 
 all: $(HTICKL) htick.exe
 
@@ -38,7 +40,7 @@ $(HTICKL): $(OBJS)
 	$(TLIB) /out:$@ $(OBJS)
 
 htick.exe:
-        $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(FCONFL) $(SMAPIL) $(HTICKL) USER32.LIB /link /opt:nowin98
+        $(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(LIBS) $(HTICKL) USER32.LIB /link /opt:nowin98
 
 clean:
 	-del *.obj
