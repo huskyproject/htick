@@ -640,7 +640,7 @@ This statement cannot be repeated.
 If LDESC is not defined in tic file, use <name> file from archive to fill it
 (usually file_id.diz).
 
-This statement cannot be repeated.
+This statement can be repeated.
 
 @subsection Note
 @code{unpack} action should be defined for archive and contain @option{$f} parameter

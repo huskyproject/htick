@@ -629,7 +629,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         }
     }
     
-    if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz && isToss)
+    if (tic->anzldesc==0 && config->fDescNameCount && !filearea->nodiz && isToss)
         GetDescFormDizFile(newticedfile, tic);
     
     

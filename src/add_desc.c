@@ -306,7 +306,9 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     int  j, found;
     UINT i;
     signed int cmdexit;
-    char cmd[256];
+    char cmd[256]="";
+    char buffer[256]="";
+
 
     /*  find what unpacker to use */
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
@@ -322,11 +324,16 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         fclose(filehandle);
     }
     
+    if (found = 0) {
+        w_log( LL_ALERT, "file %s: cannot find unpacker", fileName);
+        return 3;
+    }
+
     /*  unpack file_id.diz (config->fileDescName) */
-    if (found) {
-        char buffer[256]="";
+    for( i = 0; i < config->fDescNameCount; i++)
+    {
         getcwd( buffer, 256 );
-        fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
+        fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescNames[i],config->tempInbound);
         w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
         chdir(config->tempInbound);
         if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
@@ -345,21 +352,18 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
             }
         }
         chdir(buffer);
-
-    } else {
-        w_log( LL_ERROR, "file %s: cannot find unpacker", fileName);
-        return 3;
-    }
-    xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescName);
-    
-    found = GetDescFormFile (dizfile, tic);
-
-    if( found == 1 )
-    {
-        remove(dizfile);
-    }
-    nfree(dizfile);
-    
+        
+        xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescNames[i]);
+        
+        found = GetDescFormFile (dizfile, tic);
+        
+        if( found == 1 )
+        {
+            remove(dizfile);
+            i = config->fDescNameCount;
+        }
+        nfree(dizfile);
+    }    
     return found;
 }
 
