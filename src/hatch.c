@@ -332,7 +332,7 @@ void hatch()
 
     MakeProperCase(hatchInfo->file);
     
-    filearea=getFileArea(config,hatchInfo->area);
+    filearea=getFileArea(hatchInfo->area);
     
     if (filearea == NULL) {
         w_log('9',"Cannot open or create File Area %s",hatchInfo->area);
@@ -376,7 +376,7 @@ int send(char *filename, char *area, char *addr)
     
     w_log( LL_INFO, "Start file send (%s in %s to %s)",filename,area,addr);
     
-    filearea=getFileArea(config,area);
+    filearea=getFileArea(area);
     if (filearea == NULL) {
         if (!quiet) fprintf(stderr,"Error: Filearea not found\n");
         return 2;

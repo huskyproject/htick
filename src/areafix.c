@@ -46,6 +46,7 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/arealist.h>
+#include <fidoconf/areatree.h>
 
 #include <smapi/prog.h>
 #include <smapi/patmat.h>
@@ -437,7 +438,7 @@ int forwardRequestToLink( char *areatag,  char *descr,
     } else msg = uplink->msg;
 
     if (act==0) {
-        if (getFileArea(config, areatag) == NULL) {
+        if (getFileArea(areatag) == NULL) {
             base = uplink->fileBaseDir;
             if (config->createFwdNonPass == 0) uplink->fileBaseDir = pass;
             /*  create from own address */
@@ -655,7 +656,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
         return report;
     }
     filearea = sstrdup(token);
-    area = getFileArea(config,filearea);
+    area = getFileArea(filearea);
     if (area != NULL) {
         rc = 1;
         for (i = 0; i<area->downlinkCount;i++)
@@ -1189,11 +1190,12 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     
     /* add new created echo to config in memory */
     parseLine(buff,config);
-    
+    RebuildFileAreaTree(config);
+
     w_log( '8', "FileArea '%s' autocreated by %s", c_area, aka2str(*pktOrigAddr));
     
     /* report about new filearea */
-    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
+    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(c_area)) != NULL) {
         if (getNetMailArea(config, config->ReportTo) != NULL) {
             msg = makeMessage(area->useAka,
                 area->useAka,

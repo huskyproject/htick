@@ -180,11 +180,11 @@ void buildAccessList()
     for (i = 0; i < rCount; i++) {
         if( currFArea == NULL || stricmp(Report[i].area, currFArea->areaName))
         {
-            if(getFileArea(config,Report[i].area) == NULL)
+            if(getFileArea(Report[i].area) == NULL)
                 continue;
             aCount++;
             aList = srealloc( aList, (aCount)*sizeof(s_FAreaRepInfo));
-            currFArea            = getFileArea(config,Report[i].area);
+            currFArea            = getFileArea(Report[i].area);
             aList[aCount-1].farea  = currFArea;
             aList[aCount-1].begin  = i;
             aList[aCount-1].fCount = 0;

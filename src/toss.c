@@ -168,7 +168,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
     fprintf(tichandle,"File %s\r\n",tic->file);
     fprintf(tichandle,"Area %s\r\n",tic->area);
 
-    filearea=getFileArea(config,tic->area);
+    filearea=getFileArea(tic->area);
 
     if(!tic->areadesc && filearea && filearea->description)
     {
@@ -929,7 +929,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 #endif
 
 
-   filearea=getFileArea(config,tic.area);
+   filearea=getFileArea(tic.area);
 
    w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
    if (filearea==NULL && from_link->autoFileCreate) {
@@ -937,7 +937,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
        if(tic.areadesc)           descr = sstrdup(tic.areadesc);
        if(config->intab && descr) recodeToInternalCharset(descr);
        autoCreate(tic.area,descr,&(tic.from),NULL);
-       filearea=getFileArea(config,tic.area);
+       filearea=getFileArea(tic.area);
        w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
        nfree(descr);
    }
@@ -1153,7 +1153,7 @@ void checkTmpDir(void)
 	 /*  createFlo doesn't  support ASO!!! */
          /* if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) { */
         if (createOutboundFileName(link, link->fileEchoFlavour, FLOFILE)==0) {
-	     filearea=getFileArea(config,tic.area);
+	     filearea=getFileArea(tic.area);
 	     if (filearea!=NULL) {
                if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
                else strcpy(newticedfile,config->passFileAreaDir);
