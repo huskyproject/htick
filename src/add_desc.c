@@ -243,8 +243,15 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
             continue;
         }
         else
-            flag = 0;
-        
+        {
+            if(rc ==0)
+            {
+                nfree(line);
+                break;
+            }
+            else
+                flag = 0;
+        }
         tmp = sstrdup(line);
         token = tmp;
         p = token;
