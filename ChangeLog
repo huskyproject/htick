@@ -1,3 +1,7 @@
+2004-02-28 Saturday 20:17  mche
+
+	* src/toss.c (1.278): CRC calculated for SUN by sir
+
 2004-01-23 Friday 10:39  mche
 
 	* src/: fcommon.c (1.73), filelist.c (1.49), hatch.c (1.88), toss.c
