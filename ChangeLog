@@ -1,3 +1,8 @@
+2003-01-13 Monday 08:51  stas_degteff
+
+	* src/add_desc.c (1.24): Use cmdcall from fidoconfig instead own
+	implementation of spawnvp() usage
+
 2003-01-12 Sunday 15:11  mche
 
 	* htick.dsp (1.2): define INTEL for MSVC in compiler.h
