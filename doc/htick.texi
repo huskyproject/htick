@@ -874,7 +874,8 @@ This statement can only be repeated for different links.
 @code{AutoFileCreateDefaults -lw 100 -g Z}
 @end table
 
-Specifies the new filearea defaults.
+Specifies the new filearea defaults. Please don't set any paths here, use
+LinkFileBaseDir for these purposes. @xref{LinkFileBaseDir}.
 
 This statement can only be repeated for different links.
 
