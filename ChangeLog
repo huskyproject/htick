@@ -1,3 +1,25 @@
+2002-05-11 Saturday 16:02  mche
+
+	* src/toss.c (1.157): long filenames in reports
+
+2002-05-11 Saturday 15:26  mche
+
+	* src/: toss.c (1.156), add_desc.c (1.7): long filenames in reports
+
+2002-05-11 Saturday 12:15  mche
+
+	* src/toss.c (1.155): changeFileSuffix() moved to fidoconfig for
+	common use in hpt, htick
+
+2002-05-11 Saturday 11:51  mche
+
+	* src/toss.c (1.154): system() calls changed for spawnvp for msvc
+
+2002-05-11 Saturday 11:22  mche
+
+	* src/toss.c (1.153): createXMSG() moved to fidoconfig for common
+	use in hpt, htick
+
 2002-05-10 Friday 17:32  pavel.gulchouck
 
 	* src/toss.c (1.152): bugfix
