@@ -1,3 +1,8 @@
+2001-11-08 Thursday 15:26  ml
+
+	* src/toss.c (1.113): Check HIDDEN attributes for .tic and file on
+	tossing for non-unix version [patch by S.R.]
+
 2001-10-26 Friday 12:26  ml
 
 	* src/toss.c (1.112): memory allocation error at toss.c [patch by
