@@ -749,8 +749,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
    strLower(descr_file_name);
      
    removeDesc(descr_file_name,tic.file);
-   add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
-   if (cmAnnFile) announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
+   if (tic.anzldesc>0) add_description (descr_file_name, tic.file, tic.ldesc, tic.anzldesc);
+   else add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
+   if (cmAnnFile) if (tic.anzldesc>0) announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
+                  else announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
 
    // Adding path & seenbys
    time(&acttime);
@@ -872,11 +874,19 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (config->outtab != NULL) recodeToTransportCharset(newFileReport[newfilesCount]->areaDesc);
    newFileReport[newfilesCount]->fileName = strdup(tic.file);
 
-   newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
-   for (i = 0; i < tic.anzdesc; i++) {
-      newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+   if (tic.anzldesc>0) {
+   newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
+   for (i = 0; i < tic.anzldesc; i++) {
+      newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
    } /* endfor */
-   newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+   newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
+   } else {
+      newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
+      for (i = 0; i < tic.anzdesc; i++) {
+         newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+      } /* endfor */
+      newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+   }
 
    newFileReport[newfilesCount]->fileSize = tic.size;
 
