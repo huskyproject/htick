@@ -429,7 +429,8 @@ This statement cannot be repeated.
 @code{ConvertLongNames DontTouch}
 @end table
 
-What to do with long names when toss or hatch. Long name is name with mixed case or more than 8.3
+What to do with long names when toss or hatch.
+Saying 'long name' we mean a mixed cased name or a name longer than 8.3
 
 This statement cannot be repeated.
 
@@ -443,7 +444,8 @@ This statement cannot be repeated.
 @code{ConvertShortNames DontTouch}
 @end table
 
-What to do with short names when toss or hatch. Short name is DOS-like name, 8.3, without mixed case.
+What to do with short names when toss or hatch.
+Short name we mean a DOS-like name: 8.3, without mixed case.
 
 This statement cannot be repeated.
 
