@@ -836,10 +836,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
 
    filearea=getFileArea(config,tic.area);
-
+   
    if (filearea==NULL && from_link->autoFileCreate) {
-      autoCreate(tic.area,tic.areadesc,&(tic.from),NULL);
-      filearea=getFileArea(config,tic.area);
+       char *descr = NULL;
+       if(tic.areadesc)           descr = sstrdup(tic.areadesc);
+       if(config->intab && descr) recodeToInternalCharset(descr);
+       autoCreate(tic.area,descr,&(tic.from),NULL);
+       filearea=getFileArea(config,tic.area);
+       nfree(descr);
    }
 
    if (filearea == NULL) {
