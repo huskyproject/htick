@@ -78,9 +78,9 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    msg->destAddr.domain = NULL;
 
    strcpy(msg->datetime, (char *) xmsg.__ftsc_date);
-   msg->subjectLine = (char *) malloc(strlen((char *)xmsg.subj)+1);
-   msg->toUserName  = (char *) malloc(strlen((char *)xmsg.to)+1);
-   msg->fromUserName = (char *) malloc(strlen((char *)xmsg.from)+1);
+   msg->subjectLine = (char *) smalloc(strlen((char *)xmsg.subj)+1);
+   msg->toUserName  = (char *) smalloc(strlen((char *)xmsg.to)+1);
+   msg->fromUserName = (char *) smalloc(strlen((char *)xmsg.from)+1);
    strcpy(msg->subjectLine, (char *) xmsg.subj);
    strcpy(msg->toUserName, (char *) xmsg.to);
    strcpy(msg->fromUserName, (char *) xmsg.from);
@@ -96,7 +96,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
 
    // get kludge lines
    ctrlLen = MsgGetCtrlLen(SQmsg);
-   ctrlBuff = (unsigned char *) malloc(ctrlLen+1);
+   ctrlBuff = (unsigned char *) smalloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    free(ctrlBuff);
@@ -110,7 +110,7 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
            ourAka.zone, ourAka.net, ourAka.node, ourAka.point,
            dt->tm_year + 1900, dt->tm_mon + 1, dt->tm_mday, dt->tm_hour, dt->tm_min, dt->tm_sec, versionStr);
 
-   msg->text = (char *) calloc(1, msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
+   msg->text = (char *) scalloc(1, msg->textLength+strlen(kludgeLines)+strlen(viaLine)+1);
 
 
    strcpy(msg->text, kludgeLines);

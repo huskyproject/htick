@@ -98,7 +98,7 @@ unsigned long filecrc32(const char *name)
   if (!fd)
     return 0L;
 
-  buffer = malloc(CRC_BUFFER_SIZE);
+  buffer = smalloc(CRC_BUFFER_SIZE);
   if (buffer == NULL) return 0L;
 
   crc = 0xFFFFFFFFUL;

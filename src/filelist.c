@@ -27,29 +27,29 @@ void formatDesc(char **desc, int *count)
     char **newDesc = NULL, *tmp, *tmpDesc, *ch, buff[94], *tmp1;
 
    for (i = 0; i < (*count); i++ ) {
-      newDesc = realloc(newDesc,sizeof(char *)*(i+1));
+      newDesc = srealloc(newDesc,sizeof(char *)*(i+1));
       memset(buff, 0, sizeof buff);
       if (strlen(desc[i]) <= LenDesc) {
-	 newDesc[i] = (char *) malloc(strlen(desc[i])+1);
+	 newDesc[i] = (char *) smalloc(strlen(desc[i])+1);
 	 strcpy(newDesc[i], desc[i]);
 	 continue;
       }
-      tmp = strdup(desc[i]);
+      tmp = sstrdup(desc[i]);
 
       ch = strtok(tmp, " \t\0");
       if (strlen(ch)>LenDesc) {
-	 newDesc[i] = (char *) malloc(strlen(ch)+1);
+	 newDesc[i] = (char *) smalloc(strlen(ch)+1);
 	 strcpy(newDesc[i], ch);
 	 ch = strtok(NULL,"\0");
 	 if (ch != NULL) {
             if ((*count) == (i+1)) {
-               desc = realloc(desc,sizeof(char *) * ((*count)+1) );
+               desc = srealloc(desc,sizeof(char *) * ((*count)+1) );
 	       (*count)++;
-	       desc[i+1] = (char *) malloc(strlen(ch)+1);
+	       desc[i+1] = (char *) smalloc(strlen(ch)+1);
 	       strcpy(desc[i+1], ch);
 	    } else {
-	       tmpDesc = strdup(desc[i+1]);
-               desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
+	       tmpDesc = sstrdup(desc[i+1]);
+               desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
                sprintf(desc[i+1],"%s %s",ch,tmpDesc);
 	       free(tmpDesc);
             }
@@ -59,28 +59,28 @@ void formatDesc(char **desc, int *count)
       }
       while (ch != NULL) {
          if (strlen(buff)+strlen(ch)>LenDesc) {
-	    newDesc[i] = (char *) malloc(strlen(buff)+1);
+	    newDesc[i] = (char *) smalloc(strlen(buff)+1);
 	    strcpy(newDesc[i], buff);
 	    if ((*count) == (i+1)) {
-               desc = realloc(desc,sizeof(char *) * ((*count)+1) );
+               desc = srealloc(desc,sizeof(char *) * ((*count)+1) );
 	       (*count)++;
-	       desc[i+1] = (char *) malloc(strlen(ch)+1);
+	       desc[i+1] = (char *) smalloc(strlen(ch)+1);
 	       strcpy(desc[i+1], ch);
 	       ch = strtok(NULL,"\0");
 	       if (ch != NULL) {
-	          tmpDesc = strdup(desc[i+1]);
-                  desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
+	          tmpDesc = sstrdup(desc[i+1]);
+                  desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
                   sprintf(desc[i+1],"%s %s",tmpDesc,ch);
 		  free(tmpDesc);
 	       }
 	    } else {
-	       tmpDesc = strdup(desc[i+1]);
+	       tmpDesc = sstrdup(desc[i+1]);
 	       tmp1 = strtok(NULL,"\0");
 	       if (tmp1 == NULL) {
-                  desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
+                  desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
                   sprintf(desc[i+1],"%s %s",ch,tmpDesc);
 	       } else {
-                  desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+strlen(tmp1)+2);
+                  desc[i+1] = (char *) srealloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+strlen(tmp1)+2);
                   sprintf(desc[i+1],"%s %s %s",ch,tmp1,tmpDesc);
 	       }
 	       free(tmpDesc);
@@ -97,7 +97,7 @@ void formatDesc(char **desc, int *count)
    }
    for (i = 0; i < (*count); i++ ) {
       free(desc[i]);
-      desc[i] = (char *) malloc(strlen(newDesc[i])+1);
+      desc[i] = (char *) smalloc(strlen(newDesc[i])+1);
       strcpy(desc[i], newDesc[i]);
       free(newDesc[i]);
    }
@@ -198,8 +198,8 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
       }
       memset(&tic,0,sizeof(tic));
       if (getDesc(fbbsname, file->d_name, &tic) == 1) {
-         tic.desc=realloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
-         tic.desc[tic.anzdesc]=strdup("Description not avaliable");
+         tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
+         tic.desc[tic.anzdesc]=sstrdup("Description not avaliable");
 	 tic.anzdesc = 1;
          add_description(fbbsname, file->d_name, tic.desc, 1);
       }
@@ -237,8 +237,8 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
          strcat(filename,token);
          adaptcase(filename);
 	 if (!fexist(filename)) {
-            removeFiles = realloc(removeFiles, sizeof(char *)*(removeCount+1));
-	    removeFiles[removeCount] = (char *) malloc(strlen(strrchr(filename,PATH_DELIM)+1)+1);
+            removeFiles = srealloc(removeFiles, sizeof(char *)*(removeCount+1));
+	    removeFiles[removeCount] = (char *) smalloc(strlen(strrchr(filename,PATH_DELIM)+1)+1);
             strcpy(removeFiles[removeCount], strrchr(filename,PATH_DELIM)+1);
 	    removeCount++;
 	 }

@@ -50,8 +50,8 @@ void hatch()
    filearea=getFileArea(config,tic.area);
 
    if (config->outtab != NULL) recodeToTransportCharset(hatchdesc);
-   tic.desc=realloc(tic.desc,(tic.anzdesc+1)*sizeof(&tic.desc));
-   tic.desc[tic.anzdesc]=strdup(hatchdesc);
+   tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(&tic.desc));
+   tic.desc[tic.anzdesc]=sstrdup(hatchdesc);
    tic.anzdesc++;
    if (hatchReplace) strcpy(tic.replaces,replaceMask);
 /*
@@ -179,12 +179,12 @@ int send(char *filename, char *area, char *addr)
    if (timestr[8]==' ') timestr[8]='0';
    sprintf(tmp,"%s %lu %s UTC %s",
            addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
-   tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
-   tic.path[tic.anzpath]=strdup(tmp);
+   tic.path=srealloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
+   tic.path[tic.anzpath]=sstrdup(tmp);
    tic.anzpath++;
 
    // Adding Downlink to Seen-By
-   tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
+   tic.seenby=srealloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
    memcpy(&tic.seenby[tic.anzseenby], &link->hisAka, sizeof(s_addr));
    tic.anzseenby++;
 

@@ -37,6 +37,7 @@
 #include <global.h>
 #include <fcommon.h>
 #include <smapi/prog.h>
+#include <fidoconf/common.h>
 
 static char *mnames[] = {
 "Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
@@ -48,7 +49,7 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
 {
    s_log      *temp;
 
-   temp = (s_log *) malloc(sizeof(s_log));
+   temp = (s_log *) smalloc(sizeof(s_log));
    temp->logFile = fopen(fileName, "a");
    if (NULL == temp->logFile) {
       free(temp);
@@ -58,10 +59,10 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
    temp->open = 1;
 
    /* copy all informations */
-   temp->appName = (char *) malloc (strlen(appN)+1);
+   temp->appName = (char *) smalloc (strlen(appN)+1);
    strcpy(temp->appName, appN);
 
-   temp->keysAllowed = (char *) malloc (strlen(keys)+1);
+   temp->keysAllowed = (char *) smalloc (strlen(keys)+1);
    strcpy(temp->keysAllowed, keys);
 
    temp->firstLinePrinted=0;

@@ -81,7 +81,7 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    char *newFileName;
    int  length = strlen(fileName)-strlen(beginOfSuffix)+strlen(newSuffix);
 
-   newFileName = (char *) calloc(length+1+2, 1);
+   newFileName = (char *) scalloc(length+1+2, 1);
    strncpy(newFileName, fileName, length-strlen(newSuffix));
    strcat(newFileName, newSuffix);
 
@@ -205,7 +205,7 @@ XMSG createXMSG(s_message *msg)
    if (((msgHeader.attr & MSGFILE) == MSGFILE) && (msg->netMail==1)) {
      int size=strlen(msg->subjectLine)+strlen(config->inbound)+1;
      if (size < XMSG_SUBJ_SIZE) {
-       subject = (char *) malloc (size);
+       subject = (char *) smalloc (size);
        sprintf (subject,"%s%s",config->inbound,msg->subjectLine);
      }
    }
@@ -385,14 +385,14 @@ int parseTic(char *ticfile,s_ticfile *tic)
    s_link *ticSourceLink=NULL;
 
    tichandle=fopen(ticfile,"r");
-   memset(tic,0,sizeof(*tic));
+   memset(tic,'\0',sizeof(s_ticfile));
 
    while ((line = readLine(tichandle)) != NULL) {
       line = trimLine(line);
 
       if (*line!=0 || *line!=10 || *line!=13 || *line!=';' || *line!='#') {
          if (config->MaxTicLineLength) {
-            linecut = (char *) malloc(config->MaxTicLineLength+1);
+            linecut = (char *) smalloc(config->MaxTicLineLength+1);
             strncpy(linecut,line,config->MaxTicLineLength);
             linecut[config->MaxTicLineLength] = 0;
             token=strtok(linecut, " \t");
@@ -405,8 +405,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
             else if (stricmp(token,"area")==0) strcpy(tic->area,param);
             else if (stricmp(token,"desc")==0) {
                tic->desc=
-               realloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
-               tic->desc[tic->anzdesc]=strdup(param);
+               srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+               tic->desc[tic->anzdesc]=sstrdup(param);
                tic->anzdesc++;
             }
             else if (stricmp(token,"replaces")==0) strcpy(tic->replaces,param);
@@ -427,20 +427,20 @@ int parseTic(char *ticfile,s_ticfile *tic)
             else if (stricmp(token,"magic")==0);
             else if (stricmp(token,"seenby")==0) {
                tic->seenby=
-                  realloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
+                  srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
                string2addr(param,&tic->seenby[tic->anzseenby]);
                tic->anzseenby++;
             }
             else if (stricmp(token,"path")==0) {
                tic->path=
-                  realloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
-               tic->path[tic->anzpath]=strdup(param);
+                  srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
+               tic->path[tic->anzpath]=sstrdup(param);
                tic->anzpath++;
             }
             else if (stricmp(token,"ldesc")==0) {
                tic->ldesc=
-                  realloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
-               tic->ldesc[tic->anzldesc]=strdup(param);
+                  srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
+               tic->ldesc[tic->anzldesc]=sstrdup(param);
                tic->anzldesc++;
             }
             else {
@@ -456,8 +456,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
   fclose(tichandle);
 
   if (!tic->anzdesc) { 
-     tic->desc = realloc(tic->desc,sizeof(*tic->desc));
-     tic->desc[0] = strdup("no desc");
+     tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
+     tic->desc[0] = sstrdup("no desc");
      tic->anzdesc = 1;
   }
 
@@ -483,7 +483,7 @@ static int makealldirs(const char *basedir, const char *filename)
 
     l = strlen(basedir);
     if (!(*filename)) return 1;
-    if ((buffer = malloc(l + strlen(filename) + 1)) == NULL) return 0;
+    if ((buffer = smalloc(l + strlen(filename) + 1)) == NULL) return 0;
 
     memcpy(buffer, basedir, l);
     cpd = buffer + l;
@@ -533,7 +533,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    s_filearea *area;
    FILE *echotosslog;
 
-   fileechoFileName = (char *) malloc(strlen(c_area)+1);
+   fileechoFileName = (char *) smalloc(strlen(c_area)+1);
    strcpy(fileechoFileName, c_area);
 
    creatingLink = getLinkFromAddr(*config, pktOrigAddr);
@@ -616,14 +616,14 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    }
 
    if (creatingLink->autoFileCreateDefaults) {
-      NewAutoCreate=(char *) calloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));
+      NewAutoCreate=(char *) scalloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));
       strcpy(NewAutoCreate,creatingLink->autoFileCreateDefaults);
-   } else NewAutoCreate = (char*)calloc(1, sizeof(char));
+   } else NewAutoCreate = (char*)scalloc(1, sizeof(char));
 
    if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
      if (desc[0] != 0) {
        char *tmp;
-       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
+       tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
        nfree (NewAutoCreate);
        NewAutoCreate=tmp;
@@ -631,7 +631,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    } else {
      if (desc[0] != 0) {
        char *tmp;
-       tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
+       tmp=(char *) scalloc (strlen(NewAutoCreate)+strlen(desc)+7,sizeof(char));
        fileName[0]='\0';
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
        fileName++;
@@ -670,7 +670,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       } /* endif */
       sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
           (area->description) ? area->description : "");
-      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
+      msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
       strcat(msg->text, buff);
       writeMsgToSysop(msg, config->ReportTo);
       freeMsgBuff(msg);
@@ -784,10 +784,14 @@ int writeCheck(s_filearea *echo, s_addr *aka)
   return 0;
 }
 
+/* FIXME:
+ i don't know for what reasont this function
+ to developers: use createOutboundFileName and delete this shit
+ (this function doesn't support ASO) -- ml (5-10-2001).
 int createFlo(s_link *link, e_prio prio)
 {
 
-    FILE *f; /* bsy file for current link */
+    FILE *f; // bsy file for current link
     char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
 
    if (link->hisAka.point != 0) {
@@ -799,7 +803,7 @@ int createFlo(s_link *link, e_prio prio)
    }
 
    if (link->hisAka.zone != config->addr[0].zone) {
-      /* add suffix for other zones */
+      // add suffix for other zones
       sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
    } else {
       zoneSuffix[0] = 0;
@@ -817,22 +821,22 @@ int createFlo(s_link *link, e_prio prio)
       case NORMAL:    break;
    }
 
-   /* create floFile */
-   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
-   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   // create floFile
+   link->floFile = (char *) smalloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
+   link->bsyFile = (char *) smalloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+strlen(name)+1);
    strcpy(link->floFile, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
    strcat(link->floFile, pntDir);
-   createDirectoryTree(link->floFile); /* create directoryTree if necessary */
+   createDirectoryTree(link->floFile); // create directoryTree if necessary
    strcpy(link->bsyFile, link->floFile);
    strcat(link->floFile, name);
 
-   /* create bsyFile */
+   // create bsyFile
    strcpy(bsyname, name);
    bsyname[9]='b';bsyname[10]='s';bsyname[11]='y';
    strcat(link->bsyFile, bsyname);
 
-   /* maybe we have session with this link? */
+   // maybe we have session with this link?
    if (fexist(link->bsyFile)) {
       nfree (link->bsyFile);
       return 1;
@@ -853,6 +857,7 @@ int createFlo(s_link *link, e_prio prio)
    }
    return 0;
 }
+*/
 
 void doSaveTic(char *ticfile,s_ticfile *tic)
 {
@@ -1002,14 +1007,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       sprintf(hlp,"%s %lu %s UTC %s",
               addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
 
-      tic->path=realloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
-      tic->path[tic->anzpath]=strdup(hlp);
+      tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
+      tic->path[tic->anzpath]=sstrdup(hlp);
       tic->anzpath++;
    }
 
    if (isToss == 1) {
       /* Save seenby structure */
-      old_seenby = malloc(tic->anzseenby*sizeof(s_addr));
+      old_seenby = smalloc(tic->anzseenby*sizeof(s_addr));
       memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
       old_anzseenby = tic->anzseenby;
       memcpy(&old_from,&tic->from,sizeof(s_addr));
@@ -1024,7 +1029,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             ( (isToss==1 && seenbyComp (tic->seenby, tic->anzseenby,
                filearea->downlinks[i]->link->hisAka)!=0) || isToss==0) ) {
          /* Adding Downlink to Seen-By */
-         tic->seenby=realloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
+         tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
          memcpy(&tic->seenby[tic->anzseenby],
             &filearea->downlinks[i]->link->hisAka,
             sizeof(s_addr));
@@ -1127,12 +1132,12 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    if (!filearea->hide) {
    /* report about new files - if filearea not hidden */
-      newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
-      newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
+      newFileReport = (s_newfilereport**)srealloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
+      newFileReport[newfilesCount] = (s_newfilereport*)scalloc(1, sizeof(s_newfilereport));
       newFileReport[newfilesCount]->useAka = filearea->useAka;
       newFileReport[newfilesCount]->areaName = filearea->areaName;
       newFileReport[newfilesCount]->areaDesc = filearea->description;
-      newFileReport[newfilesCount]->fileName = strdup(tic->file);
+      newFileReport[newfilesCount]->fileName = sstrdup(tic->file);
       if (config->originInAnnounce) {
          newFileReport[newfilesCount]->origin.zone = tic->origin.zone;
          newFileReport[newfilesCount]->origin.net = tic->origin.net;
@@ -1141,16 +1146,16 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       }
 
       if (tic->anzldesc>0) {
-         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic->anzldesc, sizeof(char*));
+         newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzldesc, sizeof(char*));
          for (i = 0; i < tic->anzldesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic->ldesc[i]);
+            newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->ldesc[i]);
             if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
          newFileReport[newfilesCount]->filedescCount = tic->anzldesc;
       } else {
-         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic->anzdesc, sizeof(char*));
+         newFileReport[newfilesCount]->fileDesc = (char**)scalloc(tic->anzdesc, sizeof(char*));
          for (i = 0; i < tic->anzdesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic->desc[i]);
+            newFileReport[newfilesCount]->fileDesc[i] = sstrdup(tic->desc[i]);
             if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
          newFileReport[newfilesCount]->filedescCount = tic->anzdesc;
@@ -1168,7 +1173,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
      if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
        if (patimat(tic->file,config->execonfile[z].filename) == 0) continue;
        else {
-         comm = (char *) malloc(strlen(config->execonfile[z].command)+1
+         comm = (char *) smalloc(strlen(config->execonfile[z].command)+1
                                 +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
                                 +strlen(tic->file)+1);
          if (comm == NULL) {
@@ -1226,10 +1231,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
          if ( (to_link != NULL) && (to_link->forwardPkts != fOff) ) {
             if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
             else { /* Forwarding */
-               busy = 0;
-               if (createFlo(to_link, cvtFlavour2Prio(to_link->fileEchoFlavour))==0) {
+		busy = 0; // FIXME: see below
+//               if (createFlo(to_link, cvtFlavour2Prio(to_link->fileEchoFlavour))==0) {
+                if (createOutboundFileName(to_link,
+	    	    cvtFlavour2Prio(to_link->fileEchoFlavour), FLOFILE)==0) {
                   strcpy(linkfilepath,to_link->floFile);
-                  if (!busy) {
+                  if (!busy) { // FIXME: it always not busy!!!
                      *(strrchr(linkfilepath,PATH_DELIM))=0;
                      newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
                      if (move_file(ticfile,newticfile)==0) {
@@ -1381,7 +1388,7 @@ void processDir(char *directory, e_tossSecurity sec)
       printf("testing %s\n", file->d_name);
 #endif
       if (patimat(file->d_name, "*.TIC") == 1) {
-         dummy = (char *) malloc(strlen(directory)+strlen(file->d_name)+1);
+         dummy = (char *) smalloc(strlen(directory)+strlen(file->d_name)+1);
          strcpy(dummy, directory);
          strcat(dummy, file->d_name);
 
@@ -1419,7 +1426,7 @@ void checkTmpDir(void)
     struct dirent  *file;
     char           *ticfile;
     s_link         *link;
-    s_ticfile tic;
+    s_ticfile      tic;
     s_filearea *filearea;
     FILE *flohandle;
     int error = 0;
@@ -1432,16 +1439,20 @@ void checkTmpDir(void)
    while ((file = readdir(dir)) != NULL) {
       if (strlen(file->d_name) != 12) continue;
       //if (!file->d_size) continue;
-      ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
+      ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
       strcpy(ticfile, tmpdir);
       strcat(ticfile, file->d_name);
       if (stricmp(file->d_name+8, ".TIC") == 0) {
          memset(&tic,0,sizeof(tic));
          parseTic(ticfile,&tic);
          link = getLinkFromAddr(*config, tic.to);
-         if (createFlo(link, cvtFlavour2Prio(link->fileEchoFlavour))==0) {
-            filearea=getFileArea(config,tic.area);
-            if (filearea!=NULL) {
+	 // createFlo doesn't  support ASO!!!
+         //if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) {
+	 if (createOutboundFileName(link,
+				    cvtFlavour2Prio(link->fileEchoFlavour),
+				    FLOFILE)==0) {
+	     filearea=getFileArea(config,tic.area);
+	     if (filearea!=NULL) {
                if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);
                else strcpy(newticedfile,config->passFileAreaDir);
                strcat(newticedfile,tic.file);
@@ -1475,8 +1486,8 @@ void checkTmpDir(void)
          remove(link->bsyFile);
          nfree(link->bsyFile);
          nfree(link->floFile);
+         disposeTic(&tic);
       } /* if ".TIC" */
-      disposeTic(&tic);
       nfree(ticfile);
    } /* while */
    closedir(dir);
@@ -1516,14 +1527,14 @@ void cleanPassthroughDir(void)
          while ((file = readdir(dir)) != NULL) {
             if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
             if (patimat(file->d_name, "*.TIC") == 1) {
-               ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
+               ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
                strcpy(ticfile, tmpdir);
                strcat(ticfile, file->d_name);
                memset(&tic,0,sizeof(tic));
                parseTic(ticfile,&tic);
                if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
-                  filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
-                  filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
+                  filesInTic = srealloc(filesInTic, sizeof(char *)*(filesCount+1));
+                  filesInTic[filesCount] = (char *) smalloc(strlen(tic.file)+1);
                   strcpy(filesInTic[filesCount], tic.file);
                   filesCount++;
                }
@@ -1550,15 +1561,15 @@ void cleanPassthroughDir(void)
 
             while ((file = readdir(dir)) != NULL) {
                if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
-               ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
+               ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
                strcpy(ticfile, tmpdir);
                strcat(ticfile, file->d_name);
                if (patimat(file->d_name, "*.TIC") == 1) {
                   memset(&tic,0,sizeof(tic));
                   parseTic(ticfile,&tic);
                   if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
-                     filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
-                     filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
+                     filesInTic = srealloc(filesInTic, sizeof(char *)*(filesCount+1));
+                     filesInTic[filesCount] = (char *) smalloc(strlen(tic.file)+1);
                      strcpy(filesInTic[filesCount], tic.file);
                      filesCount++;
                   }
@@ -1580,14 +1591,14 @@ void cleanPassthroughDir(void)
       while ((file = readdir(dir)) != NULL) {
          if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
          if (patimat(file->d_name, "*.TIC") == 1) {
-            ticfile = (char *) malloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
+            ticfile = (char *) smalloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
             strcpy(ticfile, config->ticOutbound);
             strcat(ticfile, file->d_name);
             memset(&tic,0,sizeof(tic));
             parseTic(ticfile,&tic);
             if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
-               filesInTic = realloc(filesInTic, sizeof(char *)*(filesCount+1));
-               filesInTic[filesCount] = (char *) malloc(strlen(tic.file)+1);
+               filesInTic = srealloc(filesInTic, sizeof(char *)*(filesCount+1));
+               filesInTic[filesCount] = (char *) smalloc(strlen(tic.file)+1);
                strcpy(filesInTic[filesCount], tic.file);
                filesCount++;
             }
@@ -1604,7 +1615,7 @@ void cleanPassthroughDir(void)
       while ((file = readdir(dir)) != NULL) {
          if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
          if (patimat(file->d_name, "*.TIC") != 1) {
-            ticfile = (char *) malloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
+            ticfile = (char *) smalloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
             strcpy(ticfile, config->passFileAreaDir);
             strcat(ticfile, file->d_name);
             if (filesCount == 0) {
@@ -1722,20 +1733,20 @@ char *formDescStr(char *desc)
 {
    char *keepDesc, *newDesc, *tmp, *ch, *buff=NULL;
 
-   keepDesc = strdup(desc);
+   keepDesc = sstrdup(desc);
 
    if (strlen(desc) <= 50) {
       return keepDesc;
    }
 
-   newDesc = (char*)calloc(1, sizeof(char));
+   newDesc = (char*)scalloc(1, sizeof(char));
 
    tmp = keepDesc;
 
    ch = strtok(tmp, " \t\r\n");
    while (ch) {
       if (strlen(ch) > 54 && !buff) {
-		  newDesc = (char*)realloc(newDesc, strlen(newDesc)+55);
+		  newDesc = (char*)srealloc(newDesc, strlen(newDesc)+55);
 		  strncat(newDesc, ch, 54);
 		  xstrscat(&newDesc, "\r", print_ch(24, ' '), NULL);
 		  ch += 54;
@@ -1827,15 +1838,15 @@ void reportNewFiles()
                sprintf(buff+((areaLen<=15) ? 25 : areaLen+10), "Desc : %s\r %s\r",
                     (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
                     print_ch(77, '-'));
-               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
+               msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
                strcat(msg->text, buff);
                sprintf(buff, " %s%s", strUpper(newFileReport[i]->fileName), print_ch(25, ' '));
                tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
                sprintf(buff+14, "% 9i", newFileReport[i]->fileSize);
-               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
+               msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
                if (config->originInAnnounce) {
-                  msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);
+                  msg->text = (char*)srealloc(msg->text, strlen(msg->text)+75);
                   sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
                           newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
                           newFileReport[i]->origin.node,newFileReport[i]->origin.point);
@@ -1852,10 +1863,10 @@ void reportNewFiles()
                       sprintf(buff, " %s%s", strUpper(newFileReport[b]->fileName), print_ch(25, ' '));
                       tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
-                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
+                      msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                       sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
                       if (config->originInAnnounce) {
-                         msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);
+                         msg->text = (char*)srealloc(msg->text, strlen(msg->text)+75);
                          sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
                                  newFileReport[b]->origin.zone,newFileReport[b]->origin.net,
                                  newFileReport[b]->origin.node,newFileReport[b]->origin.point);
@@ -1869,7 +1880,7 @@ void reportNewFiles()
                   } /* endif */
                } /* endfor */
                sprintf(buff, " %s\r", print_ch(77, '-'));
-               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+80);
+               msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+80);
                sprintf(msg->text+strlen(msg->text), "%s %u bytes in %u file(s)\r", buff, fileSize, fileCount);
                freeFReport(newFileReport[i]); newFileReport[i] = NULL;
             } else {

@@ -241,7 +241,7 @@ void processConfig()
    // open Logfile
    htick_log = NULL;
    if (config->logFileDir != NULL) {
-     buff = (char *) malloc(strlen(config->logFileDir)+9+1); /* 9 for htick.log */
+     buff = (char *) smalloc(strlen(config->logFileDir)+9+1); /* 9 for htick.log */
      strcpy(buff, config->logFileDir),
      strcat(buff, "htick.log");
      if (config->loglevels==NULL)
@@ -274,11 +274,11 @@ void processConfig()
       exit(1);
    }
    if (config->busyFileDir == NULL) {
-      config->busyFileDir = (char*) malloc(strlen(config->outbound) + 10);
+      config->busyFileDir = (char*) smalloc(strlen(config->outbound) + 10);
       strcpy(config->busyFileDir, config->outbound);
       sprintf(config->busyFileDir + strlen(config->outbound), "busy.htk%c", PATH_DELIM);
    }
-   if (config->ticOutbound == NULL) config->ticOutbound = strdup(config->passFileAreaDir);
+   if (config->ticOutbound == NULL) config->ticOutbound = sstrdup(config->passFileAreaDir);
 }
 
 int main(int argc, char **argv)

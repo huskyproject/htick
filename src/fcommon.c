@@ -151,9 +151,9 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
 
 int createTempPktFileName(s_link *link)
 {
-   char   *fileName = (char *) malloc(strlen(config->tempOutbound)+1+12);
-   char   *pfileName = (char *) malloc(strlen(config->outbound)+1+12+13);
-   char   *tmpPFileName = (char *) malloc(strlen(config->outbound)+1+12+13);
+   char   *fileName = (char *) smalloc(strlen(config->tempOutbound)+1+12);
+   char   *pfileName = (char *) smalloc(strlen(config->outbound)+1+12+13);
+   char   *tmpPFileName = (char *) smalloc(strlen(config->outbound)+1+12+13);
    time_t aTime = time(NULL);  // get actual time
    int counter = 0;
    char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
@@ -181,11 +181,11 @@ int createTempPktFileName(s_link *link)
 
    if (link->hisAka.zone != config->addr[0].zone) {
       sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-      zoneOutbound = malloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
+      zoneOutbound = smalloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
       strcpy(zoneOutbound, config->outbound);
       strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
    } else
-      zoneOutbound = strdup(config->outbound);
+      zoneOutbound = sstrdup(config->outbound);
 
 
    // There is a problem here: Since we use the tmpOutbound fileName for duplicate checking, links with different zones who does not
@@ -239,7 +239,7 @@ int createDirectoryTree(const char *pathName) {
 
    int i;
 
-   start = (char *) malloc(strlen(pathName)+2);
+   start = (char *) smalloc(strlen(pathName)+2);
    strcpy(start, pathName);
    i = strlen(start)-1;
    if (start[i] != limiter) {
@@ -262,14 +262,14 @@ int createDirectoryTree(const char *pathName) {
       if (stat(start, &buf) != 0) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
-            buff = (char *) malloc(strlen(start)+30);
+            buff = (char *) smalloc(strlen(start)+30);
             writeLogEntry(htick_log, '5', "Could not create directory %s", start);
             free(buff);
             free(start);
             return 1;
          }
       } else if(!S_ISDIR(buf.st_mode)) {
-         buff = (char *) malloc(strlen(start)+30);
+         buff = (char *) smalloc(strlen(start)+30);
          writeLogEntry(htick_log, '5', "%s is a file not a directory", start);
          free(buff);
          free(start);
@@ -354,8 +354,8 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    } /* endif */
 
    // create floFile
-   link->floFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+namelen+1);
-   link->bsyFile = (char *) malloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+namelen+1);
+   link->floFile = (char *) smalloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+namelen+1);
+   link->bsyFile = (char *) smalloc(strlen(config->outbound)+strlen(pntDir)+strlen(zoneSuffix)+namelen+1);
    strcpy(link->floFile, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
    strcat(link->floFile, pntDir);
@@ -425,7 +425,7 @@ int removeFileMask(char *directory, char *mask)
          if (patimat(file->d_name, mask) == 1) {
 
             //remove file
-            removefile = (char *) malloc(dirLen+strlen(file->d_name)+1);
+            removefile = (char *) smalloc(dirLen+strlen(file->d_name)+1);
             strcpy(removefile, tmpDir);
             strcat(removefile, file->d_name);
             remove(removefile);

@@ -31,7 +31,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
       fprintf (descr_file, "%s", dlc);
    }
    for (i=0;i<count_desc;i++) {
-      desc_line = strdup(description[i]);
+      desc_line = sstrdup(description[i]);
       if (config->intab != NULL) recodeToInternalCharset(desc_line);
       if (i==0)
          fprintf(descr_file," %s\n",desc_line);
@@ -67,9 +67,9 @@ int removeDesc (char *descr_file_name, char *file_name)
    }
 
    if (config->fileLDescString == NULL) 
-      LDescString = strdup(">");
+      LDescString = sstrdup(">");
    else
-      LDescString = strdup(config->fileLDescString);
+      LDescString = sstrdup(config->fileLDescString);
 
    while ((line = readLine(f1)) != NULL) {
       if (*line == 0 || *line == 10 || *line == 13)
@@ -83,7 +83,7 @@ int removeDesc (char *descr_file_name, char *file_name)
 	 else
 	    flag = 0;
 
-         tmp = strdup(line);
+         tmp = sstrdup(line);
          token = strtok(tmp, " \t\0");
 
          if (token != NULL) {
@@ -123,7 +123,7 @@ int announceInFile (char *announcefile, char *file_name, int size, char *area, s
    }
    fprintf (ann_file, "%-16s %-12d %-20s %u:%u/%u.%u\n", file_name, size, area, origin.zone, origin.net, origin.node, origin.point);
    for (i=0;i<count_desc;i++) {
-      desc_line = strdup(description[i]);
+      desc_line = sstrdup(description[i]);
       if (desc_line != NULL) {
         if (config->intab != NULL) recodeToInternalCharset(desc_line);
         fprintf(ann_file,"%s\n",desc_line);
@@ -178,8 +178,8 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
 	    token=stripLeadingChars(hlp, " >");
 	    if (*token == '>') token++;
             tic->desc=
-            realloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
-            tic->desc[tic->anzdesc]=strdup(token);
+            srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+            tic->desc[tic->anzdesc]=sstrdup(token);
             tic->anzdesc++;
 	    continue;
 	 }
@@ -203,8 +203,8 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
                  strcpy(token,p);
                }
                tic->desc=
-               realloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
-               tic->desc[tic->anzdesc]=strdup(token);
+               srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+               tic->desc[tic->anzdesc]=sstrdup(token);
                tic->anzdesc++;
 		    }
 	    	flag = 1;
