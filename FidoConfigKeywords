@@ -289,3 +289,7 @@ Define permissions for newly created filearea directories (UNIX filesystems
 
 40) AutoFileCreateFlag <string>
 	Create flag when filearea has been autocreated
+
+41) FileFixNames <string>
+	Set of names separated by space on which FileFix will respond
+

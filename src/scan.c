@@ -163,12 +163,8 @@ void scanNMArea(s_area *afixarea)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
          // if for filefix - process it
-            if ((stricmp((char*)xmsg.to,"filefix")==0 ||
-                stricmp((char*)xmsg.to,"allfix")==0 ||
-                stricmp((char*)xmsg.to,"filemgr")==0 ||
-                stricmp((char*)xmsg.to,"htick")==0 ||
-                stricmp((char*)xmsg.to,"filescan")==0)
-                && for_us && (xmsg.attr & MSGREAD) != MSGREAD)
+         if (fc_stristr(config->filefixNames,(char*)xmsg.to) &&
+              for_us && (xmsg.attr & MSGREAD) != MSGREAD)
             {
                 convertMsgHeader(xmsg, &filefixmsg);
                 convertMsgText(msg, &filefixmsg, config->addr[j]);

@@ -30,6 +30,7 @@ This file describe changes between htick-1.0-stable and htick-1.1-current
    - AnnFileOrigin : show system address that hatch file in announce;
    - AnnFileRFrom : show system address which file recived from.
    - AutoFileCreateFlag : create flag when filearea has been autocreated
+   - FileFixNames : set of names on which filefix will respond
 
 3. IMPORTANT bugfixes:
    - fixed bug with missed files in report;
