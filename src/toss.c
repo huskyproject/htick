@@ -30,35 +30,42 @@
  * $Id$
  *****************************************************************************/
 
+#include <smapi/compiler.h>
+
 #ifdef OS2
 #define INCL_DOSFILEMGR /* for hidden() routine */
 #include <os2.h>
 #endif
 
-#if !defined(UNIX) && !defined(SASC)
+#ifdef HAS_IO_H
 #  include <io.h>
 #endif
+
 #include <string.h>
 #include <stdlib.h>
-#ifndef UNIX
+
+#ifdef HAS_SHARE_H
 #  include <share.h>
 #endif
+
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
-#include <unistd.h>
+
+#ifdef HAS_UNISTD_H
+#  include <unistd.h>
 #endif
 
-#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
-#include <dos.h>
-#include <process.h>
+#ifdef HAS_DOS_H
+#  include <dos.h>
 #endif
 
+#ifdef HAS_PROCESS_H
+#  include <process.h>
+#endif
 
-#include <smapi/compiler.h>
 #include <smapi/progprot.h>
 
 #include <fidoconf/fidoconf.h>
@@ -71,7 +78,7 @@
 #include <fidoconf/crc.h>
 
 #if defined(A_HIDDEN) && !defined(_A_HIDDEN)
-#define _A_HIDDEN A_HIDDEN
+#  define _A_HIDDEN A_HIDDEN
 #endif
 
 

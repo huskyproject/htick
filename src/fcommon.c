@@ -39,27 +39,26 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <errno.h>
+#include <smapi/compiler.h>
 
-#ifdef __EMX__
-#include <sys/types.h>
+#ifdef HAS_UNISTD_H
+#  include <unistd.h>
 #endif
-#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200)) ) && (!defined(__TURBOC__)))
-#include <unistd.h>
+
+#ifdef HAS_DIRECT_H
+#  include <direct.h>
 #endif
-#ifdef __IBMC__
-#include <direct.h>
+
+#ifdef HAS_PROCESS_H
+#  include <process.h>
 #endif
-#if defined(__WATCOMC__) || defined(_MSC_VER)
-#include <process.h>
-#endif
-#if defined (__TURBOC__)
-#include <process.h>
-#include <dir.h>
+
+#ifdef HAS_DIR_H
+#  include <dir.h>
 #endif
 
 /*
 #include <smapi/typedefs.h>
-#include <smapi/compiler.h>
 #include <smapi/stamp.h>
 #include <smapi/progprot.h>
 #include <smapi/ffind.h>
