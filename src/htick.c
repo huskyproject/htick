@@ -332,8 +332,8 @@ int main(int argc, char **argv)
    } /*endif */
 
    // load recoding tables
-   if (config->intab != NULL) getctab(intab, config->intab);
-   if (config->outtab != NULL) getctab(outtab, config->outtab);
+   if (config->intab != NULL) getctab(intab, (unsigned char*) config->intab);
+   if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
 
    checkTmpDir();
 
