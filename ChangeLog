@@ -1,3 +1,12 @@
+2002-03-15 Friday 12:28  mche
+
+	* src/global.c (1.13), src/htick.c (1.48), h/version.h (1.3):
+	changed version enumeration
+
+2002-03-15 Friday 08:37  mche
+
+	* src/toss.c (1.130): autocreate code improvenent
+
 2002-03-14 Thursday 16:21  mche
 
 	* src/fcommon.c (1.34), h/fcommon.h (1.9): added: makeMsgbFileName
