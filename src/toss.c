@@ -1173,7 +1173,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                      sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
                   } else {
                       // fileBoxes support
-                      if (needUseFileBoxForLink(config,downlink) && downlink->fileBox) {
+                      if (needUseFileBoxForLink(config,downlink)) {
+                          if (!downlink->fileBox) 
+                              downlink->fileBox = makeFileBoxName (config,downlink);
                           xstrcat(&linkfilepath, downlink->fileBox);
                       } else {
                           xstrcat(&linkfilepath, config->ticOutbound);
@@ -1182,14 +1184,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                }
                _createDirectoryTree(linkfilepath);
 
-               /* Don't create TICs for everybody */
-               if (!downlink->noTIC || busy) {
-                 newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-                 writeTic(newticfile,tic);
-               } else newticfile = NULL;
-
                if (!busy) {
-                   if (needUseFileBoxForLink(config,downlink) && downlink->fileBox) {
+                   /* Don't create TICs for everybody */
+                   if (!downlink->noTIC) 
+                       newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+                   else 
+                       newticfile = NULL;
+                  
+                   if (needUseFileBoxForLink(config,downlink)) {
                        xstrcat(&linkfilepath, tic->file);
                        if (link_file(newticedfile,linkfilepath ) == 0)
                        {
@@ -1206,6 +1208,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                        if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
                        fclose(flohandle);
                    }
+                   
+                   if (newticfile != NULL) writeTic(newticfile,tic);
+
                    remove(downlink->bsyFile);
                    w_log('6',"Forwarding %s for %s",
                        tic->file,
