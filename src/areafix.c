@@ -45,9 +45,6 @@
 #include <unistd.h>
 #endif
 
-/* smapi */
-#include <huskylib/patmat.h>
-
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>

@@ -296,7 +296,7 @@ void processConfig()
   /* open Logfile */
 
    initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
-   htick_log = openLog(LogFileName, versionStr, config);  /* if failed: openLog() prints a message to stderr */
+   htick_log = openLog(LogFileName, versionStr);  /* if failed: openLog() prints a message to stderr */
    if (htick_log && quiet) htick_log->logEcho = 0;
 
    if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");

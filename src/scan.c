@@ -35,7 +35,6 @@
 #include <time.h>
 
 #include <smapi/msgapi.h>
-#include <huskylib/patmat.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
