@@ -35,6 +35,7 @@
 #include <fidoconf/log.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
+#include <fidoconf/recode.h>
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/dirlayer.h>
 
@@ -368,7 +369,11 @@ void reportNewFiles()
             
             xscatprintf(&(msg->text), "\r>Area : %s",strUpper(aList[j].farea->areaName));
             if(aList[j].farea->description)
-            xscatprintf(&(msg->text), " : %s", aList[j].farea->description);
+            {
+               if (config->outtab != NULL)
+                  recodeToTransportCharset(aList[j].farea->description);
+               xscatprintf(&(msg->text), " : %s", aList[j].farea->description);
+            }
             xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
             
             for(ii = aList[j].begin; ii < aList[j].begin+aList[j].fCount; ii++)

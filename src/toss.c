@@ -877,9 +877,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    parseTic(ticfile,&tic);
 
-   w_log('6',"File: %s size: %ld area: %s from: %s orig: %u:%u/%u.%u",
-         tic.file, tic.size, tic.area, aka2str(tic.from),
-         tic.origin.zone, tic.origin.net, tic.origin.node, tic.origin.point);
+   w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
+         tic.file, tic.size, tic.area, aka2str(tic.from), aka2str(tic.origin));
 
    if (tic.to.zone!=0) {
       if (!isOurAka(config,tic.to)) {
