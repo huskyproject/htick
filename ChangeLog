@@ -1,3 +1,7 @@
+2003-01-23 Thursday 07:11  mche
+
+	* src/add_desc.c (1.30): fix previous patch
+
 2003-01-22 Wednesday 11:45  mche
 
 	* src/add_desc.c (1.29), src/toss.c (1.246), doc/htick.texi (1.21):
