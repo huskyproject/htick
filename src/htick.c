@@ -155,19 +155,31 @@ int processCommandLine(int argc, char **argv)
          } else flistfile[0] = 0;
          continue;
       } else if (stricmp(argv[i], "announce") == 0) {
-         i++;
-         cmAnnounce = 1;
-         strcpy(announceArea, argv[i]);
+	 if (i < argc-1) {
+            i++;
+            cmAnnounce = 1;
+            strcpy(announceArea, argv[i]);
+         } else {
+	    printf("insufficient number of arguments\n");
+	 }
          continue;
       } else if (stricmp(argv[i], "annfile") == 0) {
-         i++;
-         cmAnnFile = 1;
-         strcpy(announcefile, argv[i]);
+	 if (i < argc-1) {
+            i++;
+            cmAnnFile = 1;
+            strcpy(announcefile, argv[i]);
+         } else {
+	    printf("insufficient number of arguments\n");
+	 }
          continue;
       } else if (stricmp(argv[i], "annfecho") == 0) {
-         i++;
-         cmAnnNewFileecho = 1;
-         strcpy(announcenewfileecho, argv[i]);
+	 if (i < argc-1) {
+            i++;
+            cmAnnNewFileecho = 1;
+            strcpy(announcenewfileecho, argv[i]);
+         } else {
+	    printf("insufficient number of arguments\n");
+	 }
          continue;
       } else if (stricmp(argv[i], "clean") == 0) {
          cmClean = 1;
