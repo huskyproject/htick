@@ -295,6 +295,7 @@ void processConfig()
 
   /* open Logfile */
 
+   initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
    htick_log = openLog(LogFileName, versionStr, config);  /* if failed: openLog() prints a message to stderr */
    if (htick_log && quiet) htick_log->logEcho = 0;
 
