@@ -1,3 +1,9 @@
+2002-06-13 Thursday 09:36  stas
+
+	* misc/: README (1.1), filefix.866 (1.1), filefix.hlp (1.8),
+	st_htick.pl (1.1): Add thick statistic generator; translate filefix
+	help to russian; change example for filefix help.
+
 2002-06-12 Wednesday 14:55  mche
 
 	* src/htick.c (1.59): trace MaxTicLineLength
