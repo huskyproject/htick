@@ -44,3 +44,6 @@ distclean: clean
 install: htick$(EXE)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(BINDIR)
 
+uninstall:
+	$(RM) $(BINDIR)$(DIRSEP)htick$(EXE)
+
