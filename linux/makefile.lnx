@@ -1,7 +1,9 @@
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
-
 CC      = gcc
+DEBUG   = 0
+INCDIR  = /usr/local/include
+LIBDIR  = /usr/local/lib
+BINDIR  = /usr/local/bin
+IBOPT   = -s
 
 OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o recode.o crc32.o hatch.o filelist.o
 SRC_DIR = ../src/
