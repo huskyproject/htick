@@ -601,7 +601,6 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    char *fileechoFileName = NULL;
    char buff[255], myaddr[20], hisaddr[20];
-   int i=0;
    s_link *creatingLink;
    s_addr *aka;
    s_message *msg;
