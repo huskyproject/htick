@@ -1,3 +1,18 @@
+2002-10-04 Friday 12:18  sfpavel
+
+	* debian/: README.Debian (1.5), changelog (1.12), rules (1.10): New
+	debian package
+
+2002-10-04 Friday 05:29  stas_degteff
+
+	* src/: clean.c (1.7), fcommon.c (1.54), hatch.c (1.66): Prevent
+	call remove(NULL) - other places.
+
+2002-10-04 Friday 05:14  stas_degteff
+
+	* src/toss.c (1.215): Fix call remove(NULL): bugreport by Jesper
+	Srensen, 2:204/255 (02 Oct 02 20:45)
+
 2002-10-03 Thursday 15:17  stas_degteff
 
 	* src/toss.c (1.214): Fix -2
