@@ -1266,6 +1266,15 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     } /* endif */
     
     if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, aka2str(*pktOrigAddr));
+
+    if (config->afcFlag) {
+        if (NULL == (f = fopen(config->afcFlag, "a")))
+            w_log(LL_ERR, "Could not open autoAreaCreate flag: %s", config->afcFlag);
+        else {
+            w_log(LL_FLAG, "Created autoAreaCreate flag: %s", config->afcFlag);
+            fclose(f);
+        }
+    }
     
     return 0;
 }

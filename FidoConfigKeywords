@@ -286,4 +286,6 @@ Define permissions for newly created filearea directories (UNIX filesystems
 
 39) FileFixFromName <string>
 	Use FileFixFromName when responding to messages for filefix.
-        
+
+40) AutoFileCreateFlag <string>
+	Create flag when filearea has been autocreated
