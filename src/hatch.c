@@ -536,7 +536,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     
     if (needUseFileBoxForLinkAka(config,downlink,aka)) {
         /* do not copy file into busyFileDir */
-        if (strcasecmp( linkfilepath, config->busyFileDir ) = 1)
+        if (strcasecmp( linkfilepath, config->busyFileDir ))
         {
             xstrcat(&linkfilepath, tic->file);
             if (link_file(newticedfile,linkfilepath ) == 0)
