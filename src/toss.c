@@ -230,7 +230,7 @@ void disposeTic(s_ticfile *tic)
 int parseTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
-    char *line, *token, *param, *linecut = "";
+    char *line, *token, *param, *linecut = "", *emptyline = "";
     s_link *ticSourceLink=NULL;
     UINT16 key;
     s_addr Aka;
@@ -267,11 +267,19 @@ int parseTic(char *ticfile,s_ticfile *tic)
             linecut[config->MaxTicLineLength] = 0;
             token=strtok(linecut, " \t");
         } else token=strtok(line, " \t");
-        param=stripLeadingChars(strtok(NULL, "\0"), "\t");
-        if (token && param) {
+
+        if (token) {
             key = strcrc16(strUpper(token), 0);
             /* calculate crc16 of tic                                   */
-            /* w_log('1', "#define CRC_%s = 0x%X;",strUpper(token),key);*/
+            /* w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);*/
+            param=stripLeadingChars(strtok(NULL, "\0"), "\t");
+            if(!param)
+            {
+                if( key == CRC_DESC || key == CRC_LDESC )
+                    param = emptyline;
+                else
+                    continue;
+            }
             switch (key)
             {
             case CRC_CREATED:
