@@ -81,7 +81,7 @@ int getDescOptions(char *desc, char **filename)
             basename++; 
         if(fexist(basename))
         {
-            descOPT = (desc-basename == 1)? FILMLTLINE : FILONELINE;
+            descOPT = (basename-desc == 1)? FILMLTLINE : FILONELINE;
             *filename = sstrdup(basename);
         }
     }
@@ -250,7 +250,7 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
                 tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
                 tic->ldesc[0] = sstrdup(tmptic.ldesc[0]);
             }
-            else if ( SdescOPT == FILMLTLINE ) 
+            else if ( LdescOPT == FILMLTLINE ) 
             {
                 tic->anzldesc = tmptic.anzldesc;
                 tic->ldesc = tmpArray;
