@@ -1,3 +1,8 @@
+2001-10-26 Friday 12:26  ml
+
+	* src/toss.c (1.112): memory allocation error at toss.c [patch by
+	Pavel Andreew]
+
 2001-09-07 Friday 09:46  ml
 
 	* src/toss.c (1.111): fixed bug with FileFixFSC87Subset printing
