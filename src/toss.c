@@ -382,6 +382,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;
    char *line, *token, *param, *linecut = "";
+   s_link *ticSourceLink=NULL;
 
    tichandle=fopen(ticfile,"r");
    memset(tic,0,sizeof(*tic));
@@ -413,9 +414,15 @@ int parseTic(char *ticfile,s_ticfile *tic)
             else if (stricmp(token,"size")==0) tic->size=atoi(param);
             else if (stricmp(token,"crc")==0) tic->crc = strtoul(param,NULL,16);
             else if (stricmp(token,"date")==0) tic->date=atoi(param);
-            else if (stricmp(token,"from")==0) string2addr(param,&tic->from);
-            else if (stricmp(token,"to")==0 || stricmp(token,"Destination")==0)
-               string2addr(param,&tic->to);
+
+            else if (stricmp(token,"from")==0) {
+	       string2addr(param,&tic->from);
+	       ticSourceLink = getLinkFromAddr(*config, tic->from);
+	    }
+	    else if (stricmp(token,"to")==0) string2addr(param,&tic->to); 
+            else if ((stricmp(token,"Destination")==0) && 
+		     (!ticSourceLink->FileFixFSC87Subset)) 
+	                string2addr(param,&tic->to);
             else if (stricmp(token,"origin")==0) string2addr(param,&tic->origin);
             else if (stricmp(token,"magic")==0);
             else if (stricmp(token,"seenby")==0) {
@@ -437,8 +444,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
                tic->anzldesc++;
             }
             else {
-               /* printf("Unknown Keyword %s in Tic File\n",token); */
-               writeLogEntry(htick_log, '7', "Unknown Keyword %s in Tic File",token);
+               /*   printf("Unknown Keyword %s in Tic File\n",token); */
+               if (!ticSourceLink->FileFixFSC87Subset) writeLogEntry(htick_log, '7', "Unknown Keyword %s in Tic File",token);
             }
          } /* endif */
          if (config->MaxTicLineLength) nfree(linecut);
@@ -537,7 +544,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       if ((*fileechoFileName=='/') || (*fileechoFileName=='\\')) *fileechoFileName = '_'; /* convert any path elimiters to _ */
       if (creatingLink->autoFileCreateSubdirs && *fileechoFileName == '.')
       {
-                                /* technically, a / does for EACH AND EVRY
+                                /* technically, a / does for EACH AND EVERY
                                    FUCKING OS, but DOS users tend to be
                                    confused by it, soe we do them a favour */
 #if defined(MSDOS) || defined(WINNT) || defined(OS2) || defined(__NT__) \
