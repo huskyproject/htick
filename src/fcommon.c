@@ -43,6 +43,7 @@
 #endif
 #ifdef __WATCOMC__
 #include <fcntl.h>
+#include <process.h>
 #endif
 
 #include <global.h>

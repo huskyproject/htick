@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Feb 12 23:53:44 NOVT 2000
+max:
+* compiling without warnings under win32
+
+----- cvs ci ------
 Sat Feb 12 19:40:00 IZH 2000
 Georgi:
 * added new token originInAnnounce for htick
