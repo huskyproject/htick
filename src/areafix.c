@@ -1319,5 +1319,5 @@ int processFileFix(s_message *msg)
 	sprintf(tmp,"FileFix: sucessfully done for %s",aka2str(link->hisAka));
 	writeLogEntry(htick_log, '8', tmp);
 	
-	return 0;
+	return 1;
 }
