@@ -982,9 +982,9 @@ definition from config.
 * AnnTo::              Announce message destination name.
 * AnnFrom::            Announce message originator name.
 * AnnSubj::            Announce message subject.
-* AnnAdrTo::           Announce message destination address (use for netmail
+* AnnAddrTo::           Announce message destination address (use for netmail
                        area only)
-* AnnAdrFrom::         Announce message originate address.
+* AnnAddrFrom::         Announce message originate address.
 * AnnOrigin::          Origin line in announce message.
 * AnnMessFlags::       Announce message attributes (k/s loc hld ...).
 * AnnFileRFrom::       Show in announce: address of system which file received
@@ -1079,7 +1079,7 @@ Announce message originator name.
 
 This statement can be repeated only for different AnnAreaTag.
 
-@node AnnSubj, AnnAdrTo, AnnFrom, Announce System
+@node AnnSubj, AnnAddrTo, AnnFrom, Announce System
 @subsection AnnSubj
 @findex AnnSubj
 @table @asis
@@ -1093,35 +1093,35 @@ Announce message subject.
 
 This statement can be repeated only for different AnnAreaTag.
 
-@node AnnAdrTo, AnnAdrFrom, AnnSubj, Announce System
-@subsection AnnAdrTo
-@findex AnnAdrTo
+@node AnnAddrTo, AnnAddrFrom, AnnSubj, Announce System
+@subsection AnnAddrTo
+@findex AnnAddrTo
 @table @asis
 @item Syntax:
-@code{AnnAdrTo <address>}
+@code{AnnAddrTo <address>}
 @item Example:
-@code{AnnAdrTo 2:5097/31.1}
+@code{AnnAddrTo 2:5097/31.1}
 @end table
 
 Announce message destination address (use for netmail area).
 
 This statement can be repeated only for different AnnAreaTag.
 
-@node AnnAdrFrom, AnnOrigin, AnnAdrTo, Announce System
-@subsection AnnAdrFrom
-@findex AnnAdrFrom
+@node AnnAddrFrom, AnnOrigin, AnnAddrTo, Announce System
+@subsection AnnAddrFrom
+@findex AnnAddrFrom
 @table @asis
 @item Syntax:
-@code{AnnAdrFrom <address>}
+@code{AnnAddrFrom <address>}
 @item Example:
-@code{AnnAdrFrom 2:5097/31}
+@code{AnnAddrFrom 2:5097/31}
 @end table
 
 Announce message originate address.
 
 This statement can be repeated only for different AnnAreaTag.
 
-@node AnnOrigin, AnnMessFlags, AnnAdrFrom, Announce System
+@node AnnOrigin, AnnMessFlags, AnnAddrFrom, Announce System
 @subsection AnnOrigin
 @findex AnnOrigin
 @table @asis
@@ -1217,9 +1217,9 @@ AnnAreaTag      netmail
 AnnInclude      union.*
 AnnSubj         New mp3's arrives
 AnnTo           Max Inda Houze
-Annadrto        2:464/108
+Annaddrto        2:464/108
 AnnFrom         Fullfeed Distribution Site
-Annadrfrom      2:464/910.108
+Annaddrfrom      2:464/910.108
 AnnOrigin       *** seumbieky forever ***
 AnnMessFlags    k/s loc hld
 AnnFileOrigin   on

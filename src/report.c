@@ -336,8 +336,8 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
     if( reportDst > dstfile ) /* dstechomail or dstnetmail */
     {
         msg = makeMessage(
-            pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
-            pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]),
+            pRepDef->annaddrfrom ? pRepDef->annaddrfrom : &(config->addr[0]),
+            pRepDef->annaddrto   ? pRepDef->annaddrto   : &(config->addr[0]),
             pRepDef->annfrom    ? pRepDef->annfrom    : versionStr, 
             pRepDef->annto      ? pRepDef->annto      : (reportDst ? NULL : "All"), /* reportDst!=dstechomail ? */
             pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
@@ -348,8 +348,8 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         
         msg->text = createKludges(config,
             reportDst ? NULL : pRepDef->annAreaTag,  /* reportDst!=dstechomail ? */
-            pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
-            pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]), 
+            pRepDef->annaddrfrom ? pRepDef->annaddrfrom : &(config->addr[0]),
+            pRepDef->annaddrto   ? pRepDef->annaddrto   : &(config->addr[0]),
             versionStr);
         xstrcat(&(msg->text), "\001FLAGS NPD\r");
     }

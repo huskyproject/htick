@@ -25,7 +25,7 @@ AnnExclude	PNT PVT.*
 AnnTo		All
 AnnFrom		HTick Robot
 AnnSubj		New files!
-AnnAdrFrom	2:5080/159.1
+AnnAddrFrom	2:5080/159.1
 AnnOrigin	Association of Express Mail Robots
 
 AnnAreaTag	NETMAIL
@@ -33,8 +33,8 @@ AnnInclude	PVT.*
 AnnTo		My Friend
 AnnFrom		HTick Spy
 AnnSubj		New files from PVT fileechoes!
-AnnAdrFrom	2:5080/159.1
-AnnAdrTo	2:5080/159.100
+AnnAddrFrom	2:5080/159.1
+AnnAddrTo	2:5080/159.100
 AnnMessFlags	pvt k/s
 AnnOrigin	Express Mail Spy
 

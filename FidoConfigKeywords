@@ -300,9 +300,9 @@ AnnAreaTag  netmail       # report via netmail to  defined address
 AnnInclude  union.*
 AnnSubj     New mp3's arrives
 AnnTo       Max Inda Houze
-Annadrto    2:464/108
+Annaddrto    2:464/108
 AnnFrom     Fullfeed Distribution Site
-Annadrfrom  2:464/910.108
+Annaddrfrom  2:464/910.108
 AnnOrigin   *** seumbieky forever ***
 AnnMessFlags k/s loc hld
 AnnFileOrigin on
@@ -337,12 +337,12 @@ Announce message originator name.
 Announce message subject.
 
 
-31) Annadrto  <address>
+31) Annaddrto  <address>
 
 Announce message destination address (use for netmail area).
 
 
-32) Annadrfrom  <addres>
+32) Annaddrfrom  <address>
 
 Announce message originate address.
 
