@@ -401,6 +401,7 @@ int removeFileMask(char *directory, char *mask)
             strcpy(removefile, tmpDir);
             strcat(removefile, file->d_name);
             remove(removefile);
+            writeLogEntry(htick_log,'6',"Removed file: %s",removefile);
             numfiles++;
             free(removefile);
          }

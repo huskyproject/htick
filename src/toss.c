@@ -820,7 +820,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       adaptcase(newticedfile);
       */
       if (removeFileMask(fileareapath,tic->replaces)>0) {
-         writeLogEntry(htick_log,'6',"Removed file %s one request",newticedfile);
+         writeLogEntry(htick_log,'6',"Removed file[s] %s one request",tic->replaces);
       }
    }
 
