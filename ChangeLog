@@ -1,3 +1,7 @@
+2002-04-09 Tuesday 18:31  mche
+
+	* src/strsep.c (1.4): no message
+
 2002-04-05 Friday 13:03  ml
 
 	* src/fcommon.c (1.42): work again on wcw (case insensitive
