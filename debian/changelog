@@ -1,3 +1,10 @@
+htick (1.1.0-20020704-1) unstable; urgency=low
+
+  * New cvs version
+  * Change scheme of versions numbers: include CVS date
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed,  3 Jul 2002 11:40:49 +0600
+
 htick (1.1.0-1) unstable; urgency=low
 
   * NMU. Joerg, big thanks for Debian packages! But we don't see you now
