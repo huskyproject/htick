@@ -1,3 +1,10 @@
+2002-05-04 Saturday 13:49  mche
+
+	* src/add_desc.c (1.5), src/areafix.c (1.56), src/fcommon.c (1.43),
+	src/filelist.c (1.25), src/hatch.c (1.47), src/toss.c (1.147),
+	h/add_desc.h (1.3), h/areafix.h (1.7), h/pkt.h (1.6): A lot of
+	fixed-length strings bugfixs
+
 2002-05-03 Friday 14:32  mche
 
 	* src/areafix.c (1.55), src/toss.c (1.146), h/pkt.h (1.5):
