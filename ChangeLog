@@ -1,3 +1,7 @@
+2003-03-31 Monday 20:56  d_sergienko
+
+	* Makefile (1.20): -lfidoconfig -> -lfidoconf
+
 2003-03-27 Thursday 21:54  d_sergienko
 
 	* src/: areafix.c (1.119), fcommon.c (1.69), filelist.c (1.40): fix
