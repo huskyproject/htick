@@ -98,6 +98,8 @@ void hatch()
     tic.areadesc = sstrdup(filearea->description);
     // Adding crc
     tic.crc = filecrc32(hatchfile);
+
+    seenbyAdd(&tic.seenby,&tic.anzseenby,filearea->useAka);
     
     sendToLinks(0, filearea, &tic, hatchfile);
     
