@@ -1,3 +1,7 @@
+2004-11-03 Wednesday 10:56  mche
+
+	* src/toss.c (1.284): chekc for valid addr in seen-bys
+
 2004-10-29 Friday 13:02  mche
 
 	* src/areafix.c (1.129): one more fix for checking area access
