@@ -579,28 +579,28 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			break;
 		    }
 		}
-		
+        found = 1;
 		switch (rc) {
 		    case 0: 
 			xscatprintf(&report, "%s Already linked\r", area->areaName);
 			w_log( LL_AREAFIX, "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1: 
-		    case 3: 
-			changeconfig (getConfigFileName(), area, link, 0);
-			addlink(link, area);
-			xscatprintf(&report, "%s Added\r",area->areaName);
-			w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
-			break;
-		    case 5: 
+            case 3: 
+                changeconfig (getConfigFileName(), area, link, 0);
+                addlink(link, area);
+                xscatprintf(&report, "%s Added\r",area->areaName);
+                w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+                break;
+            case 5: 
                 xscatprintf(&report, "%s Link is not possible\r", area->areaName);
-			w_log( LL_AREAFIX, "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
-			break;
-		    default :
-			w_log( LL_AREAFIX, "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
-			continue;
+                w_log( LL_AREAFIX, "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
+                break;
+            default :
+                xscatprintf(&report, "%s No access\r", area->areaName);
+                w_log( LL_AREAFIX, "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
+                continue;
 		}
-        found = 1;
     }
     if(rc == 4 && link->denyFRA==0 && !found)
     {
