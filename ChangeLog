@@ -1,3 +1,13 @@
+2003-06-14 Saturday 14:23  mche
+
+	* h/fcommon.h (1.22), src/fcommon.c (1.71), src/filelist.c (1.42):
+	round big file sizes to Mb in filelist
+
+2003-06-14 Saturday 14:20  mche
+
+	* htick.vcproj (1.2), htickWithZlib.vcproj (1.2): char unsigned by
+	default
+
 2003-05-29 Thursday 14:11  mche
 
 	* src/hatch.c (1.84): fix bug when htick have no permissions to
