@@ -480,8 +480,10 @@ void reportNewFiles()
             }
             else
             {
-                cp=msg->text;
                 /* if output to file:  \r ==> \r\n */
+                /*
+                cp=msg->text;
+                
 #ifdef UNIX
                 while( (cp=strchr(cp, '\r')) )
                   *cp='\n';
@@ -491,15 +493,16 @@ void reportNewFiles()
                 dp = smalloc(strlen(msg->text)+1+j)
                 sstrcpy(msg->text, cp);
                 for( dp=cp; *cp; dp++, cp++ )
-                { if( *cp=='\r' )
-                  { *(dp++)='\r'; *dp='\n' }
-                  else *dp = *cp;
+                { 
+                    if( *cp=='\r' )
+                    { *(dp++)='\r'; *dp='\n' }
+                    else *dp = *cp;
                 }
                 *dp='\0';
                 nfree(msg->text);
                 msg->text = dp;
 #endif
-
+                */
                 msg->textLength = strlen(msg->text);
                 fwrite(msg->text, 1, msg->textLength, rp);
                 w_log(LL_FLAG, "Created report file: %s", msg->subjectLine);
