@@ -269,21 +269,21 @@ void processConfig()
 
    nfree(buff);
 
-   writeLogEntry(htick_log, '1', "Start");
+   w_log( '1', "Start");
 
-   if (config->addrCount == 0) writeLogEntry(htick_log, LL_CRIT, "At least one addr must be defined\n");
-   if (config->linkCount == 0) writeLogEntry(htick_log, LL_CRIT, "At least one link must be specified\n");
-   if (config->fileAreaBaseDir == NULL) writeLogEntry(htick_log, LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first\n");
-   if (config->passFileAreaDir == NULL) writeLogEntry(htick_log, LL_CRIT, "You must set PassFileAreaDir in fidoconfig first\n");
+   if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined\n");
+   if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified\n");
+   if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first\n");
+   if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first\n");
    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
-       writeLogEntry(htick_log, LL_CRIT, "Parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
+       w_log( LL_CRIT, "Parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
 
    if (config->addrCount == 0 ||
        config->linkCount == 0 ||
        config->fileAreaBaseDir == NULL ||
        config->passFileAreaDir == NULL ||
        (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
-      writeLogEntry(htick_log, LL_CRIT, "Wrong config file, exit.");
+      w_log( LL_CRIT, "Wrong config file, exit.");
       closeLog();
       if (config->lockfile != NULL) remove(config->lockfile);
       disposeConfig(config);
@@ -334,7 +334,7 @@ int main(int argc, char **argv)
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
-      writeLogEntry(htick_log, '9', "MsgApiOpen Error, exit.");
+      w_log( '9', "MsgApiOpen Error, exit.");
       closeLog();
       if (config->lockfile != NULL) remove(config->lockfile);
       disposeConfig(config);
@@ -359,7 +359,7 @@ int main(int argc, char **argv)
    MsgCloseApi();
 
    doneCharsets();
-   writeLogEntry(htick_log, '1', "End");
+   w_log( '1', "End");
    closeLog();
    if (config->lockfile != NULL) remove(config->lockfile);
    disposeConfig(config);

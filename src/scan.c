@@ -141,7 +141,7 @@ void scanNMArea(s_area *afixarea)
    if (netmail != NULL) {
 
       highMsg = MsgGetHighMsg(netmail);
-      writeLogEntry(htick_log, '1', "Scanning %s", afixarea->areaName);
+      w_log( '1', "Scanning %s", afixarea->areaName);
 
       // scan all Messages for filefix
       for (i=1; i<= highMsg; i++) {
@@ -185,7 +185,7 @@ void scanNMArea(s_area *afixarea)
 
       MsgCloseArea(netmail);
    } else {
-      writeLogEntry(htick_log, '9', "Could not open %s", afixarea->areaName);
+      w_log( '9', "Could not open %s", afixarea->areaName);
    } /* endif */
 }
 
@@ -193,7 +193,7 @@ void scan(void)
 {
    s_area *afixarea;
 
-  writeLogEntry(htick_log, LL_INFO, "Start filefix scan...");
+  w_log( LL_INFO, "Start filefix scan...");
   if ((afixarea = getNetMailArea(config, config->robotsArea)) == NULL) {
      afixarea = &(config->netMailAreas[0]);
   }

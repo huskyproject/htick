@@ -29,14 +29,14 @@ void hatch()
    newFileReport = NULL;
    newfilesCount = 0;
 
-   writeLogEntry(htick_log, LL_INFO, "Start file hatch...");
+   w_log( LL_INFO, "Start file hatch...");
 
    memset(&tic,0,sizeof(tic));
 
    // Exist file?
    adaptcase(hatchfile);
    if (!fexist(hatchfile)) {
-       writeLogEntry(htick_log,LL_ALERT,"File %s, not found",hatchfile);
+       w_log(LL_ALERT,"File %s, not found",hatchfile);
        disposeTic(&tic);
        return;
    }
@@ -62,7 +62,7 @@ void hatch()
    }
 */
    if (filearea == NULL) {
-      writeLogEntry(htick_log,'9',"Cannot open or create File Area %s",tic.area);
+      w_log('9',"Cannot open or create File Area %s",tic.area);
       if (!quiet) fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
       disposeTic(&tic);
       return;
@@ -100,7 +100,7 @@ int send(char *filename, char *area, char *addr)
     int busy;
     FILE *flohandle;
 
-   writeLogEntry(htick_log, LL_INFO, "Start file send (%s in %s to %s)...",filename,area,addr);
+   w_log( LL_INFO, "Start file send (%s in %s to %s)...",filename,area,addr);
 
    filearea=getFileArea(config,area);
    if (filearea == NULL) {
@@ -130,7 +130,7 @@ int send(char *filename, char *area, char *addr)
    adaptcase(sendfile);
    if (!fexist(sendfile)) {
          if (!quiet) fprintf(stderr,"Error: File not found\n");
-         writeLogEntry(htick_log,'6',"File %s, not found",sendfile);
+         w_log('6',"File %s, not found",sendfile);
          disposeTic(&tic);
          return 3;
    }
@@ -147,14 +147,14 @@ int send(char *filename, char *area, char *addr)
       if (copy_file(sendfile,tmpfile)!=0) {
          adaptcase(sendfile);
          if (copy_file(sendfile,tmpfile)==0) {
-            writeLogEntry(htick_log,'6',"Copied %s to %s",sendfile,tmpfile);
+            w_log('6',"Copied %s to %s",sendfile,tmpfile);
          } else {
-            writeLogEntry(htick_log,'9',"File %s not found or copyable",sendfile);
+            w_log('9',"File %s not found or copyable",sendfile);
             disposeTic(&tic);
             return(2);
          }
       } else {
-          writeLogEntry(htick_log,'6',"Copied %s to %s",sendfile,tmpfile);
+          w_log('6',"Copied %s to %s",sendfile,tmpfile);
           strcpy(sendfile,tmpfile);
       }
    }
@@ -203,7 +203,7 @@ int send(char *filename, char *area, char *addr)
       busy = 1;
 
    if (busy) {
-      writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
+      w_log( '7', "Save TIC in temporary dir");
       //Create temporary directory
        strcpy(linkfilepath,config->busyFileDir);
    } else {
@@ -227,7 +227,7 @@ int send(char *filename, char *area, char *addr)
 
       remove(link->bsyFile);
 
-      writeLogEntry(htick_log,'6',"Send %s from %s for %s",
+      w_log('6',"Send %s from %s for %s",
               tic.file,tic.area,addr2string(&link->hisAka));
       nfree(link->bsyFile);
    }

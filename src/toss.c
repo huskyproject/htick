@@ -118,7 +118,7 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
 
    if (!fexist(newFileName)) rename(fileName, newFileName);
    else {
-      writeLogEntry(htick_log, '9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
+      w_log( '9', "Could not change suffix for %s. File already there and the 255 files after", fileName);
    }
 }
 
@@ -291,16 +291,16 @@ void writeNetmail(s_message *msg, char *areaName)
          free(ctrlBuf);
          MsgCloseMsg(msgHandle);
 
-         writeLogEntry(htick_log, '6', "Wrote Netmail to: %u:%u/%u.%u",
+         w_log( '6', "Wrote Netmail to: %u:%u/%u.%u",
                  msg->destAddr.zone, msg->destAddr.net, msg->destAddr.node, msg->destAddr.point);
       } else {
-         writeLogEntry(htick_log, '9', "Could not write message to %s", areaName);
+         w_log( '9', "Could not write message to %s", areaName);
       } /* endif */
 
       MsgCloseArea(netmail);
    } else {
 /*     printf("%u\n", msgapierr); */
-      writeLogEntry(htick_log, '9', "Could not open netmailarea %s", areaName);
+      w_log( '9', "Could not open netmailarea %s", areaName);
    } /* endif */
 }
 
@@ -449,7 +449,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
             }
             else {
                /*   printf("Unknown Keyword %s in Tic File\n",token); */
-               if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset) writeLogEntry(htick_log, '7', "Unknown Keyword %s in Tic File",token);
+               if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset) w_log( '7', "Unknown Keyword %s in Tic File",token);
             }
          } /* endif */
          if (config->MaxTicLineLength) nfree(linecut);
@@ -559,7 +559,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
     // unpack file_id.diz (config->fileDescName)
     if (found) {
 	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
-	writeLogEntry(htick_log, '6', "file %s: unpacking with \"%s\"", fileName, cmd);
+	w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
         if( hpt_stristr(config->unpack[i-1].call, "zipInternal") )
         {
             cmdexit = 1;
@@ -574,25 +574,25 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
             cmdexit = spawnvp(P_WAIT, cmd, list);
             free((char **)list);
             if (cmdexit != 0) {
-            writeLogEntry(htick_log, '9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
+            w_log( '9', "exec failed: %s, return code: %d", strerror(errno), cmdexit);
             return 3;
         }
 #else
         if ((cmdexit = system(cmd)) != 0) {
-            writeLogEntry(htick_log, '9', "exec failed, code %d", cmdexit);
+            w_log( '9', "exec failed, code %d", cmdexit);
             return 3;
         }
 #endif
     }
     } else {
-	writeLogEntry(htick_log, '9', "file %s: cannot find unpacker", fileName);
+	w_log( '9', "file %s: cannot find unpacker", fileName);
 	return 3;
     };
 
    dizfile=malloc(strlen(config->tempInbound)+strlen(config->fileDescName)+1);
    sprintf(dizfile, "%s%s", config->tempInbound, config->fileDescName);
    if ((dizhandle=fopen(dizfile,"r")) == NULL) {
-      writeLogEntry(htick_log,'9',"File %s not found or moveable",dizfile);
+      w_log('9',"File %s not found or moveable",dizfile);
       return 3;
    };
 
@@ -752,7 +752,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    /* add new created echo to config in memory */
    parseLine(buff,config);
 
-   writeLogEntry(htick_log, '8', "FileArea '%s' autocreated by %s", c_area, hisaddr);
+   w_log( '8', "FileArea '%s' autocreated by %s", c_area, hisaddr);
 
    /* report about new filearea */
    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
@@ -941,7 +941,7 @@ int createFlo(s_link *link, e_prio prio)
          remove(link->bsyFile);
          nfree(link->bsyFile);
          nfree(link->floFile);
-         writeLogEntry(htick_log, LL_CRIT, "cannot create *.bsy file, exit.");
+         w_log( LL_CRIT, "cannot create *.bsy file, exit.");
          closeLog();
          if (config->lockfile != NULL) remove(config->lockfile);
          disposeConfig(config);
@@ -963,12 +963,12 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
      {
        savetic = &(config->saveTic[i]);
        if (patimat(tic->area,savetic->fileAreaNameMask)==1) {
-          writeLogEntry(htick_log,'6',"Saving Tic-File %s to %s",strrchr(ticfile,PATH_DELIM) + 1,savetic->pathName);
+          w_log('6',"Saving Tic-File %s to %s",strrchr(ticfile,PATH_DELIM) + 1,savetic->pathName);
           strcpy(filename,savetic->pathName);
           strcat(filename,strrchr(ticfile, PATH_DELIM) + 1);
           //strLower(filename);
           if (copy_file(ticfile,filename)!=0) {
-             writeLogEntry(htick_log,'9',"File %s not found or moveable",ticfile);
+             w_log('9',"File %s not found or moveable",ticfile);
           };
           break;
        };
@@ -1025,7 +1025,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       else repl++;
       num_files = removeFileMask(fileareapath,repl);
       if (num_files>0) {
-         writeLogEntry(htick_log,'6',"Removed %d file[s]. Filemask: %s",num_files,repl);
+         w_log('6',"Removed %d file[s]. Filemask: %s",num_files,repl);
       }
    }
 
@@ -1035,40 +1035,40 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       strcat(newticedfile,MakeProperCase(tic->file));
 
       if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
-         writeLogEntry(htick_log,'9',"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
+         w_log('9',"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
          return(3);
       }
 
       if (isToss == 1) {
          if (!filearea->sendorig) {
             if (move_file(filename,newticedfile)!=0) {
-                writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+                w_log('9',"File %s not found or moveable",filename);
                 return(2);
             } else {
-               writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
+               w_log('6',"Moved %s to %s",filename,newticedfile);
             }
          } else {
             if (copy_file(filename,newticedfile)!=0) {
-               writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+               w_log('9',"File %s not found or moveable",filename);
                return(2);
             } else {
-              writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
+              w_log('6',"Put %s to %s",filename,newticedfile);
             }
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
             if (move_file(filename,newticedfile)!=0) {
-               writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+               w_log('9',"File %s not found or moveable",filename);
                return(2);
             } else {
-               writeLogEntry(htick_log,'6',"Moved %s to %s",filename,newticedfile);
+               w_log('6',"Moved %s to %s",filename,newticedfile);
             }
          }
       } else
          if (copy_file(filename,newticedfile)!=0) {
-            writeLogEntry(htick_log,'9',"File %s not found or moveable",filename);
+            w_log('9',"File %s not found or moveable",filename);
             return(2);
          } else {
-            writeLogEntry(htick_log,'6',"Put %s to %s",filename,newticedfile);
+            w_log('6',"Put %s to %s",filename,newticedfile);
          }
    //}
 
@@ -1146,30 +1146,30 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          switch (readAccess) {
          case 0: break;
          case 5:
-            writeLogEntry(htick_log,'7',"Link %s paused",
+            w_log('7',"Link %s paused",
                     addr2string(&filearea->downlinks[i]->link->hisAka));
             break;
          case 4:
-            writeLogEntry(htick_log,'7',"Link %s not subscribe to File Area %s",
+            w_log('7',"Link %s not subscribe to File Area %s",
                     addr2string(&old_from), tic->area);
             break;
          case 3:
-            writeLogEntry(htick_log,'7',"Not export to link %s",
+            w_log('7',"Not export to link %s",
                     addr2string(&filearea->downlinks[i]->link->hisAka));
             break;
          case 2:
-            writeLogEntry(htick_log,'7',"Link %s no access level",
+            w_log('7',"Link %s no access level",
             addr2string(&filearea->downlinks[i]->link->hisAka));
             break;
          case 1:
-            writeLogEntry(htick_log,'7',"Link %s no access group",
+            w_log('7',"Link %s no access group",
             addr2string(&filearea->downlinks[i]->link->hisAka));
             break;
          }
 
          if (readAccess == 0) {
             if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
-               writeLogEntry(htick_log,'7',"File %s already seenby %s",
+               w_log('7',"File %s already seenby %s",
                        tic->file,
                        addr2string(&filearea->downlinks[i]->link->hisAka));
             } else {
@@ -1189,7 +1189,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                   busy = 1;
 
                if (busy) {
-                  writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
+                  w_log( '7', "Save TIC in temporary dir");
                   /* Create temporary directory */
                   strcpy(linkfilepath,config->busyFileDir);
                } else {
@@ -1218,7 +1218,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
                   remove(filearea->downlinks[i]->link->bsyFile);
 
-                  writeLogEntry(htick_log,'6',"Forwarding %s for %s",
+                  w_log('6',"Forwarding %s for %s",
                           tic->file,
                           addr2string(&filearea->downlinks[i]->link->hisAka));
                }
@@ -1276,15 +1276,15 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                                 +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
                                 +strlen(tic->file)+1);
          if (comm == NULL) {
-            writeLogEntry(htick_log, '9', "Exec failed - not enough memory");
+            w_log( '9', "Exec failed - not enough memory");
             continue;
          }
          sprintf(comm,"%s %s%s",config->execonfile[z].command,
                                 (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
                                 tic->file);
-         writeLogEntry(htick_log, '6', "Executing %s", comm);
+         w_log( '6', "Executing %s", comm);
          if ((cmdexit = system(comm)) != 0) {
-           writeLogEntry(htick_log, '9', "Exec failed, code %d", cmdexit);
+           w_log( '9', "Exec failed, code %d", cmdexit);
          }
          nfree(comm);
        }
@@ -1368,11 +1368,11 @@ int processTic(char *ticfile, e_tossSecurity sec)
    printf("Ticfile %s\n",ticfile);
 #endif
 
-   writeLogEntry(htick_log,'6',"Processing Tic-File %s",ticfile);
+   w_log('6',"Processing Tic-File %s",ticfile);
 
    parseTic(ticfile,&tic);
 
-   writeLogEntry(htick_log,'6',"File: %s Area: %s From: %s Orig: %u:%u/%u.%u",
+   w_log('6',"File: %s Area: %s From: %s Orig: %u:%u/%u.%u",
            tic.file, tic.area, addr2string(&tic.from),
            tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
 
@@ -1414,7 +1414,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
             }
          }
          /* not to us and no forward */
-         writeLogEntry(htick_log,'9',"Tic File adressed to %s, not to us",
+         w_log('9',"Tic File adressed to %s, not to us",
                  addr2string(&tic.to));
          disposeTic(&tic);
          return(4);
@@ -1424,7 +1424,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    /* Security Check */
    from_link=getLinkFromAddr(config,tic.from);
    if (from_link == NULL) {
-      writeLogEntry(htick_log,'9',"Link for Tic From Adress '%s' not found",
+      w_log('9',"Link for Tic From Adress '%s' not found",
               addr2string(&tic.from));
       disposeTic(&tic);
       return(1);
@@ -1432,7 +1432,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
        (stricmp(tic.password,from_link->ticPwd)!=0))) {
-      writeLogEntry(htick_log,'9',"Wrong Password %s from %s",
+      w_log('9',"Wrong Password %s from %s",
               tic.password,addr2string(&tic.from));
       disposeTic(&tic);
       return(1);
@@ -1448,11 +1448,11 @@ int processTic(char *ticfile, e_tossSecurity sec)
    /* Recieve file? */
    if (!fexist(ticedfile)) {
       if (from_link->delNotRecievedTIC) {
-         writeLogEntry(htick_log,'6',"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
+         w_log('6',"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
          disposeTic(&tic);
          return(0);
       } else {
-         writeLogEntry(htick_log,'6',"File %s from filearea %s not received, wait",tic.file,tic.area);
+         w_log('6',"File %s from filearea %s not received, wait",tic.file,tic.area);
          disposeTic(&tic);
          return(5);
       }
@@ -1460,7 +1460,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
 #if !defined(UNIX)
    if(hidden(ticedfile)) {
-      writeLogEntry(htick_log,'6',"File %s from filearea %s not completely received, wait",tic.file,tic.area);
+      w_log('6',"File %s from filearea %s not completely received, wait",tic.file,tic.area);
       disposeTic(&tic);
       return(5);
    }
@@ -1475,7 +1475,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    if (filearea == NULL) {
-      writeLogEntry(htick_log,'9',"Cannot open or create File Area %s",tic.area);
+      w_log('9',"Cannot open or create File Area %s",tic.area);
       if (!quiet) fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
       disposeTic(&tic);
       return(2);
@@ -1527,14 +1527,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
 	      *(strrchr(dirname, PATH_DELIM)) = 0;
 	      findfile = makeUniqueDosFileName(dirname,"tmp",config);
 	      if (rename(ticedfile, findfile) != 0 ) {
-	          writeLogEntry(htick_log,'9',"Can't file %s rename to %s", ticedfile, findfile);
+	          w_log('9',"Can't file %s rename to %s", ticedfile, findfile);
 		  nfree(findfile);
 		  nfree(realfile);
                   disposeTic(&tic);
                   return(3);
 	      }
 	      if (rename(realfile, ticedfile) != 0) {
-	          writeLogEntry(htick_log,'9',"Can't file %s rename to %s", realfile, ticedfile);
+	          w_log('9',"Can't file %s rename to %s", realfile, ticedfile);
 		  nfree(findfile);
 		  nfree(realfile);
                   disposeTic(&tic);
@@ -1546,7 +1546,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 	      nfree(findfile);
 	      nfree(realfile);
 	  } else {
-	      writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
+	      w_log('9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
               disposeTic(&tic);
               return(3);
 	  }
@@ -1557,7 +1557,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
    if (!tic.size) {
-      writeLogEntry(htick_log,'6',"File %s from filearea %s has zero size",tic.file,tic.area);
+      w_log('6',"File %s from filearea %s has zero size",tic.file,tic.area);
       disposeTic(&tic);
       return(5);
    }
@@ -1567,22 +1567,22 @@ int processTic(char *ticfile, e_tossSecurity sec)
    switch (writeAccess) {
    case 0: break;
    case 4:
-      writeLogEntry(htick_log,'9',"Link %s not subscribed to File Area %s",
+      w_log('9',"Link %s not subscribed to File Area %s",
               addr2string(&tic.from), tic.area);
       disposeTic(&tic);
       return(3);
    case 3:
-      writeLogEntry(htick_log,'9',"Not import from link %s",
+      w_log('9',"Not import from link %s",
               addr2string(&from_link->hisAka));
       disposeTic(&tic);
       return(3);
    case 2:
-      writeLogEntry(htick_log,'9',"Link %s no access level",
+      w_log('9',"Link %s no access level",
       addr2string(&from_link->hisAka));
       disposeTic(&tic);
       return(3);
    case 1:
-      writeLogEntry(htick_log,'9',"Link %s no access group",
+      w_log('9',"Link %s no access group",
       addr2string(&from_link->hisAka));
       disposeTic(&tic);
       return(3);
@@ -1662,7 +1662,7 @@ void checkTmpDir(void)
     FILE *flohandle;
     int error = 0;
 
-   writeLogEntry(htick_log,'6',"Checking tmp dir");
+   w_log('6',"Checking tmp dir");
    strcpy(tmpdir, config->busyFileDir);
    dir = opendir(tmpdir);
    if (dir == NULL) return;
@@ -1698,7 +1698,7 @@ void checkTmpDir(void)
                   createDirectoryTree(newticfile);
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
                   if (move_file(ticfile,newticfile)!=0) {
-                     writeLogEntry(htick_log,'9',"File %s not found or moveable",ticfile);
+                     w_log('9',"File %s not found or moveable",ticfile);
                      error = 1;
                   }
                } else remove(ticfile);
@@ -1709,7 +1709,7 @@ void checkTmpDir(void)
                      fprintf(flohandle,"^%s\n",newticfile);
                   fclose(flohandle);
 
-                  writeLogEntry(htick_log,'6',"Forwarding save file %s for %s",
+                  w_log('6',"Forwarding save file %s for %s",
                      tic.file, addr2string(&link->hisAka));
                }
             } /* if filearea */
@@ -1746,7 +1746,7 @@ void cleanPassthroughDir(void)
     unsigned int filesCount = 0, i, busy;
     char tmpdir[256];
 
-   writeLogEntry(htick_log, LL_INFO, "Start clean (purging files in passthrough dir)...");
+   w_log( LL_INFO, "Start clean (purging files in passthrough dir)...");
 
    /* check busyFileDir */
    strcpy(tmpdir, config->busyFileDir);
@@ -1850,13 +1850,13 @@ void cleanPassthroughDir(void)
             strcpy(ticfile, config->passFileAreaDir);
             strcat(ticfile, file->d_name);
             if (filesCount == 0) {
-               writeLogEntry(htick_log,'6',"Remove file %s from passthrough dir", ticfile);
+               w_log('6',"Remove file %s from passthrough dir", ticfile);
                remove(ticfile);
                nfree(ticfile);
                continue;
             }
             if (!foundInArray(filesInTic,filesCount,file->d_name)) {
-               writeLogEntry(htick_log,'6',"Remove file %s from passthrough dir", ticfile);
+               w_log('6',"Remove file %s from passthrough dir", ticfile);
                remove(ticfile);
             }
             nfree(ticfile);
@@ -1928,11 +1928,11 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
          rc = 1;
 
       } else {
-         writeLogEntry(htick_log, '9', "Could not create new msg in %s!", echo->fileName);
+         w_log( '9', "Could not create new msg in %s!", echo->fileName);
       } /* endif */
       MsgCloseArea(harea);
    } else {
-      writeLogEntry(htick_log, '9', "Could not open/create EchoArea %s!", echo->fileName);
+      w_log( '9', "Could not open/create EchoArea %s!", echo->fileName);
    } /* endif */
    return rc;
 }
@@ -1951,7 +1951,7 @@ void writeMsgToSysop(s_message *msg, char *areaName)
             msg->recode = 1;
             putMsgInArea(echo, msg,1);
             echo->imported = 1;  /* area has got new messages */
-            writeLogEntry(htick_log, '7', "Post report message to %s area", echo->areaName);
+            w_log( '7', "Post report message to %s area", echo->areaName);
          }
       } else {
 /*         putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0); */
@@ -2170,7 +2170,7 @@ void reportNewFiles()
 void toss()
 {
 
-   writeLogEntry(htick_log, LL_INFO, "Start tossing...");
+   w_log( LL_INFO, "Start tossing...");
 
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);

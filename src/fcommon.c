@@ -80,7 +80,7 @@ int createLockFile(char *lockfile) {
         if ((f=fopen(lockfile,"a")) == NULL)
            {
                    if (!quiet) fprintf(stderr,"createLockFile: cannot create lock file\"%s\"\n",lockfile);
-                   writeLogEntry(htick_log, '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
+                   w_log( '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
 
@@ -280,14 +280,14 @@ int createDirectoryTree(const char *pathName) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
             buff = (char *) smalloc(strlen(start)+30);
-            writeLogEntry(htick_log, '5', "Could not create directory %s", start);
+            w_log( '5', "Could not create directory %s", start);
             free(buff);
             free(start);
             return 1;
          }
       } else if(!S_ISDIR(buf.st_mode)) {
          buff = (char *) smalloc(strlen(start)+30);
-         writeLogEntry(htick_log, '5', "%s is a file not a directory", start);
+         w_log( '5', "%s is a file not a directory", start);
          free(buff);
          free(start);
          return 1;
@@ -388,7 +388,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    // maybe we have session with this link?
    if (fexist(link->bsyFile)) {
 
-           writeLogEntry(htick_log, '7', "link %s is busy.", addr2string(&link->hisAka));
+           w_log( '7', "link %s is busy.", addr2string(&link->hisAka));
            //free (link->floFile); link->floFile = NULL;
            free (link->bsyFile); link->bsyFile = NULL;
 
@@ -404,8 +404,8 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
                            link->bsyFile=NULL;
                            free(link->floFile);
                            if (config->lockfile != NULL) remove(config->lockfile);
-                           writeLogEntry(htick_log, '9', "cannot create *.bsy file");
-                           writeLogEntry(htick_log, '1', "End");
+                           w_log( '9', "cannot create *.bsy file");
+                           w_log( '1', "End");
                            closeLog(htick_log);
                            disposeConfig(config);
                            exit(1);
@@ -446,7 +446,7 @@ int removeFileMask(char *directory, char *mask)
             strcpy(removefile, tmpDir);
             strcat(removefile, file->d_name);
             remove(removefile);
-            writeLogEntry(htick_log,'6',"Removed file: %s",removefile);
+            w_log('6',"Removed file: %s",removefile);
             numfiles++;
             free(removefile);
 

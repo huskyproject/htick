@@ -404,7 +404,7 @@ char *unlinked(s_message *msg, s_link *link)
     report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
     strcat(report, addline);
 
-    writeLogEntry(htick_log, '8', "FileFix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
+    w_log( '8', "FileFix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
 
     return report;
 }
@@ -473,7 +473,7 @@ char *list(s_message *msg, s_link *link) {
    report=(char*) srealloc(report, strlen(report)+strlen(addline)+1);
    strcat(report, addline);
 
-   writeLogEntry(htick_log, '8', "FileFix: list sent to %s", aka2str(link->hisAka));
+   w_log( '8', "FileFix: list sent to %s", aka2str(link->hisAka));
 
    free(areaslen);
 
@@ -553,7 +553,7 @@ char *help(s_link *link) {
 
 		fclose(f);
 
-		writeLogEntry(htick_log, '8', "FileFix: help sent to %s", aka2str(link->hisAka));
+		w_log( '8', "FileFix: help sent to %s", aka2str(link->hisAka));
 
 		return help;
 	}
@@ -586,7 +586,7 @@ char *available(s_link *link) {
 
                 fclose(f);                                                      
 
-                writeLogEntry(htick_log, '8', "FileFix: Available Area List sent to %s",link->name);
+                w_log( '8', "FileFix: Available Area List sent to %s",link->name);
                                    
                 return avail;                                                   
         }                                                                       
@@ -676,20 +676,20 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		switch (rc) {
 		    case 0: 
 			sprintf(addline,"%s Already linked\r", area->areaName);
-			writeLogEntry(htick_log, '8', "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
+			w_log( '8', "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1: 
 		    case 3: 
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
 			sprintf(addline,"%s Added\r",area->areaName);
-			writeLogEntry(htick_log, '8', "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+			w_log( '8', "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
 			break;
 		    case 5: sprintf(addline,"%s Link is not possible\r", area->areaName);
-			writeLogEntry(htick_log, '8', "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
+			w_log( '8', "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
 			break;
 		    default :
-			writeLogEntry(htick_log, '8', "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
+			w_log( '8', "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
 			continue;
 		}
 		report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
@@ -698,7 +698,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (*report == 0) {
 	    sprintf(addline,"%s Not found\r",line);
-	    writeLogEntry(htick_log, '8', "FileFix: filearea %s is not found",line);
+	    w_log( '8', "FileFix: filearea %s is not found",line);
 	    report=(char*)srealloc(report, strlen(addline)+1);
 	    strcpy(report, addline);
 	}
@@ -735,16 +735,16 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		case 0: removelink(link, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
 			sprintf(addline,"%s Unlinked\r",area->areaName);
-			writeLogEntry(htick_log, '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
+			w_log( '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
 			break;
 		case 1: if (strstr(line, "*")) continue;
 			sprintf(addline,"%s Not linked\r",line);
-			writeLogEntry(htick_log, '8', "FileFix: area %s is not linked to %s", area->areaName, aka2str(link->hisAka));
+			w_log( '8', "FileFix: area %s is not linked to %s", area->areaName, aka2str(link->hisAka));
 			break;
 		case 5: sprintf(addline,"%s Unlink is not possible\r", area->areaName);
-			writeLogEntry(htick_log, '8', "FileFix: area %s -- unlink is not possible for %s", area->areaName, aka2str(link->hisAka));
+			w_log( '8', "FileFix: area %s -- unlink is not possible for %s", area->areaName, aka2str(link->hisAka));
 			break;
-		default: writeLogEntry(htick_log, '8', "FileFix: area %s -- no access for %s", area->areaName, aka2str(link->hisAka));
+		default: w_log( '8', "FileFix: area %s -- no access for %s", area->areaName, aka2str(link->hisAka));
 			continue;
 		}
 		
@@ -753,7 +753,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	}
 	if (*report == 0) {
 		sprintf(addline,"%s Not found\r",line);
-		writeLogEntry(htick_log, '8', "FileFix: area %s is not found", line);
+		w_log( '8', "FileFix: area %s is not found", line);
 		report=(char*)srealloc(report, strlen(addline)+1);
 		strcpy(report, addline);
 	}
@@ -793,21 +793,21 @@ char *resend(s_link *link, s_message *msg, char *cmd)
                             filename,filearea,addr2string(&link->hisAka));
                     break;
 	    case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
-		    writeLogEntry(htick_log, '8', "FileFix %%Resend: Passthrough filearea %s", filearea);
+		    w_log( '8', "FileFix %%Resend: Passthrough filearea %s", filearea);
 	            break;
 	    case 2: sprintf(addline,"Error: Filearea %s not found!\r",filearea);
-		    writeLogEntry(htick_log, '8', "FileFix %%Resend: Filearea %s not found", filearea);
+		    w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
 	            break;
 	    case 3: sprintf(addline,"Error: File %s not found!\r",filename);
-		    writeLogEntry(htick_log, '8', "FileFix %%Resend: File %s not found", filename);
+		    w_log( '8', "FileFix %%Resend: File %s not found", filename);
 	            break;
 	    case 5: sprintf(addline,"Error: You don't have access for filearea %s!\r",filearea);
-		    writeLogEntry(htick_log, '8', "FileFix %%Resend: Link don't have access for filearea %s", filearea);
+		    w_log( '8', "FileFix %%Resend: Link don't have access for filearea %s", filearea);
 	            break;
 	    }
 	 } else {
 	    sprintf(addline,"Error: filearea %s not found!\r",filearea);
-	    writeLogEntry(htick_log, '8', "FileFix %%Resend: Filearea %s not found", filearea);
+	    w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
 	 }
       }
    }
@@ -893,7 +893,7 @@ linkline:
 				fclose(f_conf);
 				nfree(line);
 				link->Pause = 1;
-				writeLogEntry(htick_log, '8', "FileFix: system %s set passive", aka2str(link->hisAka));
+				w_log( '8', "FileFix: system %s set passive", aka2str(link->hisAka));
 				return 1;
 			}
 		}
@@ -1019,7 +1019,7 @@ linkliner:
 		nfree(line);
 		nfree(confName);
 		link->Pause = 0;
-		writeLogEntry(htick_log, '8', "FileFix: system %s set active", aka2str(link->hisAka));
+		w_log( '8', "FileFix: system %s set active", aka2str(link->hisAka));
 		return 1;
 	}
 	close_conf();
@@ -1241,7 +1241,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 					break;
 				case LINKED:
 					RetMsg(afixarea, msg, link, preport, "FileFix reply: linked request");
-					writeLogEntry(htick_log, '8', "FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
+					w_log( '8', "FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
 					break;
 				case PAUSE: case RESUME:
 					RetMsg(afixarea, msg, link, preport, "FileFix reply: node change request");
@@ -1298,7 +1298,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 		RetMsg(afixarea, msg, link, report, "security violation");
 		free(report);
 		
-		writeLogEntry(htick_log, '8', "FileFix: security violation from %s", aka2str(link->hisAka));
+		w_log( '8', "FileFix: security violation from %s", aka2str(link->hisAka));
 		
 		free(tmplink);
 		
@@ -1315,7 +1315,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 		free(report);
 	}
 
-	writeLogEntry(htick_log, '8', "FileFix: sucessfully done for %s",aka2str(link->hisAka));
+	w_log( '8', "FileFix: sucessfully done for %s",aka2str(link->hisAka));
 	
 	return 1;
 }

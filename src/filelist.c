@@ -262,15 +262,15 @@ void filelist()
     FILE *f;
     int i;
 
-   writeLogEntry(htick_log, LL_INFO, "Start filelist...");
+   w_log( LL_INFO, "Start filelist...");
 
    if (strlen(flistfile) == 0) {
-      writeLogEntry(htick_log,'6',"Not found output file");
+      w_log('6',"Not found output file");
       return;
    }
 
    if ( (f = fopen(flistfile,"w")) == NULL ) {
-         writeLogEntry(htick_log,'6',"Could not open for write file %s",flistfile);
+         w_log('6',"Could not open for write file %s",flistfile);
          return;
    }
 
