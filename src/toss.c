@@ -445,6 +445,12 @@ int parseTic(char *ticfile,s_ticfile *tic)
 
   fclose(tichandle);
 
+  if (!tic->anzdesc) { 
+     tic->desc = realloc(tic->desc,sizeof(*tic->desc));
+     tic->desc[0] = strdup("no desc");
+     tic->anzdesc = 1;
+  }
+
   return(1);
 }
 
@@ -1622,8 +1628,6 @@ char *formDescStr(char *desc)
 {
    char *keepDesc, *newDesc, *tmp, *ch, *buff=NULL;
 
-   if (desc == NULL) return NULL;
-
    keepDesc = strdup(desc);
 
    if (strlen(desc) <= 50) {
@@ -1736,7 +1740,7 @@ void reportNewFiles()
                sprintf(buff, " %s%s", strUpper(newFileReport[i]->fileName), print_ch(25, ' '));
                tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
                sprintf(buff+14, "% 9i", newFileReport[i]->fileSize);
-               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+((tmp==NULL)?0:strlen(tmp))+2);
+               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
                if (config->originInAnnounce) {
                   msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);
@@ -1756,7 +1760,7 @@ void reportNewFiles()
                       sprintf(buff, " %s%s", strUpper(newFileReport[b]->fileName), print_ch(25, ' '));
                       tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
-                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+((tmp==NULL)?0:strlen(tmp))+2);
+                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                       sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
                       if (config->originInAnnounce) {
                          msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);

@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Sun Dec 17 10:11:28 NOVT 2000
+max (patch from Alex Bronin):
+* fix crash if no desc in tic again
+
+----- cvs ci ------
 Tue Dec 12 22:43:26 NOVT 2000
 max (patch from Alex Bronin):
 * ignore bsy flag for SeparateBundles while htick clean
