@@ -159,7 +159,8 @@ This Russian echo covers Husky Project.
 
 If you have access to Internet, you may of course post your support request
 or bug report into form on husky development site:
-http://sourceforge.net/projects/husky, click to "Bugs" link.
+http://sourceforge.net/projects/husky, click to "Bugs" link if you have post
+bug report.
 
 If you do not have access to any of these echos and internet, you may of course
 also contact developers via netmail or e-mail at the addresses listed below.
