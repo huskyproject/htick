@@ -342,6 +342,8 @@ htick ffix! 2:464/910 -910.TEST
 * filefixKillRequests::  Удалять запрос к filefix после обработки.
 * filefixReportsAttr::   Установить флаг kill/sent на ответы filefix.
 * BBSarea::              Файлобласть без возможности подписки (для `htick filelist`).
+* fileDescription::      Имя файла, содержащего описания файлов,
+                         по умолчанию files.bbs
 * fileDescName::         Если поле LDESC в TIC-файле не заполнено, использовать
                          для его заполнения файл <name> из архива.
 * FileAreaCreatePerms::  Установить права на созданную директорию файлобласти.
@@ -639,7 +641,7 @@ TIC'и хранятся здесь и удаляются после отправки. По умолчанию: использовать
 
 Этот оператор не может повторяться.
 
-@node BBSarea, fileDescName, filefixReportsAttr, Keywords
+@node BBSarea, fileDescription, filefixReportsAttr, Keywords
 @subsection BBSarea
 @findex BBSarea
 @table @asis
@@ -654,7 +656,21 @@ TIC'и хранятся здесь и удаляются после отправки. По умолчанию: использовать
 
 Этот оператор не может повторяться.
 
-@node fileDescName, FileAreaCreatePerms, BBSarea, Keywords
+@node fileDescription, fileDescName, BBSarea, Keywords
+@subsection fileDescription
+@findex fileDescription
+@table @asis
+@item Синтаксис:
+@code{fileDescription <name>}
+@item Пример:
+@code{fileDescription descript.ion}
+@end table
+
+Имя файла, содержащего описания файлов, по умолчанию files.bbs
+
+Этот оператор может повторяться.
+
+@node fileDescName, FileAreaCreatePerms, fileDescription, Keywords
 @subsection fileDescName
 @findex fileDescName
 @table @asis
