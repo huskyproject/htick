@@ -32,7 +32,7 @@
 #define LOG_H
 
 #include <stdio.h>
-#include <fidoconfig/typesize.h>
+#include <fidoconf/typesize.h>
 
 struct htick_log {
 // char *fileName;       // name of the file where the log will be stored.

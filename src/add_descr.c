@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <add_descr.h>
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
 #include <string.h>
 #include <smapi/progprot.h>
 #include <global.h>

@@ -42,7 +42,7 @@
 #include <version.h>
 
 #ifndef MSDOS
-#include <fidoconfig/fidoconfig.h>
+#include <fidoconf/fidoconf.h>
 #else
 #include <fidoconf/fidoconf.h>
 #endif

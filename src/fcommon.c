@@ -47,7 +47,7 @@
 #endif
 
 #include <global.h>
-#include <fidoconfig/fidoconfig.h>
+#include <fidoconf/fidoconf.h>
 
 #include <smapi/typedefs.h>
 #include <smapi/compiler.h>

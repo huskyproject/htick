@@ -9,12 +9,12 @@
 #include <toss.h>
 #include <log.h>
 #include <crc32.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/common.h>
 #include <add_descr.h>
 #include <recode.h>
 #include <version.h>
 #include <smapi/progprot.h>
-#include <fidoconfig/adcase.h>
+#include <fidoconf/adcase.h>
 
 void hatch()
 {

@@ -31,10 +31,10 @@
 #ifndef _FCOMMON_H
 #define _FCOMMON_H
 
-#include <fidoconfig/typesize.h>
+#include <fidoconf/typesize.h>
 #include <stdio.h>
 
-#include <fidoconfig/fidoconfig.h>
+#include <fidoconf/fidoconf.h>
 
 struct ticfiletype {
                 char file[50];      // Name of the file affected by Tic

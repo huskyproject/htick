@@ -1,5 +1,5 @@
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/common.h>    
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>    
 #include <fcommon.h>   
 #include <global.h>    
 #include <seenby.h>

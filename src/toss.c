@@ -38,16 +38,16 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <fidoconfig/fidoconfig.h>
-#include <fidoconfig/adcase.h>
-#include <fidoconfig/common.h>
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/adcase.h>
+#include <fidoconf/common.h>
 #include <fcommon.h>
 #include <global.h>
 
 #include <toss.h>
 #include <smapi/patmat.h>
 
-#include <fidoconfig/dirlayer.h>
+#include <fidoconf/dirlayer.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/typedefs.h>
