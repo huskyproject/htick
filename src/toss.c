@@ -266,25 +266,9 @@ void writeNetmail(s_message *msg, char *areaName)
    char   *bodyStart;             /* msg-body without kludgelines start */
    char   *ctrlBuf;               /* Kludgelines */
    XMSG   msgHeader;
-   char *slash;
    s_area *nmarea;
-#ifdef UNIX
-   char limiter = '/';
-#else
-   char limiter = '\\';
-#endif
 
    if ((nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
-   /* create Directory Tree if necessary */
-   if (nmarea->msgbType == MSGTYPE_SDM)
-      createDirectoryTree(nmarea->fileName);
-   else {
-      /* squish area */
-      slash = strrchr(nmarea->fileName, limiter);
-      *slash = '\0';
-      createDirectoryTree(nmarea->fileName);
-      *slash = limiter;
-   }
 
    netmail = MsgOpenArea((unsigned char *) nmarea->fileName, MSGAREA_CRIFNEC, nmarea->msgbType);
 
@@ -2167,7 +2151,7 @@ void reportNewFiles()
 
                fileCount = fileSize = 0;
                areaLen = strlen(newFileReport[i]->areaName);
-               sprintf(buff, "\r Area : %s%s", newFileReport[i]->areaName,
+               sprintf(buff, "\r>Area : %s%s", newFileReport[i]->areaName,
                                                print_ch(((areaLen<=15) ? 25 : areaLen+10), ' '));
                sprintf(buff+((areaLen<=15) ? 25 : areaLen+10), "Desc : %s\r %s\r",
                     (newFileReport[i]->areaDesc) ? newFileReport[i]->areaDesc : "",
