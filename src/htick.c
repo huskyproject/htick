@@ -62,8 +62,10 @@
 #include <smapi/progprot.h>
 #include <htick.h>
 #include <global.h>
+#include <cvsdate.h>
 
 #include <fidoconf/recode.h>
+#include <fidoconf/xstr.h>
 #include <toss.h>
 #include <scan.h>
 #include <hatch.h>
@@ -79,7 +81,7 @@ int __stdcall CharToOemA(char *, char *);
 
 int processCommandLine(int argc, char **argv)
 {
-   unsigned int i = 0;
+   int i = 0;
    int rc = 1;
    char *basename, *extdelim;
 
@@ -298,26 +300,34 @@ void processConfig()
 int main(int argc, char **argv)
 {
    struct _minf m;
+   char *version = NULL;
+
+
+   xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
 
 #ifdef __linux__
-   sprintf(versionStr, "HTick/LNX v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
-#elif defined(__freebsd__)
-   sprintf(versionStr, "HTick/BSD v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
-#elif defined(__OS2__)
-    sprintf(versionStr, "HTick/OS2 v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
+   xstrcat(&version, "/lnx");
+#elif defined(__FreeBSD__) || defined(__NetBSD__)
+   xstrcat(&version, "/bsd");
+#elif defined(__OS2__) || defined(OS2)
+   xstrcat(&version, "/os2");
 #elif defined(__NT__)
-    sprintf(versionStr, "HTick/NT v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
+   xstrcat(&version, "/w32");
 #elif defined(__sun__)
-    sprintf(versionStr, "HTick/SUN v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
+   xstrcat(&version, "/sun");
+#elif defined(MSDOS)
+   xstrcat(&version, "/dos");
 #elif defined(__BEOS__)
-    sprintf(versionStr, "HTick/beos v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
-#else
-    sprintf(versionStr, "HTick v%u.%02u%s%s", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
+   xstrcat(&version, "/beos");
 #endif
 
 
+   if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
+   xscatprintf(&versionStr,"HTick %s", version);
+   nfree(version);
+
+   if (!quiet) printf("%s (by Gabriel Plutzar)\n", versionStr);
    if (processCommandLine(argc, argv) == 0) exit(1);
-   if (!quiet) printf("Husky Tick v%u.%u%s%s by Gabriel Plutzar\n", VER_MAJOR, VER_MINOR, VER_SERVICE, VER_BRANCH);
    processConfig();
 
    // init SMAPI
@@ -353,5 +363,6 @@ int main(int argc, char **argv)
    closeLog();
    if (config->lockfile != NULL) remove(config->lockfile);
    disposeConfig(config);
+   nfree(versionStr);
    return 0;
 }

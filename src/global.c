@@ -44,8 +44,9 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
-const int VER_MAJOR = 0;
-const int VER_MINOR = 9;
+const int VER_MAJOR   = 0;
+const int VER_MINOR   = 9;
+const int VER_PATCH   = 1;
 
 /* branch is "" for CVS current, "-stable" for the release candiate branch  */
 const char *VER_BRANCH  = "";
@@ -56,7 +57,7 @@ const char *VER_BRANCH  = "";
 const char *VER_SERVICE = "";  
 
 
-char      versionStr[30];
+char      *versionStr=NULL;
 
 int       cmToss = 0;
 int       cmScan = 0;
