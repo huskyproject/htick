@@ -1,3 +1,8 @@
+2003-09-19 Friday 06:36  mche
+
+	* src/htick.c (1.101): Fixing fault on missing parameter after -c
+	comandline option. [by Evgeny Dementiev 2:5014/2]
+
 2003-09-18 Thursday 19:27  i_zkh
 
 	* doc/htick.texi (1.26): Fixed few misprints
