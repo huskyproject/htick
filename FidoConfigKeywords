@@ -72,6 +72,10 @@ Same as EchoArea, most options are valid:
 
     No replace exists files in this filearea
 
+	l) -nodiz
+	
+	Do not try to get description from <fileDescName>
+
 7) ExecOnFile <filearea> <filemask> <command>
   
 Execute some command on receiving file. Command get full filepath as parameter.
