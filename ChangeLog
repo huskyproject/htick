@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Tue Oct 17 14:02:44 NOVST 2000
+max:
+* don't core dump while write msg to sysop 
+
+----- cvs ci ------
 Tue Sep 19 20:20:08 NOVST 2000
 max:
 * select "right" link (useAka==ourAka) for filearea when toss .tic files

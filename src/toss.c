@@ -50,6 +50,7 @@
 #include <smapi/patmat.h>
 
 #include <fidoconf/dirlayer.h>
+#include <fidoconf/xstr.h>
 
 #include <smapi/msgapi.h>
 #include <smapi/typedefs.h>
@@ -1598,12 +1599,9 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
 
 void writeMsgToSysop(s_message *msg, char *areaName)
 {
-   char tmp[81];
    s_area       *echo;
 
-   sprintf(tmp, " \r--- %s\r * Origin: %s (%s)\r", versionStr, config->name, addr2string(&(msg->origAddr)));
-   msg->text = (char*)realloc(msg->text, strlen(tmp)+strlen(msg->text)+1);
-   strcat(msg->text, tmp);
+   xstrscat(&(msg->text), " \r--- ", versionStr,"\r * Origin: ", (config->name) ? config->name : "", " (", addr2string(&(msg->origAddr)), ")\r", NULL);
    msg->textLength = strlen(msg->text);
    if (msg->netMail == 1) writeNetmail(msg, areaName);
    else {
