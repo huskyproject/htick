@@ -1062,9 +1062,17 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
 #if !defined(UNIX)
 
+
 /* FIXME: This code is nonportable and should therefore really be part
           of a porting library like huskylib or fidoconf!!!
 */
+
+#if defined(__MINGW32__) && defined(__NT__)
+/* we can't include windows.h for several reasons ... */
+int __stdcall GetFileAttributesA(char *);
+#define GetFileAttributes GetFileAttributesA
+#endif
+
 
 int hidden (char *filename)
 {
