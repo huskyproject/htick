@@ -1,0 +1,1421 @@
+\input texinfo   @c -*-texinfo-*-
+
+@c %**start of header
+@c $Id$
+@c adopted from hpt.texi, written by Tema Zelikin 2:5097/31
+@setfilename htick.info
+@set HTICK HTICK
+@set VERSION 1.9
+@settitle @value{HTICK} @value{VERSION} - Husky Ticker
+@setchapternewpage odd
+@c %**end of header
+
+@titlepage
+@title @value{HTICK} @value{VERSION} manual
+@subtitle Husky Ticker
+@author Georgi Fofanov @@ 2:5050/29, fg@fg.udm.ru
+@author Nestyurkin Nikolay @@ 2:5020/3600, 3600@mail.ru
+@author Max Chernogor @@ 2:464/108, mche@ua.fm
+@page
+@c{empty page to get the page numbering right}
+@end titlepage
+
+@ifinfo
+@dircategory Fidonet Software
+@direntry
+* HTICK: (htick).               HTICK - фидошный файлэхо-процессор
+@end direntry
+@end ifinfo
+
+@iftex
+@parindent=0pt
+@end iftex
+@iftex
+@afourpaper
+@end iftex
+
+@node Top, Overview, (dir), (dir)
+@top @value{HTICK}
+Этот документ описывает @value{HTICK} @value{VERSION}, фидошный файлэхо-процессор
+под OS/2, Windows, BeOS и клоны Unix.
+
+@menu
+* Overview::                    Что такое @value{HTICK}.
+* Installation::                Установка. @emph{Прочтите это!}
+* Command Line::                ОПЦИИ и КЛЮЧИ командной строки.
+* Configuration Reference::     Пояснения к конфигурационному файлу.
+* Support::                     Информация о поддержке.
+* Keyword Index::               Спискок ключевых слов конфигурационного файла.
+@end menu
+
+@node Overview, Installation, Top, Top
+@chapter Что такое @value{HTICK}
+
+@value{HTICK} - это фидошный тоссер файлэх, включающий filefix. В настоящее
+время проект поддерживается Husky Development Team (см.
+@url{http://husk.sf.net/team.html}).
+
+Фичи @value{HTICK}:
+@enumerate
+@item Тоссинг файлэх.
+@item Filefix (на лету, из командной строки, ограничение областей...)
+@item Автосоздание на лету.
+@item Автоматическая подписка на отсутствующую арию у аплинка.
+@item Перевод арий в пассивный (только посылка) и обратно в активный режимы.
+@item Повторная посылка файлов из passthrough и не-passthrough файлэх.
+@item Группы и уровни для личного и общего доступа к файлэхам.
+@item Проверка безопастности tossgroup.
+@c @item проверка дупов.
+@item Установки линков по умолчанию.
+@item Постинг в нетмейловые и эхообласти.
+@item Гибкая настройка анонсов в эхообласти или нетмейл.
+Поддержка масок имен файлэх позволяет легко настроить несколько областей для
+анонсов из разных групп файлэх.
+@item Сохраняя анонсы на диск, вы защищаете себя от их потери из-за
+аварийного завершения @value{HTICK} (недостаточно свободного места
+на диске, нажато ^Break, отключение питания и т.д.)
+@item И многое, многое другое :)
+@end enumerate
+
+Преимущества @value{HTICK}:
+
+@enumerate
+@item Открытые исходники (GPL)
+@item Множество поддерживаемых платформ и операционных систем
+@item Быстрое исправление багов
+@end enumerate
+
+@node Installation, Download, Overview, Top
+@chapter Процедуры установки и замечания разработчиков
+Этот раздел содержит информацию, необходимую для успешных установки и
+использования @value{HTICK}.
+
+Предполагается, что вы уже скомпилировали исполняемые файлы. Если нет, смотрите
+разделы "Скачивание" или "Компилирование исходного кода".
+
+@enumerate
+@item Прочитайте документацию на FIDOCONFIG, касающуюся расположения
+конфигурационных файлов
+@item Отредактируйте конфигурационные файлы в соответствии со своими целями
+@item Запустите @code{tparser} из пакета FIDOCONFIG, чтобы проверить свой конфиг
+(прочитайте о @code{PublicGroup} или @code{AccessGrp}, если хотите использовать
+группы для @code{FileEchoAreas})
+@item Это просто, не правда ли? :-)
+@end enumerate
+
+@menu
+* Download::  Скачивание исходного кода и исполняемых файлов
+* Compiling:: Как скомпилировать исходный код
+* Support::   Поддержка, связь с автором, сообщения о багах, поддержка разработки
+@end menu
+
+@node Download, Compiling, Installation, Installation
+@section Скачивание исходного кода и исполняемых файлов
+
+@table @asis
+@item Главная страница (релизы, исходный код, последние бета-версии) - @url{http://husky.sf.net/htick.html}
+@item Прямой линк на исходники 'stable' ветки: @url{http://husky.sf.net/cvs2/stable/}
+@item Прямой линк на исходники 'current' (девелоперской) ветки: @url{http://husky.sf.net/cvs2/current/}
+@end table
+
+@node Compiling, Support, Download, Installation
+@section Компилирование исходного кода
+
+1. Необходимы пакеты smapi и fidoconf.
+
+2. Поместите пакеты smapi и fidoconf в директорию, где размещены остальные
+   пакеты fido:
+
+@table @asis
+@item /usr/src/packages/
+@item -> smapi/
+@item -> fidoconfig/
+@item -> htick/
+@item
+@end table
+
+3. Скомпилируйте и установите пакеты smapi и fidoconf. Для компилирования
+   динамических исполняемых файлов используйте "Makefile", для статических - 
+   makefile.lnx (или тот, который вам нужен).
+
+4. Компиляция и установка @value{HTICK}:
+@table @asis
+@item $ make
+@item $ make install
+@end table
+Вы должны использовать _одни и те же_ makefile при компиляции smapi, fidoconf и
+htick.
+
+@node Support, Command Line, Compiling, Installation
+@section Поддержка
+
+Существует бессчетное количество причин, по которым вы можете захотеть
+установить контакт с разработчиками.
+
+@enumerate
+@item
+Вы решили постоянно использовать @value{HTICK}. В этом случае, пожалуйста,
+пошлите письмо по адресу, указанному ниже.
+
+@item
+У вас есть общие вопросы о том, как сконфигурировать или как использовать
+конкретную фичу @value{HTICK}. Другими словами, вам нужна поддержка. В этом
+случае вам лучше всего разместить свой вопрос в одной из следующих эх:
+
+@table @code
+@item FIDOSOFT.HUSKY
+Международная конференция Husky. Предпочтительный язык - английский.
+@item RU.HUSKY
+Это русская эха Husky Project.
+@end table
+
+Если у вас есть доступ к Internet, вы, разумеется, можете поместить свой
+вопрос или сообщение о баге в форму на сайте разработчиков husky:
+http://sourceforge.net/projects/husky, идите по ссылке "Bugs", если хотите
+разместить сообщение о баге.
+
+Если у вас нет доступа ни к этим эхам, ни к Internet, вы, конечно, можете
+связаться с разработчиками через нетмейл или e-mail по адресам, указанным ниже.
+
+@item
+Вы хотите сообщить о баге. Существует два типа багов:
+
+@enumerate a
+@item Обычные баги.
+Вы думаете, что конкретная функция @value{HTICK} работает не так, как ожидается,
+например, выводит мусор или странно себя ведет, или что-то подобное. В таком
+случае, поместите сообщение в эхи, указанные выше, или в bugtrack на сайте или
+свяжитесь с разработчиками нетмейлом. Пожалуйста, укажите всю информацию,
+которая необходима для понимания вашей проблемы.
+
+@item Фатальные баги.
+Фатальный баг случается, если @value{HTICK} падает. В зависимости от вашей
+операционной системы, симптомами могут быть падение ядра (core dump), SYS 3175,
+общая ошибка защиты (general protection fault), "повисшая" система, внезапная
+перезагрузка. Мы считаем падение недопустимым. Какие бы глупые вещи вы не
+делали, у вас не должно получиться уронить @value{HTICK}.
+
+Если вы опытный пользователь, и у вас упало ядро, вы можете послать
+разработчикам gdb-репорт. Найдите файл @file{core}, который был сгенерирован.
+Затем запустите $ gdb htick core. @value{HTICK} должен быть скомпилирован с
+информацией для отладки (DEBUG=1 в файле @file{huskymak.cfg}). После этого
+отошлите сообщение по адресу, указанному ниже.
+
+Если вы используете любую другую версию исполняемых файлов (например, под
+Windows), вы не получите файл ядра при падении. Запишите как можно больше
+информации, попытайтесь воспроизвести падение и свяжитесь с авторами по адресам,
+указанным ниже. Пожалуйста, прикрепите к письму лог-файл с
+@code{loglevels 1-0A-Za-z} (все буквы и цифры).
+@end enumerate
+
+@item Вы хотите участвовать в разработке @value{HTICK}.
+Если вы программист и самостоятельно исправили ошибку в @value{HTICK},
+пожалуйста, пришлите мне свои изменения. Лучший путь сделать это - прислать
+разработчикам файл изменений в формате GNU diff (с параметром -c). Ваша работа
+будет высоко оценена и отмечена в соответствующем месте. Если вы хотите
+регулярно работать над @value{HTICK}, у нас также есть онлайновый CVS сервер, к
+которому вы сможете получить доступ.
+
+Если вы хотите добавить в @value{HTICK} новую фичу, пожалуйста, свяжитесь
+сначала с разработчиками - чтобы не делать лишнюю работу. Мы оценим все ваши
+усилия. Пожалуйста, примите во внимание, что для написания расширений
+@value{HTICK} вы должны быть знакомы с C. Кроме того, @value{HTICK} использует
+специальный стиль кода, и мы бы хотели, чтобы вы его придерживались.
+@end enumerate
+
+Итак, вот адреса разработчиков, если вы хотите связаться с нами:
+
+@itemize @bullet
+@item Fidonet:
+Max Chernogor @@ 2:464/108
+@item e-mail:
+mche@@ua.fm
+@end itemize
+
+@itemize @bullet
+@item Fidonet:
+Stas Degteff @@ 2:5080/102
+@item e-mail:
+stas_degteff@@users.sf.net
+@end itemize
+
+@node Command Line, Configuration Reference, Support, Top
+@chapter ОПЦИИ и КЛЮЧИ командной строки @value{HTICK} @value{VERSION}
+Чтобы получить спискок опций командной строки, запустите @value{HTICK} без
+параметров.
+
+@table @asis
+@item Синтаксис:
+@command{htick [options] <command>}
+@item где @code{<command>}:
+@table @asis
+@item toss
+Обработать *.tic и протоссить файлы
+@item scan
+@itemx ffix
+Искать в Netmail области писем к filefix и обработать команды filefix
+@item ffix <FTN address> <filefix command>
+Обработать команду filefix @code{command} из командной строки
+@item ffix! <FTN address> <filefix command>
+Выполнить то же, что 'ffix' и послать письмо с подпиской/отпиской линку, который
+был подписан/отписан вручную командой filefix вида:
+htick ffix! 2:464/910 -910.TEST
+Эта команда отписывает файлэхолинка 2:464/910 от 910.TEST и создает письмо к
+2:464/910, содержащее "-910.TEST"
+@item clean
+Очистить passthrough директорию (удалить посланные файлы) и удалить старые файлы
+в файлэхах
+@item announce
+Создать анонс о новых файлах, описанный операторами конфига Ann*
+(см. @xref{Announce System}.)
+@item hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]
+Хатчить файл в Area, используя Description файла; если указано "replace",
+заполнить поле Replace в TIC; если <filemask> не указана, поместить в это поле
+<file>.
+Параметры desc могут быть:
+@table @asis
+@item @code{@@BBS}
+взять описание из files.bbs
+@item @code{@@DIZ}
+взять описание из находящегося в архиве File_Id.Diz
+@item @code{@@<file>}
+взять описание из <file>
+@item @code{@@@@BBS}
+взять первую строку из Files.Bbs
+@item @code{@@@@DIZ}
+взять первую строку из находящегося в архиве File_Id.Diz
+@item @code{@@@@<file>}
+взять первую строку из <file>
+@end table
+
+@item send <file> <filearea> <address>
+Послать файл из filearea на address
+@item filelist <file> [<dirlist>]
+Создать файл-лист, содержащий все файлы в базе
+
+@itemize @bullet
+@item @code{<file>}
+Имя файла, в который записывать вывод
+@item @code{<dirlist>}
+Список директорий, которые должны быть включены в файл-лист.
+@end itemize
+@end table
+@end table
+
+@node Configuration Reference, Keywords, Command Line, Top
+@chapter Справка по конфигурации @value{HTICK} @value{VERSION}
+
+@value{HTICK} основан на библиотеке FIDOCONFIG, поэтому прочитайте в
+документации на FIDOCONFIG о расположении конфигурационного файла и идеологии
+ключевых слов.
+
+@menu
+* Keywords::               Этот раздел описывает ключевые слова
+* Common husky keywords::  Список ключевых слов, используемых многими программами
+                           husky
+* Link Keywords::          Ключевые слова, которые могут быть использованы для
+                           разных линков
+* FileArea Definition::    Определение файлобластей
+* Announce System::        Определение анонсов
+@end menu
+
+@node Keywords, FileAreaBaseDir, Configuration Reference, Configuration Reference
+@section Ключевые слова
+
+@menu
+* FileAreaBaseDir::      Базовая директория файлобластей.
+* PassFileAreaDir::      В эту директорию будут помещены файлы из passthrough
+                         файлобластей.
+* FileDescPos::          Отступ для длинных описаний в FILES.BSS.
+* fileLDescString::      Префикс для длинных описаний в FILES.BSS.
+* FileFixHelp::          Файл помощи для FileFix.
+* FileArea::             Определение файлобласти.
+* ExecOnFile::           Выполнить команду по приему файла.
+* SaveTic::              Сохранять файлы с TIC'ами.
+* MaxTicLineLength::     Установить максимальную длину строки в исходящих TIC'ах.
+* BusyFileDir::          Куда будут сложены TIC'и для линков с флагом busy.
+* ConvertLongNames::     Что делать с длинными именами при тоссинге и хатчинге.
+* ConvertShortNames::    Что делать с короткими именами при тоссинге и хатчинге.
+* addDLC::               Добавлять счетчики скачиваний в FILES.BBS.
+* DLCDigits::            Количество цифр в DLC.
+* ticOutbound::          TIC' хранятся здесь и удаляются после отсылки.
+* filefixKillRequests::  Удалять запрос к filefix после обработки.
+* filefixReportsAttr::   Установить флаг kill/sent на ответы filefix.
+* BBSarea::              Файлобласть без возможности подписки (для `htick filelist`).
+* fileDescName::         Если поле LDESC в TIC-файле не заполнено, использовать
+                         для его заполнения файл <name> из архива.
+* FileAreaCreatePerms::  Установить права на созданную директорию файлобласти.
+* FileFixFromName::      Имя отправителя в ответах filefix.
+* AutoFileCreateFlag::   Создавать флаг при автосоздании файлобластей.
+* FileFixNames::         Список имен, на которые будет откликаться filefix.
+@end menu
+
+@node FileAreaBaseDir, PassFileAreaDir, Keywords, Keywords
+@subsection FileAreaBaseDir
+@findex FileAreaBaseDir
+@table @asis
+@item Синтаксис:
+@code{FileAreaBaseDir <directory>}
+@item Пример:
+@code{FileAreaBaseDir /var/spool/fido/fileareas}
+@end table
+
+Где будут созданы директории всех файлобластей при автосоздании. Подобно
+MsgBaseDir.
+
+Этот оператор не может повторяться.
+
+@node PassFileAreaDir, FileDescPos, FileAreaBaseDir, Keywords
+@subsection PassFileAreaDir
+@findex PassFileAreaDir
+@table @asis
+@item Синтаксис:
+@code{PassFileAreaDir <directory>}
+@item Пример:
+@code{PassFileAreaDir /var/spool/fido/transit}
+@end table
+
+Куда будут сложены файлы из passthrough файлобластей (и TIC'и, если ticOutbound
+не определен).
+
+Этот оператор не может повторяться.
+
+@node FileDescPos, fileLDescString, PassFileAreaDir, Keywords
+@subsection FileDescPos
+@findex FileDescPos
+@table @asis
+@item Синтаксис:
+@code{FileDescPos <number>}
+@item Пример:
+@code{FileDescPos 13}
+@end table
+
+Количество пробелов в отступе длинных описаний в FILES.BBS.
+Рекомендуется 13 (8.3+пробел).
+
+Этот оператор не может повторяться.
+
+@node fileLDescString, FileFixHelp, FileDescPos, Keywords
+@subsection fileLDescString
+@findex fileLDescString
+@table @asis
+@item Синтаксис:
+@code{fileLDescString <string>}
+@item Пример:
+@code{fileLDescString ">"}
+@end table
+
+Эта строка помещается перед длинным описанием в FILES.BBS (обычно ">" или "+".).
+Значение по умолчанию: один пробел.
+
+Этот оператор не может повторяться.
+
+@node FileFixHelp, ExecOnFile, fileLDescString, Keywords
+@subsection FileFixHelp
+@findex FileFixHelp
+@table @asis
+@item Синтаксис:
+@code{FileFixHelp <string>}
+@item Пример:
+@code{FileFixHelp /usr/local/fido/filefix.hlp}
+@end table
+
+Файл помощи для FileFix, подобно AreaFixHelp для AreaFix'а HPT.
+
+Этот оператор не может повторяться.
+
+@node ExecOnFile, SaveTic, FileFixHelp, Keywords
+@subsection ExecOnFile
+@findex ExecOnFile
+@table @asis
+@item Синтаксис:
+@code{ExecOnFile <filearea> <filemask> <command>}
+@item Пример:
+@code{ExecOnFile husky *.diff /usr/local/fido/update_source.sh}
+@end table
+
+Выполнить некоторую команду по приему файла.
+Команда получает как параметр полный путь к файлу (пробел и имя файла должны
+быть добавлены к командной строке до выполнения).
+
+Этот оператор может повторяться.
+
+@node SaveTic, MaxTicLineLength, ExecOnFile, Keywords
+@subsection SaveTic
+@findex SaveTic
+@table @asis
+@item Синтаксис:
+@code{SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>}
+@item Пример:
+@code{SaveTic husky -l /usr/local/husky}
+@end table
+
+@table @asis
+@item <DirToSaveTic>
+куда складывать TIC'и для файлобласти(ей) <FileEchoMask>
+
+@item <FileOption>
+сохранять файлы с TIC'ами. Может быть:
+
+@table @asis
+@item empty
+файлы не будут скопированы
+
+@end table
+@table @option
+@item -l
+линк на файлы из директории файлобласти в <DirToSaveTic>
+
+@item -c
+копировать файлы из директории файлобласти в <DirToSaveTic>
+@end table
+
+Опции @option{-l} и @option{-c} работают только с не-passthrough файлэхами.
+@end table
+
+Этот оператор может повторяться.
+
+@node MaxTicLineLength, BusyFileDir, SaveTic, Keywords
+@subsection MaxTicLineLength
+@findex MaxTicLineLength
+@table @asis
+@item Синтаксис:
+@code{MaxTicLineLength <number>}
+@item Пример:
+@code{MaxTicLineLength 79}
+@end table
+
+Установить максимальную длину строки в исходящих TIC'ах в значение <number>.
+
+Этот оператор не может повторяться.
+
+@node BusyFileDir, ConvertLongNames, MaxTicLineLength, Keywords
+@subsection BusyFileDir
+@findex BusyFileDir
+@table @asis
+@item Синтаксис:
+@code{BusyFileDir <directory>}
+@item Пример:
+@code{BusyFileDir /var/spool/fido/htick.busy/}
+@end table
+
+Куда будут складываться TIC'и для линков с флагом busy (по умолчанию
+<outbound>/busy.htk).
+
+Этот оператор не может повторяться.
+
+@node ConvertLongNames, ConvertShortNames, BusyFileDir, Keywords
+@subsection ConvertLongNames
+@findex ConvertLongNames
+@table @asis
+@item Синтаксис:
+@code{ConvertLongNames <Upper|Lower|DontTouch>}
+@item Пример:
+@code{ConvertLongNames DontTouch}
+@end table
+
+Что делать с длинными именами при тоссинге и хатчинге.
+Под "длинным" мы имеем в виду имя со смешанным регистром или имя длиннее 8.3
+
+Этот оператор не может повторяться.
+
+@node ConvertShortNames, addDLC, ConvertLongNames, Keywords
+@subsection ConvertShortNames
+@findex ConvertShortNames
+@table @asis
+@item Синтаксис:
+@code{ConvertShortNames <Upper|Lower|DontTouch>}
+@item Пример:
+@code{ConvertShortNames DontTouch}
+@end table
+
+Что делать с короткими именами при тоссинге и хатчинге.
+Под "коротким" мы имеем в виду имя DOS-типа: 8.3, одного регистра.
+
+Этот оператор не может повторяться.
+
+@node addDLC, DLCDigits, ConvertShortNames, Keywords
+@subsection addDLC
+@findex addDLC
+@table @asis
+@item Синтаксис:
+@code{addDLC <bool>}
+@item Пример:
+@code{addDLC yes}
+@end table
+
+Добавлять счетчики скачиваний ([000]) в files.bbs. Используйте только с
+DLCDigits!
+
+Этот оператор не может повторяться.
+
+@node DLCDigits, ticOutbound, addDLC, Keywords
+@subsection DLCDigits
+@findex DLCDigits
+@table @asis
+@item Синтаксис:
+@code{DLCDigits <number>}
+@item Пример:
+@code{DLCDigits 4}
+@end table
+
+Установить количество цифр в DLC. DLC имеет вид [000].
+
+Этот оператор не может повторяться.
+
+@node ticOutbound, filefixKillRequests, DLCDigits, Keywords
+@subsection ticOutbound
+@findex ticOutbound
+@table @asis
+@item Синтаксис:
+@code{ticOutbound <directory>}
+@item Пример:
+@code{ticOutbound /var/spool/fido/ticOub}
+@end table
+
+TIC'и хранятся здесь и удаляются после отправки. По умолчанию: использовать
+значение PassFileAreaDir.
+
+Этот оператор не может повторяться.
+
+@node filefixKillRequests, filefixReportsAttr, ticOutbound, Keywords
+@subsection filefixKillRequests
+@findex filefixKillRequests
+@table @asis
+@item Синтаксис:
+@code{filefixKillRequests <bool>}
+@item Пример:
+@code{filefixKillRequests yes}
+@end table
+
+Удалять запросы к filefix после обработки.
+
+Этот оператор не может повторяться.
+
+@node filefixReportsAttr, BBSarea, filefixKillRequests, Keywords
+@subsection filefixReportsAttr
+@findex filefixReportsAttr
+@table @asis
+@item Синтаксис:
+@code{filefixReportsAttr <attr>}
+@item Пример:
+@code{filefixReportsAttr pvt,kill,loc}
+@end table
+
+Установить флаги на ответы filefix.
+
+Допустимые флаги:
+@table @asis
+@item pvt
+@item crash
+@item read
+@item sent
+@item att
+@item fwd
+@item orphan
+@item k/s
+@item loc
+@item fwd
+@item xx2
+@item frq
+@item rrq
+@item cpt
+@item arq
+@item urq
+@item kfs
+@item tfs
+@item dir
+@item imm
+@item cfm
+@item npd
+@end table
+
+По умолчанию "pvt loc k/s npd".
+
+Этот оператор не может повторяться.
+
+@node BBSarea, fileDescName, filefixReportsAttr, Keywords
+@subsection BBSarea
+@findex BBSarea
+@table @asis
+@item Синтаксис:
+@code{BBSarea <name> <bbsareapath>}
+@item Пример:
+@code{bbsarea bbs /var/spool/fido/bbsareas/bbs}
+@end table
+
+Файлобласть без возможности подписки, не показывается в ответах filefix.
+Используется только для генерации файл-листа (команда `htick filelist`).
+
+Этот оператор не может повторяться.
+
+@node fileDescName, FileAreaCreatePerms, BBSarea, Keywords
+@subsection fileDescName
+@findex fileDescName
+@table @asis
+@item Синтаксис:
+@code{fileDescName <name>}
+@item Пример:
+@code{fileDescName file_id.diz}
+@end table
+
+Если поле LDESC в TIC-файле не заполнено, использовать для его заполнения файл
+<name> из архива (обычно file_id.diz).
+
+Этот оператор может повторяться.
+
+@subsection Замечание
+Параметр @code{unpack} должен быть определен для архива и содержать @option{$f}
+(@option{$f} заменяется на имя файла в процессе распаковки).
+
+Примеры:
+@example
+Unpack  "/path/to/unrar e -y -c- -o+ -inul $a $p $f"   0 52617221 # *.rar
+Unpack  "d:\path\unrar  e -y -c- -o+ -inul $a $p $f"  28 52534658 # rar-sfx/DOS
+Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+Unpack "unzip -joLqq $a -d $p" 0 504b0304
+Unpack "pkunzip -njCL $a -d $p $f" 0 504b0304
+Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0
+@end example
+
+@node FileAreaCreatePerms, FileFixFromName, fileDescName, Keywords
+@subsection FileAreaCreatePerms
+@findex FileAreaCreatePerms
+@table @asis
+@item Синтаксис:
+@code{FileAreaCreatePerms <mode>}
+@item Пример:
+@code{FileAreaCreatePerms 644}
+@end table
+
+Определить права на созданные директории файлобластей (только для UNIX).
+
+Этот оператор не может повторяться.
+
+@node FileFixFromName, AutoFileCreateFlag, FileAreaCreatePerms, Keywords
+@subsection FileFixFromName
+@findex FileFixFromName
+@table @asis
+@item Синтаксис:
+@code{FileFixFromName <string>}
+@item Пример:
+@code{FileFixFromName FileFix}
+@end table
+
+Имя отправителя в ответах filefix.
+
+Этот оператор не может повторяться.
+
+@node AutoFileCreateFlag, FileFixNames, FileFixFromName, Keywords
+@subsection AutoFileCreateFlag
+@findex AutoFileCreateFlag
+@table @asis
+@item Синтаксис:
+@code{AutoFileCreateFlag <file>}
+@item Пример:
+@code{AutoFileCreateFlag /usr/local/fido/flags/new_filearea}
+@end table
+
+Создавать флаг при автосоздании файобластей.
+
+Этот оператор не может повторяться.
+
+@node FileFixNames, Link Keywords, AutoFileCreateFlag, Keywords
+@subsection FileFixNames
+@findex FileFixNames
+@table @asis
+@item Синтаксис:
+@code{FileFixNames <string>}
+@item Пример:
+@code{FileFixNames allfix filefix htick}
+@end table
+
+Список имен, разделенных пробелами, на которые будет откликаться filefix.
+
+Этот оператор не может повторяться.
+
+@node Link Keywords, fileEchoFlavour, FileFixNames, Configuration Reference
+@section Ключевые слова линков
+
+@menu
+* fileEchoFlavour::         Этот оператор устанавливает флавор, который получают
+                            исходящие на этого линка файлы из файлэх.
+* fileAreaDefaults::        Установить умолчания для последующих определений
+                            файлобластей.
+* RemoteFileRobotName::     Имя удаленного робота filefix (нужно для
+                            FileForwardRequest).
+* FileFix::                 Доступ к filefix для этого линка.
+* FileFixEchoLimit::        Лимит подписки на файлэхи.
+* noTIC::                   Отключить создание файлов TIC.
+* autoFileCreate::          Разрешить или запретить автосоздание файлэх,
+                            полученных от этого линка.
+* AutoFileCreateFile::      Указывает файл, в который будет помещено описание
+                            новой файлобласти.
+* AutoFileCreateDefaults::  Определяет умолчания новой файлобласти.
+* AutoFileCreateSubdirs::   Автосоздавать арии как /fils/gfd.app.edit (off)
+                            или как /files/gfd/app/edit (on).
+* delNotReceivedTIC::       Если файл не получен, удалять TIC.
+* FileFixFSC87Subset::      Этот булевый переключатель определяет, как будут
+                            обрабатываться TIC'и.
+* TickerPackToBox::         Если для линка определен файлбокс - тоссить файлы
+                            и TIC'и в нем.
+* LinkFileBaseDir::         Куда будут помещены автосозданные файлобласти.
+* ForwardFileRequests::     Разрешить форвард на линка запросов подписки на
+                            файлобласти.
+* ForwardFilePriority::     Приоритет аплинка при форвард-реквестах подписок на
+                            файлобласти.
+* ForwardFileRequestFile::  Список доступных у этого линка файлобластей.
+@end menu
+
+@node fileEchoFlavour, fileAreaDefaults, Link Keywords, Link Keywords
+@subsection fileEchoFlavour
+@findex fileEchoFlavour
+@table @asis
+@item Синтаксис:
+@code{fileEchoFlavour <hold|normal|crash|direct|immediate>}
+@item Пример:
+@code{fileEchoFlavour direct}
+@end table
+
+Этот оператор устанавливает флавор, который получают исходящие на этого линка
+файлы из файлэх.
+Например, установите @code{fileEchoFlavour} в hold для пойнтов и в crash для
+аплинков.
+
+Этот оператор может повторяться только для разных линков.
+
+@node fileAreaDefaults, RemoteFileRobotName, fileEchoFlavour, Link Keywords
+@subsection fileAreaDefaults
+@findex fileAreaDefaults
+@table @asis
+@item Синтаксис:
+@code{fileAreaDefaults <options> [links]}
+@item Пример:
+@code{fileAreaDefaults -lw 100 -g Z 2:5097/31.1}
+@end table
+
+Установить умолчания для последующих определений файлобластей. Допустимы любые
+опции, кроме ареатага и пути.
+Установки в определении файлобласти приоритетнее, чем @code{fileAreaDefaults}.
+Также см. @xref{echoAreaDefaults,,,hpt}. Умолчания выключаются с помощью
+пустого @code{fileAreaDefaults}.
+
+Этот оператор может повторяться только для разных линков.
+
+@node RemoteFileRobotName, noTIC, fileAreaDefaults, Link Keywords
+@subsection RemoteFileRobotName
+@findex RemoteFileRobotName
+@table @asis
+@item Синтаксис:
+@code{RemoteFileRobotName <name>}
+@item Пример:
+@code{RemoteFileRobotName allfix}
+@end table
+
+Имя удаленного робота filefix (нужно для FileForwardRequest).
+
+Этот оператор может повторяться только для разных линков.
+
+@node noTIC, autoFileCreate, RemoteFileRobotName, Link Keywords
+@subsection noTIC
+@findex noTIC
+@table @asis
+@item Синтаксис:
+@code{noTIC <bool>}
+@item Пример:
+@code{noTIC yes}
+@end table
+
+Отключить создание файлов TIC.
+
+Этот оператор может повторяться только для разных линков.
+
+@node autoFileCreate, AutoFileCreateFile, noTIC, Link Keywords
+@subsection autoFileCreate
+@findex autoFileCreate
+@table @asis
+@item Синтаксис:
+@code{autoFileCreate <on|off>}
+@item Пример:
+@code{autoFileCreate on}
+@end table
+
+Разрешить или запретить автосоздание файлэх, полученных от этого линка.
+
+Этот оператор может повторяться только для разных линков.
+
+@node AutoFileCreateFile, AutoFileCreateDefaults, autoFileCreate, Link Keywords
+@subsection AutoFileCreateFile
+@findex AutoFileCreateFile
+@table @asis
+@item Синтаксис:
+@code{AutoFileCreateFile <file>}
+@item Пример:
+@code{AutoFileCreateFile /usr/local/fido/hpt/config.filefix}
+@end table
+
+Указывает файл, в который будет помещено описание новой файлобласти.
+
+Этот оператор может повторяться только для разных линков.
+
+@node AutoFileCreateDefaults, AutoFileCreateSubdirs, AutoFileCreateFile, Link Keywords
+@subsection AutoFileCreateDefaults
+@findex AutoFileCreateDefaults
+@table @asis
+@item Синтаксис:
+@code{AutoFileCreateDefaults <string>}
+@item Пример:
+@code{AutoFileCreateDefaults -lw 100 -g Z}
+@end table
+
+Определяет умолчания новой файлобласти.
+
+Этот оператор может повторяться только для разных линков.
+
+@node AutoFileCreateSubdirs, delNotReceivedTIC, AutoFileCreateDefaults, Link Keywords
+@subsection AutoFileCreateSubdirs
+@findex AutoFileCreateSubdirs
+@table @asis
+@item Синтаксис:
+@code{AutoFileCreateSubdirs <on|off>}
+@item Пример:
+@code{AutoFileCreateSubdirs on}
+@end table
+
+Автосоздавать арии как /filebase/gfd.app.edit (off) или как
+/filebase/gfd/app/edit (on).
+Если вы хотите установить эту опцию глобально, а не для каждого линка по
+отдельности, установите ее в секции deflink. Также см. 'AutoAreaCreateSubdirs'
+в документации на hpt.
+
+Этот оператор может повторяться только для разных линков.
+
+@node delNotReceivedTIC, FileFixFSC87Subset, AutoFileCreateSubdirs, Link Keywords
+@subsection delNotReceivedTIC
+@findex delNotReceivedTIC
+@table @asis
+@item Синтаксис:
+@code{delNotReceivedTIC <on|off>}
+@item Пример:
+@code{delNotReceivedTIC on}
+@end table
+
+Удалять TIC, если файл не был принят.
+
+Этот оператор может повторяться только для разных линков.
+
+@node FileFixFSC87Subset, TickerPackToBox, delNotReceivedTIC, Link Keywords
+@subsection FileFixFSC87Subset
+@findex FileFixFSC87Subset
+@table @asis
+@item Синтаксис:
+@code{FileFixFSC87Subset <on|off>}
+@item Пример:
+@code{FileFixFSC87Subset on}
+@end table
+
+Этот булевый переключатель определяет, как будут обрабатываться файлы TIC для
+каждого линка. Значение по умолчанию ON. В процессе обработки файлов TIC htick
+будет реагировать только на совместимые с FSC87 ключевые слова и игнорировать
+неизвестные. Если переключатель установлен в OFF, будут использованы все
+поддерживаемые ключевые слова, что может привести (а при работе с некоторыми
+файл-процессорами, ПРИВЕДЕТ) к серьезным проблемам. Неизвестные ключевые слова,
+найденные в TIC, вынудят htick прекратить обработку этого файла. Если вы не
+представляете, что все это значит, установите @code{FileFixFSC87Subset} в ON для
+всех линков. Это не повредит.
+
+Этот оператор может повторяться только для разных линков.
+
+@node TickerPackToBox, LinkFileBaseDir, FileFixFSC87Subset, Link Keywords
+@subsection TickerPackToBox
+@findex TickerPackToBox
+@table @asis
+@item Синтаксис:
+@code{TickerPackToBox <on|off>}
+@item Пример:
+@code{TickerPackToBox on}
+@end table
+
+Если для линка определен файлбокс - тоссить файлы и TIC'и в нем.
+
+Этот оператор может повторяться только для разных линков.
+
+@node LinkFileBaseDir, ForwardFileRequests, TickerPackToBox, Link Keywords
+@subsection LinkFileBaseDir
+@findex LinkFileBaseDir
+@table @asis
+@item Синтаксис:
+@code{LinkFileBaseDir <directory>}
+@item Пример:
+@code{LinkFileBaseDir /usr/local/fido/fileareas/2.5097.64.0}
+@end table
+
+Куда будут помещены автосозданные файлобласти (может быть "passthrough").
+
+Этот оператор может повторяться только для разных линков.
+
+@node ForwardFileRequests, ForwardFilePriority, LinkFileBaseDir, Link Keywords
+@subsection ForwardFileRequests
+@findex ForwardFileRequests
+@table @asis
+@item Синтаксис:
+@code{ForwardFileRequests <on|off>}
+@item Пример:
+@code{ForwardFileRequests on}
+@end table
+
+Разрешить форвард-реквесты файлобластей на этого линка.
+
+Этот оператор может повторяться только для разных линков.
+
+@node ForwardFilePriority, ForwardFileRequestFile, ForwardFileRequests, Link Keywords
+@subsection ForwardFilePriority
+@findex ForwardFilePriority
+@table @asis
+@item Синтаксис:
+@code{ForwardFilePriority <number>}
+@item Пример:
+@code{ForwardFilePriority 1}
+@end table
+
+Приоритет аплинка при форвард-реквестах подписок на файлобласти.
+
+Этот оператор может повторяться только для разных линков.
+
+@node ForwardFileRequestFile, FileFix, ForwardFilePriority, Link Keywords
+@subsection ForwardFileRequestFile
+@findex ForwardFileRequestFile
+@table @asis
+@item Синтаксис:
+@code{ForwardFileRequestFile <file>}
+@item Пример:
+@code{ForwardFileRequestFile /usr/local/fido/hpt/uplink1.lst}
+@end table
+
+Список доступных у этого линка файлобластей.
+
+Этот оператор может повторяться только для разных линков.
+
+
+@node FileFix, FileFixEchoLimit, ForwardFileRequestFile, Link Keywords
+@subsection FileFix
+@findex FileFixEcho
+@table @asis
+@item Синтаксис:
+@code{filefix <bool>}
+@item Пример:
+@code{filefix off}
+@end table
+
+По умолчанию filefix включен (on). Вы можете отключить использование этим линком
+filefix'а.
+
+Этот оператор может повторяться только для разных линков.
+
+
+@node FileFixEchoLimit, FileArea Definition, FileFix, Link Keywords
+@subsection FileFixEchoLimit
+@findex FileFixEchoLimit
+@table @asis
+@item Синтаксис:
+@code{FileFixEchoLimit <number>}
+@item Пример:
+@code{FileFixEchoLimit 10}
+@end table
+
+Лимит подписки на области (максимальное количество файлобластей, на которое этот
+линк может подписаться).
+
+Этот оператор может повторяться только для разных линков.
+
+@node FileArea Definition, FileArea, FileFixEchoLimit, Configuration Reference
+@section Определение файлобласти.
+
+@menu
+* FileArea::                     Определение файлобласти.
+@end menu
+
+@node FileArea, Announce System, FileArea Definition, FileArea Definition
+@subsection FileArea
+@findex FileArea
+@table @asis
+@item Синтаксис:
+@code{FileArea <name> <fileareapath> [options] <uplink> <downlinks>}
+@item Пример:
+@code{FileArea husky /var/spool/fido/fileareas/husky -a 2:5097/31 -p 28 -g Z -d "HUSKY fileecho" 2:5097/64 2:5097/303}
+@end table
+
+Подобно EchoArea, доступно большинство опций:
+
+@table @asis
+@item -a <address>
+Наш адрес в этой области.
+
+@item -d "<string>"
+Описание этой области.
+
+@item -g <group>
+Группа этой области.
+
+@item -hide
+Спрятать область (не показывать по %LIST и в анонсах).
+
+@item -nohide
+Показывать область по %LIST и в анонсах, если fileareadefaults установлено в
+@code{-hide}.
+
+@item -lr <number>
+"Уровень для чтения": минимальный уровень линка, необходимый для того, чтобы
+посылать ему файлы из этой области.
+Должен быть неотрицательным.
+
+@item -lw <number>
+"Уровень для записи": минимальный уровень линка, необходимый для того, чтобы
+постить в область файлы, полученные от него.
+Должен быть неотрицательным.
+
+@item -mandatory
+Запретить удаленную отписку (отключить соответствующую команду filefix).
+
+@item -nomandatory
+Разрешить удаленную отписку (включить соответствующую команду filefix), если
+fileareadefaults установлено в @code{-mandatory}.
+
+@item -manual
+Запретить удаленную подписку (отключить соответствующую команду filefix).
+
+@item -nomanual
+Разрешить удаленную подписку (включить соответствующую команду filefix), если
+fileareadefaults установлено в @code{-manual}.
+
+@item -noCRC
+Отключить проверку CRC входящих файлов.
+
+@item -CRC
+Включить проверку CRC входящих файлов, если fileareadefaults установлено в
+@code{-noCRC}.
+
+@item -nodiz
+Не пытаться получить описание файла из <fileDescName> (для архивных файлов).
+
+@item -diz
+Попытаться получить описание файла из <fileDescName> (для архивных файлов), если
+fileareadefaults установлено в @code{-nodiz}.
+
+@item -pause
+Эффект %PAUSE для этой области.
+
+@item -nopause
+Отключить эффект %PAUSE для этой области, если fileareadefaults установлено в
+@code{-pause}.
+
+@item -noreplace
+Не заменять существующие в этой области файлы.
+
+@item -replace
+Заменять существующие в этой области файлы, если fileareadefaults установлено в
+@code{-noreplace}.
+
+@item -p <integer>
+Пуржить каждые n дней. Установка в 0 (значение по умолчанию) отключает пуржинг.
+
+@item -sendorig
+Посылать файлы из PassFileAreaDir для не-passthrough областей.
+
+@item -nosendorig
+Посылать файлы из директории файлобласти для не-passthrough областей, если
+fileareadefaults установлено в @code{-sendorig}.
+
+@end table
+
+@node Announce System, AnnounceSpool, FileArea, Configuration Reference
+@section Система анонсов
+
+htick имеет гибкую систему анонсов, которые могут различаться для разных
+файлобластей.
+Токен @code{AnnAreaTag} начинает новую секцию определения анонса, другие токены
+определяют списки файлобластей, включенных в анонс, и описывают формат анонса.
+
+Запустите @code{htick announce}, чтобы постить анонсы.
+
+Вы можете отключить анонсы - просто удалите @code{AnnounceSpool} из своего
+конфига.
+
+@menu
+* AnnounceSpool::         Директория для накапливания информации для анонсов.
+* AnnAreaTag::            Имя области или файла, куда будет помещен анонс.
+* AnnInclude::            Массив масок файлэх, которые будут анонсированы в
+                          этом annAreaTag.
+* AnnExclude::            Массив масок файлэх, которые не будут анонсированы в
+                          этом annAreaTag.
+* AnnTo::                 Имя получателя в письме с анонсом.
+* AnnFrom::               Имя отправителя в письме с анонсом.
+* AnnSubj::               Тема в письме с анонсом.
+* AnnAddrTo::             Адрес получателя в письме с анонсом (используйте
+                          только для нетмейловых областей).
+* AnnAddrFrom::           Адрес отправителя в письме с анонсом.
+* AnnOrigin::             Origin в письме с анонсом.
+* AnnMessFlags::          Атрибуты письма с анонсом (k/s loc hld ...).
+* AnnFileRFrom::          Указывать в анонсе: адрес системы, от которой был
+                          получен файл.
+* AnnFileOrigin::         Указывать в анонсе: адрес системы, которая захатчила
+                          файл.
+* Announcements example:: Пример для понимания анонсов (из действующего конфига).
+
+@end menu
+
+@node AnnounceSpool, AnnAreaTag, Announce System, Announce System
+@subsection AnnounceSpool
+@findex AnnounceSpool
+@table @asis
+@item Синтаксис:
+@code{AnnounceSpool <path>}
+@item Пример:
+@code{AnnounceSpool /var/spool/fido/announce}
+@end table
+
+Директория для накапливания информации для анонсов.
+
+Этот оператор не может повторяться.
+
+@node AnnAreaTag, AnnInclude, AnnounceSpool, Announce System
+@subsection AnnAreaTag
+@findex AnnAreaTag
+@table @asis
+@item Синтаксис:
+@code{AnnAreaTag <AREATAG|@@filename>}
+@item Пример:
+@code{AnnAreaTag local.announce}
+@end table
+
+Начинает новую секцию определения анонса. <AREATAG> - имя области, в которую
+будет помещен анонс; <@@filename> - имя файла с префиксом '@@', в который будет
+помещен анонс.
+
+Этот оператор может повторяться.
+
+
+@node AnnInclude, AnnExclude, AnnAreaTag, Announce System
+@subsection AnnInclude
+@findex AnnInclude
+@table @asis
+@item Синтаксис:
+@code{AnnInclude <fileecho mask list>}
+@item Пример:
+@code{AnnInclude *}
+@end table
+
+Массив имен|масок файлобластей, которые будут анонсированы в этом annAreaTag.
+По умолчанию: все файлобласти.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnExclude, AnnTo, AnnInclude, Announce System
+@subsection AnnExclude
+@findex AnnExclude
+@table @asis
+@item Синтаксис:
+@code{AnnExclude <fileecho mask list>}
+@item Пример:
+@code{AnnExclude aftnged}
+@end table
+
+Массив имен|масок файлобластей, которые не будут анонсированы в этом annAreaTag.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnTo, AnnFrom, AnnExclude, Announce System
+@subsection AnnTo
+@findex AnnTo
+@table @asis
+@item Синтаксис:
+@code{AnnTo <string>}
+@item Пример:
+@code{AnnTo All}
+@end table
+
+Имя получателя в письме с анонсом.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnFrom, AnnSubj, AnnTo, Announce System
+@subsection AnnFrom
+@findex AnnFrom
+@table @asis
+@item Синтаксис:
+@code{AnnFrom <string>}
+@item Пример:
+@code{AnnFrom Announce Robot}
+@end table
+
+Имя отправителя в письме с анонсом.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnSubj, AnnAddrTo, AnnFrom, Announce System
+@subsection AnnSubj
+@findex AnnSubj
+@table @asis
+@item Синтаксис:
+@code{AnnSubj <string>}
+@item Пример:
+@code{AnnSubj New files arrived}
+@end table
+
+Тема в письме с анонсом.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnAddrTo, AnnAddrFrom, AnnSubj, Announce System
+@subsection AnnAddrTo
+@findex AnnAddrTo
+@table @asis
+@item Синтаксис:
+@code{AnnAddrTo <address>}
+@item Пример:
+@code{AnnAddrTo 2:5097/31.1}
+@end table
+
+Адрес получателя в письме с анонсом (используйте для нетмейловых областей).
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnAddrFrom, AnnOrigin, AnnAddrTo, Announce System
+@subsection AnnAddrFrom
+@findex AnnAddrFrom
+@table @asis
+@item Синтаксис:
+@code{AnnAddrFrom <address>}
+@item Пример:
+@code{AnnAddrFrom 2:5097/31}
+@end table
+
+Адрес отправителя в письме с анонсом.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnOrigin, AnnMessFlags, AnnAddrFrom, Announce System
+@subsection AnnOrigin
+@findex AnnOrigin
+@table @asis
+@item Синтаксис:
+@code{AnnOrigin <string>}
+@item Пример:
+@code{AnnOrigin New files!}
+@end table
+
+Origin в письме с анонсом.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnMessFlags, AnnFileRFrom, AnnOrigin, Announce System
+@subsection AnnMessFlags
+@findex AnnMessFlags
+@table @asis
+@item Синтаксис:
+@code{AnnMessFlags <string>}
+@item Пример:
+@code{AnnMessFlags loc hld}
+@end table
+
+Флаги письма с анонсом (k/s loc hld ...).
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnFileRFrom, AnnFileOrigin, AnnMessFlags, Announce System
+@subsection AnnFileRFrom
+@findex AnnFileRFrom
+@table @asis
+@item Синтаксис:
+@code{AnnFileRFrom <on|off>}
+@item Пример:
+@code{AnnFileRFrom on}
+@end table
+
+Указывать в анонсе: адрес системы, от которой был получен файл.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node AnnFileOrigin, Announcements example, AnnFileRFrom, Announce System
+@subsection AnnFileOrigin
+@findex AnnFileOrigin
+@table @asis
+@item Синтаксис:
+@code{AnnFileOrigin <on|off>}
+@item Пример:
+@code{AnnFileOrigin on}
+@end table
+
+Указывать в анонсе: адрес системы, которая захатчила файл.
+
+Этот оператор может повторяться только для разных AnnAreaTag.
+
+@node Announcements example, Common husky keywords, AnnFileOrigin, Announce System
+@subsection Пример анонсов
+@findex Пример анонсов
+
+Следующий текст взят из действующего конфигурационного файла.
+
+@example
+#= Определения анонсов =====================================
+AnnounceSpool   E:\FIDO\EXCH\report
+
+# сообщать обо всех пришедших файлах в файл e:\fido\rep.txt
+AnnAreaTag      @@e:\fido\rep.txt
+AnnFileOrigin   on
+
+# сообщать в область 'seumbieky.news' о файлах, захатченных
+# в группу файлэх 'union.*'
+AnnAreaTag      seumbieky.news
+AnnInclude      union.*
+AnnSubj         New mp3's arrives
+AnnTo           United mp3 fans
+AnnFrom         Fullfeed Distribution Site
+AnnOrigin       *** seumbieky forever ***
+AnnFileOrigin   on
+AnnFileRfrom    on
+
+# сообщать о файлах в группе файлэх 'uue.*' в область
+# 'seumbieky.news'
+AnnAreaTag      seumbieky.news
+AnnInclude      uue.*
+
+# сообщать в область 'seumbieky.news' о файлах во всех
+# группах, кроме 'uue.*' и 'union.*'
+AnnAreaTag      seumbieky.news
+AnnExclude      uue.* union.*
+
+# сообщать нетмейлом на заданный адрес
+AnnAreaTag      netmail
+AnnInclude      union.*
+AnnSubj         New mp3's arrives
+AnnTo           Max Inda Houze
+Annaddrto       2:464/108
+AnnFrom         Fullfeed Distribution Site
+Annaddrfrom     2:464/910.108
+AnnOrigin       *** seumbieky forever ***
+AnnMessFlags    k/s loc hld
+AnnFileOrigin   on
+AnnFileRfrom    on
+#= Конец определений анонсов ===============================
+@end example
+
+@node Common husky keywords, Keyword Index, Announcements example, Configuration Reference
+@subsection Общие ключевые слова husky
+@findex Общие ключевые слова husky
+
+Список ключевых слов, используемых многими программами husky. Подробнее см. в
+документации на fidoconfig.
+
+@table @asis
+@item @code{BBSArea}
+@item @code{LogLevels}
+...
+@end table
+
+
+@node Keyword Index, , Common husky keywords, Top
+@appendix Список ключевых слов конфигурационного файла
+@printindex fn
+
+@bye
