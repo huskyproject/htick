@@ -336,7 +336,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
     msg->attributes = pRepDef->attributes;
 
     msg->text = createKludges(  
-        config->disableTID,
+        config->disablePID,
         netmail ? NULL : pRepDef->annAreaTag, 
         pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
         pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]), 
