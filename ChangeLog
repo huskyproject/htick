@@ -1,3 +1,8 @@
+2002-10-29 Tuesday 08:58  stas_degteff
+
+	* FidoConfigKeywords (htick-1_0-stable.1): Update fileDescName
+	token description. Thanks to Valery Kondakoff
+
 2002-10-27 Sunday 22:39  pgul
 
 	* src/toss.c (htick-1_0-stable.10): Fixed previous patch (unix
