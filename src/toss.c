@@ -1336,7 +1336,7 @@ void checkTmpDir(s_link link,char ***filesInTic,unsigned int *filesCount)
                     strcpy((*filesInTic)[*filesCount], tic.file);
                     (*filesCount)++;
                     sprintf(buff, "Adding %s to hold list, %d files holded", tic.file,*filesCount);
-                    writeLogEntry(htick_log, '9', buff);		
+                    writeLogEntry(htick_log, '6', buff);
                 }
             }
         } /* if */
