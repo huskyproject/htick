@@ -67,10 +67,10 @@
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/adcase.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/recode.h>
+#include <huskylib/dirlayer.h>
+#include <huskylib/adcase.h>
+#include <huskylib/xstr.h>
+#include <huskylib/recode.h>
 
 #include <fcommon.h>
 #include <global.h>

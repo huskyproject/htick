@@ -39,9 +39,9 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/afixcmd.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/recode.h>
-#include <fidoconf/log.h>
+#include <huskylib/xstr.h>
+#include <huskylib/recode.h>
+#include <huskylib/log.h>
 
 #include <fcommon.h>
 #include <scan.h>

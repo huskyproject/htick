@@ -33,7 +33,7 @@
 
 #include <stdio.h>
 
-#include <fidoconf/typesize.h>
+#include <huskylib/typesize.h>
 #include <fidoconf/fidoconf.h>
 
 

@@ -39,11 +39,11 @@
 
 #include <huskylib/huskylib.h>
 
-#include <fidoconf/log.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/log.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/common.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/tree.h>
+#include <huskylib/dirlayer.h>
+#include <huskylib/tree.h>
 
 #include "toss.h"
 #include "htick.h"

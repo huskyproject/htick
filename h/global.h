@@ -32,7 +32,7 @@
 #define GLOBAL_H
 
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/log.h>
+#include <huskylib/log.h>
 
 struct ticfiletype {
                 char *file;         /*  Name of the file affected by Tic */

@@ -70,13 +70,13 @@
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/adcase.h>
+#include <huskylib/adcase.h>
 #include <fidoconf/common.h>
-#include <fidoconf/dirlayer.h>
-#include <fidoconf/xstr.h>
+#include <huskylib/dirlayer.h>
+#include <huskylib/xstr.h>
 #include <fidoconf/afixcmd.h>
-#include <fidoconf/recode.h>
-#include <fidoconf/crc.h>
+#include <huskylib/recode.h>
+#include <huskylib/crc.h>
 
 #if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #  define _A_HIDDEN A_HIDDEN
