@@ -1,3 +1,8 @@
+2002-04-19 Friday 16:21  mche
+
+	* src/: areafix.c (1.52), toss.c (1.141): pause statement expanded
+	to: Pause ON Pause OFF Pause FAREA Pause EAREA
+
 2002-04-13 Saturday 16:51  mche
 
 	* src/toss.c (1.140): filebox support improved
