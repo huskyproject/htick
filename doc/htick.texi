@@ -1007,39 +1007,71 @@ Description for this filearea.
 @item -g <group>
 Group for this filearea.
 
-@item -h
+@item -hide
 Hide area (don't show in %LIST and in an announcement).
 
+@item -nohide
+Show area in %LIST and in an announcement if fileareadefaults set to @code{-hide}.
+
 @item -lr <number>
-"Read level": Min link level for sending files from this filearea to this link.
+"Read level": min link level for sending files from this filearea to this link.
+Value can't be negative.
 
 @item -lw <number>
 "Write level": 
 Min link level allowed to post into this filearea files received from link.
+Value can't be negative.
 
 @item -mandatory
 Disallow remote unsubscribe (disable unsubscribe filefix command).
 
+@item -nomandatory
+Allow remote unsubscribe (enable unsubscribe filefix command) if
+fileareadefaults set to @code{-mandatory}.
+
 @item -manual
-Disallow remote subscribe (disable subscribe filefix command).
+Disallow remote subscribe (disable subscribe filefix command)
+
+@item -nomanual
+Allow remote subscribe (enable subscribe filefix command)
+if fileareadefaults set to @code{-manual}.
 
 @item -noCRC
 Disable CRC check for incoming files.
 
+@item -CRC
+Enable CRC check for incoming files
+if fileareadefaults set to @code{-noCRC}.
+
 @item -nodiz
 Do not try to get file description from <fileDescName> (for packed files).
 
+@item -diz
+Try to get file description from <fileDescName> (for packed files)
+if fileareadefaults set to @code{-nodiz}.
+
+@item -pause
+%PAUSE has effect to this filearea.
+
 @item -nopause
-%PAUSE has no effect to this filearea.
+%PAUSE has no effect to this filearea
+if fileareadefaults set to @code{-pause}.
 
 @item -noreplace
 Don't replace exisiting files in this filearea.
 
+@item -replace
+Replace exisiting files in this filearea if fileareadefaults set to @code{-noreplace}.
+
 @item -p <integer>
-Purge after n days. Setting to 0 to disables purging.
+Purge after n days. Setting to 0 to disables purging (this is default value).
 
 @item -sendorig
 Send files from PassFileAreaDir for non passthrough areas.
+
+@item -nosendorig
+Send files from FileArea directory for non passthrough areas
+if fileareadefaults set to @code{-sendorig}.
 
 @end table
 
