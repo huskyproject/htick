@@ -1,0 +1,18 @@
+FileAreaBaseDir <directory>  
+
+Where the directories for all File areas shall be made at autocreate
+Same as MsgBaseDir
+
+AutoFileCreateDefaults <string> 
+
+Defaults for File Area Autocreate
+
+FileFixHelp <file>
+
+Help file for FileFix  (Same as AreaFixHelp for AreaFix)
+
+FileArea <name> <fileareapath> <uplink> [options] <downlinks>
+
+Same as EchoArea, most options are valid
+
+

@@ -1,0 +1,11 @@
+The following things are currently not implemented in HTICK:
+------------------------------------------------------------------------
+
+- index.bbs file write code
+- index.html file write code
+- purging old files
+- offline file request feature like reqscan (write a netmail to reqscan,
+  get the files laid on hold)
+- security check of tossgroup
+- dupe checking
+- much, much more :)
