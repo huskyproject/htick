@@ -35,7 +35,7 @@
 #include <os2.h>
 #endif
 
-
+#include <io.h>
 #include <string.h>
 #include <stdlib.h>
 #ifndef UNIX
