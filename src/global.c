@@ -34,7 +34,7 @@ s_log     *htick_log;
 s_fidoconfig *config;
 
 const int VER_MAJOR = 0;
-const int VER_MINOR = 02;
+const int VER_MINOR = 03;
 char      versionStr[30];
 
 int       cmToss = 0;
