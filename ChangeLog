@@ -1,3 +1,11 @@
+2003-03-01 Saturday 08:01  stas_degteff
+
+	* makefile.inc (1.1): Common part of makefiles (include-file)
+
+2003-03-01 Saturday 08:00  stas_degteff
+
+	* win32/makefile.cyg (1.14): Allow DLL build, check cygwin version
+
 2003-02-28 Friday 10:48  mche
 
 	* src/toss.c (1.255): do toss ticks w/o size
