@@ -604,7 +604,8 @@ int readCheck(s_filearea *echo, s_link *link)
   /* pause */
   if (link->Pause && !echo->noPause) return 3;
 
-  if (strcmp(echo->group,"0")) {
+/* Do not check for groupaccess here, use groups only (!) for Filefix */
+/*  if (strcmp(echo->group,"0")) {
       if (link->numAccessGrp) {
           if (config->numPublicGroup) {
               if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
@@ -614,7 +615,7 @@ int readCheck(s_filearea *echo, s_link *link)
       } else if (config->numPublicGroup) {
           if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
       } else return 1;
-  }
+  }*/
 
   if (echo->levelread > link->level) return 2;
 
@@ -652,7 +653,8 @@ int writeCheck(s_filearea *echo, s_addr *aka)
 
   if (i == echo->downlinkCount) return 4;
 
-   if (strcmp(echo->group,"0")) {
+/* Do not check for groupaccess here, use groups only (!) for Filefix */
+/*  if (strcmp(echo->group,"0")) {
       if (link->numAccessGrp) {
          if (config->numPublicGroup) {
 	    if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
@@ -664,7 +666,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
          if (config->numPublicGroup) {
 	    if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
 	 } else return 1;
-   }
+   }*/
 
   if (echo->levelwrite > link->level) return 2;
     

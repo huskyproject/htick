@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sun Apr  9 17:48:48 CET 2000
+hjk:
+* removed check of groupaccess on import and export of files
+
+----- cvs ci ------
 Mon Mar 20 08:56:28 MSK 2000
 max (patch from Serguei Revtov):
 * change legacy SUN & Win makefiles to compile with new includes, simplifying
