@@ -1,3 +1,28 @@
+2002-06-09 Sunday 14:28  mche
+
+	* win32/makefile.cyg (1.5), src/add_desc.c (1.12), src/scan.c
+	(1.22), src/toss.c (1.187): remove cygwin warnings
+
+2002-06-09 Sunday 14:16  mche
+
+	* src/areafix.c (1.65), src/toss.c (1.186), h/areafix.h (1.11):
+	forwardrequests added
+
+2002-06-09 Sunday 11:08  mche
+
+	* src/areafix.c (1.64), src/toss.c (1.185), h/areafix.h (1.10):
+	autoCreate() moved to areafix.c from toss.c
+
+2002-06-09 Sunday 10:53  mche
+
+	* src/filelist.c (1.29), src/hatch.c (1.54), src/toss.c (1.184),
+	h/toss.h (1.14): report postin moved to filelist.c from toss.c
+
+2002-06-09 Sunday 10:30  mche
+
+	* src/areafix.c (1.63), src/scan.c (1.21), src/toss.c (1.183),
+	h/toss.h (1.13): pkt.h removed form project
+
 2002-06-08 Saturday 19:29  d.sergienko
 
 	* src/: hatch.c (1.53), toss.c (1.182): 
