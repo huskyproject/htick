@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Fri Nov 17 15:25:44 NOVT 2000
+max:
+* don't core dump with long desriptions in hatch (static buffers must die)
+
+----- cvs ci ------
 Tue Oct 17 14:02:44 NOVST 2000
 max:
 * don't core dump while write msg to sysop 

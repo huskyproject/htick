@@ -1622,41 +1622,38 @@ void writeMsgToSysop(s_message *msg, char *areaName)
 
 char *formDescStr(char *desc)
 {
-   char *keepDesc, *newDesc, *tmp, *ch, buff[100];
+   char *keepDesc, *newDesc, *tmp, *ch, *buff=NULL;
 
    keepDesc = strdup(desc);
 
    if (strlen(desc) <= 50) {
       return keepDesc;
-   } /* endif */
+   }
 
    newDesc = (char*)calloc(1, sizeof(char));
 
    tmp = keepDesc;
 
    ch = strtok(tmp, " \t\r\n");
-   memset(buff, 0, sizeof(buff));
    while (ch) {
-      if (strlen(ch) > 50) {
-         newDesc = (char*)realloc(newDesc, 50+27);
-         strncat(newDesc, ch, 50);
-         sprintf(newDesc+strlen(newDesc), "\r%s", print_ch(24, ' '));
-         ch += 50;
+      if (strlen(ch) > 54 && !buff) {
+		  newDesc = (char*)realloc(newDesc, strlen(newDesc)+55);
+		  strncat(newDesc, ch, 54);
+		  xstrscat(&newDesc, "\r", print_ch(24, ' '), NULL);
+		  ch += 54;
       } else {
-         if (strlen(buff)+strlen(ch) > 50) {
-            newDesc = (char*)realloc(newDesc, strlen(newDesc)+strlen(buff)+27);
-            sprintf(newDesc+strlen(newDesc), "%s\r%s", buff, print_ch(24, ' '));
-            memset(buff, 0, sizeof(buff));
-         } else {
-            sprintf(buff+strlen(buff), "%s ", ch);
-            ch = strtok(NULL, " \t\r\n");
-         } /* endif */
-      } /* endif */
-   } /* endwhile */
-   if (strlen(buff) != 0) {
-      newDesc = (char*)realloc(newDesc, strlen(newDesc)+strlen(buff)+1);
-      strcat(newDesc, buff);
-   } /* endif */
+		  if (buff && strlen(buff)+strlen(ch) > 54) {
+			  xstrscat(&newDesc, buff, "\r", print_ch(24, ' '), NULL);
+			  nfree(buff);
+		  } else {
+			  xstrscat(&buff, ch, " ", NULL);
+			  ch = strtok(NULL, " \t\r\n");
+		  }
+      }
+   }
+   if (buff && strlen(buff) != 0) {
+	   xstrcat(&newDesc, buff);
+   } nfree (buff);
 
    nfree(keepDesc);
 
@@ -1665,22 +1662,19 @@ char *formDescStr(char *desc)
 
 char *formDesc(char **desc, int count)
 {
-   char *buff, *tmp;
-   int i;
+	char *buff=NULL, *tmp;
+	int i;
 
-   buff = (char*)calloc(1, sizeof(char));
-   for (i = 0; i < count; i++ ) {
-      tmp = formDescStr(desc[i]);
-      buff = (char*)realloc(buff, strlen(buff)+strlen(tmp)+26);
-      if (i == 0) {
-         sprintf(buff+strlen(buff), "%s\r", tmp);
-      } else {
-         sprintf(buff+strlen(buff), "%s%s\r", print_ch(24, ' '), tmp);
-      } /* endif */
-      nfree(tmp);
-   } /* endfor */
-
-   return buff;
+	for (i = 0; i < count; i++ ) {
+		tmp = formDescStr(desc[i]);
+		if (i == 0) {
+			xstrscat(&buff, tmp , "\r", NULL);
+		} else {
+			xstrscat(&buff, print_ch(24, ' '), tmp, "\r", NULL);
+		}
+		nfree(tmp);
+	}
+	return buff;
 }
 
 void freeFReport(s_newfilereport *report)
