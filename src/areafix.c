@@ -362,8 +362,8 @@ void changeHeader(s_message *msg, s_link *link) {
 	tmp = (char*) realloc(tmp, strlen(subject)+1);
 	strcpy(tmp,subject);
 	msg->subjectLine = tmp;
+	free(msg->toUserName);
 	msg->toUserName = msg->fromUserName;
-	free(msg->fromUserName);
 	msg->fromUserName = strdup("HTick FileFix");
 }
 

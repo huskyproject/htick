@@ -512,14 +512,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(1);
       }
 
-   if (to_us(tic.to))
-      {
-      sprintf(logstr,"Tic File adressed to %s, not to us",
-              addr2string(&tic.to));
-      writeLogEntry(log,'9',logstr);
-      disposeTic(&tic);
-      return(4);
-      }
+   if (tic.to.zone!=0) 
+      if (to_us(tic.to))
+         {
+         sprintf(logstr,"Tic File adressed to %s, not to us",
+                 addr2string(&tic.to));
+         writeLogEntry(log,'9',logstr);
+         disposeTic(&tic);
+         return(4);
+         }
 
    strcpy(ticedfile,ticfile);
    *(strrchr(ticedfile,'/')+1)=0;
