@@ -1,3 +1,13 @@
+2005-02-21 Monday 16:33  nick_voronin
+
+	* src/htickafix.c (1.5): Logging added
+
+2005-02-21 Monday 16:31  nick_voronin
+
+	* src/scan.c (1.36): Bug fixed: even msgs in sequence of requests
+	was missed if killrequests=on Behaviour changed: Don't kill
+	abortively processed requests
+
 2005-02-19 Saturday 15:33  val_khokhlov
 
 	* src/toss.c (1.287): fix a bug with autoCreate() call
