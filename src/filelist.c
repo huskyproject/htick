@@ -169,7 +169,10 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         fprintf(f,"-----------------------------------------------------------------------------\n");
         fprintf(f,"Total files in area: %6d, total size: %10s bytes\n\n",totalnumber,PrintBigSize(&bs));
     }
-    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
+    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) {
+	closedir(dir);
+	return;
+    }
     while ((fbbsline = readLine(fbbs)) != NULL) {
         if (*fbbsline == 0 || *fbbsline == 10 || *fbbsline == 13
             || *fbbsline == ' ' || *fbbsline == '\t' || *fbbsline == '>')
@@ -208,6 +211,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     IncBigSize2(&totalfilessize,&bs);
     totalfilesnumber += totalnumber;
     nfree(filename);
+    closedir(dir);
     return;
 }
 
