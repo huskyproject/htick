@@ -1,3 +1,7 @@
+2005-03-19 Saturday 16:00  mche
+
+	* htick.vcproj (1.7): fix compilation
+
 2005-03-06 Sunday 18:30  val_khokhlov
 
 	* src/htickafix.c (1.7): fix a bug with empty request message text
