@@ -1828,7 +1828,7 @@ void reportNewFiles()
                         versionStr, "All", "New Files", 0);
                      msg->text = createKludges(annArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
                   } /* endif */
-                  strcat(msg->text, " ");
+                  xstrcat(&(msg->text), " ");
                } /* endif */
 
                fileCount = fileSize = 0;
