@@ -32,6 +32,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <stdio.h>
 #ifdef __EMX__
 #include <sys/types.h>
 #endif
