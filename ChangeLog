@@ -1,3 +1,18 @@
+2004-01-23 Friday 10:39  mche
+
+	* src/: fcommon.c (1.73), filelist.c (1.49), hatch.c (1.88), toss.c
+	(1.277): some improvement on fileDescription
+
+2004-01-23 Friday 08:02  andr_lukyanov
+
+	* doc/htick.texi (1.27): Add new token: fileDescription, by default
+	- files.bbs
+
+2004-01-23 Friday 07:42  andr_lukyanov
+
+	* src/: fcommon.c (1.72), filelist.c (1.48), hatch.c (1.87), toss.c
+	(1.276): Add new token: fileDescription, by default - files.bbs
+
 2004-01-14 Wednesday 04:12  andr_lukyanov
 
 	* h/version.h (1.7), src/areafix.c (1.125), src/filelist.c (1.47),
