@@ -142,6 +142,8 @@ void buildAccessList()
     for (i = 0; i < rCount; i++) {
         if( currFArea == NULL || stricmp(Report[i].area, currFArea->areaName))
         {
+            if(getFileArea(config,Report[i].area) == NULL)
+                continue;
             aCount++;
             aList = srealloc( aList, (aCount)*sizeof(s_FAreaRepInfo));
             currFArea            = getFileArea(config,Report[i].area);
