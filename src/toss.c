@@ -76,6 +76,7 @@
 #include <fidoconf/afixcmd.h>
 #include <huskylib/recode.h>
 #include <huskylib/crc.h>
+#include <areafix/query.h>
 
 #if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #  define _A_HIDDEN A_HIDDEN

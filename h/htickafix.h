@@ -33,23 +33,10 @@
 
 #include "fcommon.h"
 
-#define NOTHING 0
-#define LIST    1
-#define HELP    2
-#define ADD     3
-#define DEL     4
-#define AVAIL   5
-#define UNLINK  6
-#define PAUSE   7
-#define RESUME  8
-#define INFO    9
-#define RESEND  10
-#define LINKED  11
 #define FFERROR 255
 
 int   processFileFix(s_message *msg);
 void  ffix(hs_addr addr, char *cmd);
-//int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink);
 int init_htickafix(void);
 
 /* these two functions are to be removed from htick after merging filefix and */

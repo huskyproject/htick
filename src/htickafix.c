@@ -245,10 +245,10 @@ int filefix_tellcmd(char *cmd) {
 		if (*line == 0) return FFERROR;
 		if (stricmp(line,"list")==0) return LIST;
 		if (stricmp(line,"help")==0) return HELP;
-		if (stricmp(line,"unlinked")==0) return UNLINK;
-		if (stricmp(line,"linked")==0) return LINKED;
+		if (stricmp(line,"unlinked")==0) return UNLINKED;
+		if (stricmp(line,"linked")==0) return QUERY;
         if (stricmp(line,"avail")==0) return AVAIL;
-		if (stricmp(line,"query")==0) return LINKED;
+		if (stricmp(line,"query")==0) return QUERY;
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
 		if (stricmp(line,"info")==0) return INFO;
@@ -285,11 +285,11 @@ char *filefix_processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	case DEL: report = unsubscribe (link, line);
 		RetFix=DEL;
 		break;
-	case UNLINK: report = list (lt_unlinked, link, line);
-		RetFix=UNLINK;
+	case UNLINKED: report = list (lt_unlinked, link, line);
+		RetFix=UNLINKED;
 		break;
-	case LINKED: report = list (lt_linked, link, line);
-		RetFix=LINKED;
+	case QUERY: report = list (lt_linked, link, line);
+		RetFix=QUERY;
 		break;
 	case AVAIL: report = available (link, line);
 		RetFix=AVAIL;
@@ -325,7 +325,6 @@ int processFileFix(s_message *msg)
 	s_link *link = NULL;
 	s_link *tmplink = NULL;
 	char *textBuff = NULL, *report=NULL, *preport = NULL, *token = NULL;
-	s_link_robot *r;
 	
 	/*  find link */
 	link=getLinkFromAddr(config, msg->origAddr);
@@ -373,10 +372,10 @@ int processFileFix(s_message *msg)
 					//if (report == NULL) report = textHead();
 					report = areaStatus(report, preport);
 					break;
-				case UNLINK:
+				case UNLINKED:
 					RetMsg(msg, link, preport, "Filefix reply: unlinked request");
 					break;
-				case LINKED:
+				case QUERY:
     				RetMsg(msg, link, preport, "Filefix reply: linked request");
 					break;
 				case AVAIL:
