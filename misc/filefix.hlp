@@ -1,13 +1,25 @@
+Here's some help about how you can use FileFix to change your fileareas.
 
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-filefix help:
+Example:
 
-%list		list of fileareas avialable
-%help		what are you reading, pal? :)
-+<echotag>	subscribe filearea
-<echotag>	the same
--<echotag>	unsubscribe filearea
-
-attention!	all other lines are *ignored*
-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
-
+ Msg  : 5 of 8                             Pvt
+ From : Your Name                          2:5020/960.1    13 Feb 99  19:51:12
+ To   : FileFix                            2:5020/960      15 Feb 99  21:57:42
+ Subj : PASSWORD              <- Your password
+-------------------------------------------------------------------------------
+ AFTNMISC                     <- Add (link) filearea
+ +OFTNMISC                    <- same
+ -NODEDIFF                    <- Remove (unlink) filearea
+ -*                           <- Remove all linked fileareas
+ %INFO                        <- Ask for general information
+ %LIST                        <- List available fileareas
+ %UNLINKED                    <- List available fileareas to which
+                                 you are currently not linked
+ %QUERY                       <- To request a list of fileareas for which 
+                                 you are connected.
+ %PAUSE                       <- If you go to holiday you can
+                                 stop receiving files for that
+                                 time without manually removing each
+                                 area with '-AREANAME'.
+ %RESUME                      <- Switch files receiving ON again.
+ %HELP                        <- FileFix will send you this help.

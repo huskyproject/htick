@@ -161,16 +161,21 @@ void scanNMArea(void)
               stricmp(xmsg.to,"filemgr")==0 ||
               stricmp(xmsg.to,"htick")==0 ||
               stricmp(xmsg.to,"filescan")==0)
-             && for_us)
+             && for_us && (xmsg.attr & MSGREAD) != MSGREAD)
             {
             convertMsgHeader(xmsg, &filefixmsg);
             convertMsgText(msg, &filefixmsg, config->addr[j]);
             
-            processFileFix(&filefixmsg);
+            if (!processFileFix(&filefixmsg)) {
+		xmsg.attr |= MSGREAD;
+		MsgWriteMsg(msg, 0, &xmsg, NULL, 0, 0, 0, NULL);
+	    }
+
+	    freeMsgBuff(&filefixmsg);
 
             MsgCloseMsg(msg);
-            MsgKillMsg(netmail, i);
-            i--;
+//            MsgKillMsg(netmail, i);
+//            i--;
             }
            else
             MsgCloseMsg(msg);

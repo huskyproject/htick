@@ -1,6 +1,10 @@
 htick 0.02
 ----------
-	
+
+Sun Jun 20  21:19:00
+Fedor:
+* change areafix.c
+
 Tue May 11 19:13:26 CEST 1999 
 mtt:
 + applied patch by Oleg to compile htick under os/2 with pgcc/emx

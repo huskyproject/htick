@@ -33,6 +33,22 @@
 
 #include <fcommon.h>
 
+#define NOTHING 0
+#define LIST    1
+#define HELP    2
+#define ADD     3
+#define DEL     4
+//#define AVAIL   5
+#define UNLINK  6
+#define PAUSE   7
+#define RESUME  8
+#define INFO    9
+#define RESEND  10
+#define ERROR   255
+
+
+
+void freeMsgBuff(s_message *msg);
 int processFileFix(s_message *msg);
 
 #endif
