@@ -405,9 +405,11 @@ char *unlinked(s_message *msg, s_link *link)
 char *list(s_message *msg, s_link *link) {
 
 	int i,j,active,avail,rc,desclen,len;
-	int areaslen[config->fileAreaCount];
+	int *areaslen;
 	int maxlen;
 	char *report, addline[256];
+	
+	areaslen = malloc(config->fileAreaCount * sizeof(int));
 
 	maxlen = 0;
 	for (i=0; i< config->fileAreaCount; i++) {
@@ -474,6 +476,8 @@ char *list(s_message *msg, s_link *link) {
 
 	sprintf(addline,"FileFix: list sent to %s", aka2str(link->hisAka));
 	writeLogEntry(htick_log, '8', addline);
+
+        free(areaslen);
 	
 	return report;
 }

@@ -1,9 +1,9 @@
-FileAreaBaseDir <directory>  
+FileAreaBaseDir <directory>
 
 Where the directories for all File areas shall be made at autocreate
 Same as MsgBaseDir
 
-PassFileAreaDir
+PassFileAreaDir <directory>
 
 Where shall be put files from Passthrough File areas (and TICs)
 

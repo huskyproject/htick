@@ -380,7 +380,6 @@ void disposeTic(s_ticfile *tic)
      }
 }
 
-
 int parseTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;   
@@ -584,6 +583,86 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    return 0;                                                        
 }              
 
+int readCheck(s_filearea *echo, s_link *link) {
+
+    // rc == '\x0000' access o'k
+    // rc == '\x0001' no access group
+    // rc == '\x0002' no access level
+    // rc == '\x0003' no access export
+    // rc == '\x0004' not linked
+    
+    int i;
+
+    for (i=0; i<echo->downlinkCount; i++) {
+	if (link == echo->downlinks[i]->link) break;
+    }
+    if (i == echo->downlinkCount) return 4;
+
+    // pause
+    if (link->Pause) return 3;
+    
+    if (echo->group && echo->group != '\060') {
+	if (link->AccessGrp) {
+	    if (config->PublicGroup) {
+		if (strchr(link->AccessGrp, echo->group) == NULL &&
+		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
+	} else if (config->PublicGroup) {
+		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	       } else return 1;
+    }
+    
+    if (echo->levelread > link->level) return 2;
+    
+    if (i < echo->downlinkCount) {
+	if (echo->downlinks[i]->export == 0) return 3;
+    }
+    
+    return 0;
+}
+
+int writeCheck(s_filearea *echo, s_addr *aka) {
+
+    // rc == '\x0000' access o'k
+    // rc == '\x0001' no access group
+    // rc == '\x0002' no access level
+    // rc == '\x0003' no access import
+    // rc == '\x0004' not linked
+
+    int i;
+
+    s_link *link;
+    
+    if (!addrComp(*aka,*echo->useAka)) return 0;
+    
+    link = getLinkFromAddr (*config,*aka);
+    if (link == NULL) return 4;
+    
+    for (i=0; i<echo->downlinkCount; i++) {
+	if (link == echo->downlinks[i]->link) break;
+    }
+    if (i == echo->downlinkCount) return 4;
+    
+    if (echo->group != '\060') {
+	if (link->AccessGrp) {
+	    if (config->PublicGroup) {
+		if (strchr(link->AccessGrp, echo->group) == NULL &&
+		    strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	    } else if (strchr(link->AccessGrp, echo->group) == NULL) return 1;
+	} else if (config->PublicGroup) {
+		   if (strchr(config->PublicGroup, echo->group) == NULL) return 1;
+	       } else return 1;
+    }
+    
+    if (echo->levelwrite > link->level) return 2;
+    
+    if (i < echo->downlinkCount) {
+	if (echo->downlinks[i]->import == 0) return 3;
+    }
+    
+    return 0;
+}
+
 int processTic(char *ticfile, e_tossSecurity sec)                     
 {
    s_ticfile tic;
@@ -604,6 +683,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    int busy;
    unsigned long crc;
    struct stat stbuf;
+   int writeAccess, readAccess;
 
 //   printf("Ticfile %s\n",ticfile);
 
@@ -614,7 +694,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    // Security Check
    from_link=getLinkFromAddr(*config,tic.from);
-   if (from_link==NULL) {
+   if (from_link == NULL) {
       sprintf(logstr,"Link for Tic From Adress '%s' not found",
               addr2string(&tic.from));
       writeLogEntry(htick_log,'9',logstr);
@@ -656,7 +736,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
       }
    }
 
-   //Calculate file size
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
 
@@ -689,27 +768,32 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(2);
    } 
 
-   if (isLinkOfFileArea(from_link,filearea)==0) {
-      sprintf(logstr,"Link %s not subscribe to File Area %s, rename tic to bad",
+   writeAccess = writeCheck(filearea,&tic.from);
+
+   switch (writeAccess) {
+   case 0: break;
+   case 4:
+      sprintf(logstr,"Link %s not subscribe to File Area %s",
               addr2string(&tic.from), tic.area);
       writeLogEntry(htick_log,'9',logstr);
       disposeTic(&tic);
       return(3);
-   }
-
-   for (i = 0; i < filearea->downlinkCount; i++)
-      if (from_link == filearea->downlinks[i]->link)
-        if (filearea->downlinks[i]->import == 0) {
-           sprintf(logstr,"Not import from link %s, %s",
-                   from_link->name,
-                   addr2string(&from_link->hisAka));
-           writeLogEntry(htick_log,'6',logstr);
-           disposeTic(&tic);
-           return(3);
-	} else break;
-
-   if (filearea->wgrp != NULL && (atoi(filearea->wgrp) > from_link->level)) {
-      sprintf(logstr,"Link %s, %s have little level",
+   case 3:
+      sprintf(logstr,"Not import from link %s, %s",
+              from_link->name,
+              addr2string(&from_link->hisAka));
+      writeLogEntry(htick_log,'6',logstr);
+      disposeTic(&tic);
+      return(3);
+   case 2:
+      sprintf(logstr,"Link %s, %s no access level",
+      from_link->name,
+      addr2string(&from_link->hisAka));
+      writeLogEntry(htick_log,'6',logstr);
+      disposeTic(&tic);
+      return(3);
+   case 1:
+      sprintf(logstr,"Link %s, %s no access group",
       from_link->name,
       addr2string(&from_link->hisAka));
       writeLogEntry(htick_log,'6',logstr);
@@ -809,34 +893,45 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    // Checking to whom I shall forward
-
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 && 
             addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
             addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0) {
          // Forward file to
+
+         readAccess = readCheck(filearea, filearea->downlinks[i]->link);
+         switch (readAccess) {
+         case 0: break;
+         case 4:
+            sprintf(logstr,"Link %s not subscribe to File Area %s",
+                    addr2string(&old_from), tic.area);
+            writeLogEntry(htick_log,'9',logstr);
+         case 3:
+            sprintf(logstr,"Not export to link %s, %s",
+                    filearea->downlinks[i]->link->name,
+                    addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'6',logstr);
+         case 2:
+            sprintf(logstr,"Link %s, %s no access level",
+            filearea->downlinks[i]->link->name,
+            addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'6',logstr);
+         case 1:
+            sprintf(logstr,"Link %s, %s no access group",
+            filearea->downlinks[i]->link->name,
+            addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'6',logstr);
+         }
+
+
+         if (readAccess == 0)
          if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
             sprintf(logstr,"File %s already seenby %s, %s",
                         tic.file,
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
-         } else if (filearea->downlinks[i]->link->Pause) {
-            sprintf(logstr,"Link %s, %s in pause",
-                        filearea->downlinks[i]->link->name,
-                        addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
-	 } else if (filearea->downlinks[i]->export == 0) {
-            sprintf(logstr,"Not export to link %s, %s",
-                        filearea->downlinks[i]->link->name,
-                        addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
-	 } else if (filearea->rgrp != NULL && (atoi(filearea->rgrp) > filearea->downlinks[i]->link->level)) {
-            sprintf(logstr,"Link %s, %s not recieve file from this fileecho",
-                        filearea->downlinks[i]->link->name,
-                        addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
-	 } else {
+         } else {
             memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
             memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
                     sizeof(s_addr));
@@ -1443,6 +1538,7 @@ void reportNewFiles()
                sprintf(buff+14, "% 9i", newFileReport[i]->fileSize);
                msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
+	       if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
                free(tmp);
                fileCount++;
                fileSize += newFileReport[i]->fileSize;
@@ -1456,6 +1552,7 @@ void reportNewFiles()
                       sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
                       msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                       sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
+	              if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
                       free(tmp);
                       fileCount++;
                       fileSize += newFileReport[b]->fileSize;

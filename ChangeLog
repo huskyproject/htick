@@ -2,6 +2,11 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Sat Jul 31 00:44:05 1999
+Georgi:
+* Added "-lw <level>" and "-lr <level>" in filearea options
+
+----- cvs ci ------
 Sun Jul 25 21:17:54 NOVST 1999
 max:
 * small bugfix (if no passFileAreaDir in config -> core dump)

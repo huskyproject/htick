@@ -21,32 +21,26 @@ void formatDesc(char **desc, int *count, FILE *f)
 //Why?
 {
     int i;
-    char **newDesc, tmp[265], tmpDesc[265], *ch, buff[94], *tmp1;
+    char **newDesc = 0, tmp[265], tmpDesc[265], *ch, buff[94], *tmp1;
 
-   newDesc = (char **) calloc(1, sizeof(*newDesc));
-   for (i = 0; i < *count; i++ ) {
+   for (i = 0; i < (*count); i++ ) {
       newDesc=realloc(newDesc,(i+1)*sizeof(*newDesc));
-      newDesc[i] = (char *) calloc(1, sizeof(char));
       memset(buff, 0, sizeof buff);
       if (strlen(desc[i]) <= 46) {
-         newDesc[i] = (char *) realloc(newDesc[i], strlen(desc[i])+1);
-	 strcpy(newDesc[i],desc[i]);
+	 newDesc[i] = strdup(desc[i]);
 	 continue;
       }
       strcpy(tmp,desc[i]);
 
       ch = strtok(tmp, " \t\0");
       if (strlen(ch)>46) {
-         newDesc[i] = (char *) realloc(newDesc[i], strlen(ch)+1);
-         strcpy(newDesc[i],ch);
+	 newDesc[i] = strdup(ch);
 	 ch = strtok(NULL,"\0");
 	 if (ch != NULL) {
-            if (*count == i+1) {
-               desc=realloc(desc,(*count+1)*sizeof(*desc));
+            if ((*count) == i+1) {
+               desc=realloc(desc,(*count)+1*sizeof(*desc));
 	       (*count)++;
-               desc[i+1] = (char *) calloc(1, sizeof(char));
-               desc[i+1] = (char *) realloc(desc[i+1], strlen(ch)+1);
-               strcpy(desc[i+1],ch);
+	       desc[i+1] = strdup(ch);
 	    } else {
 	       strcpy(tmpDesc,desc[i+1]);
                desc[i+1] = (char *) realloc(desc[i+1],strlen(desc[i+1])+strlen(ch)+1);
@@ -57,14 +51,11 @@ void formatDesc(char **desc, int *count, FILE *f)
       }
       while (ch != NULL) {
          if (strlen(buff)+strlen(ch)>46) {
-            newDesc[i] = (char *) realloc(newDesc[i], strlen(buff)+1);
-            strcpy(newDesc[i],buff);
-	    if (*count == i+1) {
-	       desc=realloc(desc,(*count+1)*sizeof(*desc));
+	    newDesc[i] = strdup(buff);
+	    if ((*count) == i+1) {
+	       desc=realloc(desc,(*count)+1*sizeof(*desc));
 	       (*count)++;
-               desc[i+1] = (char *) calloc(1, sizeof(char));
-               desc[i+1] = (char *) realloc(desc[i+1], strlen(ch)+1);
-               strcpy(desc[i+1],ch);
+	       desc[i+1] = strdup(ch);
 	       ch = strtok(NULL,"\0");
 	       if (ch != NULL) {
 	          strcpy(tmpDesc,desc[i+1]);
@@ -82,7 +73,6 @@ void formatDesc(char **desc, int *count, FILE *f)
                   sprintf(desc[i+1],"%s %s %s",ch,tmp1,tmpDesc);
 	       }
             }
-            memset(buff, 0, sizeof buff);
 	    ch = NULL;
 	    continue;
 	 }
@@ -91,12 +81,12 @@ void formatDesc(char **desc, int *count, FILE *f)
          ch = strtok(NULL, " \t\0");
       }
    }
-   for (i = 0; i < *count; i++ ) {
+   for (i = 0; i < (*count); i++ ) {
       free(desc[i]);
       desc[i] = strdup(newDesc[i]);
       free(newDesc[i]);
    }
-   if (*count>0) free(newDesc);
+   if ((*count) > 0) free(newDesc);
    return;
 }
 
