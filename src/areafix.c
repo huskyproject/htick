@@ -471,7 +471,7 @@ char *list(s_message *msg, s_link *link) {
 	return report;
 }
 
-char *linked(s_message *msg, s_link *link)
+char *linked(s_message *msg, s_link *link, int action)
 {
     int i, n, rc;
     char *report, addline[256];
@@ -487,15 +487,31 @@ char *linked(s_message *msg, s_link *link)
     for (i=n=0; i<config->fileAreaCount; i++) {
 	rc=subscribeCheck(config->fileAreas[i], msg, link);
 	if (rc==0) {
+	    if (action == 1) {
+	       report=(char*)realloc(report, strlen(report)+
+			       strlen(config->fileAreas[i].areaName)+4);
+	       if (atoi(config->fileAreas[i].wgrp) <= link->level
+		   && atoi(config->fileAreas[i].rgrp) <= link->level)
+	          strcat(report,"& ");
+	       else if (atoi(config->fileAreas[i].rgrp) <= link->level)
+	               strcat(report,"+ ");
+	       else if (atoi(config->fileAreas[i].wgrp) <= link->level)
+	               strcat(report,"* ");
+	    } else {
 	    report=(char*)realloc(report, strlen(report)+
 			    strlen(config->fileAreas[i].areaName)+3);
-	    strcat(report, " ");
+	       strcat(report," ");
+	    }
 	    strcat(report, config->fileAreas[i].areaName);
 	    strcat(report, "\r");
 	    n++;
 	}
     }
-    sprintf(addline, "\r%u areas linked\r", n);
+    if (action == 1) sprintf(addline, "\r '+'  You are receive files from this area.
+	\r '*'  You can send files to this file echo.
+	\r '&'  You can send and receive files.
+	\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
+    else sprintf(addline, "\r%u areas linked\r", n);
     report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
     strcat(report, addline);
     return report;
@@ -836,7 +852,7 @@ char *pause_link(s_message *msg, s_link *link)
 	if (changepause(getConfigFileName(), link) == 0) return NULL;    
     }
 
-    report = linked(msg, link);
+    report = linked(msg, link, 0);
     tmp = (char*)calloc(80, sizeof(char));
     strcpy(tmp, " System switched to passive\r");
     tmp = (char*)realloc(tmp, strlen(report)+strlen(tmp)+1);
@@ -956,7 +972,7 @@ char *resume_link(s_message *msg, s_link *link)
 		if (changeresume(getConfigFileName(), link) == 0) return NULL;
     }
 	
-    report = linked(msg, link);
+    report = linked(msg, link, 0);
     tmp = (char*)calloc(80, sizeof(char));
     strcpy(tmp, " System switched to active\r");
     tmp = (char*)realloc(tmp, strlen(report)+strlen(tmp)+1);
@@ -1021,7 +1037,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	case UNLINK: report = unlinked (msg, link);
 		RetFix=UNLINK;
 		break;
-	case LINKED: report = linked (msg, link);
+	case LINKED: report = linked (msg, link, 1);
 		RetFix=LINKED;
 		break;
 	case PAUSE: report = pause_link (msg, link);
@@ -1242,7 +1258,7 @@ int processFileFix(s_message *msg)
 	
 
 	if ( report != NULL ) {
-		preport=linked(msg, link);
+		preport=linked(msg, link, 0);
 		report=(char*)realloc(report, strlen(report)+strlen(preport)+1);
 		strcat(report, preport);
 		free(preport);
