@@ -237,7 +237,9 @@ void hatch()
                writeLogEntry(htick_log,'6',logstr);
 	    }
 	    free(filearea->downlinks[i]->link->bsyFile);
+	    filearea->downlinks[i]->link->bsyFile=NULL;
 	    free(filearea->downlinks[i]->link->floFile);
+	    filearea->downlinks[i]->link->floFile=NULL;
          } // if readAccess == 0
       } // Forward file
 

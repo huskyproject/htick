@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Wed Feb 23 15:00:00 IZH 2000
+Georgi:
+* added new token MaxTicLineLength
+
+----- cvs ci ------
 Wed Feb 16 23:09:43 NOVT 2000
 max:
 * fixed some bug when calculates replace file without path
@@ -19,7 +24,7 @@ max:
 ----- cvs ci ------
 Sat Feb 12 19:40:00 IZH 2000
 Georgi:
-* added new token originInAnnounce for htick
+* added new token originInAnnounce
 
 ----- cvs ci ------
 Sat Feb 12 16:45:00 IZH 2000
