@@ -220,3 +220,36 @@ Name of remote file (tic) robot (need for FileForwardRequest)
 25) AnnounceSpool (path)
 
 Place for accumulating report information
+
+26) AnnAreaTag     
+   
+Name of area when annouce will be placed
+Begins new announce difenition section
+
+27) AnnInclude   
+
+Array of fileecho names|masks that will be announced in this annAreaTag   
+
+28) AnnExclude     
+
+Array of fileecho names|masks that won't be announced in this annAreaTag
+
+29) Annto;
+
+Field TONAME  : in announce message
+
+30) Annfrom   
+
+Field FROMNAME: in announce message
+
+31) Annsubj
+
+Field SUBJ:     in announce message         
+
+32) Annadrto
+
+Field ADRTO:    in announce message  (must be present if AnnAreaTag is netmail area)
+
+33) Annadrfrom
+
+Field ADRFROM:  in announce message    
