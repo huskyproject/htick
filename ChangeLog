@@ -1,3 +1,13 @@
+2002-11-27 Wednesday 15:40  pgul
+
+	* src/: areafix.c (1.104), report.c (1.33): Use filefixReportsAttr
+	instead of filefixKillReports
+
+2002-11-27 Wednesday 12:54  stas_degteff
+
+	* src/htick.c (1.80): Fix usage information output: describe new
+	parameters for `htick hatch` command
+
 2002-11-26 Tuesday 13:02  pgul
 
 	* src/fcommon.c (1.57): Fix EMX warning
