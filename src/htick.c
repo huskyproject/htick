@@ -38,7 +38,7 @@
 #endif
 #include <sys/types.h>
 #include <signal.h>
-#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#if ((defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__TURBOC__))
 #include <sys/stat.h>
 #endif
 

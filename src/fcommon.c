@@ -47,6 +47,10 @@
 #include <fcntl.h>
 #include <process.h>
 #endif
+#if defined (__TURBOC__)
+#include <process.h>
+#include <dir.h>
+#endif
 
 #include <global.h>
 #include <fidoconf/fidoconf.h>
@@ -84,7 +88,7 @@ int createLockFile(char *lockfile) {
 #include <io.h>
 #include <fcntl.h>
 
-#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#if (!defined(S_ISDIR) && !(defined(_MSC_VER) && (_MSC_VER >= 1200)))
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
 #endif
 

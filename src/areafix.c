@@ -193,7 +193,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 
 	sbuff = buff;
 
-	while ( (ptr = strstr(sbuff, str)) ) {
+	while ( (ptr = strstr(sbuff, str)) != NULL) {
 		if (isspace(ptr[strlen(str)]) || ptr[strlen(str)]=='\000') break;
 		sbuff = ptr+1;
 	}
@@ -1153,7 +1153,7 @@ void preprocText(char *preport, s_message *msg)
     msg->text=text;
 }
 
-char *textHead()
+char *textHead(void)
 {
     char *text_head, tmpBuff[256];
     
