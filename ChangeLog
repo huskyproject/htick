@@ -1,3 +1,30 @@
+2002-05-14 Tuesday 16:18  pavel.gulchouck
+
+	* h/areafix.h (1.8), h/fcommon.h (1.16), src/fcommon.c (1.44),
+	src/toss.c (1.165): mingw32 compilation fix
+
+2002-05-14 Tuesday 14:50  mche
+
+	* src/toss.c (1.164): if link is busy save tic to busyfiledir or
+	put files in fileboxes if it exist for link
+
+2002-05-14 Tuesday 14:42  stas
+
+	* src/toss.c (1.163): Bugfix: memory leak prevent.
+
+2002-05-14 Tuesday 14:16  mche
+
+	* src/filelist.c (1.26), h/filelist.h (1.8): fix file date if
+	stat() returns wrong date
+
+2002-05-14 Tuesday 11:14  mche
+
+	* src/toss.c (1.162): set MSGLOCAL on messages posted by htick
+
+2002-05-14 Tuesday 09:52  mche
+
+	* src/toss.c (1.161): report generation fixed
+
 2002-05-13 Monday 12:25  mche
 
 	* src/toss.c (1.160): feature: if "SaveTic" defined htick will try
