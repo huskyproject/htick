@@ -1,51 +1,48 @@
-CC      = gcc
-DEBUG   = 0
 
-OBJS    = htick.o   \
-          global.o  \
-          toss.o    \
-          fcommon.o \
-          scan.o    \
-          areafix.o \
-          add_desc.o \
-          seenby.o \
-          hatch.o   \
-          filelist.o \
-          filecase.o  \
-          report.o     \
-          clean.o       \
+CC=gcc
+RM=del
 
-SRC_DIR = ../src/
+CDEFS=-D__NT__ -D__MINGW__ -c -I../h -I../..
+CFLAGS=-Wall
+COPT=-O3
 
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../.. -Wall -g -O1 -DNT -D__NT__ -DWINNT
-  LFLAGS  = -L../../smapi -L../../fidoconf -g
-else
-  CFLAGS  = -c -I../h -I../.. -Wall -pedantic -O1 -s -DNT -D__NT__ -DWINNT
-  LFLAGS  = -L../../smapi -L../../fidoconf
-endif
-  CDEFS=  $(CFLAGS)
 # uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
-# CDEFS=  $(CFLAGS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CFLAGS) -D_WIN32_WINNT=0x0500
+# CDEFS=$(CDEFS) -D_WIN32_WINNT=0x0400
+# CDEFS=$(CDEFS) -D_WIN32_WINNT=0x0500
 
+LFLAGS=-L../../smapi -L../../fidoconf
+LIBS=-lfidoconfigmgw -lsmapimgw -luser32
+SRC_DIR=../src/
 
-all: $(OBJS) \
-     htick
+default: all
+
+TARGET=htick.exe
+
+OBJS    = htick.o    \
+          global.o   \
+          toss.o     \
+          fcommon.o  \
+          scan.o     \
+          areafix.o  \
+          add_desc.o \
+          seenby.o   \
+          hatch.o    \
+          filelist.o \
+          filecase.o \
+          report.o   \
+          clean.o    \
+
+all: $(TARGET)
 
 %.o: $(SRC_DIR)%.c
-	$(CC) $(CDEFS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CDEFS) $(COPT) $(SRC_DIR)$*.c
 
-htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS)  -lfidoconfigmgw -lsmapimgw
+$(TARGET): $(OBJS)
+	$(CC) $(LFLAGS) -o $(TARGET) $(OBJS) $(LIBS)
 
 clean:
-	-rm -f *.o
-	-rm *~
-	-rm core
-	-rm htick
+	-$(RM) *.o
 
-distclean: clean
-	-rm htick
-	-rm *.1.gz
-	-rm *.log
+distclean:
+	-$(RM) $(TARGET)
+
