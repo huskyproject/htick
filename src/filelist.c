@@ -170,7 +170,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         fprintf(f,"Total files in area: %6d, total size: %10s bytes\n\n",totalnumber,PrintBigSize(&bs));
     }
     if ( (fbbs = fopen(fbbsname,"r")) == NULL ) {
-	closedir(dir);
+    husky_closedir(dir);
 	return;
     }
     while ((fbbsline = readLine(fbbs)) != NULL) {
@@ -211,7 +211,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     IncBigSize2(&totalfilessize,&bs);
     totalfilesnumber += totalnumber;
     nfree(filename);
-    closedir(dir);
+    husky_closedir(dir);
     return;
 }
 
