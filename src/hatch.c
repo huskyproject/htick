@@ -92,25 +92,17 @@ int send(char *filename, char *area, char *addr)
     //s_addr address;
     char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
     char timestr[40], *linkfilepath=NULL;
-    char *newticfile;
     struct stat stbuf;
     time_t acttime;
-    int busy;
-    FILE *flohandle;
     
-    w_log( LL_INFO, "Start file send (%s in %s to %s)...",filename,area,addr);
+    w_log( LL_INFO, "Start file send (%s in %s to %s)",filename,area,addr);
     
     filearea=getFileArea(config,area);
     if (filearea == NULL) {
         if (!quiet) fprintf(stderr,"Error: Filearea not found\n");
         return 2;
     }
-    /*
-    if (filearea->pass == 1) {
-    if (!quiet) fprintf(stderr,"Error: Passthrough filearea\n");
-    return 1;
-    }
-    */
+
     link = getLink(config, addr);
     if (link == NULL) {
         if (!quiet) fprintf(stderr,"Error: Link not found\n");
@@ -149,7 +141,7 @@ int send(char *filename, char *area, char *addr)
             if (copy_file(sendfile,tmpfile)==0) {
                 w_log('6',"Copied %s to %s",sendfile,tmpfile);
             } else {
-                w_log('9',"File %s not found or copyable",sendfile);
+                w_log('9',"File %s not found or not copyable",sendfile);
                 disposeTic(&tic);
                 nfree(sendfile);
                 nfree(tmpfile);
@@ -192,49 +184,94 @@ int send(char *filename, char *area, char *addr)
     tic.anzseenby++;
     
     // Forward file to
-    memcpy(&tic.from,filearea->useAka, sizeof(s_addr));
-    memcpy(&tic.to,&link->hisAka, sizeof(s_addr));
-    if (link->ticPwd != NULL) 
-        tic.password = sstrdup(link->ticPwd);
-    
-    busy = 0;
-    
-    if (createOutboundFileName(link,link->fileEchoFlavour, FLOFILE)==1)
-        busy = 1;
-    
-    if (busy) {
-        w_log( '7', "Save TIC in temporary dir");
-        //Create temporary directory
-        linkfilepath = sstrdup(config->busyFileDir);
-    } else {
-        if (config->separateBundles) {
-            xscatprintf(&linkfilepath,"%s.sep%c",strrchr(link->floFile, '.'), PATH_DELIM);
-        } else {
-            linkfilepath = sstrdup(config->passFileAreaDir);
-        }
-    }
-    _createDirectoryTree(linkfilepath);
-    
-    newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-    writeTic(newticfile,&tic);
-    
-    if (!busy) {
-        flohandle=fopen(link->floFile,"a");
-        fprintf(flohandle,"%s\n",sendfile);
-        fprintf(flohandle,"^%s\n",newticfile);
-        fclose(flohandle);
-        
-        remove(link->bsyFile);
-        
-        w_log('6',"Send %s from %s for %s",
-            tic.file,tic.area,aka2str(link->hisAka));
-        nfree(link->bsyFile);
-    }
-    nfree(link->floFile);
+
+    PutFileOnLink(sendfile, &tic, link);
+
     disposeTic(&tic);
     nfree(sendfile);
     nfree(tmpfile);
-    nfree(linkfilepath);
     nfree(descr_file_name);
     return 0;
+}
+
+
+void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
+{
+    int   busy = 0;
+    char *linkfilepath = NULL;
+    char *newticfile   = NULL;
+    FILE *flohandle    = NULL;
+
+    memcpy(&tic->from,downlink->ourAka,sizeof(s_addr));
+    memcpy(&tic->to,&downlink->hisAka, sizeof(s_addr));
+
+    nfree(tic->password);
+    if (downlink->ticPwd!=NULL)
+        tic->password = sstrdup(downlink->ticPwd);
+    
+    if(createOutboundFileName(downlink,downlink->fileEchoFlavour,FLOFILE)==1)
+        busy = 1;
+    
+    if (busy) {
+        xstrcat(&linkfilepath,config->busyFileDir);
+    } else {
+        if (config->separateBundles) {
+            xstrcat(&linkfilepath, downlink->floFile);
+            sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
+        } else {
+            xstrcat(&linkfilepath, config->ticOutbound);
+        }
+    }
+    
+    // fileBoxes support
+    if (needUseFileBoxForLink(config,downlink)) {
+        nfree(linkfilepath);
+        if (!downlink->fileBox) 
+            downlink->fileBox = makeFileBoxName (config,downlink);
+        xstrcat(&linkfilepath, downlink->fileBox);
+    }
+    
+    _createDirectoryTree(linkfilepath);
+    /* Don't create TICs for everybody */
+    if (!downlink->noTIC) {
+        newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+        writeTic(newticfile,tic);
+    }
+    else  newticfile = NULL;
+    
+    if (needUseFileBoxForLink(config,downlink)) {
+        xstrcat(&linkfilepath, tic->file);
+        if (link_file(newticedfile,linkfilepath ) == 0)
+        {
+            if(copy_file(newticedfile,linkfilepath )==0) {
+                w_log(LL_FILESENT,"Copied: %s",newticedfile);
+                w_log(LL_FILESENT,"    to: %s",linkfilepath);
+            } else {
+                w_log('9',"File %s not found or not copyable",newticedfile);
+                if (!busy) remove(downlink->bsyFile);
+                nfree(downlink->bsyFile);
+                nfree(downlink->floFile);
+                nfree(linkfilepath);
+            }
+        } else {
+            w_log(LL_FILESENT,"Linked: %s",newticedfile);
+            w_log(LL_FILESENT,"    to: %s",linkfilepath);
+        }
+    } else if (!busy) {
+        flohandle=fopen(downlink->floFile,"a");
+        fprintf(flohandle,"%s\n",newticedfile);
+        if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
+        fclose(flohandle);
+    }
+    if (!busy || needUseFileBoxForLink(config,downlink)) {                   
+        
+        w_log(LL_LINK,"Forwarding: %s", tic->file);
+        if (newticfile != NULL) 
+        w_log(LL_LINK,"  with tic: %s", GetFilenameFromPathname(newticfile));
+        w_log(LL_LINK,"       for: %s", aka2str(downlink->hisAka));
+        if (!busy) remove(downlink->bsyFile);
+    }
+    nfree(downlink->bsyFile);
+    nfree(downlink->floFile);
+    nfree(linkfilepath);
 }

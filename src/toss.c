@@ -86,6 +86,7 @@
 #include <add_desc.h>
 #include <seenby.h>
 #include <filecase.h>
+#include "hatch.h"
 
 s_newfilereport **newFileReport = NULL;
 unsigned newfilesCount = 0;
@@ -747,9 +748,6 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    int cmdexit;
    char *comm;
    char *p;
-   int busy;
-   char *newticfile;
-   FILE *flohandle;
    unsigned int minLinkCount;
 
 
@@ -764,63 +762,60 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    if(p) strLower(p+1);
 
    _createDirectoryTree(fileareapath);
-
+   
    if (tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
-      /* Delete old file[s] */
-      int num_files;
-      char *repl;
-
-      repl = strrchr(tic->replaces,PATH_DELIM);
-      if (repl==NULL) repl = tic->replaces;
-      else repl++;
-      num_files = removeFileMask(fileareapath,repl);
-      if (num_files>0) {
-         w_log('6',"Removed %d file[s]. Filemask: %s",num_files,repl);
-      }
+       /* Delete old file[s] */
+       int num_files;
+       char *repl;
+       
+       repl = strrchr(tic->replaces,PATH_DELIM);
+       if (repl==NULL) repl = tic->replaces;
+       else repl++;
+       num_files = removeFileMask(fileareapath,repl);
+       if (num_files>0) {
+           w_log('6',"Removed %d file[s]. Filemask: %s",num_files,repl);
+       }
    }
 
-   //if (!filearea->pass || (filearea->pass && filearea->downlinkCount>=minLinkCount)) {
-
-      strcpy(newticedfile,fileareapath);
-      strcat(newticedfile,MakeProperCase(tic->file));
-
-      if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
-         w_log('9',"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
-         return(3);
-      }
-
-      if (isToss == 1) {
-         if (!filearea->sendorig) {
-            if (move_file(filename,newticedfile)!=0) {
-                w_log('9',"File %s not found or not moveable",filename);
-                return(2);
-            } else {
-               w_log('6',"Moved %s to %s",filename,newticedfile);
-            }
-         } else {
-            if (copy_file(filename,newticedfile)!=0) {
+   
+   strcpy(newticedfile,fileareapath);
+   strcat(newticedfile,MakeProperCase(tic->file));
+   
+   if(!filearea->pass && filearea->noreplace && fexist(newticedfile)) {
+       w_log('9',"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
+       return(3);
+   }
+   
+   if (isToss == 1) {
+       if (!filearea->sendorig) {
+           if (move_file(filename,newticedfile)!=0) {
                w_log('9',"File %s not found or not moveable",filename);
                return(2);
-            } else {
-              w_log('6',"Put %s to %s",filename,newticedfile);
-            }
-            strcpy(newticedfile,config->passFileAreaDir);
-            strcat(newticedfile,MakeProperCase(tic->file));
-            if (move_file(filename,newticedfile)!=0) {
+           } else {
+               w_log('6',"Moved %s to %s",filename,newticedfile);
+           }
+       } else {
+           if (copy_file(filename,newticedfile)!=0) {
                w_log('9',"File %s not found or not moveable",filename);
                return(2);
-            } else {
+           } else {
+               w_log('6',"Put %s to %s",filename,newticedfile);
+           }
+           strcpy(newticedfile,config->passFileAreaDir);
+           strcat(newticedfile,MakeProperCase(tic->file));
+           if (move_file(filename,newticedfile)!=0) {
+               w_log('9',"File %s not found or not moveable",filename);
+               return(2);
+           } else {
                w_log('6',"Moved %s to %s",filename,newticedfile);
-            }
-         }
-      } else
-         if (copy_file(filename,newticedfile)!=0) {
-            w_log('9',"File %s not found or not moveable",filename);
-            return(2);
-         } else {
-            w_log('6',"Put %s to %s",filename,newticedfile);
-         }
-   //}
+           }
+       }
+   } else if (copy_file(filename,newticedfile)!=0) {
+       w_log('9',"File %s not found or not moveable",filename);
+       return(2);
+   } else {
+       w_log('6',"Put %s to %s",filename,newticedfile);
+   }
 
    if (tic->anzldesc==0)
       if (config->fileDescName)
@@ -917,87 +912,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          }
 
          if (readAccess == 0) {
-            if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0) {
+            if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0)
+            {
                w_log('7',"File %s already seenby %s",
                        tic->file,
                        aka2str(downlink->hisAka));
             } else {
-//               memcpy(&tic->from,filearea->useAka,sizeof(s_addr));
-               memcpy(&tic->from,downlink->ourAka,sizeof(s_addr));
-               memcpy(&tic->to,&downlink->hisAka,
-                      sizeof(s_addr));
-               nfree(tic->password);
-               if (downlink->ticPwd!=NULL)
-                  tic->password = sstrdup(downlink->ticPwd);
-
-               busy = 0;
-
-               if (createOutboundFileName(downlink,
-                     downlink->fileEchoFlavour,
-                     FLOFILE)==1)
-                  busy = 1;
-
-               if (busy) {
-                   w_log( LL_LINK, "link %s is busy",aka2str(downlink->hisAka));
-                   /* Create temporary directory */
-                   xstrcat(&linkfilepath,config->busyFileDir);
-               } else {
-                   if (config->separateBundles) {
-                       xstrcat(&linkfilepath, downlink->floFile);
-                       sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
-                   } else {
-                       xstrcat(&linkfilepath, config->ticOutbound);
-                   }
-               }
-
-               // fileBoxes support
-               if (needUseFileBoxForLink(config,downlink)) {
-                   nfree(linkfilepath);
-                   if (!downlink->fileBox) 
-                       downlink->fileBox = makeFileBoxName (config,downlink);
-                   xstrcat(&linkfilepath, downlink->fileBox);
-               }
-
-               _createDirectoryTree(linkfilepath);
-               /* Don't create TICs for everybody */
-               if (!downlink->noTIC) {
-                   newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-                   writeTic(newticfile,tic);
-               }
-               else 
-                   newticfile = NULL;
-
-               if (needUseFileBoxForLink(config,downlink)) {
-                   xstrcat(&linkfilepath, tic->file);
-                   if (link_file(newticedfile,linkfilepath ) == 0)
-                   {
-                       if(copy_file(newticedfile,linkfilepath )==0)
-                           w_log('6',"Copied %s to %s",newticedfile,linkfilepath);
-                       else 
-                           w_log('9',"File %s not found or not copyable",newticedfile);
-                   } else {
-                       w_log('6',"Linked %s to %s",newticedfile,linkfilepath);
-                   }
-               } else if (!busy) {
-                   flohandle=fopen(downlink->floFile,"a");
-                   fprintf(flohandle,"%s\n",newticedfile);
-                   if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
-                   fclose(flohandle);
-               }
-               if (!busy || needUseFileBoxForLink(config,downlink)) {                   
-
-                   w_log(LL_LINK,"Forwarding: %s", tic->file);
-                   if (newticfile != NULL) 
-                   w_log(LL_LINK,"  with tic: %s", GetFilenameFromPathname(newticfile));
-                   w_log(LL_LINK,"       for: %s", aka2str(downlink->hisAka));
-                   if (!busy)
-                    remove(downlink->bsyFile);
-               }
-               
-               nfree(downlink->bsyFile);
-               nfree(downlink->floFile);
-               nfree(linkfilepath);
-            } /* if Seenby */
+               PutFileOnLink(newticedfile, tic,  downlink);
+            } 
          } /* if readAccess == 0 */
       } /* Forward file */
    }
@@ -1151,9 +1073,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    parseTic(ticfile,&tic);
 
-   w_log('6',"File: %s Area: %s From: %s Orig: %u:%u/%u.%u",
-           tic.file, tic.area, aka2str(tic.from),
-           tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
+   w_log('6',"File: %s", tic.file);
+   w_log('6',"Area: %s", tic.area);
+   w_log('6',"From: %s", aka2str(tic.from));
+   w_log('6',"Orig: %u:%u/%u.%u",tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
 
    if (tic.to.zone!=0) {
       if (!isOurAka(config,tic.to)) {
