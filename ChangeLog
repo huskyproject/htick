@@ -1,3 +1,11 @@
+2002-06-12 Wednesday 14:55  mche
+
+	* src/htick.c (1.59): trace MaxTicLineLength
+
+2002-06-12 Wednesday 08:20  mche
+
+	* src/scan.c (1.23): fix filefix scan
+
 2002-06-11 Tuesday 18:04  mche
 
 	* FidoConfigKeywords (1.25): RemoteFileRobotName
