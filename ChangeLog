@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Mon May 1 2:50:00 MSK 2000
+Nestyurkin Nikolay:
+* new writeLogEntry, like in hpt
+
+----- cvs ci ------
 Sat Apr 29 2:10:00 MSK 2000
 Nestyurkin Nikolay:
 * announce in area bugfix

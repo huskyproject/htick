@@ -31,8 +31,18 @@
 #include <time.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdarg.h>
 
 #include <log.h>
+#include <global.h>
+#include <fcommon.h>
+#include <smapi/prog.h>
+
+static char *mnames[] = {
+"Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"
+};
+
+static char *wdnames[] = {"Sun","Mon","Tue","Wed","Thu","Fri","Sat"};
 
 s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
 {
@@ -77,82 +87,45 @@ void closeLog(s_log *htick_log)
    }
 }
 
-void writeLogEntry(s_log *htick_log, char key, char *logString)
+void writeLogEntry(s_log *htick_log, char key, char *logString, ...)
 {
    time_t     currentTime;
    struct tm  *locTime;
+	va_list	  ap;
 
-   if (NULL != htick_log) {
-     if (0 != htick_log->open && NULL != strchr(htick_log->keysAllowed, key)) 
+   if (htick_log) {
+     if (htick_log->open && strchr(htick_log->keysAllowed, key)) 
         {
+        currentTime = time(NULL);
+        locTime = localtime(&currentTime);
+	
         if (!htick_log->firstLinePrinted)
            {
            /* make first line of log */
            fprintf(htick_log->logFile, "----------  ");
 
-           currentTime = time(NULL);
-           locTime = localtime(&currentTime);
-           switch (locTime->tm_wday) {
-           case 0: fprintf(htick_log->logFile, "Sun");
-              break;
-           case 1: fprintf(htick_log->logFile, "Mon");
-              break;
-           case 2: fprintf(htick_log->logFile, "Tue");
-              break;
-           case 3: fprintf(htick_log->logFile, "Wed");
-              break;
-           case 4: fprintf(htick_log->logFile, "Thu");
-              break;
-           case 5: fprintf(htick_log->logFile, "Fri");
-              break;
-           case 6: fprintf(htick_log->logFile, "Sat");
-              break;
-           default:
-             break;
-           } /* endswitch */
-
-           fprintf(htick_log->logFile, " %2u ", locTime->tm_mday);
-
-           switch (locTime->tm_mon) {
-           case 0: fprintf(htick_log->logFile, "Jan");
-              break;
-           case 1: fprintf(htick_log->logFile, "Feb");
-              break;
-           case 2: fprintf(htick_log->logFile, "Mar");
-              break;
-           case 3: fprintf(htick_log->logFile, "Apr");
-              break;
-           case 4: fprintf(htick_log->logFile, "May");
-              break;
-           case 5: fprintf(htick_log->logFile, "Jun");
-              break;
-           case 6: fprintf(htick_log->logFile, "Jul");
-              break;
-           case 7: fprintf(htick_log->logFile, "Aug");
-              break;
-           case 8: fprintf(htick_log->logFile, "Sep");
-              break;
-           case 9: fprintf(htick_log->logFile, "Oct");
-              break;
-           case 10: fprintf(htick_log->logFile, "Nov");
-              break;
-           case 11: fprintf(htick_log->logFile, "Dec");
-              break;
-           default:
-             break;
-           } /* endswitch */
-
-           fprintf(htick_log->logFile, " %02u, %s\n", locTime->tm_year % 100,
-                   htick_log->appName);
+	   fprintf(htick_log->logFile, "%3s %02u %3s %02u, %s\n",
+             wdnames[locTime->tm_wday], locTime->tm_mday,
+	     mnames[locTime->tm_mon], locTime->tm_year % 100, htick_log->appName);
 
            htick_log->firstLinePrinted=1;
            }
 
-        currentTime = time(NULL);
-        locTime = localtime(&currentTime);
-        fprintf(htick_log->logFile, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
+        fprintf(htick_log->logFile, "%c %02u.%02u.%02u  ", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
+ 
+	va_start(ap, logString);
+	vfprintf(htick_log->logFile, logString, ap);
+	va_end(ap);
+	fputc('\n', htick_log->logFile); 
+
         fflush(htick_log->logFile);
-	if (htick_log->logEcho) fprintf(stdout, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
-     } /* endif */
-   } /* endif */
+	if (htick_log->logEcho) {
+	   fprintf(stdout, "%c %02u.%02u.%02u  ", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec);
+	   va_start(ap, logString);
+	   vfprintf(stdout, logString, ap);
+	   va_end(ap);
+	   fputc('\n', stdout);
+	};
+     }
+   }
 }
