@@ -33,6 +33,8 @@
 
 extern const int VER_MAJOR;
 extern const int VER_MINOR;
+extern const char *VER_BRANCH;
+extern const char *VER_SERVICE;
 
 extern char versionStr[30];
 
