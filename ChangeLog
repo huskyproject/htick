@@ -1,3 +1,7 @@
+2003-01-06 Monday 13:28  i_zkh
+
+	* doc/htick.texi (1.19): Fix spelling, misprints, etc
+
 2003-01-05 Sunday 16:30  mche
 
 	* src/areafix.c (1.107): fix bug : AutoAreaCreate adds wrong line
