@@ -1732,7 +1732,7 @@ void cleanPassthroughDir(void)
     char           *ticfile;
     s_ticfile tic;
     char **filesInTic = NULL;
-    unsigned int filesCount = 0, i, busy;
+    unsigned int filesCount = 0, i;
     char tmpdir[256];
 
    w_log( LL_INFO, "Start clean (purging files in passthrough dir)...");
@@ -1769,9 +1769,9 @@ void cleanPassthroughDir(void)
    /* check separateBundles dirs (does anybody use this?) */
    if (config->separateBundles) {
       for (i = 0; i < config->linkCount; i++) {
-         busy = 0;
-         if (createOutboundFileName(&(config->links[i]), normal, FLOFILE) == 1)
-            busy = 1;
+         
+         if (createOutboundFileName(&(config->links[i]), normal, FLOFILE) == 0)  {
+
          strcpy(tmpdir, config->links[i].floFile);
          sprintf(strrchr(tmpdir, '.'), ".sep");
          if (direxist(tmpdir)) {
@@ -1798,10 +1798,11 @@ void cleanPassthroughDir(void)
                nfree(ticfile);
             } /* while */
             closedir(dir);
+            remove(config->links[i].bsyFile);
+            nfree(config->links[i].bsyFile);
+            nfree(config->links[i].floFile);
          }
-         if (!busy) remove(config->links[i].bsyFile);
-         nfree(config->links[i].bsyFile);
-         nfree(config->links[i].floFile);
+         }
       }
    }
 
