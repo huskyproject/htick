@@ -616,67 +616,13 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
   return(1);
 }
 
-                                /* we do NOT check for a dosish ':' here
-                                   because mkdir "C:" is nonsense */
-#define my_isdirsep(x) (((x) == '/') || ((x) == '\\'))
-
-                                /* makes sure subdirectories in the pathname
-                                   exist. the last part of the argument is only
-                                   treated as a subdir if the argument ends
-                                   with '/' (or '\\'). rv: 1=ok, 0=error
-                                   basedir is not checked, filename is
-                                   checked. basedir must end in separator. */
-
-static int makealldirs(const char *basedir, const char *filename)
-{
-    char *buffer, *cpd;
-    const char *cps = filename;
-    size_t l;
-
-    l = strlen(basedir);
-    if (!(*filename)) return 1;
-    if ((buffer = smalloc(l + strlen(filename) + 1)) == NULL) return 0;
-
-    memcpy(buffer, basedir, l);
-    cpd = buffer + l;
-
-    do
-    {
-        while ((!my_isdirsep(*cps)) && (*cps))
-        {
-            *cpd++ = *cps++;
-        }
-
-        if (my_isdirsep(*cps))
-        {
-            if (!direxist(buffer))
-            {
-                *cpd = '\0';
-                mymkdir(buffer); /* we can't check mkdir return code for
-                                    portability reasons, so we do this: */
-                if (!direxist(buffer))
-                {
-                    free(buffer);
-                    return 0;
-                }
-            }
-            *cpd++ = *cps++;
-        }
-    } while (*cps);
-
-    free(buffer);
-    return 1;
-}
-
-#undef my_isdirsep
-
-
 int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 {
    FILE *f;
    char *NewAutoCreate;
    char *fileName;
-   char *fileechoFileName;
+
+   char *fileechoFileName = NULL;
    char buff[255], myaddr[20], hisaddr[20];
    int i=0;
    s_link *creatingLink;
@@ -690,36 +636,33 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
-   /* translating path of the area to lowercase, much better imho. */
-   while (*fileechoFileName != '\0') {
-      *fileechoFileName=tolower(*fileechoFileName);
-      if ((*fileechoFileName=='/') || (*fileechoFileName=='\\')) *fileechoFileName = '_'; /* convert any path elimiters to _ */
-      if (creatingLink->autoFileCreateSubdirs && *fileechoFileName == '.')
-      {
-                                /* technically, a / does for EACH AND EVERY
-                                   FUCKING OS, but DOS users tend to be
-                                   confused by it, soe we do them a favour */
-#if defined(MSDOS) || defined(WINNT) || defined(OS2) || defined(__NT__) \
-          || defined(DOS) || defined(__OS2__) || defined(__WINNT__)
-          *fileechoFileName = '\\';
-#else
-          *fileechoFileName = '/';
-#endif
-      }
+   fileechoFileName = makeMsgbFileName(c_area);
 
-      fileechoFileName++;
-      i++;
-   }
+    // translating name of the area to lowercase/uppercase
+    if (config->createAreasCase == eUpper) strUpper(c_area);
+    else strLower(c_area);
 
-   while (i>0) {
-      fileechoFileName--;
-      i--;
-   }
+    // translating filename of the area to lowercase/uppercase
+    if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
+    else strLower(fileechoFileName);
+
+    if (creatingLink->autoFileCreateSubdirs)
+    {
+        char *cp;
+        for (cp = fileechoFileName; *cp; cp++)
+        {
+            if (*cp == '.')
+            {
+                *cp = PATH_DELIM;
+            }
+        }
+    }
 
    if (creatingLink->autoFileCreateSubdirs &&
        stricmp(config->fileAreaBaseDir,"Passthrough"))
    {
-       if (!makealldirs(config->fileAreaBaseDir,fileechoFileName))
+       sprintf(buff,"%s%s",config->fileAreaBaseDir,fileechoFileName);
+       if (!_createDirectoryTree(buff))
        {
            if (!quiet) fprintf(stderr, "cannot make all subdirectories for %s\n",
                    fileechoFileName);
