@@ -1195,12 +1195,14 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
 	fseek(f, configlen, SEEK_SET);
 	setfsize(fileno(f), configlen);
 	fclose(f);
+	nfree(buff);
 	return 1;
     }
     fclose(f);
     
     /* add new created echo to config in memory */
     parseLine(buff,config);
+    nfree(buff);
     RebuildFileAreaTree(config);
 
     w_log( '8', "FileArea '%s' autocreated by %s", c_area, aka2str(*pktOrigAddr));
@@ -1223,11 +1225,9 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
                 config->filefixKillReports);
             msg->text = createKludges(config, config->ReportTo, area->useAka, area->useAka, versionStr);
         } /* endif */
-        xstrcat(&msg->text, "\001FLAGS NPD\r");
-        sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
-            (area->description) ? area->description : "");
-        msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+1);
-        strcat(msg->text, buff);
+        xstrscat(&msg->text, "\001FLAGS NPD\r" "\r \rNew filearea: ",
+                 area->areaName, "\r\rDescription : ",
+                 area->description ? area->description : "", "\r", NULL);
         writeMsgToSysop(msg, config->ReportTo, NULL);
         freeMsgBuffers(msg);
         nfree(msg);
@@ -1236,8 +1236,7 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
             fprintf(echotosslog,"%s\n",config->ReportTo);
             fclose(echotosslog);
         }
-    } else {
-    } /* endif */
+    }
     
     if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, aka2str(*pktOrigAddr));
 
