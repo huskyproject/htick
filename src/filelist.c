@@ -17,29 +17,31 @@
 unsigned long totalfilessize = 0;
 unsigned int totalfilesnumber = 0;
 
-void formatDesc(char **desc, int *count, FILE *f)
+#define LenDesc 46
+
+void formatDesc(char **desc, int *count)
 //Don't work. :-((
 //Why?
 {
     int i;
-    char **newDesc = 0, tmp[265], tmpDesc[265], *ch, buff[94], *tmp1;
+    char **newDesc = NULL, *tmp, tmpDesc[265], *ch, buff[94], *tmp1;
 
    for (i = 0; i < (*count); i++ ) {
-      newDesc=realloc(newDesc,(i+1)*sizeof(*newDesc));
+      newDesc = realloc(newDesc,sizeof(char *)*(i+1));
       memset(buff, 0, sizeof buff);
-      if (strlen(desc[i]) <= 46) {
-	 newDesc[i] = strdup(desc[i]);
+      if (strlen(desc[i]) <= LenDesc) {
+	 newDesc[i] = (char *) malloc(strlen(desc[i])+1);
 	 continue;
       }
-      strcpy(tmp,desc[i]);
+      tmp = strdup(desc[i]);
 
       ch = strtok(tmp, " \t\0");
-      if (strlen(ch)>46) {
-	 newDesc[i] = strdup(ch);
+      if (strlen(ch)>LenDesc) {
+	 newDesc[i] = (char *) malloc(strlen(ch)+1);
 	 ch = strtok(NULL,"\0");
 	 if (ch != NULL) {
-            if ((*count) == i+1) {
-               desc=realloc(desc,(*count)+1*sizeof(*desc));
+            if ((*count) == (i+1)) {
+               desc = realloc(desc,sizeof(char *) * ((*count)+1) );
 	       (*count)++;
 	       desc[i+1] = strdup(ch);
 	    } else {
@@ -48,12 +50,13 @@ void formatDesc(char **desc, int *count, FILE *f)
                sprintf(desc[i+1],"%s %s",ch,tmpDesc);
             }
 	 }
+         free(tmp);
 	 continue;
       }
       while (ch != NULL) {
          if (strlen(buff)+strlen(ch)>46) {
 	    newDesc[i] = strdup(buff);
-	    if ((*count) == i+1) {
+	    if ((*count) == (i+1)) {
 	       desc=realloc(desc,(*count)+1*sizeof(*desc));
 	       (*count)++;
 	       desc[i+1] = strdup(ch);
@@ -75,12 +78,14 @@ void formatDesc(char **desc, int *count, FILE *f)
 	       }
             }
 	    ch = NULL;
+            free(tmp);
 	    continue;
 	 }
          if (buff[0] == 0) sprintf(buff, "%s", ch);
          else sprintf(buff+strlen(buff), " %s", ch);
          ch = strtok(NULL, " \t\0");
       }
+      free(tmp);
    }
    for (i = 0; i < (*count); i++ ) {
       free(desc[i]);
@@ -129,7 +134,7 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
    fprintf(f, "-%02u", year % 100);
    if (countdesc == 0) fprintf(f," Description not avaliable\n");
    else {
-      //formatDesc(desc, &countdesc, f);
+      //formatDesc(desc, &countdesc);
       for (i=0;i<countdesc;i++) {
          if (i == 0) fprintf(f," %s\n",desc[i]);
 	 else fprintf(f,"                               %s\n",desc[i]);
@@ -141,7 +146,7 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
 void printFileArea(char *area_areaName, char *area_pathName, char *area_description, FILE *f, int bbs) {
 
     char fileareapath[256], fbbsname[256], filename[256];
-    char fbbsline[265];
+    char *fbbsline;
     DIR            *dir;
     struct dirent  *file;
     s_ticfile tic;
@@ -167,11 +172,12 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
    if (dir == NULL) return;
 
    while ((file = readdir(dir)) != NULL) {
-      if (strcmp(file->d_name,".") == 0 || strcmp(file->d_name,"..") == 0) continue;
+      if (strcmp(file->d_name,".") == 0 || strcmp(file->d_name,"..") == 0)
+         continue;
       strcpy(filename, fileareapath);
       strcat(filename, file->d_name);
       if (stricmp(filename, fbbsname) == 0) continue;
-      else if (!flag) {
+      if (!flag) {
          if (bbs) fprintf(f,"BbsArea: %s", area_areaName);
          else fprintf(f,"FileArea: %s", area_areaName);
          if (area_description!=NULL)
@@ -201,11 +207,9 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
       fprintf(f,"Total files in area: %4d, total size: %10lu bytes\n\n",totalnumber,totalsize);
    }
    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
-   while (!feof(fbbs)) {
-         fgets(fbbsline,sizeof fbbsline,fbbs);
-
-         if (fbbsline[0]==0 || fbbsline[0]==10 || fbbsline[0]==13
-	     || fbbsline[0]==' ' || fbbsline[0]=='\t' || fbbsline[0]=='>')
+   while ((fbbsline = readLine(fbbs)) != NULL) {
+         if (*fbbsline == 0 || *fbbsline == 10 || *fbbsline == 13
+	     || *fbbsline == ' ' || *fbbsline == '\t' || *fbbsline == '>')
             continue;
 
          Len = strlen(fbbsline);
@@ -229,7 +233,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
             strcpy(removeFiles[removeCount], strrchr(filename,PATH_DELIM)+1);
 	    removeCount++;
 	 }
-	 fbbsline[0] = '\0';
+	 free(fbbsline);
    }
    fclose(fbbs);
    if (removeCount > 0) {

@@ -62,8 +62,6 @@ int removeDesc (char *descr_file_name, char *file_name)
       LDescString = strdup(config->fileLDescString);
 
    while ((line = readLine(f1)) != NULL) {
-      line = trimLine(line);
-
       if (*line == 0 || *line == 10 || *line == 13)
             continue;
 
