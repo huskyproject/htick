@@ -107,11 +107,12 @@ int send(char *filename, char *area, char *addr)
       if (!quiet) fprintf(stderr,"Error: Filearea not found\n");
       return 2;
    }
+/*
    if (filearea->pass == 1) {
       if (!quiet) fprintf(stderr,"Error: Passthrough filearea\n");
       return 1;
    }
-
+*/
    string2addr(addr, &address);
    link = getLinkFromAddr(config, address);
    if (link == NULL) {
@@ -121,7 +122,11 @@ int send(char *filename, char *area, char *addr)
 
    memset(&tic,0,sizeof(tic));
 
-   strcpy(sendfile,filearea->pathName);
+   if (filearea->pass == 1)
+       strcpy(sendfile,config->passFileAreaDir);
+   else
+       strcpy(sendfile,filearea->pathName);
+
    strLower(sendfile);
    _createDirectoryTree(sendfile);
    strcat(sendfile,filename);
