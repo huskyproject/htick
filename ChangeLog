@@ -1,3 +1,11 @@
+2002-11-04 Monday 09:50  stas_degteff
+
+	* Makefile (1.15): Add info about install documentation
+
+2002-11-04 Monday 06:11  mche
+
+	* win32/makefile.cyg (1.12): corrected makefile
+
 2002-10-30 Wednesday 08:52  mche
 
 	* src/toss.c (1.232): syntax of changeFileSuffix is expanded
