@@ -1,3 +1,15 @@
+2003-06-25 Wednesday 07:30  andr_lukyanov
+
+	* win32/makefile.mvcdll (1.13): Add internal zip (hptzip) support
+
+2003-06-22 Sunday 04:10  nssoft
+
+	* Makefile (1.22): Add ZipInternal support
+
+2003-06-21 Saturday 11:03  mche
+
+	* htick.vcproj (1.3): documentation build added
+
 2003-06-15 Sunday 10:21  mche
 
 	* src/report.c (1.41): round big file sizes to Mb in htick reports
