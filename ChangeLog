@@ -1,3 +1,11 @@
+2002-04-23 Tuesday 21:40  pavel.gulchouck
+
+	* src/areafix.c (1.53): strftime() changed to fts_time()
+
+2002-04-23 Tuesday 18:21  mche
+
+	* src/toss.c (1.142): fixed bug with creation subdirs
+
 2002-04-22 Monday 15:48  mche
 
 	* src/hatch.c (1.45): resend files from passFileAreaDir let's try
