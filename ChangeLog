@@ -1,3 +1,18 @@
+2002-07-06 Saturday 18:38  stas
+
+	* FidoConfigKeywords (1.29): Update documentation: add the
+	mandatory keyword & change 'manual' description
+
+2002-07-06 Saturday 18:30  stas
+
+	* src/areafix.c (1.73): Mandatory now disallow unsubscribe only;
+	Manual disallow subscribe
+
+2002-07-06 Saturday 10:36  mche
+
+	* src/: htick.c (1.64), toss.c (1.198): do not create announces if
+	AnnounceSpool is not defined in config
+
 2002-07-05 Friday 22:34  stas
 
 	* src/toss.c (1.197): Fix include for UNIXes (& BeOS)
