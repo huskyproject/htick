@@ -1,4 +1,10 @@
 ----- cvs ci ------
+Thu May 10 22:31:02 CEST 2001
+Wulf:
+* new keyword: FileFixFSC87Subset - process only FSC87-compliant keywords and 
+  ignore any unknown keywords and process TIC further instead of stopping.
+
+----- cvs ci ------
 Wed Apr 18 23:24:50 CEST 2001
 tobi:
 * new keywords: autofilecreatesubdirs and autoareacreatesubdirs
