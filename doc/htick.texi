@@ -241,6 +241,56 @@ stas_degteff@@users.sf.net
 @chapter @value{HTICK} @value{VERSION} Command Line OPTIONS and SWITCHES
 To get help about the command line syntax, use @value{HTICK} without any arguments
 
+@table @asis
+@item Syntax:
+@command{htick [options] <command>}
+@item where @code{<command>} is:
+@table @asis
+@item toss
+Reading *.tic and tossing files
+@item scan
+@itemx ffix
+Scanning Netmail area for mails to filefix and process filefix command
+@item ffix <FTN address> <filefix command>
+Process filefix command @code{command} from command line
+@item clean
+Clean passthrough dir (remove sent files) and remove old files in fileechos
+@item announce
+Announce new files as defined in Ann* config statements
+(See @xref{Announce System}.)
+@item hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]
+Hatch file into Area, using Description for file, if exist "replace", then
+fill replace field in TIC; if not exist <filemask>, then put <file> in field.
+Desc's parameters may be:
+@table @asis
+@item @code{@@BBS}
+to load description from files.bbs
+@item @code{@@DIZ}
+to load description from the contained File_Id.Diz
+@item @code{@@<file>}
+to load description from <file>
+@item @code{@@@@BBS}
+to use first line from Files.Bbs
+@item @code{@@@@DIZ}
+to use 1st line from the contained File_Id.Diz
+@item @code{@@@@<file>}
+to use first line from <file>
+@end table
+
+@item send <file> <filearea> <address>
+Send file from filearea to address
+@item filelist <file> [<dirlist>]
+Generate filelist which includes all files in base.
+
+@itemize @bullet
+@item @code{<file>}
+filename for write output to.
+@item @code{<dirlist>}
+list of paths to files from filelist.
+@end itemize
+@end table
+@end table
+
 @node Configuration Reference, Keywords, Command Line, Top
 @chapter @value{HTICK} @value{VERSION} Configuration Reference
 
@@ -1172,7 +1222,7 @@ Show in announce: address of system which file is received from
 
 This statement can be repeated only for different AnnAreaTag.
 
-@node AnnFileOrigin, Announces example, AnnFileRFrom, Announce System
+@node AnnFileOrigin, Announcements example, AnnFileRFrom, Announce System
 @subsection AnnFileOrigin
 @findex AnnFileOrigin
 @table @asis
@@ -1187,14 +1237,14 @@ Show in announce: address of system that hatched file
 This statement can be repeated only for different AnnAreaTag.
 
 
-@node Announces example, Keyword Index, AnnFileOrigin, Announce System
-@subsection Announces example
-@findex Announces example
+@node Announcements example, Keyword Index, AnnFileOrigin, Announce System
+@subsection Announcements example
+@findex Announcements example
 
 The following text is taken from a real config file.
 
 @example
-#= Announces definitions =====================================
+#= Announcements definitions =====================================
 AnnounceSpool   E:\FIDO\EXCH\report
 
 # report all arrived files to file e:\fido\rep.txt
@@ -1236,7 +1286,7 @@ AnnFileRfrom    on
 #= Announces definitions ends ================================
 @end example
 
-@node Keyword Index, , Announces example, Top
+@node Keyword Index, , Announcements example, Top
 @appendix Configuration File Keyword Index
 @printindex fn
 
