@@ -2,6 +2,12 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Thu Jul 16  20:57:45
+Georgi:
+* FileFix now support mask
+* post announce about new files in ReportTo or announceArea (from command string)
+* bugfix if not define -r and/or -w in filearea option
+
 Wed Jul 15  19:23:54
 Georgi:
 * bugfix in toss

@@ -709,7 +709,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
            return(3);
 	} else break;
 
-   if (atoi(filearea->wgrp) > from_link->level) {
+   if (filearea->wgrp != NULL && (atoi(filearea->wgrp) > from_link->level)) {
       sprintf(logstr,"Link %s, %s have little level",
       from_link->name,
       addr2string(&from_link->hisAka));
@@ -832,7 +832,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
-	 } else if (atoi(filearea->rgrp) > filearea->downlinks[i]->link->level) {
+	 } else if (filearea->rgrp != NULL && (atoi(filearea->rgrp) > filearea->downlinks[i]->link->level)) {
             sprintf(logstr,"Link %s, %s not recieve file from this fileecho",
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
@@ -1325,15 +1325,20 @@ void reportNewFiles()
    s_message *msg;
    char      buff[256], *tmp;
    FILE      *echotosslog;
+   char      *annArea;
 
-   // post report about new files to announceArea
+   if (cmAnnounce) annArea = announceArea;
+   else if (config->ReportTo != NULL) annArea = config->ReportTo;
+        else return;
+
+   // post report about new files to annArea
    for (c = 0; c < config->addrCount && newfilesCount != 0; c++) {
       msg = NULL;
       for (i = 0; i < newfilesCount; i++) {
          if (newFileReport[i] != NULL) {
             if (newFileReport[i]->useAka == &(config->addr[c])) {
                if (msg == NULL) {
-                  if (stricmp(announceArea, "netmail") == 0) {
+                  if (stricmp(annArea, "netmail") == 0) {
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, config->sysop, "New Files", 1);
@@ -1344,7 +1349,7 @@ void reportNewFiles()
                         newFileReport[i]->useAka,
                         versionStr, "All", "New Files", 0);
                      msg->text = (char*)calloc(300, sizeof(char));
-                     createKludges(msg->text, announceArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
+                     createKludges(msg->text, annArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
                   } /* endif */
                   strcat(msg->text, " ");
                } /* endif */
@@ -1399,7 +1404,7 @@ void reportNewFiles()
       free(newFileReport);
       if (config->echotosslog != NULL) {
          echotosslog = fopen (config->echotosslog, "a");
-         fprintf(echotosslog,"%s\n",announceArea);
+         fprintf(echotosslog,"%s\n",annArea);
          fclose(echotosslog);
       }
    }
@@ -1414,6 +1419,6 @@ void toss()
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
    
-   if (cmAnnounce) reportNewFiles();
+   reportNewFiles();
 }
 

@@ -218,5 +218,5 @@ void hatch()
 
    disposeTic(&tic);
    
-   if (cmAnnounce) reportNewFiles();
+   reportNewFiles();
 }

@@ -8,7 +8,7 @@ Here's some help about how you can use FileFix to change your fileareas.
 %query          the same
 %pause          stop recieve files
 %resume         recieved files again
-+<echotag>	subscribe filearea (not support mask)
++<echotag>	subscribe filearea (support mask)
 <echotag>	the same
 -<echotag>	unsubscribe filearea
 
