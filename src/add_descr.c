@@ -13,7 +13,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 {
    FILE *descr_file;
    int i;
-   char desc_line[263], namefile[50];
+   char desc_line[265], namefile[50];
    
    descr_file = fopen (descr_file_name, "a");
    if (descr_file == NULL) return 1;
@@ -36,7 +36,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 int removeDesc (char *descr_file_name, char *file_name)
 {
     FILE *f1, *f2;
-    char hlp[264] = "", tmp[264], *token, descr_file_name_tmp[256];
+    char hlp[265] = "", tmp[265], *token, descr_file_name_tmp[256];
     int flag = 0;
 
    f1 = fopen (descr_file_name, "r");
