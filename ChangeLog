@@ -1,3 +1,8 @@
+2002-03-29 Friday 10:00  mche
+
+	* src/fcommon.c (1.40), src/toss.c (1.136), h/fcommon.h (1.14):
+	hardlink support for coping files under  WinNT 5.0
+
 2002-03-28 Thursday 15:20  mche
 
 	* src/toss.c (1.135): fileboxes support
