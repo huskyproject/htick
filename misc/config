@@ -1,0 +1,25 @@
+# Simple config for htick (include it to main $FIDOCONFIG)
+
+FileAreaBaseDir		/home/ftp/pub/fileechoes
+PassFileAreaDir		/var/spool/ftn/passthrough
+
+FileFixHelp		/etc/husky/filefix.hlp
+FileFixKillReports
+FileFixKillRequests
+AreaFixFromName		FileFix
+
+OriginInAnnounce
+ConvertLongNames	DontTouch
+FileDescName		file_id.diz
+FileAreaCreatePerms	0755
+
+AnnounceSpool		/var/spool/ftn/announce
+AnnAreaTag	EXPRESS.INFO
+AnnInclude	*
+AnnExclude	PNT	# hide from announces :-)
+AnnTo		All
+AnnFrom		HTick Robot
+AnnSubj		New files!
+AnnAddrFrom	2:5080/159.1
+AnnOrigin	Association of Express Mail Robots
+
