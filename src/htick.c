@@ -257,9 +257,9 @@ void processConfig()
    // open Logfile
    htick_log = NULL;
    if (config->logFileDir != NULL) {
-     buff = (char *) smalloc(strlen(config->logFileDir)+9+1); /* 9 for htick.log */
+     buff = (char *) smalloc(strlen(config->logFileDir)+strlen(LogFileName)+1);
      strcpy(buff, config->logFileDir),
-     strcat(buff, "htick.log");
+     strcat(buff, LogFileName);
 /*     if (config->loglevels==NULL)
         htick_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
        else

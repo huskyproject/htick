@@ -31,6 +31,8 @@
 #ifndef HTICK_H
 #define HTICK_H
 
+#define LogFileName	"htick.log"
+
 int  processCommandLine(int argc, char **argv);
 void processConfig(void);
 
