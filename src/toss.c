@@ -1610,7 +1610,7 @@ void cleanPassthroughDir(void)
             ticfile = (char *) smalloc(strlen(config->passFileAreaDir)+strlen(file->d_name)+1);
             strcpy(ticfile, config->passFileAreaDir);
             strcat(ticfile, file->d_name);
-            if (direxist()) { // do not touch dirs
+            if (direxist(ticfile)) { // do not touch dirs
                nfree(ticfile);
                continue;
             }
