@@ -4,8 +4,10 @@ FileAreaBaseDir		/home/ftp/pub/fileechoes
 PassFileAreaDir		/var/spool/ftn/passthrough
 
 FileFixHelp		/etc/husky/filefix.hlp
-FileFixKillReports
 FileFixKillRequests
+FileFixReportsAttr      loc pvt npd k/s  # kill filefix reports
+#FileFixReportsAttr      loc pvt npd dir  # send filefix reports directly
+
 
 if "[module]"=="htick"
 
