@@ -636,7 +636,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    creatingLink = getLinkFromAddr(config, pktOrigAddr);
 
-   fileechoFileName = makeMsgbFileName(c_area);
+   fileechoFileName = makeMsgbFileName(config, c_area);
 
     // translating name of the area to lowercase/uppercase
     if (config->createAreasCase == eUpper) strUpper(c_area);
@@ -1013,7 +1013,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    p = strrchr(fileareapath,PATH_DELIM);
    if(p) strLower(p+1);
 
-   createDirectoryTree(fileareapath);
+   _createDirectoryTree(fileareapath);
 
    if (tic->replaces!=NULL && !filearea->pass && !filearea->noreplace) {
       /* Delete old file[s] */
@@ -1200,7 +1200,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                      strcpy(linkfilepath, config->ticOutbound);
                   }
                }
-               createDirectoryTree(linkfilepath);
+               _createDirectoryTree(linkfilepath);
 
                /* Don't create TICs for everybody */
                if (!filearea->downlinks[i]->link->noTIC || busy) {
@@ -1695,7 +1695,7 @@ void checkTmpDir(void)
                   } else {
                      strcpy(newticfile,config->ticOutbound);
                   }
-                  createDirectoryTree(newticfile);
+                  _createDirectoryTree(newticfile);
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
                   if (move_file(ticfile,newticfile)!=0) {
                      w_log('9',"File %s not found or moveable",ticfile);
@@ -1879,19 +1879,8 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
    HAREA harea;
    HMSG  hmsg;
    XMSG  xmsg;
-   char *slash;
    int rc = 0;
 
-   /* create Directory Tree if necessary */
-   if (echo->msgbType == MSGTYPE_SDM)
-      createDirectoryTree(echo->fileName);
-   else {
-      /* squish area */
-      slash = strrchr(echo->fileName, PATH_DELIM);
-      *slash = '\0';
-      createDirectoryTree(echo->fileName);
-      *slash = PATH_DELIM;
-   }
 
    harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC, echo->msgbType | MSGTYPE_ECHO);
    if (harea != NULL) {

@@ -166,141 +166,6 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
    return 0;
 }
 
-int createTempPktFileName(s_link *link)
-{
-   char   *fileName = (char *) smalloc(strlen(config->tempOutbound)+1+12);
-   char   *pfileName = (char *) smalloc(strlen(config->outbound)+1+12+13);
-   char   *tmpPFileName = (char *) smalloc(strlen(config->outbound)+1+12+13);
-   time_t aTime = time(NULL);  // get actual time
-   int counter = 0;
-   char *wdays[7]={ "su", "mo", "tu", "we", "th", "fr", "sa" };
-#ifdef UNIX
-   char limiter='/';
-#else
-   char limiter='\\';
-#endif
-   char zoneSuffix[6] = "\0";
-
-   char *zoneOutbound; // this contains the correct outbound directory including zones
-
-   time_t tr;
-   char *wday;
-   struct tm *tp;
-
-
-   tr=time(NULL);
-   tp=localtime(&tr);
-   counter = 0;
-
-   wday=wdays[tp->tm_wday];
-
-   aTime %= 0xffffff;   // only last 24 bit count
-
-   if (link->hisAka.zone != config->addr[0].zone) {
-      sprintf(zoneSuffix, ".%03x%c", link->hisAka.zone, PATH_DELIM);
-      zoneOutbound = smalloc(strlen(config->outbound)-1+strlen(zoneSuffix)+1);
-      strcpy(zoneOutbound, config->outbound);
-      strcpy(zoneOutbound+strlen(zoneOutbound)-1, zoneSuffix);
-   } else
-      zoneOutbound = sstrdup(config->outbound);
-
-
-   // There is a problem here: Since we use the tmpOutbound fileName for duplicate checking, links with different zones who does not
-   // have problems with duplicate pfileName´s increment the counter. We can run out of counters without using them.
-   // Has anybody understand that? :-)
-   // This is no big problem, but a big system with many links and many zones may encounter problems
-
-   do {
-
-           sprintf(fileName, "%s%06lx%02x.pkt", config->tempOutbound, (unsigned long) aTime, counter);
-
-           if ( link->hisAka.point == 0 )
-                   sprintf(tmpPFileName,"%s%06lx%02x.%s",zoneOutbound, (unsigned long) aTime, counter,wday);
-           else
-                   sprintf(tmpPFileName, "%s%04x%04x.pnt%c%06lx%02x.%s", zoneOutbound, link->hisAka.net, link->hisAka.node, limiter, (unsigned long) aTime, counter, wday);
-           counter++;
-
-   } while ((fexist(fileName) || fileNameAlreadyUsed(fileName, NULL)) && (counter<=255));
-
-   counter = 0;
-   do {
-      sprintf(pfileName, "%s%0x", tmpPFileName, counter);
-      counter++;
-   } while ((fexist(pfileName) || fileNameAlreadyUsed(NULL, pfileName)) && (counter <= 15));
-
-   free(tmpPFileName);
-
-   if ((!fexist(fileName)) && (!fexist(pfileName))) {
-           link->packFile = pfileName;
-           link->pktFile = fileName;
-           return 0;
-   }
-   else {
-      free(fileName);
-      free(pfileName);
-      return 1;
-   }
-}
-
-int createDirectoryTree(const char *pathName) {
-
-   struct stat buf;
-   char *start, *slash;
-   char *buff;
-
-#ifdef UNIX
-   char limiter='/';
-#else
-   char limiter='\\';
-#endif
-
-   int i;
-
-   start = (char *) smalloc(strlen(pathName)+2);
-   strcpy(start, pathName);
-   i = strlen(start)-1;
-   if (start[i] != limiter) {
-      start[i+1] = limiter;
-      start[i+2] = '\0';
-   }
-   slash = start;
-
-#ifndef UNIX
-   // if there is a drivename, jump over it
-   if (slash[1] == ':') slash += 2;
-#endif
-
-   // jump over first limiter
-   slash++;
-
-   while ((slash = strchr(slash, limiter)) != NULL) {
-      *slash = '\0';
-
-      if (stat(start, &buf) != 0) {
-         // this part of the path does not exist, create it
-         if (mymkdir(start) != 0) {
-            buff = (char *) smalloc(strlen(start)+30);
-            w_log( '5', "Could not create directory %s", start);
-            free(buff);
-            free(start);
-            return 1;
-         }
-      } else if(!S_ISDIR(buf.st_mode)) {
-         buff = (char *) smalloc(strlen(start)+30);
-         w_log( '5', "%s is a file not a directory", start);
-         free(buff);
-         free(start);
-         return 1;
-      }
-
-      *slash++ = limiter;
-   }
-
-   free(start);
-
-   return 0;
-}
-
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    FILE *f; // bsy file for current link
@@ -376,7 +241,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    strcpy(link->floFile, config->outbound);
    if (zoneSuffix[0] != 0) strcpy(link->floFile+strlen(link->floFile)-1, zoneSuffix);
    strcat(link->floFile, pntDir);
-   createDirectoryTree(link->floFile); // create directoryTree if necessary
+   _createDirectoryTree(link->floFile); // create directoryTree if necessary
    strcpy(link->bsyFile, link->floFile);
    strcat(link->floFile, name);
 
@@ -460,21 +325,4 @@ int removeFileMask(char *directory, char *mask)
       closedir(dir);
    }
    return(numfiles);
-}
-
-char *makeMsgbFileName(char *s) {
-    // allowed symbols: 0..9, a..z, A..Z, ".,!@#$^()~-_{}[]"
-    static char defstr[]="\"*/:;<=>?\\|%`'&+"; // not allowed
-    char *name=NULL, *str;
-
-    if (config->notValidFNChars) str = config->notValidFNChars;
-    else str = defstr;
-
-    while (*s) {
-	if (strchr(str,*s)) xscatprintf(&name,"%%%x", *s);
-	else xscatprintf(&name, "%c", *s);
-	s++;
-    }
-
-    return name;
 }

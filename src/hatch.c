@@ -123,7 +123,7 @@ int send(char *filename, char *area, char *addr)
 
    strcpy(sendfile,filearea->pathName);
    strLower(sendfile);
-   createDirectoryTree(sendfile);
+   _createDirectoryTree(sendfile);
    strcat(sendfile,filename);
 
    // Exist file?
@@ -214,7 +214,7 @@ int send(char *filename, char *area, char *addr)
            strcpy(linkfilepath, config->passFileAreaDir);
        }
    }
-   createDirectoryTree(linkfilepath);
+   _createDirectoryTree(linkfilepath);
 
    newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
    writeTic(newticfile,&tic);

@@ -172,7 +172,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
 
    strcpy(fileareapath,area_pathName);
    strLower(fileareapath);
-   createDirectoryTree(fileareapath);
+   _createDirectoryTree(fileareapath);
    strcpy(fbbsname,fileareapath);
    strcat(fbbsname,"files.bbs");
    adaptcase(fbbsname);

@@ -76,36 +76,6 @@ e_prio cvtFlavour2Prio(e_flavour flavour);
   FZ:     obvious
 */
 
-void addAnotherPktFile(s_link *link, char *filename);
-/*DOC
-  Input:  a pointer to a link structure, a pointer to a filename
-  FZ:     Adds the string pointed to by filename to the list off additional
-          pktfiles for the specified link. No checks are performed. The
-          string is duplicated internally.
-*/
-  
-int   createTempPktFileName(s_link *link);
-/*DOC
-  Input:  a pointer to a link structure
-  Output: 0 is returned if a filename and a packedfilename could be created.
-          1 else
-  FZ:     createTempPktFile tries to compose a new, not used pktfilename.
-          It takes the least 24bit of the actual time. The last 2 Bytes
-          area filled with a counter. So you can get up to 256 different files
-          in a second and have the same timestamp only every 291 days.
-          The pktFileName and the packFileName are stored in the link
-          structure
-*/
-
-int    createDirectoryTree(const char *pathName);
-/*DOC
-  Input:  a pointer to a 
-  Output: 0 if successfull, 1 else
-  FZ:     pathName is a correct directory name
-          createDirectoryTree creates the directory and all parental directories
-          if they do not exist.
-*/
-  
 int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
 /*DOC
   Input:  link is the link whose OutboundFileName should be created.
@@ -136,4 +106,3 @@ int removeFileMask(char *directory, char *mask);
           mask is the file mask for remove file[s]
   Output: 
 */
-char *makeMsgbFileName(char *s);
