@@ -1,3 +1,17 @@
+2003-01-09 Thursday 12:55  stas_degteff
+
+	* doc/Makefile (1.2): set permissions for install documentations &
+	libraries. Patch from Max Khon <fjoe@iclub.nsu.ru>
+
+2003-01-09 Thursday 10:28  mche
+
+	* doc/htick.texi (1.20): correct documentation
+
+2003-01-09 Thursday 10:11  stas_degteff
+
+	* src/areafix.c (1.109): fix warning: 'configlen' might be used
+	uninitialized
+
 2003-01-08 Wednesday 06:59  mche
 
 	* src/areafix.c (1.108): fix bug on empty cfg file: AutoAreaCreate
