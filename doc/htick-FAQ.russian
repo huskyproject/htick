@@ -153,7 +153,7 @@ A: (ML,SD)
 ** В tokens.h в массиве parseline_tokens соблюдайте сортировку токенов!
 
 2. Формат запуска diff следующий:
-   diff -r -c -N hpt.orig htick.modified > htick.diff
+   diff -r -c -N htick.orig htick.modified > htick.diff
    где htick.orig и htick - каталоги с исходным и переделанным htick. (Будьте
    внимательны! Типичная ошибка - неверный порядок параметров, в результате
    чего получается обратный дифф.)
