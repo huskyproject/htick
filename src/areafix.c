@@ -162,7 +162,7 @@ int subscribeCheck(s_filearea area, s_message *msg, s_link *link) {
 	    } else if (config->PublicGroup) {
 			if (strchr(config->PublicGroup, area.group) == NULL) return 2;
 		} else return 2;
-	if (area.hide) return 3;
+	if (area.hide || area.manual) return 3;
 	return 1;
 }
 
@@ -390,7 +390,7 @@ char *unlinked(s_message *msg, s_link *link)
 	    strcat(report, "\r");
 	}
     }
-    sprintf(addline,"filefix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
+    sprintf(addline,"FileFix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
     writeLogEntry(htick_log, '8', addline);
 
     return report;
@@ -408,8 +408,9 @@ char *list(s_message *msg, s_link *link) {
 
 	for (i=active=avail=0; i< config->fileAreaCount; i++) {
 
-	    rc=subscribeCheck(config->fileAreas[i],msg, link);
-	    if (rc < 2) {
+	    if (config->fileAreas[i].hide == 0) {
+	       rc=subscribeCheck(config->fileAreas[i],msg, link);
+	       if (rc < 2) {
 			arealen=strlen(config->fileAreas[i].areaName);
 			if (config->fileAreas[i].description!=NULL)
 			       desclen=strlen(config->fileAreas[i].description);
@@ -437,6 +438,7 @@ char *list(s_message *msg, s_link *link) {
                                strcat(report,config->fileAreas[i].description);
 			}
 			strcat(report,"\r");
+	       }
 	    }
 	}
 	
@@ -444,7 +446,7 @@ char *list(s_message *msg, s_link *link) {
 	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
 	strcat(report, addline);
 
-	sprintf(addline,"AreaFix: list sent to %s", aka2str(link->hisAka));
+	sprintf(addline,"FileFix: list sent to %s", aka2str(link->hisAka));
 	writeLogEntry(htick_log, '8', addline);
 	
 	return report;
@@ -489,7 +491,7 @@ char *help(s_link *link) {
 	if (config->filefixhelp!=NULL) {
 		if ((f=fopen(config->filefixhelp,"r")) == NULL)
 			{
-				fprintf(stderr,"filefix: cannot open help file \"%s\"\n",
+				fprintf(stderr,"FileFix: cannot open help file \"%s\"\n",
 						config->filefixhelp);
 				return NULL;
 			}
@@ -506,7 +508,7 @@ char *help(s_link *link) {
 
 		fclose(f);
 
-		sprintf(addline,"filefix: help sent to %s",link->name);
+		sprintf(addline,"FileFix: help sent to %s",link->name);
 		writeLogEntry(htick_log, '8', addline);
 
 		return help;
@@ -558,7 +560,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 
 	if ((f=fopen(fileName,"r+")) == NULL)
 		{
-			fprintf(stderr,"AreaFix: cannot open config file %s \n", fileName);
+			fprintf(stderr,"FileFix: cannot open config file %s \n", fileName);
 			return 1;
 		}
 	
@@ -622,7 +624,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		switch (rc) {
 		    case 0: 
 			sprintf(addline,"%s Already linked\r", area->areaName);
-			sprintf(logmsg,"filefix: %s already linked to %s",
+			sprintf(logmsg,"FileFix: %s already linked to %s",
 					aka2str(link->hisAka), area->areaName);
 			writeLogEntry(htick_log, '8', logmsg);
     			break;
@@ -630,11 +632,11 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
 			sprintf(addline,"%s Added\r",area->areaName);
-			sprintf(logmsg,"filefix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+			sprintf(logmsg,"FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
 			writeLogEntry(htick_log, '8', logmsg);
 			break;
 		    default :
-			sprintf(logmsg,"filefix: area %s -- no access for %s",
+			sprintf(logmsg,"FileFix: area %s -- no access for %s",
 					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			continue;
@@ -646,7 +648,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (*report == 0) {
 	    sprintf(addline,"%s Not found\r",line);
-	    sprintf(logmsg,"filefix: area %s is not found",line);
+	    sprintf(logmsg,"FileFix: area %s is not found",line);
 	    writeLogEntry(htick_log, '8', logmsg);
 	    report=(char*)realloc(report, strlen(addline)+1);
 	    strcpy(report, addline);
@@ -684,21 +686,21 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		case 0: removelink(link, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
 			sprintf(addline,"%s Unlinked\r",area->areaName);
-			sprintf(logmsg,"filefix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
+			sprintf(logmsg,"FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
 			writeLogEntry(htick_log, '8', logmsg);
 			break;
 		case 1: if (strstr(line, "*")) continue;
 			sprintf(addline,"%s Not linked\r",line);
-			sprintf(logmsg,"filefix: area %s is not linked to %s",
+			sprintf(logmsg,"FileFix: area %s is not linked to %s",
 					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			break;
 		case 5: sprintf(addline,"%s Unlink is not possible\r", area->areaName);
-			sprintf(logmsg,"filefix: area %s -- unlink is not possible for %s",
+			sprintf(logmsg,"FileFix: area %s -- unlink is not possible for %s",
 					area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			break;
-		default: sprintf(logmsg,"filefix: area %s -- no access for %s",
+		default: sprintf(logmsg,"FileFix: area %s -- no access for %s",
 						 area->areaName, aka2str(link->hisAka));
 			writeLogEntry(htick_log, '8', logmsg);
 			continue;
@@ -710,7 +712,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	}
 	if (*report == 0) {
 		sprintf(addline,"%s Not found\r",line);
-		sprintf(logmsg,"filefix: area %s is not found", line);
+		sprintf(logmsg,"FileFix: area %s is not found", line);
 		writeLogEntry(htick_log, '8', logmsg);
 		report=(char*)realloc(report, strlen(addline)+1);
 		strcpy(report, addline);
@@ -736,7 +738,7 @@ int changepause(char *confName, s_link *link)
     
 	if ((f_conf=fopen(confName,"r+")) == NULL)
 		{
-			fprintf(stderr,"filefix: cannot open config file %s \n", confName);
+			fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
 			return 1;
 		}
 	
@@ -792,7 +794,7 @@ int changepause(char *confName, s_link *link)
 				free(line);
 				free(cfgline);
 				link->Pause = 1;
-				sprintf(logmsg,"filefix: system %s set passive", aka2str(link->hisAka));
+				sprintf(logmsg,"FileFix: system %s set passive", aka2str(link->hisAka));
 				writeLogEntry(htick_log, '8', logmsg);
 				break;
 			}
@@ -830,7 +832,7 @@ int changeresume(char *confName, s_link *link)
     
 	if ((f_conf=fopen(confName,"r+")) == NULL)
 		{
-			fprintf(stderr,"filefix: cannot open config file %s \n", confName);
+			fprintf(stderr,"FileFix: cannot open config file %s \n", confName);
 			return 1;
 		}
     
@@ -912,7 +914,7 @@ int changeresume(char *confName, s_link *link)
 				free(line);
 				free(cfgline);
 				link->Pause = 0;
-				sprintf(logmsg,"areafix: system %s set active",	aka2str(link->hisAka));
+				sprintf(logmsg,"FileFix: system %s set active",	aka2str(link->hisAka));
 				writeLogEntry(htick_log, '8', logmsg);
 				break;
     	    }
@@ -1047,7 +1049,7 @@ void preprocText(char *preport, s_message *msg)
 {
     char *text, tmp[80], kludge[100];
 	
-    sprintf(tmp, " \r--- %s filefix\r", versionStr);
+    sprintf(tmp, " \r--- %s FileFix\r", versionStr);
     createKludges(kludge, NULL, &msg->origAddr, &msg->destAddr);
     text=(char*) malloc(strlen(kludge)+strlen(preport)+strlen(tmp)+1);
     strcpy(text, kludge);
@@ -1070,17 +1072,12 @@ char *textHead()
 
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
-    char *tab;
     s_message *tmpmsg;
     
     tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName, subj, 1);
     preprocText(report, tmpmsg);
     
-    tab = config->intab;
-    
     writeNetmail(tmpmsg);
-    
-    config->intab = tab;
     
     freeMsgBuff(tmpmsg);
     free(tmpmsg);
@@ -1204,7 +1201,7 @@ int processFileFix(s_message *msg)
 		RetMsg(msg, link, report, "security violation");
 		free(report);
 		
-		sprintf(tmp,"filefix: security violation from %s", aka2str(link->hisAka));
+		sprintf(tmp,"FileFix: security violation from %s", aka2str(link->hisAka));
 		writeLogEntry(htick_log, '8', tmp);
 		
 		free(tmplink);
@@ -1223,7 +1220,7 @@ int processFileFix(s_message *msg)
 	}
 
 
-	sprintf(tmp,"filefix: sucessfully done for %s",aka2str(link->hisAka));
+	sprintf(tmp,"FileFix: sucessfully done for %s",aka2str(link->hisAka));
 	writeLogEntry(htick_log, '8', tmp);
 	
 	return 0;

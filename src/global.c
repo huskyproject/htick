@@ -40,12 +40,16 @@ char      versionStr[30];
 int       cmToss = 0;
 int       cmScan = 0;
 int       cmHatch = 0;
+int       hatchReplace = 0;
 int       cmFlist = 0;
 
 char      flistfile[256];
 char      hatchfile[256];
 char      hatcharea[256];
 char      hatchdesc[256];
+
+int       cmAnnounce = 0;
+char      announceArea[256];
 
 int       cmAnnFile = 0;
 char      announcefile[256];

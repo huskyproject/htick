@@ -66,12 +66,14 @@ void processCommandLine(int argc, char **argv)
 "\nUsage: htick <command>\n"
 "\n"
 "Commands:\n"
-" toss [announce <area>]  Reading *.tic and tossing files, announce it in area\n"
-" annfile <file>          Announce new files in text file (toss and hatch)\n"
-" annfecho <file>         Announce new fileecho in text file\n"
+" toss                    Reading *.tic and tossing files\n"
+" [announce <area>]       Announce new files in area (toss and hatch)\n"
+" [annfile <file>]        Announce new files in text file (toss and hatch)\n"
+" [annfecho <file>]       Announce new fileecho in text file\n"
 " scan                    Scanning Netmail area for mails to filefix\n"
 " hatch <file> <area>\n" 
-"       <description>     Hatch file into Area, using Description for file\n"
+" <description> [replace] Hatch file into Area, using Description for file,\n"
+"                         if \"replace\", then fill replace field in TIC\n"
 " filelist <file>         Generate filelist which includes all files in base\n"
 " purge <days>            Purge files older than <days> days\n"
 " send <Adress> <file>    Send file to Adress\n"
@@ -96,12 +98,20 @@ void processCommandLine(int argc, char **argv)
          strcpy(hatcharea, argv[i++]);
          strcpy(hatchdesc, argv[i]);
          continue;
+      } else if (stricmp(argv[i], "replace") == 0) {
+         hatchReplace = 1;
+         continue;
       } else if (stricmp(argv[i], "filelist") == 0) {
          cmFlist = 1;
 	 if (i < argc-1) {
             i++;
             strcpy(flistfile, argv[i]);
          } else flistfile[0] = 0;
+         continue;
+      } else if (stricmp(argv[i], "announce") == 0) {
+         i++;
+         cmAnnounce = 1;
+         strcpy(announceArea, argv[i]);
          continue;
       } else if (stricmp(argv[i], "annfile") == 0) {
          i++;

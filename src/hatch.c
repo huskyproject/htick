@@ -35,7 +35,6 @@ void hatch()
    newfilesCount = 0;
 
 
-
    memset(&tic,0,sizeof(tic));
 
    // Exist file?
@@ -60,6 +59,7 @@ void hatch()
    tic.desc=realloc(tic.desc,(tic.anzdesc+1)*sizeof(&tic.desc));
    tic.desc[tic.anzdesc]=strdup(hatchdesc);
    tic.anzdesc++;
+   if (hatchReplace) strcpy(tic.replaces,tic.file);
 /*
    if (filearea==NULL) {
       autoCreate(tic.area,tic.from,tic.areadesc);
@@ -106,6 +106,7 @@ void hatch()
    strcat(descr_file_name, "files.bbs");
    strLower(descr_file_name);
 
+   removeDesc(descr_file_name,tic.file);
    add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
    if (cmAnnFile) announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
 
@@ -202,12 +203,12 @@ void hatch()
    newFileReport[newfilesCount]->useAka = filearea->useAka;
    newFileReport[newfilesCount]->areaName = filearea->areaName;
    newFileReport[newfilesCount]->areaDesc = filearea->description;
-   if (config->outtab != NULL) recodeToTransportCharset(newFileReport[newfilesCount]->areaDesc);
    newFileReport[newfilesCount]->fileName = strdup(tic.file);
 
    newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
    for (i = 0; i < tic.anzdesc; i++) {
       newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+      if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
    } /* endfor */
    newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
 
@@ -217,5 +218,5 @@ void hatch()
 
    disposeTic(&tic);
    
-   reportNewFiles();
+   if (cmAnnounce) reportNewFiles();
 }

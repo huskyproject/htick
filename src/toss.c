@@ -255,12 +255,12 @@ void writeNetmail(s_message *msg)
 
       if (msgHandle != NULL) {
          config->netMailArea.imported = 1; // area has got new messages
-
+/*
          if (config->intab != NULL) {
             recodeToInternalCharset(msg->text);
             recodeToInternalCharset(msg->subjectLine);
          }
-
+*/
          msgHeader = createXMSG(msg);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
@@ -451,52 +451,56 @@ int parseTic(char *ticfile,s_ticfile *tic)
 }
 
 int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
-{                                                                              
+{
    FILE *f;
    char *NewAutoCreate;
-   char *fileName;                                                             
+   char *fileName;
    char *fileechoFileName;
-   char buff[255], myaddr[20], hisaddr[20];                                    
-   int i=0;                                                                    
-   s_link *creatingLink;                                                       
-   s_addr *aka;                                                                
+   char buff[255], myaddr[20], hisaddr[20];
+   int i=0;
+   s_link *creatingLink;
+   s_addr *aka;
    s_message *msg;
    s_filearea *area;
-                                                                               
+   FILE *echotosslog;
+
    fileechoFileName = (char *) malloc(strlen(c_area)+1);
    strcpy(fileechoFileName, c_area);
 
-   //translating path of the area to lowercase, much better imho.              
-   while (*fileechoFileName != '\0') {                                                   
-      *fileechoFileName=tolower(*fileechoFileName);                                                
-      if ((*fileechoFileName=='/') || (*fileechoFileName=='\\')) *fileechoFileName = '_'; // convert any path elimiters to _                           
-      fileechoFileName++;                                                                
-      i++;                                                                     
-   }                                                                           
-                                                                               
-   while (i>0) {fileechoFileName--;i--;};                                                
-                                                                               
-   creatingLink = getLinkFromAddr(*config, pktOrigAddr);                       
-                                                                               
-   fileName = creatingLink->autoFileCreateFile;                                    
-   if (fileName == NULL) fileName = getConfigFileName();              
-                                                                      
-   f = fopen(fileName, "a");                                          
-   if (f == NULL) {                                                   
-      f = fopen(getConfigFileName(), "a");                            
-      if (f == NULL)                                                  
-         {                                                            
-            fprintf(stderr,"autocreate: cannot open config file\n");  
-            return 1;                                                 
-         }                                                            
-   }                                                                  
-                                                                      
-   aka = creatingLink->ourAka;                                        
-                                                                      
-   // making local address and address of uplink                      
+   //translating path of the area to lowercase, much better imho.
+   while (*fileechoFileName != '\0') {
+      *fileechoFileName=tolower(*fileechoFileName);
+      if ((*fileechoFileName=='/') || (*fileechoFileName=='\\')) *fileechoFileName = '_'; // convert any path elimiters to _
+      fileechoFileName++;
+      i++;
+   }
+
+   while (i>0) {
+      fileechoFileName--;
+      i--;
+   }
+
+   creatingLink = getLinkFromAddr(*config, pktOrigAddr);
+
+   fileName = creatingLink->autoFileCreateFile;
+   if (fileName == NULL) fileName = getConfigFileName();
+
+   f = fopen(fileName, "a");
+   if (f == NULL) {
+      f = fopen(getConfigFileName(), "a");
+      if (f == NULL)
+         {
+            fprintf(stderr,"autocreate: cannot open config file\n");
+            return 1;
+         }
+   }
+
+   aka = creatingLink->ourAka;
+
+   // making local address and address of uplink
    strcpy(myaddr,addr2string(aka));
    strcpy(hisaddr,addr2string(&pktOrigAddr));
-                                                                                
+
    //write new line in config file                                              
                             
 /*   sprintf(buff, "FileArea %s %s%s%s -a %s %s ", 
@@ -508,17 +512,17 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
            myaddr, 
            hisaddr); */
 
-   sprintf(buff, "FileArea %s %s%s -a %s ", 
+   sprintf(buff, "FileArea %s %s%s -a %s ",
            c_area,
-           config->fileAreaBaseDir, 
-           fileechoFileName, 
+           config->fileAreaBaseDir,
+           fileechoFileName,
            myaddr);
-           
+
    if (creatingLink->autoFileCreateDefaults) {
       NewAutoCreate=(char *) calloc (strlen(creatingLink->autoFileCreateDefaults)+1, sizeof(char));
       strcpy(NewAutoCreate,creatingLink->autoFileCreateDefaults);
    } else NewAutoCreate = (char*)calloc(1, sizeof(char));
-   
+
    if ((fileName=strstr(NewAutoCreate,"-d "))==NULL) {
      if (desc!=NULL) {
        char *tmp;
@@ -539,25 +543,25 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        free(NewAutoCreate);
        NewAutoCreate=tmp;
      }
-   }   
+   }
 
    if ((NewAutoCreate != NULL) && (strlen(buff)+strlen(NewAutoCreate))<255) {
-      strcat(buff, NewAutoCreate);                     
-   }                            
-   
+      strcat(buff, NewAutoCreate);
+   }
+
    free(NewAutoCreate);
-   
+
    sprintf (buff+strlen(buff)," %s",hisaddr);
-   
-   fprintf(f, "%s\n", buff);                                                
-                                                                    
-   fclose(f);                                                       
-                                                                    
-   // add new created echo to config in memory                      
-   parseLine(buff,config);                                          
-                                                                    
-   sprintf(buff, "FileArea '%s' autocreated by %s", c_area, hisaddr);   
-   writeLogEntry(htick_log, '8', buff);                                   
+
+   fprintf(f, "%s\n", buff);
+
+   fclose(f);
+
+   // add new created echo to config in memory
+   parseLine(buff,config);
+
+   sprintf(buff, "FileArea '%s' autocreated by %s", c_area, hisaddr);
+   writeLogEntry(htick_log, '8', buff);
 
    // report about new filearea
    if (config->ReportTo && (area = getFileArea(config, c_area)) != NULL) {
@@ -576,6 +580,11 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       writeMsgToSysop(msg);
       freeMsgBuff(msg);
       free(msg);
+      if (config->echotosslog != NULL) {
+         echotosslog = fopen (config->echotosslog, "a");
+         fprintf(echotosslog,"%s\n",config->ReportTo);
+         fclose(echotosslog);
+      }
    } else {
    } /* endif */
 
@@ -622,7 +631,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
-							  (stricmp(tic.password,from_link->ticPwd)!=0))) {
+       (stricmp(tic.password,from_link->ticPwd)!=0))) {
       sprintf(logstr,"Wrong Password %s from %s",
               tic.password,addr2string(&tic.from));
       writeLogEntry(htick_log,'9',logstr);
@@ -661,7 +670,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    crc = filecrc32(ticedfile);
    if (tic.crc != crc) {
-      sprintf(logstr,"Wrong CRC - in tic:%lx, need:%lx",tic.crc,crc);
+      sprintf(logstr,"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
       writeLogEntry(htick_log,'9',logstr);
       disposeTic(&tic);
       return(3);
@@ -696,7 +705,25 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return(3);
    }
+/*
+   if (from_link->import == 0) {
+      sprintf(logstr,"Not import from link %s, %s",
+              from_link->name,
+              addr2string(&from_link->hisAka));
+      writeLogEntry(htick_log,'6',logstr);
+      disposeTic(&tic);
+      return(3);
+   }
 
+   if (atoi(filearea->wgrp) > from_link->level) {
+      sprintf(logstr,"Link %s, %s have little level",
+      from_link->name,
+      addr2string(&from_link->hisAka));
+      writeLogEntry(htick_log,'6',logstr);
+      disposeTic(&tic);
+      return(3);
+   }
+*/
    strLower(fileareapath);
    createDirectoryTree(fileareapath);
 
@@ -799,7 +826,22 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
-         } else {
+         } else if (filearea->downlinks[i]->link->Pause) {
+            sprintf(logstr,"Link %s, %s in pause",
+                        filearea->downlinks[i]->link->name,
+                        addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'6',logstr);
+	 } else /*if (filearea->downlinks[i]->export == 0) {
+            sprintf(logstr,"Not export to link %s, %s",
+                        filearea->downlinks[i]->link->name,
+                        addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'6',logstr);
+	 } else if (atoi(filearea->rgrp) > filearea->downlinks[i]->link->level) {
+            sprintf(logstr,"Link %s, %s have little level",
+                        filearea->downlinks[i]->link->name,
+                        addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'6',logstr);
+	 } else */{
             memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
             memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
                     sizeof(s_addr));
@@ -871,19 +913,20 @@ int processTic(char *ticfile, e_tossSecurity sec)
    newFileReport[newfilesCount]->useAka = filearea->useAka;
    newFileReport[newfilesCount]->areaName = filearea->areaName;
    newFileReport[newfilesCount]->areaDesc = filearea->description;
-   if (config->outtab != NULL) recodeToTransportCharset(newFileReport[newfilesCount]->areaDesc);
    newFileReport[newfilesCount]->fileName = strdup(tic.file);
 
    if (tic.anzldesc>0) {
-   newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
-   for (i = 0; i < tic.anzldesc; i++) {
-      newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
-   } /* endfor */
-   newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
+      newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
+      for (i = 0; i < tic.anzldesc; i++) {
+         newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
+         if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
+      } /* endfor */
+      newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
    } else {
       newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
       for (i = 0; i < tic.anzdesc; i++) {
          newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+         if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
       } /* endfor */
       newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
    }
@@ -1192,6 +1235,7 @@ void writeMsgToSysop(s_message *msg)
       echo = getArea(config, tmp);
       if (echo != &(config->badArea)) {
          if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
+	    msg->recode = 1;
             putMsgInArea(echo, msg,1);
             echo->imported = 1;  // area has got new messages
             sprintf(tmp, "Post report message to %s area", echo->areaName);
@@ -1283,15 +1327,16 @@ void reportNewFiles()
    UINT32    fileSize;
    s_message *msg;
    char      buff[256], *tmp;
+   FILE      *echotosslog;
 
-   // post report about new files to config->ReportTo
+   // post report about new files to announceArea
    for (c = 0; c < config->addrCount && newfilesCount != 0; c++) {
       msg = NULL;
       for (i = 0; i < newfilesCount; i++) {
          if (newFileReport[i] != NULL) {
             if (newFileReport[i]->useAka == &(config->addr[c])) {
                if (msg == NULL) {
-                  if (stricmp(config->ReportTo, "netmail") == 0) {
+                  if (stricmp(announceArea, "netmail") == 0) {
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
                         versionStr, config->sysop, "New Files", 1);
@@ -1302,7 +1347,7 @@ void reportNewFiles()
                         newFileReport[i]->useAka,
                         versionStr, "All", "New Files", 0);
                      msg->text = (char*)calloc(300, sizeof(char));
-                     createKludges(msg->text, config->ReportTo, newFileReport[i]->useAka, newFileReport[i]->useAka);
+                     createKludges(msg->text, announceArea, newFileReport[i]->useAka, newFileReport[i]->useAka);
                   } /* endif */
                   strcat(msg->text, " ");
                } /* endif */
@@ -1353,7 +1398,14 @@ void reportNewFiles()
       } else {
       } /* endif */
    } /* endfor */
-   if (newFileReport) free(newFileReport);
+   if (newFileReport) {
+      free(newFileReport);
+      if (config->echotosslog != NULL) {
+         echotosslog = fopen (config->echotosslog, "a");
+         fprintf(echotosslog,"%s\n",announceArea);
+         fclose(echotosslog);
+      }
+   }
 }
 
 void toss()
@@ -1365,6 +1417,6 @@ void toss()
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
    
-   reportNewFiles();
+   if (cmAnnounce) reportNewFiles();
 }
 
