@@ -57,12 +57,6 @@
 #include <hatch.h>
 #include <filelist.h>
 
-#ifdef __NT__
-#define WIN32_LEAN_AND_MEAN
-#define NOMSG
-#include <windows.h>
-#endif
-
 void processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;

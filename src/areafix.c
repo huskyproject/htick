@@ -122,7 +122,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
        msg->attributes |= MSGPRIVATE;
        msg->netMail = 1;
     }
-    if (config->areafixKillReports) msg->attributes |= MSGKILL;
+    if (config->filefixKillReports) msg->attributes |= MSGKILL;
     
     strftime(msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
     
@@ -321,7 +321,6 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 }
 
 void addlink(s_link *link, s_filearea *area) {
-    char *test = NULL;
     s_arealink *arealink;
 
     area->downlinks = realloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));

@@ -2,6 +2,19 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Tue Feb  8 00:07:06 NOVT 2000
+max (patch from Alex Bronin, 2:5049/36):
+* executing command on receiving file
+  ExecOnFile <filearea> <filemask> <command>
+  command get full filepath as parameter
+* increased crc buffer for speed
+* continue fixing segmentation fault if field Desc in TIC > 255 chars
+* areafix: using filefixKillReports instead areafixKillReports
+* lock file contains pid in win32 too
+* UTC time in Path
+* added Orig to reports
+
+----- cvs ci ------
 Sat Feb  5 02:36:03 NOVT 2000
 max:
 * adopted my changes in fidoconfig for import, export, mandatory & groups

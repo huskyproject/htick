@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <crc32.h>
 
@@ -87,7 +88,7 @@ unsigned long strcrc32(const char *str)
 unsigned long filecrc32(const char *name)
 {
   FILE *fd;
-  static char buffer[1024];
+  char* buffer;
   size_t got;
   unsigned long crc;
 
@@ -96,14 +97,18 @@ unsigned long filecrc32(const char *name)
   if (!fd)
     return 0L;
 
+  buffer = malloc(CRC_BUFFER_SIZE);
+  if (buffer == NULL) return 0L;
+
   crc = 0xFFFFFFFFL;
   while (1)
   {
-    got = fread(buffer, 1, 1024, fd);
+    got = fread(buffer, 1, CRC_BUFFER_SIZE, fd);
     crc = crc32(buffer, got, crc);
-    if (got != 1024)
+    if (got != CRC_BUFFER_SIZE)
       break;
   }
+  free(buffer);
   fclose(fd);
   return crc ^ 0xFFFFFFFFL;
 }

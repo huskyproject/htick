@@ -37,6 +37,7 @@ typedef enum tossSecurity e_tossSecurity;
 
 struct newfilereport {
    s_addr   *useAka;
+   s_addr   origin;
    char     *areaName;
    char     *areaDesc;
    char     *fileName;

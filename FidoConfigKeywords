@@ -27,3 +27,7 @@ Help file for FileFix  (Same as AreaFixHelp for AreaFix)
 7) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
 
 Same as EchoArea, most options are valid
+
+8) ExecOnFile <filearea> <filemask> <command>
+  
+Execute some command on receiving file. Command get full filepath as parameter.

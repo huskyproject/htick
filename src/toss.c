@@ -55,6 +55,7 @@
 #include <pkt.h>
 #include <areafix.h>
 #include <version.h>
+#include <ffind.h>
 
 #include <stamp.h>
 #include <progprot.h>
@@ -782,6 +783,11 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    parseTic(ticfile,&tic);
 
+   sprintf(logstr,"File: %s Area: %s From: %s Origin: %u:%u/%u.%u",
+           tic.file, tic.area, addr2string(&tic.from),
+           tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
+   writeLogEntry(htick_log,'6',logstr);
+
    /* Security Check */
    from_link=getLinkFromAddr(*config,tic.from);
    if (from_link == NULL) {
@@ -979,10 +985,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (filearea->downlinkCount>0) {
       /* Adding path & seenbys */
       time(&acttime);
-      strcpy(timestr,asctime(localtime(&acttime)));
+      strcpy(timestr,asctime(gmtime(&acttime)));
       timestr[strlen(timestr)-1]=0;
 
-      sprintf(hlp,"%s %lu %s %s",
+      sprintf(hlp,"%s %lu %s UTC %s",
               addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
 
       tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
@@ -1131,6 +1137,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
    newFileReport[newfilesCount]->areaName = filearea->areaName;
    newFileReport[newfilesCount]->areaDesc = filearea->description;
    newFileReport[newfilesCount]->fileName = strdup(tic.file);
+   newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
+   newFileReport[newfilesCount]->origin.net = tic.origin.net;
+   newFileReport[newfilesCount]->origin.node = tic.origin.node;
+   newFileReport[newfilesCount]->origin.point = tic.origin.point;
 
    if (tic.anzldesc>0) {
       newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
@@ -1560,11 +1570,12 @@ void freeFReport(s_newfilereport *report)
 
 void reportNewFiles()
 {
-   int       b, c, i, fileCount;
+   int       b, c, i, j, fileCount, cmdexit;
    UINT32    fileSize;
    s_message *msg;
-   char      buff[256], *tmp;
+   char      buff[256], *tmp, *comm;
    FILE      *echotosslog;
+   s_filearea *filearea;
    char      *annArea;
 
    if (cmAnnounce) annArea = announceArea;
@@ -1593,6 +1604,30 @@ void reportNewFiles()
                   } /* endif */
                   strcat(msg->text, " ");
                } /* endif */
+
+               /* execute external program */
+               filearea = getFileArea(config, newFileReport[i]->areaName);
+               for (j = 0; j < config->execonfileCount; j++) {
+                 if (stricmp(newFileReport[i]->areaName,config->execonfile[j].filearea) != 0) continue;
+                   if (patimat(newFileReport[i]->fileName,config->execonfile[j].filename) == 0) continue;
+                   else {
+                     comm = (char *) malloc(strlen(config->execonfile[j].command)+1
+                                            +strlen(filearea->pathName)
+                                            +strlen(newFileReport[i]->fileName)+1);
+                     if (comm == NULL) continue;
+                     sprintf(comm,"%s %s%s",config->execonfile[j].command,
+                                            filearea->pathName,
+                                            newFileReport[i]->fileName);
+                     sprintf(buff, "Executing %s", comm);
+                     writeLogEntry(htick_log, '1', buff);
+                     if ((cmdexit = system(comm)) != 0) {
+                       sprintf(buff, "Exec failed, code %d", cmdexit);
+                       writeLogEntry(htick_log, '1', buff);
+                     }
+                     free(comm);
+                   }                                         
+               }
+
                fileCount = fileSize = 0;
                sprintf(buff, "\r Area : %s%s", newFileReport[i]->areaName,
                                                print_ch(25, ' '));
@@ -1601,11 +1636,14 @@ void reportNewFiles()
             	    print_ch(77, '-'));
                msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
                strcat(msg->text, buff);
-               sprintf(buff, " %s%s", newFileReport[i]->fileName, print_ch(25, ' '));
+               sprintf(buff, " %s%s", strUpper(newFileReport[i]->fileName), print_ch(25, ' '));
                tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
                sprintf(buff+14, "% 9i", newFileReport[i]->fileSize);
-               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
+               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2+75);
                sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
+               sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                       newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
+                       newFileReport[i]->origin.node,newFileReport[i]->origin.point);
 	       if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
                free(tmp);
                fileCount++;
@@ -1615,11 +1653,14 @@ void reportNewFiles()
                       newFileReport[b]->useAka == &(config->addr[c]) &&
                       stricmp(newFileReport[i]->areaName,
                       newFileReport[b]->areaName) == 0) {
-                      sprintf(buff, " %s%s", newFileReport[b]->fileName, print_ch(25, ' '));
+                      sprintf(buff, " %s%s", strUpper(newFileReport[b]->fileName), print_ch(25, ' '));
                       tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
-                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
+                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2+75);
                       sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
+                      sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                              newFileReport[b]->origin.zone,newFileReport[b]->origin.net,
+                              newFileReport[b]->origin.node,newFileReport[b]->origin.point);
 	              if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
                       free(tmp);
                       fileCount++;

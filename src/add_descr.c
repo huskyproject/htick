@@ -100,7 +100,7 @@ int announceInFile (char *announcefile, char *file_name, int size, char *area, s
 {
    FILE *ann_file;
    int i;
-   char desc_line[256];
+   char *desc_line;
    
    if (!fexist(announcefile)) {
       ann_file = fopen (announcefile, "w");
@@ -113,9 +113,12 @@ int announceInFile (char *announcefile, char *file_name, int size, char *area, s
    }
    fprintf (ann_file, "%-16s %-12d %-20s %u:%u/%u.%u\n", file_name, size, area, origin.zone, origin.net, origin.node, origin.point);
    for (i=0;i<count_desc;i++) {
-      strcpy(desc_line,description[i]);
-      if (config->intab != NULL) recodeToInternalCharset(desc_line);
-      fprintf(ann_file,"%s\n",desc_line);
+      desc_line = strdup(description[i]);
+      if (desc_line != NULL) {
+        if (config->intab != NULL) recodeToInternalCharset(desc_line);
+        fprintf(ann_file,"%s\n",desc_line);
+        free(desc_line);
+      }
    }
    fprintf (ann_file,"-------------------------------------------------------------------\n");
    fclose (ann_file);
@@ -143,7 +146,7 @@ int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
 int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
 {
     FILE *f1;
-    char hlp[265] = "", tmp[265], *token;
+    char hlp[1024] = "", tmp[1024], *token;
     int flag = 0, rc = 1;
 
    f1 = fopen (descr_file_name, "r");

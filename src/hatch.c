@@ -216,6 +216,10 @@ void hatch()
       newFileReport[newfilesCount]->areaName = filearea->areaName;
       newFileReport[newfilesCount]->areaDesc = filearea->description;
       newFileReport[newfilesCount]->fileName = strdup(tic.file);
+      newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
+      newFileReport[newfilesCount]->origin.net = tic.origin.net;
+      newFileReport[newfilesCount]->origin.node = tic.origin.node;
+      newFileReport[newfilesCount]->origin.point = tic.origin.point;
 
       newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
       for (i = 0; i < tic.anzdesc; i++) {
@@ -309,9 +313,9 @@ int send(char *filename, char *area, char *addr)
 
    // Adding path
    time(&acttime);
-   strcpy(timestr,asctime(localtime(&acttime)));
+   strcpy(timestr,asctime(gmtime(&acttime)));
    timestr[strlen(timestr)-1]=0;
-   sprintf(tmp,"%s %lu %s %s",
+   sprintf(tmp,"%s %lu %s UTC %s",
            addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
    tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
    tic.path[tic.anzpath]=strdup(tmp);
