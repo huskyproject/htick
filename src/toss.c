@@ -10,7 +10,7 @@
  *
  * Vienna, Austria, Europe
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -111,28 +111,28 @@ int to_us(const s_addr destAddr)
    return !0;
 }
 
-void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka) 
-{                                   
-                                                                                
-   *buff = 0;                                                                   
-   if (area != NULL)                                                            
-      sprintf(buff + strlen(buff), "AREA:%s\r", area);                          
-   else {                                                                       
+void createKludges(char *buff, const char *area, const s_addr *ourAka, const s_addr *destAka)
+{
+
+   *buff = 0;
+   if (area != NULL)
+      sprintf(buff + strlen(buff), "AREA:%s\r", area);
+   else {
       if (ourAka->point) sprintf(buff + strlen(buff), "\1FMPT %d\r",
-          ourAka->point);                                                                            
+          ourAka->point);
       if (destAka->point) sprintf(buff + strlen(buff), "\1TOPT %d\r",
-          destAka->point);                                                                          
-   };                                                                           
-                                                                                
-   if (ourAka->point)                                                           
-      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u.%u %08lx\r",               
-          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) time(NULL));  
-   else                                                                         
-      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u %08lx\r",                  
-              ourAka->zone,ourAka->net,ourAka->node,(unsigned long) time(NULL));                
-                                                                                
-   sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);                     
-}                                                                               
+          destAka->point);
+   };
+
+   if (ourAka->point)
+      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u.%u %08lx\r",
+          ourAka->zone,ourAka->net,ourAka->node,ourAka->point,(unsigned long) time(NULL));
+   else
+      sprintf(buff + strlen(buff),"\1MSGID: %u:%u/%u %08lx\r",
+              ourAka->zone,ourAka->net,ourAka->node,(unsigned long) time(NULL));
+
+   sprintf(buff + strlen(buff), "\1PID: %s\r", versionStr);
+}
 
 
 XMSG createXMSG(s_message *msg)
@@ -143,11 +143,11 @@ XMSG createXMSG(s_message *msg)
         union stamp_combo dosdate;
         int i,remapit;
         char *subject;
-        
+
         if (msg->netMail == 1) {
                 /* attributes of netmail must be fixed */
                 msgHeader.attr = msg->attributes;
-                
+
                 if (to_us(msg->destAddr)==0) {
                         msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD
                           | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); /* kill these flags */
@@ -156,7 +156,7 @@ XMSG createXMSG(s_message *msg)
 
       /* Check if we must remap */
       remapit=0;
-      
+
       for (i=0;i<config->remapCount;i++)
           if ((config->remaps[i].toname==NULL ||
                stricmp(config->remaps[i].toname,msg->toUserName)==0) &&
@@ -172,11 +172,11 @@ XMSG createXMSG(s_message *msg)
 
       if (remapit)
          {
-         msg->destAddr.zone=config->remaps[i].newaddr.zone;              
+         msg->destAddr.zone=config->remaps[i].newaddr.zone;
          msg->destAddr.net=config->remaps[i].newaddr.net;
-         msg->destAddr.node=config->remaps[i].newaddr.node;   
-         msg->destAddr.point=config->remaps[i].newaddr.point;             
-         }                                                               
+         msg->destAddr.node=config->remaps[i].newaddr.node;
+         msg->destAddr.point=config->remaps[i].newaddr.point;
+         }
 
    }
    else
@@ -185,7 +185,7 @@ XMSG createXMSG(s_message *msg)
        msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD | MSGFRQ | MSGSCANNED | MSGLOCKED); /* kill these flags */
        msgHeader.attr |= MSGLOCAL;
      }
-   
+
    strcpy((char *) msgHeader.from,msg->fromUserName);
    strcpy((char *) msgHeader.to, msg->toUserName);
    subject=msg->subjectLine;
@@ -199,7 +199,7 @@ XMSG createXMSG(s_message *msg)
    strcpy((char *) msgHeader.subj,subject);
    if (subject != msg->subjectLine)
      free(subject);
-       
+
    msgHeader.orig.zone  = (word)msg->origAddr.zone;
    msgHeader.orig.node  = (word)msg->origAddr.node;
    msgHeader.orig.net   = (word)msg->origAddr.net;
@@ -306,7 +306,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
    int i;
 
    tichandle=fopen(ticfile,"wb");
-   
+
    fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
    fprintf(tichandle,"File %s\r\n",tic->file);
    fprintf(tichandle,"Area %s\r\n",tic->area);
@@ -336,10 +336,10 @@ void writeTic(char *ticfile,s_ticfile *tic)
 
    for (i=0;i<tic->anzpath;i++)
        fprintf(tichandle,"Path %s\r\n",tic->path[i]);
-  
+
    for (i=0;i<tic->anzseenby;i++)
        fprintf(tichandle,"Seenby %s\r\n",addr2string(&tic->seenby[i]));
-  
+
    if (tic->password[0]!=0)
       fprintf(tichandle,"Pw %s\r\n",tic->password);
 
@@ -367,7 +367,7 @@ void disposeTic(s_ticfile *tic)
 
 int parseTic(char *ticfile,s_ticfile *tic)
 {
-   FILE *tichandle;   
+   FILE *tichandle;
    char *line, *token, *param, *linecut = "";
 
    tichandle=fopen(ticfile,"r");
@@ -490,7 +490,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    strcpy(hisaddr,addr2string(&pktOrigAddr));
 
    /* write new line in config file */
-                            
+
    sprintf(buff, "FileArea %s %s%s -a %s ",
            c_area,
            config->fileAreaBaseDir,
@@ -552,7 +552,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
          msg->text = (char *)calloc(300, sizeof(char));
          createKludges(msg->text, config->ReportTo, area->useAka, area->useAka);
       } /* endif */
-      sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName, 
+      sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
           (area->description) ? area->description : "");
       msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+1);
       strcat(msg->text, buff);
@@ -569,8 +569,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 
    if (cmAnnNewFileecho) announceNewFileecho (announcenewfileecho, c_area, hisaddr);
 
-   return 0;                                                        
-}              
+   return 0;
+}
 
 int readCheck(s_filearea *echo, s_link *link)
 {
@@ -651,16 +651,16 @@ int writeCheck(s_filearea *echo, s_addr *aka)
             if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
                 !grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
                return 1;
-         } else 
+         } else
             if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) return 1;
-      } else 
+      } else
          if (config->numPublicGroup) {
             if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
          } else return 1;
    }*/
 
   if (echo->levelwrite > link->level) return 2;
-    
+
   if (i < echo->downlinkCount)
   {
     if (link->import == 0) return 3;
@@ -796,7 +796,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       strcpy(fileareapath,filearea->pathName);
    else
       strcpy(fileareapath,config->passFileAreaDir);
-   p = strrchr(fileareapath,PATH_DELIM); 
+   p = strrchr(fileareapath,PATH_DELIM);
    if(p) strLower(p+1);
 
    createDirectoryTree(fileareapath);
@@ -887,7 +887,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    }
 
    for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 && 
+      if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 &&
           ( (isToss==1 && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) ||
 	   isToss==0 ) &&
             addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0 &&
@@ -904,7 +904,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
    /* Checking to whom I shall forward */
    for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 && 
+      if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 &&
             addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
             addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0) {
          /* Forward file to */
@@ -1052,14 +1052,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
            writeLogEntry(htick_log, '9', "Exec failed, code %d", cmdexit);
          }
          nfree(comm);
-       }                                         
+       }
    }
 
    if (isToss == 1) nfree(old_seenby);
    return(0);
 }
 
-int processTic(char *ticfile, e_tossSecurity sec)                     
+int processTic(char *ticfile, e_tossSecurity sec)
 {
    s_ticfile tic;
    size_t j;
@@ -1183,7 +1183,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
       disposeTic(&tic);
       return(2);
-   } 
+   }
 
    /* Check CRC Value and reject faulty files depending on noCRC flag */
    if (!filearea->noCRC) {
@@ -1375,7 +1375,7 @@ void cleanPassthroughDir(void)
    if (direxist(tmpdir)) {
       strcpy(tmpdir, config->busyFileDir);
       dir = opendir(tmpdir);
-      if (dir != NULL) {  
+      if (dir != NULL) {
          while ((file = readdir(dir)) != NULL) {
             if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
             if (patimat(file->d_name, "*.TIC") == 1) {
@@ -1402,16 +1402,16 @@ void cleanPassthroughDir(void)
    if (config->separateBundles) {
       for (i = 0; i < config->linkCount; i++) {
          busy = 0;
-         if (createOutboundFileName(&(config->links[i]), NORMAL, FLOFILE) == 1) 
+         if (createOutboundFileName(&(config->links[i]), NORMAL, FLOFILE) == 1)
             busy = 1;
          if (!busy) {
             strcpy(tmpdir, config->links[i].floFile);
-            sprintf(strrchr(tmpdir, '.'), ".sep"); 
+            sprintf(strrchr(tmpdir, '.'), ".sep");
             if (direxist(tmpdir)) {
                sprintf(tmpdir+strlen(tmpdir), "%c", PATH_DELIM);
                dir = opendir(tmpdir);
                if (dir == NULL) continue;
-   
+
                while ((file = readdir(dir)) != NULL) {
                   if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
                   ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
@@ -1583,7 +1583,7 @@ void writeMsgToSysop(s_message *msg, char *areaName)
 /*         putMsgInBadArea(msgToSysop[i], msgToSysop[i]->origAddr, 0); */
       }
    }
-    
+
 }
 
 char *formDescStr(char *desc)
@@ -1763,8 +1763,10 @@ void reportNewFiles()
       nfree(newFileReport);
       if (config->echotosslog != NULL) {
          echotosslog = fopen (config->echotosslog, "a");
-         fprintf(echotosslog,"%s\n",annArea);
-         fclose(echotosslog);
+         if (echotosslog != NULL) {
+            fprintf(echotosslog,"%s\n",annArea);
+            fclose(echotosslog);
+         }
       }
    }
 }
@@ -1777,6 +1779,6 @@ void toss()
    processDir(config->localInbound, secLocalInbound);
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
-   
+
    reportNewFiles();
 }
