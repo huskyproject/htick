@@ -1,3 +1,7 @@
+2003-02-25 Tuesday 12:01  stas_degteff
+
+	* HISTORY (1.14): Cosmetics fix
+
 2003-02-21 Friday 09:14  stas_degteff
 
 	* src/toss.c (1.253): Test parsetic() result
