@@ -10,7 +10,7 @@
 #include <fcommon.h>
 #include <fidoconf/common.h>
 #include <smapi/progprot.h>
-#include <add_descr.h>
+#include <add_desc.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/adcase.h>
 

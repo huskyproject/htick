@@ -3,10 +3,11 @@
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj add_descr.obj seenby.obj recode.obj crc32.obj hatch.obj filelist.obj filecase.obj
+OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj add_desc.obj seenby.obj recode.obj crc32.obj hatch.obj filelist.obj filecase.obj
 SRC_DIR = ..\src
 
 CFLAGS  = -zq -wx -bt=nt -j -i=..\..;..\h -oneatx -5
+LFLAGS  = system nt
 
 all: $(OBJS) htick.exe
 
@@ -16,4 +17,13 @@ $(OBJS): $(SRC_DIR)\*.c
 
 htick.exe: $(OBJS)
    @echo linking htick
-  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj, filecase.obj Library ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME htick.exe
+  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_desc.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj, filecase.obj Library ..\..\smapi\smapiwcw.lib, ..\..\fidoconf\fconfwcw.lib NAME htick.exe
+
+.IGNORE
+
+clean:
+	DEL *.obj
+
+distclean: clean
+	DEL htick.exe
+	

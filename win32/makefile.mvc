@@ -17,7 +17,7 @@ OBJS    = global.obj \
           scan.obj \
           areafix.obj \
           strsep.obj \
-          add_descr.obj \
+          add_desc.obj \
           seenby.obj \
           recode.obj \
           crc32.obj \

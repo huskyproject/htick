@@ -62,7 +62,7 @@
 #include <smapi/stamp.h>
 #include <smapi/progprot.h>
 
-#include <add_descr.h>
+#include <add_desc.h>
 #include <seenby.h>
 #include <recode.h>
 #include <crc32.h>

@@ -5,7 +5,7 @@ LIBDIR  = /usr/local/lib
 BINDIR  = /usr/local/bin
 IBOPT   = -s
 
-OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_descr.o seenby.o recode.o crc32.o hatch.o filelist.o filecase.o
+OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_desc.o seenby.o recode.o crc32.o hatch.o filelist.o filecase.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
