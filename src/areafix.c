@@ -1118,9 +1118,11 @@ char *areastatus(char *preport, char *text)
     tmp = preport;
     ptmp = strchr(tmp, '\r');
     while (ptmp) {
-		*(ptmp++)=0;
+		*ptmp=0;
+		ptmp++;
         report=strchr(tmp, ' ');
-		*(report++)=0;
+		*report=0;
+		report++;
         if (strlen(tmp) > 50) tmp[50] = 0;
 		if (50-strlen(tmp) == 0) sprintf(tmpBuff, " %s  %s\r", tmp, report);
         else if (50-strlen(tmp) == 1) sprintf(tmpBuff, " %s   %s\r", tmp, report);

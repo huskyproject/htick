@@ -8,6 +8,11 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Tue Nov 30 22:13:00 1999
+sms:
+* fixed some misuses of ++ in areafix.c
+
+----- cvs ci ------
 Sun Nov 07 15:30:00 1999
 georgi:
 + Added support fowrardPkts for TIC
