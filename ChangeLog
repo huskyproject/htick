@@ -1,3 +1,8 @@
+2003-01-22 Wednesday 11:45  mche
+
+	* src/add_desc.c (1.29), src/toss.c (1.246), doc/htick.texi (1.21):
+	multiply definition for filedescname
+
 2003-01-21 Tuesday 06:19  stas_degteff
 
 	* htick.dsp (1.3): 0x0a --> 0x0d0x0a for *.dsp
