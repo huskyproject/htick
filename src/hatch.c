@@ -42,6 +42,8 @@
 #include <fidoconf/adcase.h>
 #include <fidoconf/xstr.h>
 #include <filecase.h>
+#include "report.h"
+
 
 void hatch()
 {
@@ -96,6 +98,7 @@ void hatch()
     // Adding crc
     tic.crc = filecrc32(hatchfile);
     
+    doSaveTic4Report(&tic);
     sendToLinks(0, filearea, &tic, hatchfile);
     
     disposeTic(&tic);
