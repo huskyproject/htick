@@ -1,3 +1,9 @@
+2003-02-17 Monday 12:28  mche
+
+	* src/areafix.c (1.113), src/clean.c (1.15), src/filelist.c (1.35),
+	src/hatch.c (1.76), src/report.c (1.38), src/toss.c (1.252),
+	h/toss.h (1.22): merging s_filearea into s_area
+
 2003-02-11 Tuesday 11:05  sfpavel
 
 	* doc/: bugreport.rus (1.4), bugreport.txt (1.4), htick.texi
