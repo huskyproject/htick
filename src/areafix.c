@@ -1206,8 +1206,10 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     {
         xscatprintf(&buff," %s",aka2str(*pktOrigAddr));
     }    
-    if(dwLink) xscatprintf(&buff," %s",aka2str(*dwLink));
-    
+    if(dwLink && !isOurAka(config,*dwLink)) 
+    {
+        xscatprintf(&buff," %s",aka2str(*dwLink));
+    }
     // fix if dummys del \n from the end of file
     fseek (f, -1L, SEEK_END);
     if (getc(f) != '\n') {
