@@ -37,7 +37,7 @@ typedef enum tossSecurity e_tossSecurity;
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
 void disposeTic(s_ticfile *tic);
-void writeTic(char *ticfile,s_ticfile *tic);
+int writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
 void processTmpDir(void);
 void toss(void);

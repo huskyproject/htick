@@ -125,6 +125,7 @@
 #define TIC_CantRename 3
 #define TIC_NotForUs   4
 #define TIC_NotRecvd   5
+#define TIC_IOError    6
 
 
 void writeNetmail(s_message *msg, char *areaName)
@@ -170,13 +171,22 @@ void writeNetmail(s_message *msg, char *areaName)
    } /* endif */
 }
 
-void writeTic(char *ticfile,s_ticfile *tic)
+int writeTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
     unsigned int i;
     s_filearea *filearea = NULL;
 
-    tichandle=fopen(ticfile,"wb");
+    if (ticfile) {
+        tichandle=fopen(ticfile,"wb");
+        if (!tichandle) {
+            w_log(LL_ERROR, "Unable to open TIC file %s !!!\n", ticfile);
+            return 0;
+        }
+    } else {
+        w_log(LL_ERROR, "ticfile is NULL, internal error!\n");
+        return 0;
+    }
 
     fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
     fprintf(tichandle,"File %s\r\n",tic->file);
@@ -225,6 +235,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
         fprintf(tichandle,"Pw %s\r\n",tic->password);
 
     fclose(tichandle);
+    return 1;
 }
 
 void disposeTic(s_ticfile *tic)
@@ -586,7 +597,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     if (isToss == 1) {
         if (!filearea->sendorig) {
             /* overwrite existing file if not same */
-            if (move_file(filename,newticedfile,1)!=0) { 
+            if (move_file(filename,newticedfile,1)!=0) {
                 w_log( LL_ERROR,"File %s not moveable to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
@@ -741,7 +752,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                         tic->file,
                         aka2str(downlink->hisAka));
                 } else {
-                    PutFileOnLink(newticedfile, tic,  downlink);
+                    if (!PutFileOnLink(newticedfile, tic,  downlink))
+                        return TIC_IOError;
                 }
             } /* if readAccess == 0 */
         } /* Forward file */

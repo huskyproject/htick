@@ -5,6 +5,6 @@
 
 void hatch(void);
 int  send(char *filename, char *area, char *addr);
-void PutFileOnLink(char *filename, s_ticfile *tic, s_link* downlink);
+int PutFileOnLink(char *filename, s_ticfile *tic, s_link* downlink);
 
 #endif

@@ -1,0 +1,3 @@
+Known bugs:
+* If we can't write tic for link when put file on links, tic is lost.
+	Rest links receive files normally.
