@@ -1,3 +1,9 @@
+2004-01-06 Tuesday 11:02  d_sergienko
+
+	* HISTORY, Makefile, src/toss.c (htick-1_4-stable.[4,2,7]): replace
+	char 026 to space in generated tics to prevent incorrect TIC
+	processing by old DOS fileechoprocessors.
+
 2003-12-28 Sunday 00:58  d_sergienko
 
 	* src/toss.c (htick-1_4-stable.6): fixed coredump when area is not
