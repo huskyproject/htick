@@ -1,3 +1,12 @@
+2002-05-06 Monday 14:10  pavel.gulchouck
+
+	* src/: areafix.c (1.57), toss.c (1.150): Added kludge "FLAGS NPD"
+	when needed
+
+2002-05-06 Monday 13:18  pavel.gulchouck
+
+	* src/toss.c (1.149): minor bugfix in doSaveTic
+
 2002-05-05 Sunday 09:25  pavel.gulchouck
 
 	* src/toss.c (1.148): fileFixKillReports fixed
