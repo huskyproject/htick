@@ -1,3 +1,16 @@
+2002-10-03 Thursday 15:17  stas_degteff
+
+	* src/toss.c (1.214): Fix -2
+
+2002-10-03 Thursday 15:10  stas_degteff
+
+	* src/toss.c (1.213): Fix previous fix (typo error)
+
+2002-10-03 Thursday 14:39  stas_degteff
+
+	* src/toss.c (1.212): Fix after fidoconf/move_fiel() & copy_file()
+	fix.
+
 2002-09-30 Monday 14:36  mche
 
 	* src/areafix.c (1.92): define function before using
