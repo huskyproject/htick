@@ -1,3 +1,8 @@
+2002-05-29 Wednesday 16:55  mche
+
+	* src/add_desc.c (1.10): write description of file on new line only
+	for long filenames
+
 2002-05-27 Monday 16:28  mche
 
 	* src/add_desc.c (1.9): DLCDigits position moved back
