@@ -1,30 +1,35 @@
 # include Husky-Makefile-Config
 include ../../huskymak.cfg
 
-OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ)
+OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
+          scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_descr$(OBJ) seenby$(OBJ) \
+          recode$(OBJ) crc32$(OBJ) hatch$(OBJ) filelist$(OBJ)
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
   CFLAGS  = -c -I../h -I../../smapi -I$(INCDIR) -Wall -ggdb -O2
-  LFLAGS  = -L$(LIBDIR)
 else
   CFLAGS  = -c -I../h -I../../smapi -I$(INCDIR) -Wall -O3 -s
-  LFLAGS  = -L$(LIBDIR)
+endif
+
+ifeq ($(SHORTNAME), 1)
+  LFLAGS  = -L$(LIBDIR) -lsmapi -lfidoconf
+else
+  LFLAGS  = -L$(LIBDIR) -lsmapi -lfidoconfig
 endif
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
-all: $(OBJS) \
-     htick$(EXE)
+all: $(OBJS) htick$(EXE)
 
 %$(OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 htick$(EXE): $(OBJS)
-	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS) -lsmapi -lfidoconfig
+	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS)
 
 clean:
-	-$(RM) -f *$(OBJ)
+	-$(RM) *$(OBJ)
 	-$(RM) *~
 	-$(RM) core
 	-$(RM) htick$(EXE)
@@ -35,5 +40,5 @@ distclean: clean
 	-$(RM) *.log
 
 install: htick$(EXE)
-	install $(IBOPT) htick$(EXE) $(BINDIR)
+	$(INSTALL) $(IBOPT) htick$(EXE) $(BINDIR)
 
