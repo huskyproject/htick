@@ -62,7 +62,7 @@ typedef struct ticfiletype s_ticfile;
  
 
 
-enum prio {CRASH, HOLD, NORMAL};
+enum prio {CRASH, HOLD, NORMAL, DIRECT, IMMEDIATE};
 enum type {PKT, REQUEST, FLOFILE};
 typedef enum prio e_prio;
 typedef enum type e_type;

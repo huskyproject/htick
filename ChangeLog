@@ -1,5 +1,11 @@
 htick 0.02
 ----------
+
+----- cvs ci ------
+Mon Jun 28  16:47:00
+Fedor:
++ Added direct and immediate flavours
+
 Sun Jun 27  15:26:00
 Fedor:
 * Fixed bug with BUSY flag

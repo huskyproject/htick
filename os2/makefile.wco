@@ -8,7 +8,7 @@ OBJS    = htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areaf
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -zq
+CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
 LFLAGS  = DEBUG Watcom
 !ELSE
 CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
