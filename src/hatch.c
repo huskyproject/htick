@@ -291,10 +291,14 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     }
     if (!busy || needUseFileBoxForLink(config,downlink)) {                   
         
-        w_log(LL_LINK,"Forwarding: %s", tic->file);
         if (newticfile != NULL) 
-        w_log(LL_LINK,"  with tic: %s", GetFilenameFromPathname(newticfile));
-        w_log(LL_LINK,"       for: %s", aka2str(downlink->hisAka));
+            w_log(LL_LINK,"Forwarding %s with tic %s for %s", tic->file,
+                  GetFilenameFromPathname(newticfile),
+                  aka2str(downlink->hisAka));
+        else
+            w_log(LL_LINK,"Forwarding %s for %s", tic->file,
+                  aka2str(downlink->hisAka));
+
         if (!busy) remove(downlink->bsyFile);
     }
     nfree(downlink->bsyFile);
