@@ -541,11 +541,17 @@ This statement cannot be repeated.
 @code{fileDescName file_id.diz}
 @end table
 
-If no LDESC defined in tic file, use <name> file from archive fill it
-(usually file_id.diz). 'unpack' action should be defined for archive
-and contain $fparameter.
+If no LDESC defined in tic file, use <name> file from archive to fill it
+(usually file_id.diz).
 
 This statement cannot be repeated.
+
+Note:
+'unpack' action should be defined for archive and contain $f parameter
+($f replaces with file name on unpacking time). Examples:
+Unpack  "/path/to/unrar e -y -ec- -o- -cl $a $p $f" 0 52617221
+Unpack  "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+
 
 @node FileAreaCreatePerms, FileFixFromName, fileDescName, Keywords
 @subsection FileAreaCreatePerms
