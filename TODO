@@ -25,3 +25,6 @@ New tokens for files.bbs handle:
     
     If descriptionsSubDir set, every file has it's own description in this
     dir, i.e. "file.ext" has description in ".desc/file.ext.desc"
+
+Change delNotReceivedTIC value from boolean to numberical, wait N days before
+remove tic (0 = immediately)
