@@ -1,3 +1,8 @@
+2005-01-17 Monday 11:46  val_khokhlov
+
+	* h/global.h (1.26), src/add_desc.c (1.38), src/report.c (1.44):
+	fix a warning on print_ch()
+
 2005-01-09 Sunday 17:30  val_khokhlov
 
 	* src/htickafix.c (1.4): make callback for getArea()
