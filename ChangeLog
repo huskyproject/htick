@@ -1,3 +1,8 @@
+2001-12-12 Wednesday 11:28  ml
+
+	* src/toss.c (1.117): compiling hidden() on win32 [patch by Serguei
+	Revtov]
+
 2001-12-06 Thursday 15:49  tobi
 
 	* src/toss.c (1.116): impemented hidden() for os/2
