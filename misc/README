@@ -1,0 +1,7 @@
+The 'misc' subdirectory in htick contents some contributed files & programs
+for htick:
+
+filefix.hlp  filefix help (english)
+filefix.866  filefix help (russian, cp866)
+
+st_htick.pl  HTick statistic tool (perl script)

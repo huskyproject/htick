@@ -26,21 +26,8 @@ Example:
  To   : FileFix                            2:5020/960      15 Feb 99  21:57:42
  Subj : PASSWORD              <- Your password
 -------------------------------------------------------------------------------
- AFTNMISC                     <- Add (link) filearea
- +OFTNMISC                    <- same
- -NODEDIFF                    <- Remove (unlink) filearea
- -*                           <- Remove all linked fileareas
- %INFO                        <- Ask for general information
- %LIST                        <- List available fileareas
- %AVAIL                       <- List all fileareas that are available at
-                                 this system's uplinks
- %UNLINKED                    <- List available fileareas to which
-                                 you are currently not linked
- %QUERY                       <- To request a list of fileareas for which 
-                                 you are connected.
- %PAUSE                       <- If you go to holiday you can
-                                 stop receiving files for that
-                                 time without manually removing each
-                                 area with '-AREANAME'.
- %RESUME                      <- Switch files receiving ON again.
- %HELP                        <- FileFix will send you this help.
+ -NODEDIFF 
+ -*        
+ AFTNMISC  
+ +OFTNMISC 
+ %AVAIL    
