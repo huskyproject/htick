@@ -1,3 +1,18 @@
+2002-10-04 Friday 05:21  stas_degteff
+
+	* src/: hatch.c, htick.c (htick-1_0-stable.[2,2]): Additional to
+	previous
+
+2002-10-04 Friday 05:16  stas_degteff
+
+	* src/toss.c (htick-1_0-stable.7): Prevent call remove(NULL) -
+	other place.
+
+2002-10-04 Friday 05:10  stas_degteff
+
+	* src/toss.c (htick-1_0-stable.6): Fix call remove(NULL): bugreport
+	by Jesper Srensen, 2:204/255 (02 Oct 02 20:45)
+
 2002-09-19 Thursday 07:41  sfpavel
 
 	* dos/makefile.djg, src/toss.c (htick-1_0-stable.[1,5]): Fix DJGPP
