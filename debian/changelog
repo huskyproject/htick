@@ -1,3 +1,11 @@
+htick (1.4.0+beta1-2) unstable; urgency=low
+
+  * Place htick package to main. Now smapi has LGPL license and htick
+    does not depends from non-free packages
+  * Minor fixes for debian/rules
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Wed, 19 Feb 2003 11:29:53 +0500
+
 htick (1.4.0+beta1-1) unstable; urgency=low
 
   * New stable branch

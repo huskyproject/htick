@@ -36,13 +36,13 @@ install: build
 	dh_clean -k
 	dh_installdirs
 	# Add here commands to install the package into debian/htick.
-	$(MAKE) install DESTDIR=$(CURDIR)/debian/htick
-	cp misc/config debian/htick/etc/husky/config.htick
-	cp misc/fileareas misc/filefix.* debian/htick/etc/husky
-	cp misc/purge_fileecho misc/st_htick.pl debian/htick/usr/share/doc/htick/misc
+	$(MAKE) install DESTDIR=$(CURDIR)/debian/$(PACKAGE)
+	cp misc/config debian/$(PACKAGE)/etc/husky/config.htick
+	cp misc/fileareas misc/filefix.* debian/$(PACKAGE)/etc/husky
+	cp misc/purge_fileecho misc/st_htick.pl debian/$(PACKAGE)/usr/share/doc/htick/misc
 	cd doc ; \
-	make all install DESTDIR=$(CURDIR)/debian/htick
-	rm -f $(CURDIR)/debian/htick/usr/share/info/dir*
+	make all install DESTDIR=$(CURDIR)/debian/$(PACKAGE)
+	rm -f $(CURDIR)/debian/$(PACKAGE)/usr/share/info/dir*
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -56,15 +56,9 @@ binary-arch: build install
 	dh_installdocs
 	dh_installexamples
 	dh_installmenu
-#	dh_installlogrotate
-#	dh_installemacsen
-#	dh_installpam
-#	dh_installmime
-#	dh_installinit
 	dh_installcron
 	dh_installman
 	dh_installinfo
-#	dh_undocumented
 	dh_installchangelogs ChangeLog
 	dh_link
 	dh_strip
