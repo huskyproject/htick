@@ -51,9 +51,6 @@
 #if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
 #include <unistd.h>
 #endif
-#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
-#define _A_HIDDEN A_HIDDEN
-#endif
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
@@ -68,6 +65,10 @@
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
+
+#if defined(A_HIDDEN) && !defined(_A_HIDDEN)
+#define _A_HIDDEN A_HIDDEN
+#endif
 
 #include <smapi/progprot.h>
 #include <smapi/compiler.h>
