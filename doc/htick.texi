@@ -49,7 +49,7 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 @end menu
 
 @node Overview, Installation, Top, Top
-@chapter An Overview on @value{HTICK}
+@chapter An Overview of @value{HTICK}
 
 @value{HTICK} is a Fidonet file areas tosser with filefix. Now project
 supported by Husky Development Team (see @url{http://husk.sf.net/team.html}).
@@ -77,7 +77,7 @@ losing announcements in critical @value{HTICK} termination
 @item much, much more :)
 @end enumerate
 
-The advantages of @value{HTICK} is:
+The advantages of @value{HTICK} are:
 
 @enumerate
 @item Open Source (GPL)
@@ -122,7 +122,7 @@ groups for @code{FileEchoAreas})
 
 1. The smapi and fidoconf packages are required for htick.
 
-2. Put the fidoconfig ans smapi packages in the directory where the
+2. Put the fidoconfig ans smapi packages to the directory where the
    other packages of fido linux reside:
 
 @table @asis
@@ -152,7 +152,7 @@ There are numerous reasons why you might wish to establish contact with develope
 @enumerate
 @item
 You have decided to use @value{HTICK} on a regular basis. In this case,
-please do send an netmail at the address listed below.
+please do send a netmail at the address listed below.
 
 @item
 You have a general questions on how to configure or on how to use a certain
@@ -209,13 +209,13 @@ and letters).
 If you are a programmer and have fixed a problem in @value{HTICK} on your
 own, please submit your changes to me. The preferred way for doing so is to
 send to developers a difference file in GNU diff format (with -c parameter).
-Your work will be highly appreceated and honored in an appropriate place.
+Your work will be highly appreciated and honored in an appropriate place.
 If you want to regularly work on @value{HTICK}, we also have a CVS server
 online that you can have access to if you like.
 
 If you want to write a new feature for @value{HTICK}, please contact developers
 beforehand to avoid that we do duplicate work. Again, I will appreciate and
-honor eny efforts done by you. Please note that for writing a @value{HTICK}
+honor any efforts done by you. Please note that for writing a @value{HTICK}
 enhancement, you should be familiar with C. Also, @value{HTICK} uses a
 special indentation style throughout the source code, that I would like
 you to adhere to.
@@ -244,7 +244,7 @@ To get help about the command line syntax, use @value{HTICK} without any argumen
 @node Configuration Reference, Keywords, Command Line, Top
 @chapter @value{HTICK} @value{VERSION} Configuration Reference
 
-@value{HTICK} based on FIDOCONFIG library, so read documentation of
+@value{HTICK} is based on FIDOCONFIG library, so read documentation of
 FIDOCONFIG about location of config file and keywords ideology.
 
 @menu
@@ -269,8 +269,8 @@ FIDOCONFIG about location of config file and keywords ideology.
 * SaveTic::              Save files with tics
 * MaxTicLineLength::     Set maximum line length in outgoing TICs to number.
 * BusyFileDir::          Where shall be put TICs for busy links
-* ConvertLongNames::     What do with long names when toss or hatch.
-* ConvertShortNames::    What do with short names when toss or hatch.
+* ConvertLongNames::     What to do with long names when toss or hatch.
+* ConvertShortNames::    What to do with short names when toss or hatch.
 * addDLC::               Add Download counters to FILES.BBS.
 * DLCDigits::            How much digits DLC must be.
 * ticOutbound::          TICs are stored here and killed after transmission
@@ -309,7 +309,7 @@ This statement cannot be repeated.
 @code{PassFileAreaDir /var/spool/fido/transit}
 @end table
 
-Where shall be put files from Passthrough File areas (and TICs, ifnot define ticOutbound).
+Where shall be put files from Passthrough File areas (and TICs, if ticOutbound is not defined).
 
 This statement cannot be repeated.
 
@@ -366,8 +366,9 @@ This statement cannot be repeated.
 @code{ExecOnFile husky *.diff /usr/local/fido/update_source.sh}
 @end table
 
-Execute some command on receiving file. Command get full filepath as parameter (space and
-file pathname to be append to command string before execution).
+Execute some command on receiving file. 
+Command gets full filepath as parameter (space and file pathname should be
+appended to command string before execution).
 
 This statement cannot be repeated.
 
@@ -381,17 +382,28 @@ This statement cannot be repeated.
 @code{ExecOnFile husky -l /usr/local/husky}
 @end table
 
-<DirToSaveTic> - where put TIC for fileecho[es] <FileEchoMask>
+@table @asis
+@item <DirToSaveTic>
+where put TIC for fileecho[es] <FileEchoMask>
 
-<FileOption>   - save files with tics. May be:
+@item <FileOption>
+save files with tics. May be:
 
-                 1) empty - files will not be copied
+@table @asis
+@item empty
+files will not be copied
 
-                 2) -l    - link files from fileechodir to <DirToSaveTic>
+@end table
+@table @option
+@item -l
+link files from fileechodir to <DirToSaveTic>
 
-                 3) -c    - copy files from fileechodir to <DirToSaveTic>
+@item -c
+copy files from fileechodir to <DirToSaveTic>
+@end table
 
-                 -l,-c works only for non-Passthrough file echos
+Options @option{-l} and @option{-c} work only for non-Passthrough file echos
+@end table
 
 This statement cannot be repeated.
 
@@ -433,7 +445,7 @@ This statement cannot be repeated.
 @code{ConvertLongNames DontTouch}
 @end table
 
-What do with long names when toss or hatch. Long name is name with mixed case or more than 8.3
+What to do with long names when toss or hatch. Long name is name with mixed case or more than 8.3
 
 This statement cannot be repeated.
 
@@ -447,7 +459,7 @@ This statement cannot be repeated.
 @code{ConvertShortNames DontTouch}
 @end table
 
-What do with short names when toss or hatch. Short name is DOS-like name, 8.3, without mixed case.
+What to do with short names when toss or hatch. Short name is DOS-like name, 8.3, without mixed case.
 
 This statement cannot be repeated.
 
@@ -475,7 +487,7 @@ This statement cannot be repeated.
 @code{DLCDigits 4}
 @end table
 
-How much digits DLC must be. DLC have [000] form.
+How much digits DLC must be. DLC has [000] form.
 
 This statement cannot be repeated.
 
@@ -531,7 +543,7 @@ This statement cannot be repeated.
 @code{bbsarea bbs /var/spool/fido/bbsareas/bbs}
 @end table
 
-File area without subscribing, not show in filefix reports.
+File area without subscribing, not shown in filefix reports.
 Use for filelist generation only (`htick filelist` command).
 
 This statement cannot be repeated.
@@ -551,12 +563,15 @@ If no LDESC defined in tic file, use <name> file from archive to fill it
 
 This statement cannot be repeated.
 
-Note:
-'unpack' action should be defined for archive and contain $f parameter
-($f replaces with file name on unpacking time). Examples:
-Unpack  "/path/to/unrar e -y -ec- -o- -cl $a $p $f" 0 52617221
-Unpack  "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+@subsection Note
+@code{unpack} action should be defined for archive and contain @option{$f} parameter
+(@option{$f} replaces with file name on unpacking time).
 
+Examples:
+@example
+Unpack "/path/to/unrar e -y -ec- -o- -cl $a $p $f" 0 52617221
+Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+@end example
 
 @node FileAreaCreatePerms, FileFixFromName, fileDescName, Keywords
 @subsection FileAreaCreatePerms
@@ -625,12 +640,10 @@ This statement cannot be repeated.
                             FileForwardRequest).
 * FileFixEchoLimit::        Area subscription limit.
 * noTIC::                   Disable TIC file creation.
-* autoFileCreate::          Allow or deny autocreate fileechoes received from
+* autoFileCreate::          Allow or deny autocreating fileechoes received from
                             this link.
-* AutoFileCreateFile::      New filearea definitions to be placed into this
-                            file.
-* AutoFileCreateDefaults::  New filearea definitions to be placed into this
-                            file.
+* AutoFileCreateFile::      Specifies the file new filearea will be placed into
+* AutoFileCreateDefaults::  Specifies the new filearea defaults.
 * AutoFileCreateSubdirs::   Whether to autocreate areas like /fils/gfd.app.edit
                             (off) or /files/gfd/app/edit (on).
 * delNotRecievedTIC::       If file not received, then remove TIC.
@@ -655,8 +668,8 @@ This statement cannot be repeated.
 @code{fileEchoFlavour direct}
 @end table
 
-This statement sets the flavour which outgoing files in fileechos for this linkget.
-For example set fileEchoFlavour for points to hold and for uplink crash.
+This statement sets the flavour which outgoing files in fileechos for this link get.
+For example set @code{fileEchoFlavour} to hold for points and to crash for uplinks.
 
 This statement can only be repeated for different links.
 
@@ -671,8 +684,10 @@ This statement can only be repeated for different links.
 @end table
 
 Set defaults for filearea definitions that follow. All options are possible,
-except areatag and path. Settings in thefilearea definition overrides default.
-See also echoAreaDefaults.Defaults are switched off with empty 'fileAreaDefaults'.
+except areatag and path. 
+Settings in the filearea definition override @code{fileAreaDefaults}
+See also @xref{echoAreaDefaults,,,hpt}. Defaults are switched off
+with empty @code{fileAreaDefaults}.
 
 This statement can only be repeated for different links.
 
@@ -714,7 +729,7 @@ This statement can only be repeated for different links.
 @code{autoFileCreate on}
 @end table
 
-Allow or deny autocreate fileechoes received from this link.
+Allow or deny autocreating fileechoes received from this link.
 
 This statement can only be repeated for different links.
 
@@ -728,7 +743,7 @@ This statement can only be repeated for different links.
 @code{AutoFileCreateFile /usr/local/fido/hpt/config.filefix}
 @end table
 
-New filearea definitions to be placed into this file.
+Specifies the file new filearea definitions will be placed into
 
 This statement can only be repeated for different links.
 
@@ -742,7 +757,7 @@ This statement can only be repeated for different links.
 @code{AutoFileCreateDefaults -lw 100 -g Z}
 @end table
 
-New filearea definitions to be placed into this file.
+Specifies the new filearea defaults.
 
 This statement can only be repeated for different links.
 
@@ -875,7 +890,7 @@ This statement can only be repeated for different links.
 @code{FileFixEchoLimit 10}
 @end table
 
-Area subscribe limit (max fileareas number allowed for this link subscribe)
+Area subscribe limit (max fileareas number this link is allowed to subscribe to)
 
 This statement can only be repeated for different links.
 
@@ -912,10 +927,11 @@ Group for this filearea.
 Hide area (non visible in %LIST and in announce).
 
 @item -lr <number>
-"Read level": Min link level for send files from this filearea to this link.
+"Read level": Min link level for sending files from this filearea to this link.
 
 @item -lw <number>
-"Write level": Min link level for allow received files from link to post into this filearea.
+"Write level": 
+Min link level allowed to post into this filearea files received from link.
 
 @item -mandatory
 Disallow remote unsubscribe (disable unsubscribe areafix command).
@@ -933,10 +949,10 @@ Do not try to get file description from <fileDescName> (for packed files).
 %PAUSE has no effect to this filearea.
 
 @item -noreplace
-No replace exists files in this filearea.
+Don't replace exisiting files in this filearea.
 
 @item -p <integer>
-Purge after n days. Set to 0 disable purging.
+Purge after n days. Setting to 0 to disables purging.
 
 @item -sendorig
 Send files from PassFileAreaDir for non passthrough areas.
@@ -1143,7 +1159,7 @@ This statement can be repeated only for different AnnAreaTag.
 @code{AnnFileRFrom on}
 @end table
 
-Show in announce: address of system which file recived from
+Show in announce: address of system which file is received from
 
 This statement can be repeated only for different AnnAreaTag.
 
