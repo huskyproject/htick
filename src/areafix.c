@@ -498,7 +498,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			w_log( LL_AREAFIX, "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1:
-                changeconfig (getConfigFileName(), area, link, 0);
+                changeconfig (cfgFile?cfgFile:getConfigFileName(), area, link, 0);
                 Addlink(config, link, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
@@ -567,7 +567,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		
 		switch (rc) {
         case 0: RemoveLink(link, area);
-			changeconfig (getConfigFileName(),  area, link, 1);
+			changeconfig (cfgFile?cfgFile:getConfigFileName(),  area, link, 1);
 			xscatprintf(&report, "%s Unlinked\r",area->areaName);
 			w_log( '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
             if(cmNotifyLink)

@@ -84,8 +84,6 @@
 #include <areafix.h>
 #include "report.h"
 
-static char *cfgfile=NULL;
-
 int processHatchParams(int i, int argc, char **argv)
 {
 
@@ -204,7 +202,8 @@ int processCommandLine(int argc, char **argv)
             continue;
         }
         if ( !strcmp(argv[i], "-c") && ++i<argc ) {
-            cfgfile = argv[i];
+            if (argv[i]) xstrcat(&cfgFile, argv[i]);
+            else printf("parameter missing after \"%s\"!\n", argv[i-1]);
             continue;
         }
         if (stricmp(argv[i], "toss") == 0) {
@@ -289,70 +288,71 @@ int processCommandLine(int argc, char **argv)
 
 void processConfig()
 {
-   char *buff = NULL;
+    char *buff = NULL;
 
-   setvar("module", "htick");
-   SetAppModule(M_HTICK);
-   config = readConfig(cfgfile);
-   if (NULL == config) {
-      fprintf(stderr, "Config file not found\n");
-      exit(1);
-   };
-
-
-  /* open Logfile */
-
-   initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
-   htick_log = openLog(LogFileName, versionStr);  /* if failed: openLog() prints a message to stderr */
-   if (htick_log && quiet) htick_log->logEcho = 0;
-
-   if (config->addrCount == 0)          w_log( LL_CRIT, "At least one addr must be defined");
-   if (config->linkCount == 0)          w_log( LL_CRIT, "At least one link must be specified");
-   if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
-   if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first");
-   if (config->outbound == NULL)        w_log( LL_CRIT, "You must set outbound in fidoconfig first");
-   if (config->tempOutbound == NULL)    w_log( LL_CRIT, "You must set tempOutbound in fidoconfig first");
-
-   if (cmAnnounce && config->announceSpool == NULL)
-       w_log( LL_CRIT, "You must set AnnounceSpool in fidoconfig first");
-   if (config->MaxTicLineLength && config->MaxTicLineLength<80)
-       w_log( LL_CRIT, "Parameter MaxTicLineLength (%d) in fidoconfig must be 0 or >80\n",config->MaxTicLineLength);
-
-   if (config->addrCount == 0 ||
-       config->linkCount == 0 ||
-       config->fileAreaBaseDir == NULL ||
-       config->passFileAreaDir == NULL ||
-       config->outbound == NULL ||
-       config->tempOutbound == NULL ||
-       (cmAnnounce && config->announceSpool == NULL) ||
-       (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
-           w_log( LL_CRIT, "Wrong config file, exit.");
-           closeLog();
-           if (config->lockfile != NULL) remove(config->lockfile);
-           disposeConfig(config);
-           exit(1);
-       }
+    setvar("module", "htick");
+    SetAppModule(M_HTICK);
+    config = readConfig(cfgFile);
+    if (NULL == config) {
+        nfree(cfgFile);
+        fprintf(stderr, "Config file not found\n");
+        exit(1);
+    };
 
 
-   if (config->lockfile) {
-       lock_fd = lockFile(config->lockfile, config->advisoryLock);
-       if( lock_fd < 0 )
-       {
-           disposeConfig(config);
-           exit(EX_CANTCREAT);
-       }
-   }
+    /* open Logfile */
 
-   w_log( LL_START, "Start");
-   
-   nfree(buff);
+    initLog(config->logFileDir, config->logEchoToScreen, config->loglevels, config->screenloglevels);
+    htick_log = openLog(LogFileName, versionStr);  /* if failed: openLog() prints a message to stderr */
+    if (htick_log && quiet) htick_log->logEcho = 0;
 
-   if (config->busyFileDir == NULL) {
-      config->busyFileDir = (char*) smalloc(strlen(config->outbound) + 10);
-      strcpy(config->busyFileDir, config->outbound);
-      sprintf(config->busyFileDir + strlen(config->outbound), "busy.htk%c", PATH_DELIM);
-   }
-   if (config->ticOutbound == NULL) config->ticOutbound = sstrdup(config->passFileAreaDir);
+    if (config->addrCount == 0)          w_log( LL_CRIT, "At least one addr must be defined");
+    if (config->linkCount == 0)          w_log( LL_CRIT, "At least one link must be specified");
+    if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
+    if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first");
+    if (config->outbound == NULL)        w_log( LL_CRIT, "You must set outbound in fidoconfig first");
+    if (config->tempOutbound == NULL)    w_log( LL_CRIT, "You must set tempOutbound in fidoconfig first");
+
+    if (cmAnnounce && config->announceSpool == NULL)
+        w_log( LL_CRIT, "You must set AnnounceSpool in fidoconfig first");
+    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
+        w_log( LL_CRIT, "Parameter MaxTicLineLength (%d) in fidoconfig must be 0 or >80\n",config->MaxTicLineLength);
+
+    if (config->addrCount == 0 ||
+        config->linkCount == 0 ||
+        config->fileAreaBaseDir == NULL ||
+        config->passFileAreaDir == NULL ||
+        config->outbound == NULL ||
+        config->tempOutbound == NULL ||
+        (cmAnnounce && config->announceSpool == NULL) ||
+        (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
+            w_log( LL_CRIT, "Wrong config file, exit.");
+            closeLog();
+            if (config->lockfile != NULL) remove(config->lockfile);
+            disposeConfig(config);
+            exit(1);
+        }
+
+
+        if (config->lockfile) {
+            lock_fd = lockFile(config->lockfile, config->advisoryLock);
+            if( lock_fd < 0 )
+            {
+                disposeConfig(config);
+                exit(EX_CANTCREAT);
+            }
+        }
+
+        w_log( LL_START, "Start");
+
+        nfree(buff);
+
+        if (config->busyFileDir == NULL) {
+            config->busyFileDir = (char*) smalloc(strlen(config->outbound) + 10);
+            strcpy(config->busyFileDir, config->outbound);
+            sprintf(config->busyFileDir + strlen(config->outbound), "busy.htk%c", PATH_DELIM);
+        }
+        if (config->ticOutbound == NULL) config->ticOutbound = sstrdup(config->passFileAreaDir);
 }
 
 int main(int argc, char **argv)
