@@ -286,7 +286,7 @@ char *available(s_link *link) {
             if (line[0] != '\0') {
                 running = line;
                 token = strseparate(&running, " \t\r\n");
-                addAreaListItem(al,0,0,token,running,uplink->LinkGrp);
+                addAreaListItem(al,0,0,1,1,0,token,running,uplink->LinkGrp);
 
             }
 		nfree(line);
