@@ -76,7 +76,8 @@ void processCommandLine(int argc, char **argv)
 "                         if \"replace\", then fill replace field in TIC\n"
 " filelist <file>         Generate filelist which includes all files in base\n"
 " purge <days>            Purge files older than <days> days\n"
-" send <Adress> <file>    Send file to Adress\n"
+" send <file> <filearea>\n"
+"      <address>          Send file from filearea to address\n"
 " request <Adress> <file> Request file from adress\n"
 "\n"
 "Not all features are implemented yet, you are welcome to implement them :)\n"
@@ -97,6 +98,13 @@ void processCommandLine(int argc, char **argv)
          strcpy(hatchfile, argv[i++]);
          strcpy(hatcharea, argv[i++]);
          strcpy(hatchdesc, argv[i]);
+         continue;
+      } else if (stricmp(argv[i], "send") == 0) {
+         cmSend = 1;
+         i++;
+         strcpy(sendfile, argv[i++]);
+         strcpy(sendarea, argv[i++]);
+         strcpy(sendaddr, argv[i]);
          continue;
       } else if (stricmp(argv[i], "replace") == 0) {
          hatchReplace = 1;
@@ -248,6 +256,7 @@ int main(int argc, char **argv)
    if (1 == cmToss) toss();
    if (cmScan == 1) scan();
    if (cmHatch == 1) hatch();
+   if (cmSend == 1) send(sendfile, sendarea, sendaddr);
    if (cmFlist == 1) filelist();
 
    // deinit SMAPI

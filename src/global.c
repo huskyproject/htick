@@ -41,12 +41,18 @@ int       cmToss = 0;
 int       cmScan = 0;
 int       cmHatch = 0;
 int       hatchReplace = 0;
+int       cmSend = 0;
 int       cmFlist = 0;
 
 char      flistfile[256];
+
 char      hatchfile[256];
 char      hatcharea[256];
 char      hatchdesc[256];
+
+char      sendfile[256];
+char      sendarea[256];
+char      sendaddr[256];
 
 int       cmAnnounce = 0;
 char      announceArea[256];
