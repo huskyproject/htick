@@ -46,11 +46,8 @@
 
 #include <version.h>
 
-#ifndef MSDOS
 #include <fidoconf/fidoconf.h>
-#else
-#include <fidoconf/fidoconf.h>
-#endif
+#include <fidoconf/common.h>
 
 #include <smapi/progprot.h>
 #include <htick.h>
@@ -239,7 +236,7 @@ void processConfig()
        else
         htick_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
 
-     free(buff);
+     nfree(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
    if (htick_log==NULL) printf("Could not open logfile: %s\n", buff);
    writeLogEntry(htick_log, '1', "Start");

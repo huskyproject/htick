@@ -1,3 +1,4 @@
+#include <fidoconf/common.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -108,7 +109,7 @@ unsigned long filecrc32(const char *name)
     if (got != CRC_BUFFER_SIZE)
       break;
   }
-  free(buffer);
+  nfree(buffer);
   fclose(fd);
   return crc ^ 0xFFFFFFFFL;
 }

@@ -348,31 +348,21 @@ void writeTic(char *ticfile,s_ticfile *tic)
 
 void disposeTic(s_ticfile *tic)
 {
-  int i;
+   int i;
 
-  if (tic->seenby!=NULL)
-     free(tic->seenby);
+   nfree(tic->seenby);
 
-  if (tic->path!=NULL)
-     { 
-     for (i=0;i<tic->anzpath;i++)
-         free(tic->path[i]);
-     free(tic->path);
-     }
+   for (i=0;i<tic->anzpath;i++)
+      nfree(tic->path[i]);
+   nfree(tic->path);
 
-  if (tic->desc!=NULL)
-     { 
-     for (i=0;i<tic->anzdesc;i++)
-         free(tic->desc[i]);
-     free(tic->desc);
-     }
+   for (i=0;i<tic->anzdesc;i++)
+      nfree(tic->desc[i]);
+   nfree(tic->desc);
 
-  if (tic->ldesc!=NULL)
-     { 
-     for (i=0;i<tic->anzldesc;i++)
-         free(tic->ldesc[i]);
-     free(tic->ldesc);
-     }
+   for (i=0;i<tic->anzldesc;i++)
+      nfree(tic->ldesc[i]);
+   nfree(tic->ldesc);
 }
 
 int parseTic(char *ticfile,s_ticfile *tic)
@@ -434,13 +424,13 @@ int parseTic(char *ticfile,s_ticfile *tic)
                tic->anzldesc++;
             }
             else {
-/*               printf("Unknown Keyword %s in Tic File\n",token); */
+               /* printf("Unknown Keyword %s in Tic File\n",token); */
                writeLogEntry(htick_log, '7', "Unknown Keyword %s in Tic File",token);
             }
          } /* endif */
-         if (config->MaxTicLineLength) free(linecut);
+         if (config->MaxTicLineLength) nfree(linecut);
       } /* endif */
-      free(line);
+      nfree(line);
    } /* endwhile */
 
   fclose(tichandle);
@@ -517,7 +507,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        char *tmp;
        tmp=(char *) calloc (strlen(NewAutoCreate)+strlen(desc)+6,sizeof(char));
        sprintf(tmp,"%s -d \"%s\"", NewAutoCreate, desc);
-       free (NewAutoCreate);
+       nfree (NewAutoCreate);
        NewAutoCreate=tmp;
      }
    } else {
@@ -529,7 +519,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
        fileName++;
        fileName=strrchr(fileName,'\"')+1; //"
        strcat(tmp,fileName);
-       free(NewAutoCreate);
+       nfree(NewAutoCreate);
        NewAutoCreate=tmp;
      }
    }
@@ -538,7 +528,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       strcat(buff, NewAutoCreate);
    }
 
-   free(NewAutoCreate);
+   nfree(NewAutoCreate);
 
    sprintf (buff+strlen(buff)," %s",hisaddr);
 
@@ -568,7 +558,7 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
       strcat(msg->text, buff);
       writeMsgToSysop(msg, config->ReportTo);
       freeMsgBuff(msg);
-      free(msg);
+      nfree(msg);
       if (config->echotosslog != NULL) {
          echotosslog = fopen (config->echotosslog, "a");
          fprintf(echotosslog,"%s\n",config->ReportTo);
@@ -729,15 +719,14 @@ int createFlo(s_link *link, e_prio prio)
 
    /* maybe we have session with this link? */
    if (fexist(link->bsyFile)) {
-      free (link->bsyFile); link->bsyFile = NULL;
+      nfree (link->bsyFile);
       return 1;
    } else {
       if ((f=fopen(link->bsyFile,"a")) == NULL) {
          fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
          remove(link->bsyFile);
-         free(link->bsyFile);
-         link->bsyFile=NULL;
-         free(link->floFile);
+         nfree(link->bsyFile);
+         nfree(link->floFile);
          if (config->lockfile != NULL) remove(config->lockfile);
          writeLogEntry(htick_log, '9', "cannot create *.bsy file");
          writeLogEntry(htick_log, '1', "End");
@@ -886,15 +875,15 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       tic->path=realloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
       tic->path[tic->anzpath]=strdup(hlp);
       tic->anzpath++;
+   }
 
-      if (isToss == 1) {
-         /* Save seenby structure */
-         old_seenby = malloc(tic->anzseenby*sizeof(s_addr));
-         memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
-         old_anzseenby = tic->anzseenby;
-         memcpy(&old_from,&tic->from,sizeof(s_addr));
-         memcpy(&old_to,&tic->to,sizeof(s_addr));
-      }
+   if (isToss == 1) {
+      /* Save seenby structure */
+      old_seenby = malloc(tic->anzseenby*sizeof(s_addr));
+      memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
+      old_anzseenby = tic->anzseenby;
+      memcpy(&old_from,&tic->from,sizeof(s_addr));
+      memcpy(&old_to,&tic->to,sizeof(s_addr));
    }
 
    for (i=0;i<filearea->downlinkCount;i++) {
@@ -997,10 +986,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                           tic->file,
                           addr2string(&filearea->downlinks[i]->link->hisAka));
                }
-               free(filearea->downlinks[i]->link->bsyFile);
-               filearea->downlinks[i]->link->bsyFile=NULL;
-               free(filearea->downlinks[i]->link->floFile);
-               filearea->downlinks[i]->link->floFile=NULL;
+               nfree(filearea->downlinks[i]->link->bsyFile);
+               nfree(filearea->downlinks[i]->link->floFile);
             } /* if Seenby */
          } /* if readAccess == 0 */
       } /* Forward file */
@@ -1063,11 +1050,11 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          if ((cmdexit = system(comm)) != 0) {
            writeLogEntry(htick_log, '9', "Exec failed, code %d", cmdexit);
          }
-         free(comm);
+         nfree(comm);
        }                                         
    }
 
-   if (isToss == 1) free(old_seenby);
+   if (isToss == 1) nfree(old_seenby);
    return(0);
 }
 
@@ -1142,8 +1129,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         fprintf(flohandle,"^%s\n",newticfile);
                         fclose(flohandle);
                         remove(to_link->bsyFile);
-                        free(to_link->bsyFile);
-                        free(to_link->floFile);
+                        nfree(to_link->bsyFile);
+                        nfree(to_link->floFile);
                      }
                   }
                }
@@ -1198,14 +1185,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
    } 
 
    /* Check CRC Value and reject faulty files depending on noCRC flag */
-   crc = filecrc32(ticedfile);
-   if (filearea->noCRC) tic.crc = crc;
-   else if (tic.crc != crc) {
-        writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
-        disposeTic(&tic);
-        return(3);
+   if (!filearea->noCRC) {
+      crc = filecrc32(ticedfile);
+      if (tic.crc != crc) {
+         writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
+         disposeTic(&tic);
+         return(3);
+      }
    }
-     
+
    writeAccess = writeCheck(filearea,&tic.from);
 
    switch (writeAccess) {
@@ -1281,7 +1269,7 @@ void processDir(char *directory, e_tossSecurity sec)
                remove (dummy);
                break;
          } /* switch */
-         free(dummy);
+         nfree(dummy);
       } /* if */
    } /* while */
    closedir(dir);
@@ -1347,11 +1335,11 @@ void checkTmpDir(void)
             } /* if filearea */
          } /* if createFlo */
          remove(link->bsyFile);
-         free(link->bsyFile);
-         free(link->floFile);
+         nfree(link->bsyFile);
+         nfree(link->floFile);
       } /* if ".TIC" */
       disposeTic(&tic);
-      free(ticfile);
+      nfree(ticfile);
    } /* while */
    closedir(dir);
 }
@@ -1402,7 +1390,7 @@ void cleanPassthroughDir(void)
                   filesCount++;
                }
                disposeTic(&tic);
-               free(ticfile);
+               nfree(ticfile);
             }
          }
          closedir(dir);
@@ -1439,14 +1427,14 @@ void cleanPassthroughDir(void)
                      }
                      disposeTic(&tic);
                   }
-                  free(ticfile);
+                  nfree(ticfile);
                } /* while */
                closedir(dir);
             }
             remove(config->links[i].bsyFile);
          } /* if !busy */
-         free(config->links[i].bsyFile);
-         free(config->links[i].floFile);
+         nfree(config->links[i].bsyFile);
+         nfree(config->links[i].floFile);
       }
    }
 
@@ -1468,7 +1456,7 @@ void cleanPassthroughDir(void)
                filesCount++;
             }
             disposeTic(&tic);
-            free(ticfile);
+            nfree(ticfile);
          }
       }
       closedir(dir);
@@ -1486,14 +1474,14 @@ void cleanPassthroughDir(void)
             if (filesCount == 0) {
                writeLogEntry(htick_log,'6',"Remove file %s from passthrough dir", ticfile);
                remove(ticfile);
-               free(ticfile);
+               nfree(ticfile);
                continue;
             }
             if (!foundInArray(filesInTic,filesCount,file->d_name)) {
                writeLogEntry(htick_log,'6',"Remove file %s from passthrough dir", ticfile);
                remove(ticfile);
             }
-            free(ticfile);
+            nfree(ticfile);
          }
       }
       closedir(dir);
@@ -1501,8 +1489,8 @@ void cleanPassthroughDir(void)
 
    if (filesCount > 0) {
       for (i=0; i<filesCount; i++)
-        free(filesInTic[i]);
-      free(filesInTic);
+        nfree(filesInTic[i]);
+      nfree(filesInTic);
    }
 }
 
@@ -1558,7 +1546,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip)
          MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword) strlen(textStart), (dword) strlen(textStart), (dword)strlen(ctrlBuff), (byte *)ctrlBuff);
 
          MsgCloseMsg(hmsg);
-         free(ctrlBuff);
+         nfree(ctrlBuff);
          rc = 1;
 
       } else {
@@ -1635,7 +1623,7 @@ char *formDescStr(char *desc)
       strcat(newDesc, buff);
    } /* endif */
 
-   free(keepDesc);
+   nfree(keepDesc);
 
    return newDesc;
 }
@@ -1654,7 +1642,7 @@ char *formDesc(char **desc, int count)
       } else {
          sprintf(buff+strlen(buff), "%s%s\r", print_ch(24, ' '), tmp);
       } /* endif */
-      free(tmp);
+      nfree(tmp);
    } /* endfor */
 
    return buff;
@@ -1663,11 +1651,11 @@ char *formDesc(char **desc, int count)
 void freeFReport(s_newfilereport *report)
 {
    int i;
-   free(report->fileName);
+   nfree(report->fileName);
    for (i = 0; i < report->filedescCount; i++) {
-      free(report->fileDesc[i]);
+      nfree(report->fileDesc[i]);
    } /* endfor */
-   free(report->fileDesc);
+   nfree(report->fileDesc);
 }
 
 void reportNewFiles()
@@ -1728,7 +1716,7 @@ void reportNewFiles()
                           newFileReport[i]->origin.node,newFileReport[i]->origin.point);
                }
                if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
-               free(tmp);
+               nfree(tmp);
                fileCount++;
                fileSize += newFileReport[i]->fileSize;
                for (b = i+1; b < newfilesCount; b++) {
@@ -1748,7 +1736,7 @@ void reportNewFiles()
                                  newFileReport[b]->origin.node,newFileReport[b]->origin.point);
                       }
                       if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
-                      free(tmp);
+                      nfree(tmp);
                       fileCount++;
                       fileSize += newFileReport[b]->fileSize;
                       freeFReport(newFileReport[b]); newFileReport[b] = NULL;
@@ -1766,12 +1754,12 @@ void reportNewFiles()
       if (msg) {
          writeMsgToSysop(msg, annArea);
          freeMsgBuff(msg);
-         free(msg);
+         nfree(msg);
       } else {
       } /* endif */
    } /* endfor */
    if (newFileReport) {
-      free(newFileReport);
+      nfree(newFileReport);
       if (config->echotosslog != NULL) {
          echotosslog = fopen (config->echotosslog, "a");
          fprintf(echotosslog,"%s\n",annArea);

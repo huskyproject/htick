@@ -226,9 +226,9 @@ int send(char *filename, char *area, char *addr)
 
       writeLogEntry(htick_log,'6',"Send %s from %s for %s",
               tic.file,tic.area,addr2string(&link->hisAka));
-      free(link->bsyFile);
+      nfree(link->bsyFile);
    }
-   free(link->floFile);
+   nfree(link->floFile);
    disposeTic(&tic);
    return 0;
 }

@@ -242,15 +242,15 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
             strcpy(removeFiles[removeCount], strrchr(filename,PATH_DELIM)+1);
 	    removeCount++;
 	 }
-	 free(fbbsline);
+	 nfree(fbbsline);
    }
    fclose(fbbs);
    if (removeCount > 0) {
       for (i=0; i<removeCount; i++) {
         removeDesc(fbbsname,removeFiles[i]);
-	free(removeFiles[i]);
+	nfree(removeFiles[i]);
       }
-      free(removeFiles);
+      nfree(removeFiles);
    }
    totalfilessize += totalsize;
    totalfilesnumber += totalnumber;

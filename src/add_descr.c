@@ -41,7 +41,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
          fprintf(descr_file,"%s%s%s\n", print_ch(config->fileDescPos-1, ' '), 
 	         (config->fileLDescString == NULL) ? " " : config->fileLDescString, desc_line);
       }
-      free(desc_line);
+      nfree(desc_line);
    }
    if (count_desc == 0) fprintf(descr_file,"\n");
    fclose (descr_file);
@@ -94,11 +94,11 @@ int removeDesc (char *descr_file_name, char *file_name)
 	    else
 	       flag = 1;
 	 }
-      free(tmp);
-      free(line);
+      nfree(tmp);
+      nfree(line);
    }
 
-   free(LDescString);
+   nfree(LDescString);
    fclose (f1);
    fclose (f2);
    remove(descr_file_name);
@@ -127,7 +127,7 @@ int announceInFile (char *announcefile, char *file_name, int size, char *area, s
       if (desc_line != NULL) {
         if (config->intab != NULL) recodeToInternalCharset(desc_line);
         fprintf(ann_file,"%s\n",desc_line);
-        free(desc_line);
+        nfree(desc_line);
       }
    }
    fprintf (ann_file,"-------------------------------------------------------------------\n");
