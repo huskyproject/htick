@@ -890,17 +890,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
    } 
 
    /* Check CRC Value and reject faulty files depending on noCRC flag */
-
-   if (!filearea->noCRC) {
-     crc = filecrc32(ticedfile);
-     if (tic.crc != crc) {
+   crc = filecrc32(ticedfile);
+   if (filearea->noCRC) tic.crc = crc;
+   else if (tic.crc != crc) {
         sprintf(logstr,"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
         writeLogEntry(htick_log,'9',logstr);
         disposeTic(&tic);
         return(3);
-     }
    }
-   
+     
    writeAccess = writeCheck(filearea,&tic.from);
 
    switch (writeAccess) {
