@@ -1,3 +1,3 @@
 htick 1.4.0-stable
-cvs tag: HEAD
-required: fidoconfig 1.4-current, smapi 2.4-current
+cvs tag: htick-1_4-stable
+required: fidoconfig 1.4-stable, smapi 2.4-stable
