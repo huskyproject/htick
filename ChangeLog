@@ -1,3 +1,7 @@
+2004-04-28 Wednesday 04:20  nssoft
+
+	* Makefile (1.23): Fixing compilation with enabled HPTZIP
+
 2004-04-15 Thursday 21:25  i_zkh
 
 	* doc/htick.rus.texi (1.4): Bugfix
