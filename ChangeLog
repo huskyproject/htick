@@ -1,3 +1,10 @@
+2003-03-03 Monday 08:07  d_sergienko
+
+	* src/: add_desc.c (1.33), areafix.c (1.115), clean.c (1.16),
+	fcommon.c (1.64), filelist.c (1.36), hatch.c (1.77), htick.c
+	(1.91), scan.c (1.28), toss.c (1.256): 
+	use new huskylib
+
 2003-03-02 Sunday 17:43  stas_degteff
 
 	* doc/htick-FAQ.russian (1.6): Update header
