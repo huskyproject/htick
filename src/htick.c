@@ -287,10 +287,9 @@ void processConfig()
        config->fileAreaBaseDir == NULL ||
        config->passFileAreaDir == NULL ||
        (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
-      if (config->lockfile != NULL) remove(config->lockfile);
-      writeLogEntry(htick_log, '9', "wrong config file");
-      writeLogEntry(htick_log, '1', "End");
+      writeLogEntry(htick_log, LL_CRIT, "Wrong config file, exit.");
       closeLog();
+      if (config->lockfile != NULL) remove(config->lockfile);
       disposeConfig(config);
       exit(1);
    }
@@ -331,9 +330,9 @@ int main(int argc, char **argv)
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
-      writeLogEntry(htick_log, '9', "MsgApiOpen Error");
-          if (config->lockfile != NULL) remove(config->lockfile);
+      writeLogEntry(htick_log, '9', "MsgApiOpen Error, exit.");
       closeLog();
+      if (config->lockfile != NULL) remove(config->lockfile);
       disposeConfig(config);
       exit(1);
    } /*endif */
@@ -354,9 +353,9 @@ int main(int argc, char **argv)
    // deinit SMAPI
    MsgCloseApi();
 
-   if (config->lockfile != NULL) remove(config->lockfile);
    writeLogEntry(htick_log, '1', "End");
    closeLog();
+   if (config->lockfile != NULL) remove(config->lockfile);
    disposeConfig(config);
    return 0;
 }
