@@ -38,6 +38,10 @@
 
 #include <string.h>
 #include <stdlib.h>
+#ifndef UNIX
+#  include <share.h>
+#endif
+#include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
 #ifdef __EMX__
@@ -73,6 +77,7 @@
 #include <fidoconf/crc.h>
 
 #include <smapi/progprot.h>
+#include <smapi/compiler.h>
 
 #include <fcommon.h>
 #include <global.h>
@@ -213,7 +218,19 @@ int parseTic(char *ticfile,s_ticfile *tic)
    char *line, *token, *param, *linecut = "";
    s_link *ticSourceLink=NULL;
 
+#ifdef UNIX
    tichandle=fopen(ticfile,"r");
+#else
+   // insure that ticfile won't be removed while parsing
+   int fh = 0;
+   fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
+   if( fh<0 ){
+     w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
+     return 0;
+   }
+   tichandle = fdopen(fh,"r");
+#endif
+
    if(!tichandle){
      w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
      return 0;
