@@ -1,0 +1,358 @@
+                              HUSKY Ticker FAQ
+                    (версия от 21.11.2002 для htick-current)
+
+Постарайтесь прочесть ВЕСЬ FAQ перед тем, как задавать вопросы в конференции,
+особенно, если Вы подозреваете, что Ваш вопрос - один из регулярно задаваемых.
+
+Если  y вас  есть  желание пополнить FAQ  вопросами и/или новыми ответами -
+пожалуйста, присылайте netmail'ом вопрос и ваш вариант ответа на него ведущемy.
+Ведущий оставляет за собой право редактировать и подправлять присланные вопросы
+и ответы, не согласовывая изменения с автоpами.
+
+Ведущий FAQ - Stas Degteff, 2:5080/102
+
+Новые или измененные вопросы помечены знаком ">".
+
+ Q01. Где взять свежие версии?
+ Q02. А где можно стянуть исходники?
+ Q03. Что означают буквы в скобках в начале ответа?
+ Q04. Как связаться с разработчиками?
+ Q05. Кому присылать патчи?
+ Q06. Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
+ Q07. Кому прислать и как правильно оформить багрепорт?
+ Q08. Так как насчет фичи "X"?
+ Q09. А как собирать latest версии под win32?
+ Q10. В чем разница между версиями cygwin и mingw32?
+ Q11. А можно как-нибудь получать диффы на e-mail/netmail?
+ Q12. Как победить ошибки компиляции под Red Hat и ASP Linux?
+ Q13. Компилятор под FreeBSD ругается: warning: mktemp() possibly used unsafely
+ Q14. Htick не удаляет из рабочего каталога распакованные из архивов файлы
+
+/---------------------------------------------------------------------/
+
+[01] Q: Где взять свежие версии?
+
+A: (ML, SR, SD)
+
+1. Официальные дистрибутивы.
+   Комплектацией архивов и компиляцией бинарников занимаются "Packagers"
+   проекта: Pavel Andreew 2:5080/59 (главный packager: комплектация архивов,
+   debian packages), Shilov Vladimir 2:4627/64 (бинарники win32-current),
+   Andy U. Luk'yanov (бинарники Win32, OS/2, DPMI).
+
+1.1. Бинарники и исходники релизов: http://sourceforge.net/projects/husky,
+     страничка "Файлы" (самые свежие выставлены на первой). Ссылка есть
+     на сайте проекта http://husky.sf.net == http://husky.sourceforge.net.
+
+1.2. Исходники: http://husky.sourceforge.net/cvs2/stable
+     или на CVS, инструкция тут: http://husky.sourceforge.net/cvs.html
+
+1.3. Debian packages: http://husky.sourceforge.net/debian
+
+1.4. Бинарники для win32 - в файлэхе NFTN, архив на Демосе:
+     ftp://ddt.demos.su/pub/fileecho/NFTN/
+
+2. Персональные сборки (часто согласованы с официальными):
+
+2.2. husky пакет под BeOS - BeFTN - живет на http://walther.sourceforge.net/
+     и http://www.bebits.com/app/1886/ (Собирают:
+     под BeOS5.1 Paul Galashin 2:5053/777.12
+     под BeOS5.0.3 Сергей Жарский 2:465/204.43)
+
+2.3. Бинаpники DOS-DPMI, OS/2, Win32, Win32-dll-Perl:
+     http://hpt-bin.boom.ru/ (собирает Andy U. Luk'yanov 2:5001/7)
+
+3. Для Perl версии может понадобиться файл MSVCRT.DLL, взять его можно
+   с сервера Microsoft: ftp://ftp.microsoft.com/softlib/mslfiles/msvcrt.exe
+
+/------/
+
+[02] Q: А где можно взять исходники?
+
+A: (ML,SD)
+
+1. current за несколько дней: http://husky.sourceforge.net/cvs2/current
+2. stable за несколько дней: http://husky.sourceforge.net/cvs2/stable
+3. На любой момент - с CVS, инструкция: http://husky.sourceforge.net/cvs.html
+   и https://sourceforge.net/cvs/?group_id=1332
+4. ftp://ddt.demos.su/pub/fileecho/HUSKY/ - файлэха HUSKY. Сорцы раз в два
+   месяца, diff'ы постоянно.
+
+/------/
+
+[03] Q: Что означают буквы в скобках в начале ответа?
+
+A: (ML)
+
+Это сокращения от имен людей, написавших ответы:
+    ML - Max Levenkov, 2:5000/117
+    PG - Pavel Gulchouck, 2:463/68
+    VS - Victor Sergienko. 2:464/118
+    SR - Serguei Revtov, 2:5021/11.10 & 2:5021/19.1
+    FL - Fedor Lizunkov, 2:5020/960
+    VL - Vitaliy Lovky, 2:463/1113
+    TE - Tobias Ernst, 2:2476/418
+    DK - Dmitriy Kazimirow, 2:5004/73
+    mk - mihail kapitanov, 2:465/239
+    sv - sergei volodchenkov, 2:5030/1197.10
+    aim - andrey i mavlyanov, 2:5030/1159
+    SD - Stas Degteff, 2:5080/102
+    PA  - Pavel Andreew, 2:5080/59
+    DP  - Dmitry Pankov, 2:5022/81
+
+/------/
+
+[04] Q: Как связаться с разработчиками
+
+A: (SD)
+   1. Задать интересующий вопрос в эхоконференциях: русскоязычной RU.HUSKY
+      или международной FIDOSOFT.HUSKY
+   2. Найти разработчика нужного модуля на страничке HUSKY TEAM:
+      http://husky.sf.net/team.html
+   3. Вот нынешние участники проекта c http://sourceforge.net/projects/husky/
+      (данные на ноябрь 2002):
+
+Andy U. Luk'yanov  Packager            andr_lukyanov at users.sourceforge.net
+Andrew Sagulin     Developer           andrews42 at users.sourceforge.net
+Dmitry Sergienko   Project Manager     d_sergienko at users.sourceforge.net
+Georgi Fofanov     Developer           georgi at users.sourceforge.net
+Gerrit Kьhn        Developer           gerritkuehn at users.sourceforge.net
+Igor Zakharoff     Doc Translator      i_zkh at users.sourceforge.net
+Michael Haase      Developer           it-dienste at users.sourceforge.net
+Joerg Stadelhoff   Developer           joergstadelhoff at users.sourceforge.net
+Max Levenkov       Developer           max_levenkov at users.sourceforge.net
+Max Chernogor      Project Manager     mche at users.sourceforge.net
+Matthias Tichy                         mtt at users.sourceforge.net
+Nestyurkin Nikolay Developer           nikn at users.sourceforge.net
+Ivan Fedorov       Support Manager     nssoft at users.sourceforge.net
+Tobias Ernst       Project Manager     os2tobi at users.sourceforge.net
+Pavel Gulchouck    Project Manager     pgul at users.sourceforge.net
+Volker Quetschke   Developer           quetschke at users.sourceforge.net
+Sascha Silbe                           sascha_silbe at users.sourceforge.net
+Pavel Andreew      Packager            sfpavel at users.sourceforge.net
+Shilov Vladimir    Packager            shivn at users.sourceforge.net
+Stas Degteff       Developer           stas_degteff at users.sourceforge.net
+Tema Zelikin       Doc Translator      tema31 at users.sourceforge.net
+
+Чтобы получить email-адрес, " at " нужно заменить на "@".
+
+/------/
+
+[05] Q: Кому присылать патчи?
+
+A: (ML,SD)
+
+Любому разработчику, лучше ведущему модуля, для htick - Max Chernogor (адреса
+см. в ответах 3 и 4).
+Требования к патчам:
+
+1. Если добавлен новый token(**), нужно:
+а) добавить его в fidoconf/doc/keywords.htick
+б) задокументировать в htick/doc/htick.texi
+** В tokens.h в массиве parseline_tokens соблюдайте сортировку токенов!
+
+2. Формат запуска diff следующий:
+   diff -r -c -N hpt.orig htick.modified > htick.diff
+   где htick.orig и htick - каталоги с исходным и переделанным htick. (Будьте
+   внимательны! Типичная ошибка - неверный порядок параметров, в результате
+   чего получается обратный дифф.)
+
+3. Обязательно запаковать архиватором (tar+gzip, zip, rar - в порядке
+   предпочтения; досовские версии архиваторов крайне нежелательно использовать
+   из-за того, что они портят имя файла)
+
+4. Сделать описание вида (в одну строку, пусть даже она будет больше ширины
+   экрана в несколько раз):
+   new feature added [patch by Vasya Pupkin]
+   и эту строку вставить в текст письма (не в файл!).
+
+5. Каждому модулю (fidoconf, htick, ...) - свой патч.
+
+Перед тем, как что-то делать, лучше посоветоваться с ведущим модуля: обсудить
+варианты решения проблемы, названия новых ключевых слов конфига и т.д.
+
+/------/
+
+[06] Q: Я скачал *-current-(дата).tar.gz, а там баг! (архив ~месячной давности)
+
+A: (PA)
+   Стоит обновиться.
+   Дело в том, что *current* меняется не по разу в день (с учётом пожеланий
+и багрепортов). Поэтому тот архив, что скачал ты, на сегодня /мягко говоря/
+устарел ;-)
+   Раздел "Файлы" на http://sf.net/projects/husky предназначен в первую очередь
+для размещения официальных (пре)релизов и еже-{одно-двух}-недельных бинарников.
+Исходники же (особенно current) лучше брать самые свежие с CVS, на худой конец
+- http://husky.sf.net/cvs2/current/*-latest.tar.gz.
+   Если же баг не исправлен - пиши багрепорт (см. следующий ответ).
+
+/------/
+
+[07] Q: Кому прислать и как правильно оформить багрепорт?
+
+A: (SD)
+   А разве в комплекте нет bugreport.txt (bugreport.rus)? Тогда вот инструкция.
+   Багрепорт можно запостить в эхоконференции RU.HUSKY или FIDOSOFT.HUSKY
+(международная, писать надо по английски); в раздел bugtrack на сайте
+(https://sourceforge.net/tracker/?atid=101332&group_id=1332&func=browse).
+Можно также написать ведущему проекта - но это менее оперативно.
+
+   Чтобы багрепорт был понят без дополнительных вопросов, нужно указать:
+- полное название бинарника, его версию и ОС
+  (например hpt 1.3-current/win32 29-09-2002, запущенный под Windows 2000)
+- суть ошибки
+- приложить информативное место в логе при включенных ВСЕХ уровнях
+  протоколирования - т.е. Loglevels 0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabc...
+  (например с десяток строк перед прерыванием работы программы)
+  начиная с htick 1.1 можно указывать диапазон уровней: Loglevels 0-z
+- если непонятно поведение - приложить информативную часть конфига.
+
+   Багрепорты предпочтительно публиковать в bugtrack - там есть возможность
+оперативно передавать их разработчикам.
+   Кроме багрепортов, на sf.net имеется такой же сервис для поддержки
+пользователей и предложений по развитию.
+
+/------/
+
+[08] Q: Так как насчет фичи "X"?
+
+A: (ML)
+
+Присылай патч! (c) mtt
+
+Q: хмм... я извиняюсь за то что ввел, по всей видимости, тебя в
+Q: заблуждение, но я _спрашивал_ будет ли "X" в hpt. Сам я разве
+Q: что калькулятор напрограммить могу...
+
+Вот так всегда.
+
+The source is available, so download it and do it yourself. Please don't
+think that OpenSource developers are your personal slaves. (c) FreeAmp FAQ
+
+/------/
+
+[09] Q: А как собирать latest версии под win32?
+
+A: (DK)
+
+1.  Распаковываешь архив  (если  нету tar/gzip, то либо www.cygnus.com, либо
+www.winzip.com).
+
+2. Компилятор.  Реально под Win32 надо взять MSVC, Watcom C, Borland C либо
+поставить Cygwin и запускать (n)make -f makefile.(mvc|mvcdllwcw|bcw|cyg)
+
+3. Распаковать и собрать последовательно:
+- SMAPI:    получишь smapi(mvc|wcw|bcw).(lib|dll) (в cygwin - libsmapicyg.a),
+- fidoconf: получишь fidoconfmvc.dll либо fidoconf(mvc|wcw|bcw).lib
+  (в cygwin libfidoconfigcyg.a) + несколько утилиток (tparser, fc2*).
+- Затем компилируешь любую из остальных программ.
+
+4. _Все_ собираемые программы/библиотеки должны  быть  от  одной  даты (если
+smapi/fidoconf  -  latest  от 9.10.2002  то совать туда,  например,  hpt  от
+1.1.2001 чревато).
+
+5. Чтобы получить html-документацию, нужен makeinfo (напрмер из Cygwin):
+с октября 2002 года именно он используется в makefile, либо интерпретатор PERL
+(напр. www.activestate.com, www.perl.com) и скрипт Texi2Html
+(http://www.mathematik.uni-kl.de/~obachman/Texi2Html/Distrib)
+
+/------/
+
+[10] Q: В чем разница между версиями cygwin и mingw32?
+
+A: (PG)
+
+mingw32 (это который используется при -mno-cygwin) - это просто RTL,
+напоминающая POSIX более, чем msvc, watcom и пр. С ее помощью применение
+напильника обычно может привести к компиляции небольших юниксных утилит под
+windows. В результате получаются полноценные виндовые exe-шники. Сам по себе
+gcc+mingw32 является полнофункциональным компилятором, который можно
+использовать не только для портирования unix utils.
+
+Cygwin - это среда, эмулирующая некоторые черты unix, включая fork(). При
+компиляции создаются a.out-бинарники с загрузчиком. Требуют для работы
+cygwin1.dll. Применяются для той же цели (портирование unix utils), но требуют
+напильник меньшего калибра. Результат уступает по эффективности mingw32,
+требует cygwin1.dll, поэтому при прочих равных использование mingw32 является
+предпочтительным. Могут отбрасывать core, которую потом можно поднимать gdb,
+т.е. этот вариант удобно использовать при отладке (для отлова плавающих
+глюков).
+
+Поправьте, если я в чем-то ошибаюсь.
+
+/------/
+
+[11] Q: А можно как-нибудь получать диффы на e-mail/netmail?
+
+A: (DK)
+   Можно, https://lists.sourceforge.net/lists/listinfo/husky-diffs -
+   в этой рассылке распространяются диффы, пожатые gzip. После распаковки
+   цеплять их надо с помощью patch -p0 < file.diff
+   (patch.exe - GNU Patch от CygWin'а или из binutils/win32)
+
+A: (SD)
+   С полным перемещением на Sourceforge.Net создан список рассылки
+   диффов текстом (удобно отслеживать изменения):
+   https://lists.sourceforge.net/lists/listinfo/husky-cvs
+
+   Кроме того есть CVS и доступ к нему из браузера:
+   http://cvs.sourceforge.net/cgi-bin/viewcvs.cgi/husky/
+
+/------/
+
+[12] Q: Как победить ошибки компиляции под Red Hat и ASP Linux?
+
+A: (PG)
+   Если стянуть с gnu.org и поставить там нормальный gcc (2.95.3 или 3.xx) -
+   собирается.
+   А рэдхэтовским или аспшным хаком 2.96 - никто и не обещал. Можно посмотреть
+   на http://www.gnu.org/software/gcc/releases.html - нет такой версии, после
+   2.95.3 сразу идет 3.0.
+
+/------/
+
+[13] Q: Компилятор под FreeBSD ругается: warning: mktemp() possibly used
+   unsafely; consider using mkstemp()
+
+A: (SD, PG)
+   В переводе это сообщение звучит так: "Предупреждение: функция mktemp()
+   возможно используется небезопасным образом; предпочтительно использовать
+   mkstemp()". mktemp() генерирует имя временного файла, mkstemp() к тому же
+   создает этот файл. Смысл предупреждения состоит в том, что после завершения
+   mktemp() сгенерированное имя файла может оказаться занятым.
+   Вот только есть одна тонкость: mktemp() - стандартная функция, а mkstemp()
+   - нет (в некоторых реализациях встречается еще и mkstemps() - создание файла
+   с суффиксом). Ради сохранения переносимости кода в husky используется
+   mktemp() с соответствующими проверками.
+
+A: (PG)
+   На то он и warning, что предупреждает о _возможной_ (но совсем не
+   обязательной) ошибке (_possibly_ used unsafely). Так вот, в данном
+   случае ошибки нет, все так и задумано, и warning можно игнорировать.
+   Отличие его от других warning-ов в том, что его не так просто обойти
+   или отключить, как в других случаях (сделать явное преобразование
+   типов или вместо "if (a=b)" написать "if ((a=b)!=0)"). Предложенный
+   вариант использования mkstemp() мало того, что непереносим, но еще и
+   попросту не подходит в нашем случае, т.к. эта функция не позволяет
+   создавать временный файл с определенным расширением.
+   Все написано совершенно корректно, и менять код только ради того, чтобы
+   убрать warning, IMHO смысла нет.
+
+/------/
+
+[14] Q: Htick не удаляет из рабочего каталога распакованные из архивов файлы
+
+A: (DP)
+   RTFM! Пропиши нормально распаковщики! hint: параметр $f укажи. А то у тебя
+   извлекается не один файл, а все.
+   === Cut ===
+   Unpack "pkzip25 -ext -silent -over=all -nozip -nofix $a $p $f" 0  504b0304
+   Unpack "rar e -y -c- $a $p $f" 0 52617221
+   Unpack "rar e -y -c- $a $p $f" 28 52534658
+   Unpack "arj e -y $a $p $f" 0 60ea
+   Unpack "ha ey $a $p $f" 0 4841
+   Unpack "lha e /m $a $p $f" 4 6c68
+
+/--------------------------------------------------------------------------/
+
+        При написании данного файла за основу взят HPT FAQ.
