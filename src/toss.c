@@ -858,8 +858,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
             if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
             else { /* Forwarding */
                 busy = 0;
-                if (createOutboundFileName(to_link,
-                     to_link->fileEchoFlavour, FLOFILE)==0) {
+                if (createOutboundFileNameAka(to_link,
+                     to_link->fileEchoFlavour, FLOFILE, SelectPackAka(to_link))==0) {
                   strcpy(linkfilepath,to_link->floFile);
                   if (!busy) { /*  FIXME: it always not busy!!! */
                      *(strrchr(linkfilepath,PATH_DELIM))=0;
@@ -1164,7 +1164,7 @@ void checkTmpDir(void)
          link = getLinkFromAddr(config, tic.to);
 	 /*  createFlo doesn't  support ASO!!! */
          /* if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) { */
-        if (createOutboundFileName(link, link->fileEchoFlavour, FLOFILE)==0) {
+        if (createOutboundFileNameAka(link, link->fileEchoFlavour, FLOFILE, SelectPackAka(link))==0) {
 	     filearea=getFileArea(tic.area);
 	     if (filearea!=NULL) {
                if (!filearea->pass && !filearea->sendorig) strcpy(newticedfile,filearea->pathName);

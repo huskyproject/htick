@@ -476,7 +476,10 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     char *linkfilepath = NULL;
     char *newticfile   = NULL;
     FILE *flohandle    = NULL;
+    hs_addr *aka;
+    char *str_hisAka, *str_Aka;
 
+    aka = SelectPackAka(downlink);
     memcpy(&tic->from,downlink->ourAka,sizeof(hs_addr));
     memcpy(&tic->to,&downlink->hisAka, sizeof(hs_addr));
 
@@ -484,7 +487,7 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     if (downlink->ticPwd!=NULL)
         tic->password = sstrdup(downlink->ticPwd);
     
-    if(createOutboundFileName(downlink,downlink->fileEchoFlavour,FLOFILE)==1)
+    if(createOutboundFileNameAka(downlink,downlink->fileEchoFlavour,FLOFILE,aka)==1)
         busy = 1;
     
     if (busy) {
@@ -501,10 +504,10 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     }
     
     /*  fileBoxes support */
-    if (needUseFileBoxForLink(config,downlink)) {
+    if (needUseFileBoxForLinkAka(config,downlink,aka)) {
         nfree(linkfilepath);
         if (!downlink->fileBox) 
-            downlink->fileBox = makeFileBoxName (config,downlink);
+            downlink->fileBox = makeFileBoxNameAka (config,downlink,aka);
         xstrcat(&linkfilepath, downlink->fileBox);
     }
     
@@ -516,7 +519,7 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     }
     else  newticfile = NULL;
     
-    if (needUseFileBoxForLink(config,downlink)) {
+    if (needUseFileBoxForLinkAka(config,downlink,aka)) {
         xstrcat(&linkfilepath, tic->file);
         if (link_file(newticedfile,linkfilepath ) == 0)
         {
@@ -540,15 +543,20 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
         if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
         fclose(flohandle);
     }
-    if (!busy || needUseFileBoxForLink(config,downlink)) {                   
+    if (!busy || needUseFileBoxForLinkAka(config,downlink,aka)) {                   
+
+        str_hisAka = aka2str5d(downlink->hisAka);
+        str_Aka = aka2str5d(*aka);
         
         if (newticfile != NULL) 
-            w_log(LL_LINK,"Forwarding %s with tic %s for %s", tic->file,
+            w_log(LL_LINK,"Forwarding %s with tic %s for %s via %s", tic->file,
                   GetFilenameFromPathname(newticfile),
-                  aka2str(downlink->hisAka));
+                  str_hisAka, str_Aka);
         else
-            w_log(LL_LINK,"Forwarding %s for %s", tic->file,
-                  aka2str(downlink->hisAka));
+            w_log(LL_LINK,"Forwarding %s for %s via %s", tic->file,
+                  str_hisAka, str_Aka);
+
+        nfree(str_hisAka); nfree(str_Aka);
 
         if (!busy && downlink->bsyFile) remove(downlink->bsyFile);
     }

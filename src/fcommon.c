@@ -114,12 +114,17 @@ int fileNameAlreadyUsed(char *pktName, char *packName) {
    return 0;
 }
 
-int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
+int createOutboundFileNameAka(s_link *link, e_flavour prio, e_pollType typ, hs_addr *aka)
 {
-   int nRet = NCreateOutboundFileName(config,link,prio,typ);
+   int nRet = NCreateOutboundFileNameAka(config,link,prio,typ,aka);
    if(nRet == -1) 
       exit_htick("cannot create *.bsy file!",0);
    return nRet;
+}
+
+int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
+{
+  return createOutboundFileNameAka(link, prio, typ, &(link->hisAka));
 }
 
 int removeFileMask(char *directory, char *mask)
