@@ -234,7 +234,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
  	fseek(f, curpos, SEEK_SET);
 //	fputs(buff, f);
 	fwrite(buff, sizeof(char), (size_t) len, f);
-#ifdef __WATCOMC__
+#if defined(__WATCOMC__) || defined(__MINGW32__)
 	fflush( f );
 	fTruncate( fileno(f), endpos-linelen );
 	fflush( f );
@@ -315,7 +315,13 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	fseek(f,-cfglen-al-1-before_str,SEEK_END);
 	fwrite(cfg, sizeof(char), cfglen, f);
 
-	truncate(fileName,endpos-al-before_str);
+#if defined(__WATCOMC__) || defined(__MINGW32__)
+	fflush( f );
+	fTruncate( fileno(f), endpos-al-before_str);
+	fflush( f );
+#else
+	truncate(fileName, endpos-al-before_str);
+#endif
 	
 	fseek(f,areapos-1,SEEK_SET);
 

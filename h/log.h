@@ -39,7 +39,7 @@ struct htick_log {
    char *keysAllowed;    // only log-data with one of these keys will be stored
    char *appName;        // name of the application which has created this log entry
    FILE *logFile;        // in this logFile
-   char open;            // is the log-file open?
+   char isopen;            // is the log-file open?
    char firstLinePrinted;// First line in Log File printed ?
    unsigned int logEcho; // echo log to screen?
 };

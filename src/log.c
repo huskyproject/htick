@@ -56,7 +56,7 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
       return NULL;
    } /* endif */
 
-   temp->open = 1;
+   temp->isopen = 1;
 
    /* copy all informations */
    temp->appName = (char *) smalloc (strlen(appN)+1);
@@ -75,11 +75,11 @@ s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
 void closeLog(s_log *htick_log)
 {
    if (htick_log != NULL) {
-      if (htick_log->open != 0) {
+      if (htick_log->isopen != 0) {
          if (htick_log->firstLinePrinted)
             fprintf(htick_log->logFile, "\n");
          fclose(htick_log->logFile);
-         htick_log->open = 0;
+         htick_log->isopen = 0;
       } /* endif */
       free(htick_log->appName);
       free(htick_log->keysAllowed);
@@ -95,7 +95,7 @@ void writeLogEntry(s_log *htick_log, char key, char *logString, ...)
 	va_list	  ap;
 
    if (htick_log) {
-     if (htick_log->open && strchr(htick_log->keysAllowed, key)) 
+     if (htick_log->isopen && strchr(htick_log->keysAllowed, key)) 
         {
         currentTime = time(NULL);
         locTime = localtime(&currentTime);
