@@ -925,7 +925,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    w_log('6',"Processing Tic-File %s",ticfile);
 
-   parseTic(ticfile,&tic);
+   if( !parseTic(ticfile,&tic) )
+      return 2;
 
    w_log('6',"File: %s size: %ld area: %s from: %s orig: %u:%u/%u.%u",
          tic.file, tic.size, tic.area, aka2str(tic.from),
