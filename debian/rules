@@ -36,7 +36,7 @@ clean:
 	-$(MAKE) clean
 	-rm -f configure-stamp
 	-rm -f build-stamp
-	-rm -rf debian/htick
+	-rm -rf debian/$(PACKAGE)
 	-rm -f debian/postinst.debhelper
 	-rm -f debian/postrm.debhelper
 	-rm -f debian/prerm.debhelper
@@ -68,7 +68,7 @@ binary-arch: build install
 	dh_installexamples
 	dh_installmenu
 	dh_installcron
-	dh_installman
+	dh_installmanpages
 	dh_installinfo
 #	dh_undocumented
 	dh_installchangelogs ChangeLog
