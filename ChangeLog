@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Fri Mar  9 16:02:04 NOVT 2001
+max:
+* comment d_size in toss.c (don't compiled under linux)
+
+----- cvs ci ------
 Mon Mar  5 22:51:20 NOVT 2001
 max (patch from Alex Bronin):
 * robotsArea

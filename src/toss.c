@@ -1344,7 +1344,7 @@ void checkTmpDir(void)
 
    while ((file = readdir(dir)) != NULL) {
       if (strlen(file->d_name) != 12) continue;
-      if (!file->d_size) continue;
+      //if (!file->d_size) continue;
       ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
       strcpy(ticfile, tmpdir);
       strcat(ticfile, file->d_name);
