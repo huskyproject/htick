@@ -1,3 +1,10 @@
+htick (0.9-4) unstable; urgency=low
+
+  * Hey, im back. New package.
+  * Changed build-depends for libfidoconf, its 0.13 now
+
+ -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Sun,  3 Mar 2002 23:37:19 +0100
+
 htick (0.9-3) unstable; urgency=low
 
   * Section changed to contrib/mail.
@@ -16,6 +23,4 @@ htick (0.9-1) unstable; urgency=low
 
  -- Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>  Thu,  5 Jul 2001 22:32:44 +0200
 
-Local variables:
-mode: debian-changelog
-End:
+
