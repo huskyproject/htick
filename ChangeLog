@@ -1,3 +1,9 @@
+2005-03-04 Friday 14:23  mche
+
+	* h/htickafix.h (1.2), htick.vcproj (1.6), htickWithZlib.vcproj
+	(1.3), src/htickafix.c (1.6), src/toss.c (1.288): macro
+	redifinition fixed
+
 2005-02-21 Monday 16:33  nick_voronin
 
 	* src/htickafix.c (1.5): Logging added
