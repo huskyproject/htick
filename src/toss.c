@@ -1266,8 +1266,10 @@ void checkTmpDir(void)
                }
             } /* if filearea */
          } /* if createFlo */
-         remove(link->bsyFile);
-         nfree(link->bsyFile);
+         if(link->bsyFile){
+           remove(link->bsyFile);
+           nfree(link->bsyFile);
+         }
          nfree(link->floFile);
          disposeTic(&tic);
       } /* if ".TIC" */
