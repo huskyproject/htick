@@ -65,6 +65,7 @@ void doSaveTic4Report(s_ticfile *tic)
     unsigned int i;
     
     char *rpTicName = NULL;
+    char *desc_line = NULL;
     
     rpTicName = makeUniqueDosFileName(config->announceSpool,"tic",config);
 
@@ -81,17 +82,21 @@ void doSaveTic4Report(s_ticfile *tic)
     fprintf(tichandle,"Area %s\r\n",tic->area);
 
     if (tic->anzldesc>0) {
-        for (i=0;i<tic->anzldesc;i++)
-        {
-            if (config->intab != NULL) recodeToInternalCharset(tic->ldesc[i]);
-            fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
-        }
+       for (i=0;i<tic->anzldesc;i++)
+       {
+          desc_line = sstrdup(tic->ldesc[i]);
+          if (config->intab != NULL) recodeToInternalCharset(desc_line);
+          fprintf(tichandle,"LDesc %s\r\n",desc_line);
+          nfree(desc_line);
+       }
     } else {
-        for (i=0;i<tic->anzdesc;i++)
-        {
-            if (config->intab != NULL) recodeToInternalCharset(tic->desc[i]);
-            fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
-        }
+       for (i=0;i<tic->anzdesc;i++)
+       {
+          desc_line = sstrdup(tic->desc[i]);
+          if (config->intab != NULL) recodeToInternalCharset(desc_line);
+          fprintf(tichandle,"Desc %s\r\n",desc_line);
+          nfree(desc_line);
+       }
     }
     if (tic->origin.zone!=0)
         fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
