@@ -1,3 +1,9 @@
+2005-04-03 Sunday 15:20  d_sergienko
+
+	* doc/htick.rus.texi, doc/htick.texi, src/areafix.c
+	(htick-1_4-stable.[2,4,2]): skip 'passthrough' in
+	autoFileCreateDefaults - this should be set via linkFileBaseDir
+
 2005-03-20 Sunday 01:47  sfpavel
 
 	* debian/changelog (tags: stable) (htick-1_4-stable.8): 1.4-RC3
