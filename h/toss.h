@@ -61,4 +61,8 @@ int readCheck(s_filearea *echo, s_link *link);
 int writeCheck(s_filearea *echo, s_addr *aka);
 int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic, char *filename);
 
+s_newfilereport **newFileReport;
+unsigned newfilesCount;
+
+
 #endif

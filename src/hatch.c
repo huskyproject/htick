@@ -48,8 +48,6 @@ void hatch()
     s_ticfile tic;
     s_filearea *filearea;
     struct stat stbuf;
-    extern s_newfilereport **newFileReport;
-    extern int newfilesCount;
     
     newFileReport = NULL;
     newfilesCount = 0;
