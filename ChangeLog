@@ -1,3 +1,8 @@
+2002-12-20 Friday 15:27  stas_degteff
+
+	* src/: htick.c (1.82), toss.c (1.239): Bugfix: memory fault if
+	netmailarea not defined in config
+
 2002-12-10 Tuesday 12:59  mche
 
 	* h/global.h (1.20), h/version.h (1.4), src/global.c (1.24),
