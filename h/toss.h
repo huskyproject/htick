@@ -57,5 +57,6 @@ void processTmpDir(void);
 void toss(void);
 void writeNetmail(s_message *msg);
 char *addr2string(s_addr *addr);
+int readCheck(s_filearea *echo, s_link *link);
 
 #endif

@@ -219,10 +219,14 @@ void processConfig()
    if (stricmp(config->fileAreaBaseDir,pass_area) == 0) 
       config->fileAreaBaseDir[strlen(config->fileAreaBaseDir)-1]=0;
    if (config->passFileAreaDir == NULL) printf("you must set PassFileAreaDir in fidoconfig first\n");
+   if (config->MaxTicLineLength && config->MaxTicLineLength<80)
+       printf("parameter MaxTicLineLength in fidoconfig must be 0 or >80\n");
 
    if (config->addrCount == 0 ||
        config->linkCount == 0 ||
-       config->fileAreaBaseDir == NULL) {
+       config->fileAreaBaseDir == NULL ||
+       config->passFileAreaDir == NULL ||
+       (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
       if (config->lockfile != NULL) remove(config->lockfile);
       writeLogEntry(htick_log, '9', "wrong config file");
       writeLogEntry(htick_log, '1', "End");

@@ -50,3 +50,7 @@ Execute some command on receiving file. Command get full filepath as parameter.
 10) originInAnnounce
 
 Show Origin in announce
+
+11) MaxTicLineLength <number>
+
+Set maximum line length in TIC to <number>

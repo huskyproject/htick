@@ -32,6 +32,7 @@ void hatch()
    struct stat stbuf;
    extern s_newfilereport **newFileReport;
    extern int newfilesCount;
+   int readAccess;
 
    newFileReport = NULL;
    newfilesCount = 0;
@@ -139,32 +140,56 @@ void hatch()
       // Checking to whom I shall forward
       for (i=0;i<filearea->downlinkCount;i++) { 
          // Forward file to
-         memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
-         memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
-                sizeof(s_addr));
-         strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
 
-         busy = 0;
+         readAccess = readCheck(filearea, filearea->downlinks[i]->link);
+         switch (readAccess) {
+         case 0: break;
+         case 3:
+            sprintf(logstr,"Not export to link %s, %s",
+                    filearea->downlinks[i]->link->name,
+                    addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'7',logstr);
+	    break;
+         case 2:
+            sprintf(logstr,"Link %s, %s no access level",
+            filearea->downlinks[i]->link->name,
+            addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'7',logstr);
+	    break;
+         case 1:
+            sprintf(logstr,"Link %s, %s no access group",
+            filearea->downlinks[i]->link->name,
+            addr2string(&filearea->downlinks[i]->link->hisAka));
+            writeLogEntry(htick_log,'7',logstr);
+	    break;
+         }
 
-         if (createOutboundFileName(filearea->downlinks[i]->link,
-             cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
-             FLOFILE)==1)
-            busy = 1;
+         if (readAccess == 0) {
 
-         strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
-         if (busy) {
-            writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
-	    //Create temporary directory
-	    *(strrchr(linkfilepath,'.'))=0;
-	    strcat(linkfilepath,".htk");
-            createDirectoryTree(linkfilepath);
-	 }
-	 else {
-            if (filearea->pass != 1) 
+            memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
+            memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
+                   sizeof(s_addr));
+            strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
+
+            busy = 0;
+
+            if (createOutboundFileName(filearea->downlinks[i]->link,
+                cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
+                FLOFILE)==1)
+               busy = 1;
+
+            strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
+            if (busy) {
+               writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
+               //Create temporary directory
+	       *(strrchr(linkfilepath,'.'))=0;
+	       strcat(linkfilepath,".htk");
+               createDirectoryTree(linkfilepath);
+	    } else {
+               if (filearea->pass) 
+	          strcpy(linkfilepath, config->passFileAreaDir);
 	       *(strrchr(linkfilepath,PATH_DELIM))=0;
-	    else
-	       strcpy(linkfilepath, config->passFileAreaDir);
-	 }
+	    }
 
          // separate bundles
          if (config->separateBundles && !busy) {
@@ -187,25 +212,33 @@ void hatch()
              free(sepDir);
          }
 
-         newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-         writeTic(newticfile,&tic);
+	    /* Don't create TICs for everybody */
+	    if (!filearea->downlinks[i]->link->noTIC) {
+              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+              writeTic(newticfile,&tic);   
+	    } 
+	    else newticfile = NULL;
 
-         if (!busy) {
-	    flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
-            fprintf(flohandle,"%s\n",filename);
-            fprintf(flohandle,"^%s\n",newticfile);
-            fclose(flohandle);
+            if (!busy) {
+	       flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
+               fprintf(flohandle,"%s\n",filename);
+	       
+	       if (newticfile != NULL)
+                  fprintf(flohandle,"^%s\n",newticfile);
 
-            remove(filearea->downlinks[i]->link->bsyFile);
+               fclose(flohandle);
 
-            sprintf(logstr,"Forwarding %s for %s, %s",
-                    tic.file,
-                    filearea->downlinks[i]->link->name,
-                    addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'6',logstr);
+               remove(filearea->downlinks[i]->link->bsyFile);
+
+               sprintf(logstr,"Forwarding %s for %s, %s",
+                       tic.file,
+                       filearea->downlinks[i]->link->name,
+                       addr2string(&filearea->downlinks[i]->link->hisAka));
+               writeLogEntry(htick_log,'6',logstr);
+	    }
 	    free(filearea->downlinks[i]->link->bsyFile);
-	 }
-	 free(filearea->downlinks[i]->link->floFile);
+	    free(filearea->downlinks[i]->link->floFile);
+         } // if readAccess == 0
       } // Forward file
 
    }

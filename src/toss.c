@@ -377,7 +377,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;   
    char hlp[80];
-   char *line, *token, *param;
+   char *line, *token, *param, *linecut = "";
 
    tichandle=fopen(ticfile,"r");
    memset(tic,0,sizeof(*tic));
@@ -386,7 +386,12 @@ int parseTic(char *ticfile,s_ticfile *tic)
       line = trimLine(line);
 
       if (*line!=0 || *line!=10 || *line!=13 || *line!=';' || *line!='#') {
-         token=strtok(line, " \t");
+         if (config->MaxTicLineLength) {
+            linecut = (char *) malloc(config->MaxTicLineLength+1);
+	    strncpy(linecut,line,config->MaxTicLineLength);
+	    linecut[config->MaxTicLineLength] = 0;
+	    token=strtok(linecut, " \t");
+	 } else token=strtok(line, " \t");
          param=stripLeadingChars(strtok(NULL, "\0"), "\t");
          if (token && param) {
             if (stricmp(token,"created")==0);
@@ -433,6 +438,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
                writeLogEntry(htick_log, '7', hlp);  
             }
          } /* endif */
+         if (config->MaxTicLineLength) free(linecut);
       } /* endif */
       free(line);
    } /* endwhile */
@@ -579,11 +585,12 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
 int readCheck(s_filearea *echo, s_link *link)
 {
 
-  // rc == '\x0000' access o'k
-  // rc == '\x0001' no access group
-  // rc == '\x0002' no access level
-  // rc == '\x0003' no access export
-  // rc == '\x0004' not linked
+  /* rc == '\x0000' access o'k
+   rc == '\x0001' no access group
+   rc == '\x0002' no access level
+   rc == '\x0003' no access export
+   rc == '\x0004' not linked
+   */
 
   int i;
 
@@ -622,11 +629,12 @@ int readCheck(s_filearea *echo, s_link *link)
 int writeCheck(s_filearea *echo, s_addr *aka)
 {
 
-  // rc == '\x0000' access ok
-  // rc == '\x0001' no access group
-  // rc == '\x0002' no access level
-  // rc == '\x0003' no access import
-  // rc == '\x0004' not linked
+  /* rc == '\x0000' access o'k
+   rc == '\x0001' no access group
+   rc == '\x0002' no access level
+   rc == '\x0003' no access import
+   rc == '\x0004' not linked
+   */
 
   int i;
 
@@ -902,7 +910,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    } else {
       sprintf(logstr,"Cannot open or create File Area %s",tic.area);
       writeLogEntry(htick_log,'9',logstr);
-      fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
+      fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
       disposeTic(&tic);
       return(2);
    } 
@@ -1074,36 +1082,36 @@ int processTic(char *ticfile, e_tossSecurity sec)
          }
 
          if (readAccess == 0) {
-         if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
-            sprintf(logstr,"File %s already seenby %s, %s",
-                        tic.file,
-                        filearea->downlinks[i]->link->name,
-                        addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'7',logstr);
-         } else {
-            memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
-            memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
-                    sizeof(s_addr));
-            strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
-
-            busy = 0;
-
-            if (createOutboundFileName(filearea->downlinks[i]->link,
-                 cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
-                 FLOFILE)==1)
-                busy = 1;
-
-            strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
-            if (busy) {
-               writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
-               /* Create temporary directory */
-               *(strrchr(linkfilepath,'.'))=0;
-               strcat(linkfilepath,".htk");
-               createDirectoryTree(linkfilepath);
+            if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
+               sprintf(logstr,"File %s already seenby %s, %s",
+                       tic.file,
+                       filearea->downlinks[i]->link->name,
+                       addr2string(&filearea->downlinks[i]->link->hisAka));
+               writeLogEntry(htick_log,'7',logstr);
             } else {
-		if (filearea->pass != 0) strcpy(linkfilepath,config->passFileAreaDir);
-		*(strrchr(linkfilepath,PATH_DELIM))=0;
-	    }
+               memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
+               memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
+                      sizeof(s_addr));
+               strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
+
+               busy = 0;
+
+               if (createOutboundFileName(filearea->downlinks[i]->link,
+                   cvtFlavour2Prio(filearea->downlinks[i]->link->fileEchoFlavour),
+                   FLOFILE)==1)
+                  busy = 1;
+
+               strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
+               if (busy) {
+                  writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
+                  /* Create temporary directory */
+                  *(strrchr(linkfilepath,'.'))=0;
+                  strcat(linkfilepath,".htk");
+                  createDirectoryTree(linkfilepath);
+               } else {
+		  if (filearea->pass != 0) strcpy(linkfilepath,config->passFileAreaDir);
+		  *(strrchr(linkfilepath,PATH_DELIM))=0;
+	       }
 
             /* separate bundles */
             if (config->separateBundles && !busy) {
@@ -1126,34 +1134,32 @@ int processTic(char *ticfile, e_tossSecurity sec)
                free(sepDir);
             }
 
-	    /* Don't create TICs for everybody */
-	    if (!filearea->downlinks[i]->link->noTIC) {
-              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-              writeTic(newticfile,&tic);   
-	    } 
-	    else newticfile = NULL;
+	       /* Don't create TICs for everybody */
+	       if (!filearea->downlinks[i]->link->noTIC) {
+                 newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+                 writeTic(newticfile,&tic);   
+	       } else newticfile = NULL;
 
-            if (!busy) {
-               flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
-               fprintf(flohandle,"%s\n",newticedfile);
+               if (!busy) {
+                  flohandle=fopen(filearea->downlinks[i]->link->floFile,"a");
+                  fprintf(flohandle,"%s\n",newticedfile);
 	       
-	       if (newticfile != NULL)
-                 fprintf(flohandle,"^%s\n",newticfile);
-	       
-               fclose(flohandle);
+	          if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
 
-               remove(filearea->downlinks[i]->link->bsyFile);
+                  fclose(flohandle);
 
-               sprintf(logstr,"Forwarding %s for %s, %s",
-                       tic.file,
-                       filearea->downlinks[i]->link->name,
-                       addr2string(&filearea->downlinks[i]->link->hisAka));
+                  remove(filearea->downlinks[i]->link->bsyFile);
 
-               writeLogEntry(htick_log,'6',logstr);
-            }
-            free(filearea->downlinks[i]->link->floFile);
-         } /* if Seenby */
-      } /* if readAccess == 0 */
+                  sprintf(logstr,"Forwarding %s for %s, %s",
+                          tic.file,
+                          filearea->downlinks[i]->link->name,
+                          addr2string(&filearea->downlinks[i]->link->hisAka));
+                  writeLogEntry(htick_log,'6',logstr);
+               }
+               free(filearea->downlinks[i]->link->bsyFile);
+               free(filearea->downlinks[i]->link->floFile);
+            } /* if Seenby */
+         } /* if readAccess == 0 */
       } /* Forward file */
    }
 
