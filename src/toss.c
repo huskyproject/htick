@@ -1018,14 +1018,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
               *(strrchr(dirname, PATH_DELIM)) = 0;
               findfile = makeUniqueDosFileName(dirname,"tmp",config);
               if (rename(ticedfile, findfile) != 0 ) {
-                  w_log('9',"Can't file %s rename to %s", ticedfile, findfile);
+                  w_log(LL_CRIT, "Can't rename file %s to %s: %s", ticedfile, findfile, strerror(errno));
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
                   return TIC_NotRecvd;
               }
               if (rename(realfile, ticedfile) != 0) {
-                  w_log('9',"Can't file %s rename to %s", realfile, ticedfile);
+                  w_log(LL_CRIT, "Can't rename file %s to %s: %s", realfile, ticedfile, strerror(errno));
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
