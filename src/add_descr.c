@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <add_descr.h>
-#include <fidoconfig.h>
-#include <common.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/common.h>
 #include <string.h>
-#include <progprot.h>
+#include <smapi/progprot.h>
 #include <global.h>
 #include <recode.h>
 #include <toss.h>

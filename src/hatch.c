@@ -6,16 +6,15 @@
 #include <hatch.h>
 #include <global.h>
 #include <fcommon.h>
-#include <common.h>
 #include <toss.h>
 #include <log.h>
 #include <crc32.h>
-#include <common.h>
+#include <fidoconfig/common.h>
 #include <add_descr.h>
 #include <recode.h>
 #include <version.h>
-#include <progprot.h>
-#include <adcase.h>
+#include <smapi/progprot.h>
+#include <fidoconfig/adcase.h>
 
 void hatch()
 {

@@ -8,11 +8,11 @@
 #include <global.h>
 #include <string.h>
 #include <fcommon.h>
-#include <common.h>
-#include <progprot.h>
+#include <fidoconfig/common.h>
+#include <smapi/progprot.h>
 #include <add_descr.h>
-#include <dirlayer.h>
-#include <adcase.h>
+#include <fidoconfig/dirlayer.h>
+#include <fidoconfig/adcase.h>
 
 unsigned long totalfilessize = 0;
 unsigned int totalfilesnumber = 0;

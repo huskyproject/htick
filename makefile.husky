@@ -7,9 +7,9 @@ OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
 SRC_DIR = src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -ggdb -O2
+  CFLAGS  = -c -Ih -I$(INCDIR) -Wall -ggdb -O2
 else
-  CFLAGS  = -c -Ih -I../smapi -I$(INCDIR) -Wall -O3 -s
+  CFLAGS  = -c -Ih -I$(INCDIR) -Wall -O3 -s
 endif
 
 ifeq ($(SHORTNAME), 1)

@@ -38,27 +38,27 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-#include <fidoconfig.h>
-#include <adcase.h>
-#include <common.h>
+#include <fidoconfig/fidoconfig.h>
+#include <fidoconfig/adcase.h>
+#include <fidoconfig/common.h>
 #include <fcommon.h>
 #include <global.h>
 
 #include <toss.h>
-#include <patmat.h>
+#include <smapi/patmat.h>
 
-#include <dirlayer.h>
+#include <fidoconfig/dirlayer.h>
 
-#include <msgapi.h>
-#include <typedefs.h>
-#include <compiler.h>
+#include <smapi/msgapi.h>
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
 #include <pkt.h>
 #include <areafix.h>
 #include <version.h>
-#include <ffind.h>
+#include <smapi/ffind.h>
 
-#include <stamp.h>
-#include <progprot.h>
+#include <smapi/stamp.h>
+#include <smapi/progprot.h>
 
 #include <add_descr.h>
 #include <seenby.h>

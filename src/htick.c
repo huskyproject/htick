@@ -37,17 +37,17 @@
 #include <sys/types.h>
 #include <signal.h>
 
-#include <msgapi.h>
+#include <smapi/msgapi.h>
 
 #include <version.h>
 
 #ifndef MSDOS
-#include <fidoconfig.h>
+#include <fidoconfig/fidoconfig.h>
 #else
-#include <fidoconf.h>
+#include <fidoconf/fidoconf.h>
 #endif
 
-#include <progprot.h>
+#include <smapi/progprot.h>
 #include <htick.h>
 #include <global.h>
 
