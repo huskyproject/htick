@@ -1,5 +1,10 @@
 # include Husky-Makefile-Config
+ifeq ($(DEBIAN), 1)
+# Every Debian-Source-Paket has one included.
+include debian/huskymak.cfg
+else
 include ../huskymak.cfg
+endif
 
 OBJS    = htick$(OBJ) global$(OBJ) log$(OBJ) toss$(OBJ) fcommon$(OBJ) \
           scan$(OBJ) areafix$(OBJ) strsep$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
