@@ -41,19 +41,18 @@
 #include "report.h"
 #include "version.h"
 
-
 s_ticfile* Report = NULL;
 unsigned   rCount = 0;
 
-void doSaveTic4Report(char *ticfile,s_ticfile *tic)
+void doSaveTic4Report(s_ticfile *tic)
 {
     FILE *tichandle;
     unsigned int i;
     
     char *rpTicName = NULL;
     
-    xstrscat(&rpTicName,config->announceSpool,GetFilenameFromPathname(ticfile),NULL);
-    
+    rpTicName = makeUniqueDosFileName(config->announceSpool,"tic",config);
+
     tichandle = fopen(rpTicName,"wb");
     
     if(tichandle == NULL){
@@ -66,8 +65,6 @@ void doSaveTic4Report(char *ticfile,s_ticfile *tic)
     fprintf(tichandle,"File %s\r\n",tic->file);
     fprintf(tichandle,"Area %s\r\n",tic->area);
 
-    if (tic->areadesc)
-        fprintf(tichandle,"Areadesc %s\r\n",tic->areadesc);
     if (tic->anzldesc>0) {
         for (i=0;i<tic->anzldesc;i++)
             fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
@@ -242,9 +239,11 @@ void reportNewFiles()
    
    
    for (i = 0; i < rCount; i++) {
+       s_filearea *currFArea = getFileArea(config,Report[i].area);
        fileCount = 0;
-       xscatprintf(&(msg->text), "\r>Area : %s", Report[i].area);
-       if(Report[i].areadesc) xscatprintf(&(msg->text), " : %s", Report[i].areadesc);
+       xscatprintf(&(msg->text), "\r>Area : %s",strUpper(Report[i].area));
+       if(currFArea && currFArea->description)
+           xscatprintf(&(msg->text), " : %s", currFArea->description);
        xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
        
        if(strlen(Report[i].file) > 12)

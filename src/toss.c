@@ -1078,7 +1078,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
 
-   doSaveTic4Report(ticfile,&tic);
+   doSaveTic4Report(&tic);
    doSaveTic(ticfile,&tic,filearea);
    disposeTic(&tic);
    return(rc);

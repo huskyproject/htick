@@ -34,7 +34,7 @@
 
 #include "fcommon.h"
 
-void doSaveTic4Report(char *ticfile,s_ticfile *tic);
+void doSaveTic4Report(s_ticfile *tic);
 void report();
 
 #endif 
