@@ -278,18 +278,9 @@ void processConfig()
       exit(1);
    };
 
-/*
+
   /* open Logfile */
-   htick_log = NULL;
-   if (config->logFileDir != NULL) {
-     buff = (char *) smalloc(strlen(config->logFileDir)+strlen(LogFileName)+1);
-     strcpy(buff, config->logFileDir),
-     strcat(buff, LogFileName);
-     htick_log = openLog(buff, versionStr, config);
-     if (htick_log && quiet) htick_log->logEcho = 0;
-   } else
-       fprintf(stderr, "You have no logFileDir in your config, there will be no log created");
-*/
+
    htick_log = openLog(buff, versionStr, config);  /* if failed: openLog() prints a message to stderr */
    if (htick_log && quiet) htick_log->logEcho = 0;
 
