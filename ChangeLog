@@ -1,3 +1,8 @@
+2002-12-02 Monday 07:43  stas_degteff
+
+	* misc/config (1.8): Use FileFixReportsAttr instead
+	filefixkillreports
+
 2002-11-29 Friday 14:15  mche
 
 	* src/areafix.c (1.105): fix xstrscat() usage
