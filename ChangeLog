@@ -1,3 +1,16 @@
+2004-07-27 Tuesday 07:53  andr_lukyanov
+
+	* src/filelist.c (1.51): Fix MSVC6 isspace() in filelist
+
+2004-07-20 Tuesday 15:14  pgul
+
+	* src/toss.c (1.283): Fix spelling in log message
+
+2004-07-19 Monday 22:44  i_zkh
+
+	* doc/: htick.rus.texi (1.5), htick.texi (1.30): Minor changes
+	concerning FilefixReportsAttr syntax
+
 2004-06-07 Monday 11:44  sfpavel
 
 	* debian/compat (1.1): file compat was initially added on branch
@@ -1258,8 +1271,8 @@
 2002-09-25 Wednesday 07:27  mche
 
 	* src/areafix.c (1.91), FidoConfigKeywords (1.41): feature:
-	FileFixEchoLimit patch by <Àëåêñåé Ñóõîòèí <pscorporation@mail.ru>>
-
+	FileFixEchoLimit patch by <Ã€Ã«Ã¥ÃªÃ±Ã¥Ã© Ã‘Ã³ÃµÃ®Ã²Ã¨Ã­ <pscorporation@mail.ru>>
+        
 2002-09-24 Tuesday 13:20  pgul
 
 	* src/: areafix.c (1.90), report.c (1.17): disableTID changed to
