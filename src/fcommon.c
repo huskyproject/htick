@@ -201,8 +201,10 @@ int removeFileMask(char *directory, char *mask)
    return(numfiles);
 }
 
-#ifdef _MAKE_DLL_MVC_
-#	include <Winbase.h>
+#ifdef _WIN32_WINNT
+#define _WINUSER_
+#define _WINUSER_H
+#	include <windows.h>
 #endif
 
 int link_file(const char *from, const char *to)
