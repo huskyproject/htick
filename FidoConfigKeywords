@@ -237,18 +237,18 @@ Place for accumulating report information
 
 <AREATAG>
 	Name of area where annouce will be placed
-	Begins new announce difenition section
+	Begins new announce definition section
 
 <@filename>
 	FileName with leading '@' where annouce will be placed
-	Begins new announce difenition section
+	Begins new announce definition section
 
 ---------------------------------------
-EXAMPLE of config:
+Config example:
 
 AnnounceSpool   E:\FIDO\EXCH\report
 
-AnnAreaTag  @e:\fido\rep.txt  # report all arived files to file e:\fido\rep.txt
+AnnAreaTag  @e:\fido\rep.txt # report all arrived files to file e:\fido\rep.txt
 AnnFileOrigin on
 
 AnnAreaTag  seumbieky.news    # report to area 'seumbieky.news'
@@ -261,12 +261,12 @@ AnnFileOrigin on
 AnnFileRfrom on
 
 AnnAreaTag  seumbieky.news
-AnnInclude  uue.*            # report 'uue.*' group of fileechos
+AnnInclude  uue.*         # report 'uue.*' group of fileechos
 
 AnnAreaTag  seumbieky.news
-AnnExclude  uue.* union.*    # report all other exept of 'uue.* union.*' group of fileechos
+AnnExclude  uue.* union.* # report all other exept of 'uue.* and union.*' groups
 
-AnnAreaTag  netmail          # report via netmail to  defined address
+AnnAreaTag  netmail       # report via netmail to  defined address
 AnnInclude  union.*
 AnnSubj     New mp3's arrives
 AnnTo       Max Inda Houze
