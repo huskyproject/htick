@@ -158,7 +158,7 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
 10) originInAnnounce
 
-Show system that hatch file in announce.
+Show system address that hatch file in announce.
 
 11) MaxTicLineLength <number>
 
