@@ -1,3 +1,8 @@
+2002-11-01 Friday 12:39  mche
+
+	* h/seenby.h, src/hatch.c, src/seenby.c (htick-1_0-stable.[1,3,1]):
+	add seen-by when hatch
+
 2002-10-29 Tuesday 08:58  stas_degteff
 
 	* FidoConfigKeywords (htick-1_0-stable.1): Update fileDescName
