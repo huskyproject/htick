@@ -1428,11 +1428,13 @@ int foundInArray(char **filesInTic, unsigned int filesCount, char *name)
 {
     unsigned int i, rc = 0;
 
-    for (i = 0; i < filesCount; i++)
+    if ( name )
+      for (i = 0; i < filesCount; i++) {
         if (patimat(filesInTic[i],name) == 1) {
             rc = 1;
             break;
         }
+      }
     return rc;
 }
 
@@ -1446,6 +1448,7 @@ void cleanPassthroughDir(void)
     unsigned int filesCount = 0, i;
     char tmpdir[256];
 
+   w_log( LL_FUNC, "cleanPassthroughDir(): begin" );
    w_log( LL_INFO, "Start clean (purging files in passthrough dir)...");
 
    /* check busyFileDir */
@@ -1476,6 +1479,8 @@ void cleanPassthroughDir(void)
          closedir(dir);
       }
    }
+
+/* w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ ); */
 
    /* check separateBundles dirs (does anybody use this?) */
    if (config->separateBundles) {
@@ -1517,6 +1522,8 @@ void cleanPassthroughDir(void)
       }
    }
 
+/* w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ ); */
+
    /* check ticOutbound */
    dir = opendir(config->ticOutbound);
    if (dir != NULL) {
@@ -1528,7 +1535,7 @@ void cleanPassthroughDir(void)
             strcat(ticfile, file->d_name);
             memset(&tic,0,sizeof(tic));
             parseTic(ticfile,&tic);
-            if (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file))) {
+            if (tic.file && (filesCount == 0 || (filesCount > 0 && !foundInArray(filesInTic,filesCount,tic.file)))) {
                filesInTic = srealloc(filesInTic, sizeof(char *)*(filesCount+1));
                filesInTic[filesCount] = (char *) smalloc(strlen(tic.file)+1);
                strcpy(filesInTic[filesCount], tic.file);
@@ -1540,6 +1547,8 @@ void cleanPassthroughDir(void)
       }
       closedir(dir);
    }
+
+/* w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ ); */
 
    /* purge passFileAreaDir */
    dir = opendir(config->passFileAreaDir);
@@ -1570,11 +1579,14 @@ void cleanPassthroughDir(void)
       closedir(dir);
    }
 
+/* w_log( LL_SRCLINE, "%s:%d", __FILE__, __LINE__ ); */
+
    if (filesCount > 0) {
       for (i=0; i<filesCount; i++)
         nfree(filesInTic[i]);
       nfree(filesInTic);
    }
+   w_log( LL_FUNC, "cleanPassthroughDir(): end" );
 }
 
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
