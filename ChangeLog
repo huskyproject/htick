@@ -1,3 +1,15 @@
+2003-05-15 Thursday 01:07  nssoft
+
+	* Makefile (1.21): Fix makefiles.
+
+2003-05-14 Wednesday 21:44  d_sergienko
+
+	* src/toss.c (1.269): recodeMsgBase switch support
+
+2003-05-14 Wednesday 21:17  d_sergienko
+
+	* src/scan.c (1.31): add processing recodeMsgBase
+
 2003-05-12 Monday 07:15  mche
 
 	* src/toss.c (1.268): fixed: htick don't toss zero-length files
