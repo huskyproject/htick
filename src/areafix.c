@@ -651,9 +651,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	report=(char*)calloc(1, sizeof(char));
 
-	// not support mask
-	if (strchr(line, '*') == NULL) {	
-	    for (i=0; i<config->fileAreaCount; i++) {
+	for (i=0; i<config->fileAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->fileAreas[i]),msg,line, link);
 		if (rc == 4) continue;
 		
@@ -682,7 +680,6 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		}
 		report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
 		strcat(report, addline);
-	    }
 	}
 	
 	if (*report == 0) {
