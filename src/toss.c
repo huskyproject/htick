@@ -779,7 +779,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
 int processTic(char *ticfile, e_tossSecurity sec)                     
 {
    s_ticfile tic;
-   int i;
+   int i, z;
    size_t j;
    FILE *flohandle;
 
@@ -798,6 +798,9 @@ int processTic(char *ticfile, e_tossSecurity sec)
    unsigned long crc;
    struct stat stbuf;
    int writeAccess, readAccess;
+   int cmdexit;
+   char buff[256], *comm;
+
 
 /*   printf("Ticfile %s\n",ticfile); */
 
@@ -1007,7 +1010,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       else
          announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
    }
-   
+
    if (filearea->downlinkCount>0) {
       /* Adding path & seenbys */
       time(&acttime);
@@ -1197,6 +1200,28 @@ int processTic(char *ticfile, e_tossSecurity sec)
       newFileReport[newfilesCount]->fileSize = tic.size;
 
       newfilesCount++;
+   }
+
+   /* execute external program */
+   for (z = 0; z < config->execonfileCount; z++) {
+     if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
+       if (patimat(strdup(tic.file),config->execonfile[z].filename) == 0) continue;
+       else {
+         comm = (char *) malloc(strlen(config->execonfile[z].command)+1
+                                +strlen(filearea->pathName)
+                                +strlen(tic.file)+1);
+         if (comm == NULL) continue;
+         sprintf(comm,"%s %s%s",config->execonfile[z].command,
+                                filearea->pathName,
+                                tic.file);
+         sprintf(buff, "Executing %s", comm);
+         writeLogEntry(htick_log, '1', buff);
+         if ((cmdexit = system(comm)) != 0) {
+           sprintf(buff, "Exec failed, code %d", cmdexit);
+           writeLogEntry(htick_log, '1', buff);
+         }
+         free(comm);
+       }                                         
    }
 
    free(old_seenby);
@@ -1607,12 +1632,11 @@ void freeFReport(s_newfilereport *report)
 
 void reportNewFiles()
 {
-   int       b, c, i, j, fileCount, cmdexit;
+   int       b, c, i, fileCount;
    UINT32    fileSize;
    s_message *msg;
-   char      buff[256], *tmp, *comm;
+   char      buff[256], *tmp;
    FILE      *echotosslog;
-   s_filearea *filearea;
    char      *annArea;
    int       areaLen;
 
@@ -1642,29 +1666,6 @@ void reportNewFiles()
                   } /* endif */
                   strcat(msg->text, " ");
                } /* endif */
-
-               /* execute external program */
-               filearea = getFileArea(config, newFileReport[i]->areaName);
-               for (j = 0; j < config->execonfileCount; j++) {
-                 if (stricmp(newFileReport[i]->areaName,config->execonfile[j].filearea) != 0) continue;
-                   if (patimat(newFileReport[i]->fileName,config->execonfile[j].filename) == 0) continue;
-                   else {
-                     comm = (char *) malloc(strlen(config->execonfile[j].command)+1
-                                            +strlen(filearea->pathName)
-                                            +strlen(newFileReport[i]->fileName)+1);
-                     if (comm == NULL) continue;
-                     sprintf(comm,"%s %s%s",config->execonfile[j].command,
-                                            filearea->pathName,
-                                            newFileReport[i]->fileName);
-                     sprintf(buff, "Executing %s", comm);
-                     writeLogEntry(htick_log, '1', buff);
-                     if ((cmdexit = system(comm)) != 0) {
-                       sprintf(buff, "Exec failed, code %d", cmdexit);
-                       writeLogEntry(htick_log, '1', buff);
-                     }
-                     free(comm);
-                   }                                         
-               }
 
                fileCount = fileSize = 0;
 	       areaLen = strlen(newFileReport[i]->areaName);
@@ -1717,9 +1718,9 @@ void reportNewFiles()
                sprintf(buff, " %s\r", print_ch(77, '-'));
                msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+80);
                sprintf(msg->text+strlen(msg->text), "%s %u bytes in %u file(s)\r", buff, fileSize, fileCount);
+               freeFReport(newFileReport[i]); newFileReport[i] = NULL;
             } else {
             } /* endif */
-            freeFReport(newFileReport[i]); newFileReport[i] = NULL;
          } /* endif */
       } /* endfor */
       if (msg) {
