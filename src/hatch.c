@@ -6,6 +6,7 @@
 #include <hatch.h>
 #include <global.h>
 #include <fcommon.h>
+#include <common.h>
 #include <toss.h>
 #include <log.h>
 #include <crc32.h>
@@ -68,8 +69,6 @@ void hatch()
 */
    if (filearea!=NULL) {
       strcpy(fileareapath,filearea->pathName);
-      if (filearea->pathName[strlen(filearea->pathName)-1]!=PATH_DELIM)
-         sprintf(fileareapath+strlen(fileareapath), "%c", PATH_DELIM);
    } else {
       sprintf(logstr,"Cannot open oder create File Area %s",tic.area);
       writeLogEntry(htick_log,'9',logstr);
@@ -81,11 +80,10 @@ void hatch()
    strLower(fileareapath);
    createDirectoryTree(fileareapath);
 
-   //Calculate file size
    stat(hatchfile,&stbuf);
    tic.size = stbuf.st_size;
 
-   tic.origin = tic.from = config->addr[0];
+   tic.origin = tic.from = *filearea->useAka;
 
    // Adding crc
    tic.crc = filecrc32(hatchfile);
@@ -193,7 +191,9 @@ void hatch()
                     filearea->downlinks[i]->link->name,
                     addr2string(&filearea->downlinks[i]->link->hisAka));
             writeLogEntry(htick_log,'6',logstr);
+	    free(filearea->downlinks[i]->link->bsyFile);
 	 }
+	 free(filearea->downlinks[i]->link->floFile);
       } // Forward file
 
    }
@@ -219,4 +219,151 @@ void hatch()
    disposeTic(&tic);
    
    reportNewFiles();
+}
+
+int send(char *filename, char *area, char *addr)
+//0 - OK
+//1 - Passthrough filearea
+//2 - filearea not found
+//3 - file not found
+//4 - link not found
+{
+    s_ticfile tic;
+    s_link *link = NULL;
+    s_filearea *filearea;
+    s_addr address;
+    char sendfile[256], logstr[200], descr_file_name[256];
+    char tmp[100], timestr[40], linkfilepath[256];
+    char sepname[13], *sepDir, *newticfile;
+    struct stat stbuf;
+    time_t acttime;
+    int busy;
+    FILE *flohandle;
+
+   filearea=getFileArea(config,area);
+   if (filearea == NULL) {
+      fprintf(stderr,"Error: Filearea not found\n");
+      return 2;
+   }
+   if (filearea->pass == 1) {
+      fprintf(stderr,"Error: Passthrough filearea\n");
+      return 1;
+   }
+
+   string2addr(addr, &address);
+   link = getLinkFromAddr(*config, address);
+   if (link == NULL) {
+      fprintf(stderr,"Error: Link not found\n");
+      return 4;
+   }
+
+   memset(&tic,0,sizeof(tic));
+
+   strcpy(sendfile,filearea->pathName);
+   strLower(sendfile);
+   createDirectoryTree(sendfile);
+   strcat(sendfile,filename);
+
+   // Exist file?
+   if (!fexist(sendfile)) {
+      strLower(sendfile);
+      if (!fexist(sendfile)) {
+         fprintf(stderr,"Error: File not found\n");
+         sprintf(logstr,"File %s, not found",sendfile);
+         writeLogEntry(htick_log,'6',logstr);
+         disposeTic(&tic);
+         return 3;
+      }
+   }
+
+   sepDir = strrchr(sendfile,PATH_DELIM);
+   if (sepDir) strcpy(tic.file, sepDir+1);
+   else strcpy(tic.file,sendfile);
+
+   strcpy(tic.area,area);
+
+   stat(sendfile,&stbuf);
+   tic.size = stbuf.st_size;
+
+   tic.origin = tic.from = *filearea->useAka;
+
+   // Adding crc
+   tic.crc = filecrc32(sendfile);
+
+   strcpy(descr_file_name, filearea->pathName);
+   strcat(descr_file_name, "files.bbs");
+   strLower(descr_file_name);
+
+   getDesc(descr_file_name, tic.file, &tic);
+
+   // Adding path
+   time(&acttime);
+   strcpy(timestr,asctime(localtime(&acttime)));
+   timestr[strlen(timestr)-1]=0;
+   sprintf(tmp,"%s %lu %s %s",
+           addr2string(filearea->useAka), time(NULL), timestr,versionStr);
+   tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
+   tic.path[tic.anzpath]=strdup(tmp);
+   tic.anzpath++;
+
+   // Adding Downlink to Seen-By
+   tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
+   memcpy(&tic.seenby[tic.anzseenby], &link->hisAka, sizeof(s_addr));
+   tic.anzseenby++;
+
+   // Forward file to
+   memcpy(&tic.from,filearea->useAka, sizeof(s_addr));
+   memcpy(&tic.to,&link->hisAka, sizeof(s_addr));
+   if (link->ticPwd != NULL) strcpy(tic.password,link->ticPwd);
+
+   busy = 0;
+
+   if (createOutboundFileName(link,
+       cvtFlavour2Prio(link->echoMailFlavour), FLOFILE)==1)
+      busy = 1;
+
+   strcpy(linkfilepath,link->floFile);
+   if (busy) {
+      writeLogEntry(htick_log, '7', "Save TIC in temporary dir");
+      //Create temporary directory
+      *(strrchr(linkfilepath,'.'))=0;
+      strcat(linkfilepath,".htk");
+      createDirectoryTree(linkfilepath);
+   } else *(strrchr(linkfilepath,PATH_DELIM))=0;
+
+   // separate bundles
+   if (config->separateBundles && !busy) {
+          
+      if (link->hisAka.point != 0)
+         sprintf(sepname,"%08x.sep",link->hisAka.point);
+      else
+         sprintf(sepname,"%04x%04x.sep",link->hisAka.net,link->hisAka.node);
+
+      sepDir = (char*) malloc(strlen(linkfilepath)+1+strlen(sepname)+1+1);
+      sprintf(sepDir,"%s%c%s%c",linkfilepath,PATH_DELIM,sepname,PATH_DELIM);
+      strcpy(linkfilepath,sepDir);
+
+      createDirectoryTree(sepDir);
+      free(sepDir);
+   }
+
+   newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+   writeTic(newticfile,&tic);
+
+   if (!busy) {
+      flohandle=fopen(link->floFile,"a");
+      fprintf(flohandle,"%s\n",sendfile);
+      fprintf(flohandle,"^%s\n",newticfile);
+      fclose(flohandle);
+
+      remove(link->bsyFile);
+
+      sprintf(logstr,"Send %s from %s for %s, %s",
+              tic.file,tic.area,link->name,addr2string(&link->hisAka));
+      writeLogEntry(htick_log,'6',logstr);
+      free(link->bsyFile);
+   }
+   free(link->floFile);
+   disposeTic(&tic);
+   return 0;
 }
