@@ -105,6 +105,10 @@ void writeNetmail(s_message *msg, char *areaName)
    XMSG   msgHeader;
    s_area *nmarea;
 
+   if (!config->netMailAreas) {
+     w_log(LL_CRIT, "Netmailarea not defined!");
+     return;
+   }
    if ((nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
 
    netmail = MsgOpenArea((UCHAR *) nmarea->fileName, MSGAREA_CRIFNEC, (word)nmarea->msgbType);

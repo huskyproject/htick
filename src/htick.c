@@ -355,6 +355,9 @@ int main(int argc, char **argv)
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
 
+   if (!(config->netMailAreas))
+     w_log( LL_CRIT, "Netmailarea not defined, filefix not allowed!");
+
    if (!quiet) printf("%s\n", versionStr);
    // init SMAPI
    m.req_version = 0;
@@ -379,7 +382,7 @@ int main(int argc, char **argv)
    if (cmSend)  send(sendfile, sendarea, sendaddr);
    if (cmFlist) filelist();
    if (cmClean) cleanPassthroughDir();
-   if (cmAfix)  ffix(afixAddr, afixCmd);
+   if (cmAfix && config->netMailAreas) ffix(afixAddr, afixCmd);
    nfree(afixCmd);
    nfree(flistfile);
    nfree(dlistfile);
