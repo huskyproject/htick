@@ -1075,6 +1075,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    parseTic(ticfile,&tic);
 
    w_log('6',"File: %s", tic.file);
+   if(tic.size) 
+   w_log('6',"Size: %ld", tic.size);
    w_log('6',"Area: %s", tic.area);
    w_log('6',"From: %s", aka2str(tic.from));
    w_log('6',"Orig: %u:%u/%u.%u",tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
@@ -1792,7 +1794,7 @@ void reportNewFiles()
    unsigned  int i, c;
    UINT32    fileSize;
    s_message *msg;
-   char      buff[256], *tmp=NULL;
+   char      *tmp=NULL;
    FILE      *echotosslog;
    char      *annArea;
 
@@ -1897,9 +1899,8 @@ void reportNewFiles()
                   } else {
                   } /* endif */
                } /* endfor */
-               sprintf(buff, " %s\r", print_ch(77, '-'));
-               msg->text = (char*)srealloc(msg->text, strlen(msg->text)+strlen(buff)+80);
-               sprintf(msg->text+strlen(msg->text), "%s %u bytes in %u file(s)\r", buff, fileSize, fileCount);
+               xscatprintf(&(msg->text), " %s\r", print_ch(77, '-'));
+               xscatprintf(&(msg->text), " %u bytes in %u file(s)\r", fileSize, fileCount);
                freeFReport(newFileReport[i]); newFileReport[i] = NULL;
             } else {
             } /* endif */
