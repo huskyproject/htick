@@ -158,6 +158,7 @@ void scanNMArea(void)
                 
          // if for filefix - process it
          if ((stricmp(xmsg.to,"filefix")==0 ||
+              stricmp(xmsg.to,"allfix")==0 ||
               stricmp(xmsg.to,"filemgr")==0 ||
               stricmp(xmsg.to,"htick")==0 ||
               stricmp(xmsg.to,"filescan")==0)
