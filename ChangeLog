@@ -1,3 +1,21 @@
+2002-08-22 Thursday 12:39  mche
+
+	* win32/makefile.mgw (1.1): no message
+
+2002-08-22 Thursday 11:02  sfpavel
+
+	* debian/: README.Debian (1.4), changelog (1.9), control (1.8),
+	copyright (1.3), docs (1.3), rules (1.7): New debian package
+
+2002-08-22 Thursday 10:31  sfpavel
+
+	* debian/postinst (1.5): Re-add debian/postinst
+
+2002-08-22 Thursday 07:19  sfpavel
+
+	* misc/: README (1.2), purge_fileecho (1.1): Add
+	misc/purge_fileecho from hpt
+
 2002-08-21 Wednesday 12:41  mche
 
 	* src/clean.c (1.6): reduce cygwin warnings
