@@ -5,7 +5,7 @@
 @c adopted from hpt.texi, written by Tema Zelikin 2:5097/31
 @setfilename htick.info
 @set HTICK HTICK
-@set VERSION 1.1.0
+@set VERSION 1.4
 @settitle @value{HTICK} @value{VERSION} - Husky Ticker
 @setchapternewpage odd
 @c %**end of header
