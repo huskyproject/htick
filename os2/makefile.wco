@@ -4,14 +4,14 @@ DEBUG   = 1
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj
+OBJS    = htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj
 SRC_DIR = ..\src
 
 !IF $(DEBUG) == 1
 CFLAGS  = -d2 -hw -i=..\h;..\..\smapi;..\..\fidoconfig -zq
 LFLAGS  = DEBUG Watcom
 !ELSE
-CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq -wcd=1180 -wcd=1181
+CFLAGS  = -i..\h;..\..\smapi;..\..\fidoconfig -oneatx -zq
 LFLAGS  =
 !ENDIF
 

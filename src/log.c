@@ -34,7 +34,7 @@
 
 #include <log.h>
 
-s_log *openLog(char *fileName, char *appN, char *keys)
+s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog)
 {
    s_log      *temp;
 
@@ -55,6 +55,8 @@ s_log *openLog(char *fileName, char *appN, char *keys)
    strcpy(temp->keysAllowed, keys);
 
    temp->firstLinePrinted=0;
+
+   temp->logEcho = echoLog;
 
    return temp;
 }
@@ -150,6 +152,7 @@ void writeLogEntry(s_log *htick_log, char key, char *logString)
         locTime = localtime(&currentTime);
         fprintf(htick_log->logFile, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
         fflush(htick_log->logFile);
+	if (htick_log->logEcho) fprintf(stdout, "%c %02u.%02u.%02u  %s\n", key, locTime->tm_hour, locTime->tm_min, locTime->tm_sec, logString);
      } /* endif */
    } /* endif */
 }

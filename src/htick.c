@@ -49,11 +49,11 @@
 #include <htick.h>
 #include <global.h>
 
+#include <recode.h>
 #include <toss.h>
 #include <scan.h>
 #include <hatch.h>
 #include <filelist.h>
-#include <recode.h>
 
 void processCommandLine(int argc, char **argv)
 {
@@ -96,8 +96,10 @@ void processCommandLine(int argc, char **argv)
          continue;
       } else if (stricmp(argv[i], "filelist") == 0) {
          cmFlist = 1;
-         i++;
-         strcpy(flistfile, argv[i]);
+	 if (i < argc-1) {
+            i++;
+            strcpy(flistfile, argv[i]);
+         } else flistfile[0] = 0;
          continue;
       } else if (stricmp(argv[i], "annfile") == 0) {
          i++;
@@ -139,9 +141,9 @@ void processConfig()
      strcpy(buff, config->logFileDir),
      strcat(buff, "htick.log");
      if (config->loglevels==NULL)
-        htick_log = openLog(buff, versionStr, "123456789");
+        htick_log = openLog(buff, versionStr, "123456789", config->logEchoToScreen);
        else
-        htick_log = openLog(buff, versionStr, config->loglevels);
+        htick_log = openLog(buff, versionStr, config->loglevels, config->logEchoToScreen);
 
      free(buff);
    } else printf("You have no logFileDir in your config, there will be no log created");
@@ -168,7 +170,20 @@ int main(int argc, char **argv)
 {
    struct _minf m;
 
-   sprintf(versionStr, "HTick/Linux v%u.%02u", VER_MAJOR, VER_MINOR);
+#ifdef __linux__
+   sprintf(versionStr, "HTick/LNX v%u.%02u", VER_MAJOR, VER_MINOR);
+#elif __freebsd__
+   sprintf(versionStr, "HTick/BSD v%u.%02u", VER_MAJOR, VER_MINOR);
+#elif __OS2__
+    sprintf(versionStr, "HTick/OS2 v%u.%02u", VER_MAJOR, VER_MINOR);
+#elif __NT__
+    sprintf(versionStr, "HTick/NT v%u.%02u", VER_MAJOR, VER_MINOR);
+#elif __sun__
+    sprintf(versionStr, "HTick/SUN v%u.%02u", VER_MAJOR, VER_MINOR);
+#else
+    sprintf(versionStr, "HTick v%u.%02u", VER_MAJOR, VER_MINOR);
+#endif
+
 
    printf("Husky Tick v%u.%02u by Gabriel Plutzar\n",VER_MAJOR,VER_MINOR);
 

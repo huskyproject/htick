@@ -11,8 +11,8 @@
 #include <progprot.h>
 #include <add_descr.h>
 
-    unsigned long totalfilessize = 0;
-    unsigned int totalfilesnumber = 0;
+unsigned long totalfilessize = 0;
+unsigned int totalfilesnumber = 0;
 
 void printFileArea(s_filearea area, FILE *f) {
     FILE *fbbs;
@@ -26,8 +26,8 @@ void printFileArea(s_filearea area, FILE *f) {
     struct tm *locTime;
 
    strcpy(fileareapath,area.pathName);
-   if (area.pathName[strlen(area.pathName)-1]!='/')
-      strcat(fileareapath,"/");
+   if (area.pathName[strlen(area.pathName)-1]!=PATH_DELIM)
+      sprintf(fileareapath+strlen(fileareapath), "%c", PATH_DELIM);
    strLower(fileareapath);
    createDirectoryTree(fileareapath);
    strcpy(fbbsname,fileareapath);
@@ -118,7 +118,7 @@ void printFileArea(s_filearea area, FILE *f) {
 	       fprintf(f," %s\n",token);
 	       flag = 1;
 	    } else {
-	       removeDesc(fbbsname,strrchr(filename,'/')+1);
+	       removeDesc(fbbsname,strrchr(filename,PATH_DELIM)+1);
 	       flag = 2;
 	    }
 	 }
@@ -137,6 +137,11 @@ void filelist()
     FILE *f;
     char logstr[200];
     int i;
+
+   if (strlen(flistfile) == 0) {
+      writeLogEntry(htick_log,'6',"Not found output file");
+      return;
+   }
 
    if ( (f = fopen(flistfile,"w")) == NULL ) {
          sprintf(logstr,"Could not open for write file %s",flistfile);

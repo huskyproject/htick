@@ -41,11 +41,12 @@ struct htick_log {
    FILE *logFile;        // in this logFile
    char open;            // is the log-file open?
    char firstLinePrinted;// First line in Log File printed ?
+   unsigned int logEcho; // echo log to screen?
 };
 
 typedef struct htick_log s_log;
 
-s_log *openLog(char *fileName, char *appN, char *keys);
+s_log *openLog(char *fileName, char *appN, char *keys, unsigned int echoLog);
 /*DOC
   Input:  fileName is a valid name for a file.
           appN contains the name of the application.

@@ -35,6 +35,19 @@
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
+struct newfilereport {
+   s_addr   *useAka;
+   char     *areaName;
+   char     *areaDesc;
+   char     *fileName;
+   char     **fileDesc;
+   unsigned filedescCount;
+   UINT32   fileSize;
+};
+typedef struct newfilereport s_newfilereport;
+
+void writeMsgToSysop(s_message *msg);
+void reportNewFiles(void);
 void strLower(char *s);
 void disposeTic(s_ticfile *tic);
 void writeTic(char *ticfile,s_ticfile *tic);

@@ -1,5 +1,12 @@
 htick 0.02
 ----------
+Sun Jun 27  15:26:00
+Fedor:
+* Fixed bug with BUSY flag
+* Fixed bug with limiter / and \ in path
+* Fixed bug with temporary directory when link is online (BUSY)
++ Added posting about autocreating filearea in netmail or echoarea (ReportTo)
++ Added posting about new files in netmail or echoarea (ReportTo)
 
 Wen Jun 23 14:52:45 IZHST 1999
 georgi:

@@ -368,6 +368,34 @@ void removelink(s_link *link, s_filearea *area) {
 	area->downlinkCount--;
 }
 
+char *unlinked(s_message *msg, s_link *link)
+{
+    int i, rc;
+    char *report, addline[256];
+    s_filearea *area;
+    
+    area=config->fileAreas;
+    
+    sprintf(addline, "Unlinked fileareas to %s\r\r", aka2str(link->hisAka));
+    report=(char*)calloc(strlen(addline)+1, sizeof(char));
+    strcpy(report, addline);
+    
+    for (i=0; i<config->fileAreaCount; i++) {
+	rc=subscribeCheck(area[i], msg, link);
+	if (rc == 1) {
+	    report=(char*)realloc(report, strlen(report)+
+				strlen(area[i].areaName)+3);
+	    strcat(report, " ");
+	    strcat(report, area[i].areaName);
+	    strcat(report, "\r");
+	}
+    }
+    sprintf(addline,"filefix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
+    writeLogEntry(htick_log, '8', addline);
+
+    return report;
+}
+
 char *list(s_message *msg, s_link *link) {
 
 	int i,j,active,avail,rc,arealen,desclen,len;
@@ -690,6 +718,229 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	return report;
 }
 
+int testAddr(char *addr, s_addr hisAka)
+{
+    s_addr aka;
+    string2addr(addr, &aka);
+    if (addrComp(aka, hisAka)==0) return 1;
+    return 0;
+}
+
+int changepause(char *confName, s_link *link)
+{
+    char *cfgline, *token;
+    char *line, logmsg[256];
+    long curpos, endpos, cfglen;
+    int rc;
+    FILE *f_conf;
+    
+	if ((f_conf=fopen(confName,"r+")) == NULL)
+		{
+			fprintf(stderr,"filefix: cannot open config file %s \n", confName);
+			return 1;
+		}
+	
+    while ((cfgline = readLine(f_conf)) != NULL) {
+		cfgline = trimLine(cfgline);
+		if (*cfgline == 0 || *cfgline == '#') continue;
+		line = cfgline;
+		token = strseparate(&line, " \t");
+		if (stricmp(token, "include")==0) {
+			while (*line=='\t') line++;
+			token=strseparate(&line, " \t");
+			changepause(token, link);
+		}			
+		if (stricmp(token, "link") == 0) {
+			free(cfgline);
+			for (rc = 0; rc == 0; ) {
+				fseek(f_conf, 0L, SEEK_CUR);
+				curpos = ftell(f_conf);
+				if ((cfgline = readLine(f_conf)) == NULL) { 
+					rc = 2;
+					break;
+				}
+				cfgline = trimLine(cfgline);
+				if (!*cfgline || *cfgline == '#') continue;
+				line = cfgline;
+				token = strseparate(&line, " \t");
+				if (stricmp(token, "link") == 0) {
+					fseek(f_conf, curpos, SEEK_SET);
+					rc = 1;
+				}
+				if (stricmp(token, "aka") == 0) break;
+				free(cfgline);
+			}
+			if (rc == 2) return 0;
+			if (rc == 1) continue;
+			token = strseparate(&line, " \t");
+			if (testAddr(token, link->hisAka)) {
+				
+				curpos = ftell(f_conf);
+				
+				fseek(f_conf, 0L, SEEK_END);
+				endpos = ftell(f_conf);
+				
+				cfglen=endpos-curpos;
+				
+				line = (char*)calloc(cfglen+1, sizeof(char));
+				fseek(f_conf, curpos, SEEK_SET);
+				fread(line, sizeof(char), cfglen, f_conf);
+		
+				fseek(f_conf, curpos, SEEK_SET);
+				fputs("Pause\n", f_conf);
+				fputs(line, f_conf);
+				free(line);
+				free(cfgline);
+				link->Pause = 1;
+				sprintf(logmsg,"filefix: system %s set passive", aka2str(link->hisAka));
+				writeLogEntry(htick_log, '8', logmsg);
+				break;
+			}
+		}
+		free(cfgline);
+    }
+    fclose(f_conf);
+    return 1;
+}
+
+char *pause_link(s_message *msg, s_link *link)
+{
+    char *tmp;
+    char *report=NULL;
+    
+    if (link->Pause == 0) {
+	if (changepause(getConfigFileName(), link) == 0) return NULL;    
+    }
+
+    report = linked(msg, link);
+    tmp = (char*)calloc(80, sizeof(char));
+    strcpy(tmp, " System switched to passive\r");
+    tmp = (char*)realloc(tmp, strlen(report)+strlen(tmp)+1);
+    strcat(tmp, report);
+    free(report);
+    return tmp;
+}
+
+int changeresume(char *confName, s_link *link)
+{
+    FILE *f_conf;
+    char *cfgline, *line, *token, logmsg[256];
+    int rc=0;
+    long curpos, remstr, endpos, cfglen;
+    
+	if ((f_conf=fopen(confName,"r+")) == NULL)
+		{
+			fprintf(stderr,"filefix: cannot open config file %s \n", confName);
+			return 1;
+		}
+    
+    while ((cfgline = readLine(f_conf)) != NULL) {
+		cfgline = trimLine(cfgline);
+		if (*cfgline == 0 || *cfgline == '#') continue;
+		line = cfgline;
+		token = strseparate(&line, " \t");
+		if (stricmp(token, "include")==0) {
+			while (*line=='\t') line++;
+			token=strseparate(&line, " \t");
+			changeresume(token, link);
+		}			
+		if (stricmp(token, "link") == 0) {
+			free(cfgline);
+			for (rc = 0; rc == 0; ) {
+				fseek(f_conf, 0L, SEEK_CUR);
+				curpos = ftell(f_conf);
+				if ((cfgline = readLine(f_conf)) == NULL) { 
+					rc = 2;
+					break;
+				}
+				if (*cfgline == 0 || *cfgline == '#') continue;
+				line = cfgline;
+				token = strseparate(&line, " \t");
+				if (stricmp(token, "link") == 0) {
+					fseek(f_conf, curpos, SEEK_SET);
+					rc = 1;
+				}
+				if (stricmp(token, "aka") == 0) break;
+				free(cfgline);
+			}
+			if (rc == 2) break;
+			if (rc == 1) continue;
+			token = strseparate(&line, " \t");
+			if (testAddr(token, link->hisAka)) {
+				free(cfgline);
+				for (rc = 0; rc == 0; ) {
+					fseek(f_conf, 0L, SEEK_CUR);
+					curpos = ftell(f_conf);
+					if ((cfgline = readLine(f_conf)) == NULL) {
+						rc = 1;
+						break;
+					}
+					cfgline = trimLine(cfgline);
+					if (*cfgline == 0 || *cfgline == '#') continue;
+					line = cfgline;
+					token = strseparate(&line, " \t");
+					if (stricmp(token, "link") == 0) {
+						rc = 1;
+						break;
+					}
+					if (stricmp(token, "pause") == 0) break;
+					free(cfgline);
+				}
+				if (rc) break;
+				
+				remstr = ftell(f_conf);
+				
+				fseek(f_conf, 0L, SEEK_END);
+				endpos = ftell(f_conf);
+				
+				cfglen=endpos-remstr;
+				
+				line = (char*)calloc(cfglen+1, sizeof(char));
+				fseek(f_conf, remstr, SEEK_SET);
+				cfglen = fread(line, sizeof(char), (size_t) cfglen, f_conf);
+				
+				fseek(f_conf, curpos, SEEK_SET);
+//				fputs(line, f_conf);
+				fwrite(line, sizeof(char), (size_t) cfglen, f_conf);
+#ifdef __WATCOMC__
+				fflush( f_conf );
+				fTruncate( fileno(f_conf), endpos-(remstr-curpos) );
+				fflush( f_conf );
+#else
+				truncate(confName, endpos-(remstr-curpos));
+#endif
+				free(line);
+				free(cfgline);
+				link->Pause = 0;
+				sprintf(logmsg,"areafix: system %s set active",	aka2str(link->hisAka));
+				writeLogEntry(htick_log, '8', logmsg);
+				break;
+    	    }
+		}
+		free(cfgline);
+    }
+    fclose(f_conf);
+    if (rc) return 0;
+    return 1;
+}
+
+char *resume_link(s_message *msg, s_link *link)
+{
+    char *tmp, *report=NULL;
+    
+    if (link->Pause) {
+		if (changeresume(getConfigFileName(), link) == 0) return NULL;
+    }
+	
+    report = linked(msg, link);
+    tmp = (char*)calloc(80, sizeof(char));
+    strcpy(tmp, " System switched to active\r");
+    tmp = (char*)realloc(tmp, strlen(report)+strlen(tmp)+1);
+    strcat(tmp, report);
+    free(report);
+    return tmp;
+}
+
 int tellcmd(char *cmd) {
 	char *line;
 
@@ -741,15 +992,15 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	case DEL: report = unsubscribe (link,msg,line);
 		RetFix=DEL;
 		break;
-/*	case UNLINK: report = unlinked (msg, link);
+	case UNLINK: report = unlinked (msg, link);
 		RetFix=UNLINK;
-		break;*/
-/*	case PAUSE: report = pause_link (msg, link);
+		break;
+	case PAUSE: report = pause_link (msg, link);
 		RetFix=PAUSE;
-		break;*/
-/*	case RESUME: report = resume_link (msg, link);
+		break;
+	case RESUME: report = resume_link (msg, link);
 		RetFix=RESUME;
-		break;*/
+		break;
 /*	case INFO: report = info_link(msg, link);
 		RetFix=INFO;
 		break;*/
