@@ -1,3 +1,7 @@
+2002-09-30 Monday 14:36  mche
+
+	* src/areafix.c (1.92): define function before using
+
 2002-09-26 Thursday 09:12  pgul
 
 	* src/toss.c (1.211): minor bugfix (incorrect logging)
