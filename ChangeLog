@@ -1,3 +1,7 @@
+2002-12-28 Saturday 15:12  mche
+
+	* src/toss.c (1.242): fix previous patch - copy file to filechodir
+
 2002-12-27 Friday 13:23  mche
 
 	* src/: fcommon.c (1.60), htick.c (1.85): common function for
