@@ -461,7 +461,7 @@ This statement cannot be repeated.
 @end table
 
 What to do with short names when toss or hatch.
-Short name is a DOS-like name: 8.3, without mixed case.
+Saying 'short name' we mean a DOS-like name: 8.3, without mixed case.
 
 This statement cannot be repeated.
 
@@ -571,8 +571,12 @@ This statement cannot be repeated.
 
 Examples:
 @example
-Unpack "/path/to/unrar e -y -ec- -o- -cl $a $p $f" 0 52617221
+Unpack  "/path/to/unrar e -y -c- -o+ -inul $a $p $f"   0 52617221 # *.rar
+Unpack  "d:\path\unrar  e -y -c- -o+ -inul $a $p $f"  28 52534658 # rar-sfx/DOS
 Unpack "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+Unpack "unzip -joLqq $a -d $p" 0 504b0304
+Unpack "pkunzip -njCL $a -d $p $f" 0 504b0304
+Unpack "pkzip25 -ext -silent -over=all -nofix -nozip $a $p $f" 0
 @end example
 
 @node FileAreaCreatePerms, FileFixFromName, fileDescName, Keywords
