@@ -66,7 +66,10 @@
 #include <smapi/ffind.h>
 #include <smapi/patmat.h>
 
-//#include <process.h>
+#if defined (_MSC_VER)
+#include <process.h>
+#endif
+
 #include <toss.h>
 #include <add_desc.h>
 
