@@ -84,6 +84,25 @@
 #include "hatch.h"
 #include "report.h"
 
+/* tic keywords calculated crc */
+#define CRC_CREATED     0x4EC6
+#define CRC_FILE        0x1A66
+#define CRC_AREADESC    0xB621
+#define CRC_DESC        0xECBD
+#define CRC_AREA        0x825A
+#define CRC_CRC         0x5487
+#define CRC_REPLACES    0xCF01
+#define CRC_ORIGIN      0xFCDC
+#define CRC_FROM        0x1293
+#define CRC_TO          0x7B50
+#define CRC_PATH        0x5411
+#define CRC_SEENBY      0xC3D4
+#define CRC_PW          0x24AD
+#define CRC_SIZE        0x5593
+#define CRC_DATE        0xD4BD
+#define CRC_DESTINATION 0xA9D1
+#define CRC_MAGIC       0xD858
+#define CRC_LDESC       0x5394
 
 void writeNetmail(s_message *msg, char *areaName)
 {
@@ -210,104 +229,121 @@ void disposeTic(s_ticfile *tic)
  */
 int parseTic(char *ticfile,s_ticfile *tic)
 {
-   FILE *tichandle;
-   char *line, *token, *param, *linecut = "";
-   s_link *ticSourceLink=NULL;
-
+    FILE *tichandle;
+    char *line, *token, *param, *linecut = "";
+    s_link *ticSourceLink=NULL;
+    UINT16 key;
+    s_addr Aka;
+    
 #if defined(UNIX) || defined(__DJGPP__)
-   tichandle=fopen(ticfile,"r");
+    tichandle=fopen(ticfile,"r");
 #else
-   // insure that ticfile won't be removed while parsing
-   int fh = 0;
-   fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
-   if( fh<0 ){
-     w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
-     return 0;
-   }
-   tichandle = fdopen(fh,"r");
+    // insure that ticfile won't be removed while parsing
+    int fh = 0;
+    fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
+    if( fh<0 ){
+        w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
+        return 0;
+    }
+    tichandle = fdopen(fh,"r");
 #endif
+    
+    if(!tichandle){
+        w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
+        return 0;
+    }
+    
+    memset(tic,'\0',sizeof(s_ticfile));
+    
+    while ((line = readLine(tichandle)) != NULL) {
+        line = trimLine(line);
+        
+        if (*line==0 || *line==10 || *line==13 || *line==';' || *line=='#') 
+            continue;
 
-   if(!tichandle){
-     w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
-     return 0;
-   }
-
-   memset(tic,'\0',sizeof(s_ticfile));
-
-   while ((line = readLine(tichandle)) != NULL) {
-      line = trimLine(line);
-
-      if (*line!=0 || *line!=10 || *line!=13 || *line!=';' || *line!='#') {
-         if (config->MaxTicLineLength) {
+        if (config->MaxTicLineLength) {
             linecut = (char *) smalloc(config->MaxTicLineLength+1);
             strncpy(linecut,line,config->MaxTicLineLength);
             linecut[config->MaxTicLineLength] = 0;
             token=strtok(linecut, " \t");
-         } else token=strtok(line, " \t");
-         param=stripLeadingChars(strtok(NULL, "\0"), "\t");
-         if (token && param) {
-            if (stricmp(token,"created")==0);
-            else if (stricmp(token,"file")==0) tic->file = sstrdup(param);
-            else if (stricmp(token,"areadesc")==0) tic->areadesc = sstrdup(param);
-            else if (stricmp(token,"area")==0) tic->area = sstrdup(param);
-            else if (stricmp(token,"desc")==0) {
-               tic->desc=
-               srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
-               tic->desc[tic->anzdesc]=sstrdup(param);
-               tic->anzdesc++;
-            }
-            else if (stricmp(token,"replaces")==0) tic->replaces = sstrdup(param);
-            else if (stricmp(token,"pw")==0) tic->password = sstrdup(param);
-            else if (stricmp(token,"size")==0) tic->size=atoi(param);
-            else if (stricmp(token,"crc")==0) tic->crc = strtoul(param,NULL,16);
-            else if (stricmp(token,"date")==0) tic->date=atoi(param);
-
-            else if (stricmp(token,"from")==0) {
-	       string2addr(param,&tic->from);
-	       ticSourceLink = getLinkFromAddr(config, tic->from);
-	    }
-	    else if (stricmp(token,"to")==0) string2addr(param,&tic->to);
-            else if ((stricmp(token,"Destination")==0) &&
-		     (ticSourceLink && !ticSourceLink->FileFixFSC87Subset))
-	                string2addr(param,&tic->to);
-            else if (stricmp(token,"origin")==0) string2addr(param,&tic->origin);
-            else if (stricmp(token,"magic")==0);
-            else if (stricmp(token,"seenby")==0) {
-               s_addr Aka;
-               string2addr(param,&Aka);
-               seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
-            }
-            else if (stricmp(token,"path")==0) {
-               tic->path=
-                  srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
-               tic->path[tic->anzpath]=sstrdup(param);
-               tic->anzpath++;
-            }
-            else if (stricmp(token,"ldesc")==0) {
-               tic->ldesc=
-                  srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
-               tic->ldesc[tic->anzldesc]=sstrdup(param);
-               tic->anzldesc++;
-            }
-            else {
-               /*   printf("Unknown Keyword %s in Tic File\n",token); */
-               if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset) w_log( '7', "Unknown Keyword %s in Tic File",token);
-            }
-         } /* endif */
-         if (config->MaxTicLineLength) nfree(linecut);
-      } /* endif */
-      nfree(line);
-   } /* endwhile */
-
-  fclose(tichandle);
-
-  if (!tic->anzdesc) {
-     tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
-     tic->desc[0] = sstrdup("no desc");
-     tic->anzdesc = 1;
-  }
-
-  return(1);
+        } else token=strtok(line, " \t");
+        param=stripLeadingChars(strtok(NULL, "\0"), "\t");
+        if (token && param) {
+            key = strcrc16(strUpper(token), 0);
+            /* calculate crc16 of tic                                   */
+            /* w_log('1', "#define CRC_%s = 0x%X;",strUpper(token),key);*/
+            switch (key)
+            {
+            case CRC_CREATED:
+            case CRC_MAGIC:
+                break;
+            case CRC_FILE:      tic->file = sstrdup(param);
+                break;
+            case CRC_AREADESC:  tic->areadesc = sstrdup(param);
+                break;
+            case CRC_AREA:      tic->area = sstrdup(param);
+                break;
+            case CRC_CRC:       tic->crc = strtoul(param,NULL,16);
+                break;
+            case CRC_SIZE:      tic->size = tic->size=atoi(param);
+                break;
+            case CRC_DATE:      tic->date=atoi(param);
+                break;
+            case CRC_REPLACES:  tic->replaces = sstrdup(param);
+                break;
+            case CRC_PW:        tic->password = sstrdup(param);
+                break;
+            case CRC_FROM:      string2addr(param,&tic->from);
+                ticSourceLink = getLinkFromAddr(config, tic->from);
+                break;
+            case CRC_ORIGIN:    string2addr(param,&tic->origin);
+                break;
+            case CRC_TO:        string2addr(param,&tic->to);
+                break;
+            case CRC_DESTINATION:
+                if(ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
+                    string2addr(param,&tic->to);
+                break;
+            case CRC_DESC:
+                tic->desc=
+                    srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
+                tic->desc[tic->anzdesc]=sstrdup(param);
+                tic->anzdesc++;
+                break;
+            case CRC_LDESC:
+                tic->ldesc=
+                    srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
+                tic->ldesc[tic->anzldesc]=sstrdup(param);
+                tic->anzldesc++;
+                break;
+            case CRC_SEENBY:
+                string2addr(param,&Aka);
+                seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
+                break;
+            case CRC_PATH:
+                tic->path=
+                    srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
+                tic->path[tic->anzpath]=sstrdup(param);
+                tic->anzpath++;
+                break;
+            default:
+                if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
+                    w_log( '7', "Unknown Keyword %s in Tic File",token);
+            } /* switch */
+        } /* endif */
+        if (config->MaxTicLineLength) nfree(linecut);
+        nfree(line);
+    } /* endwhile */
+    
+    fclose(tichandle);
+    
+    if (!tic->anzdesc) {
+        tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
+        tic->desc[0] = sstrdup("no desc");
+        tic->anzdesc = 1;
+    }
+    
+    return 1;
 }
 
 
