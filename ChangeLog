@@ -1,3 +1,8 @@
+2002-10-16 Wednesday 15:41  mche
+
+	* src/hatch.c (1.68): fix bug with incorrect hatching macros
+	expanding
+
 2002-10-15 Tuesday 13:20  mche
 
 	* src/toss.c (1.222): fix incorrect parsing of tic-file with empty
