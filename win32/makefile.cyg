@@ -1,40 +1,146 @@
 # $Id$
 # Legacy makefile for build htick in cygwin enviroment
 
-CC      = gcc
-DEBUG   = 0
+# Uncomment this for compile info for gdb and display more compiler warnings:
+# usually uncommented in current branch.
+DEBUG	= -g -pedantic
 
-OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o report.o clean.o
+# Uncomment this for strip all simbols from binaries to reduce file sizes
+#STRIP	= -s
+
+# Uncomment one of these lines if you want to enable hardlinking
+# on NTFS 4.0 or 5.0
+# Uncomment ONLY ONE line!
+# HARDLINKS_NT4	= -D_WIN32_WINNT=0x0400
+# HARDLINKS_W2K	= -D_WIN32_WINNT=0x0500
+# HARDLINKS_XP	= -D_WIN32_WINNT=0x0500
+
+## Embedded perl ##
+# Not implemnted yet, reserved to future usage
+PERL=0
+PERL_DIR=
+
+ifeq (~$(PERL)~, ~1~)
+PERLFLAGS	= `$(PERL_DIR)perl -MExtUtils::Embed -e ccopts`
+PERLDEFS	= -DDO_PERL
+PERLLIBS 	= `$(PERL_DIR)perl -MExtUtils::Embed -e ldopts`
+PERLOBJ 	= perl$(OBJ)
+endif
+
+## source directories ##
+
+H_DIR	= ../h/
 SRC_DIR = ../src/
 
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../.. -Wall -g -D__NT__ -mno-cygwin
-  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin  -g
-else
-  CFLAGS  = -c -I../h -I../.. -O3 -Wall -pedantic -D__NT__ -mno-cygwin
-  LFLAGS  = -L../../smapi -L../../fidoconf -mno-cygwin 
+## programs ##
+
+#use this line if you are using Cygwin or MINGW32 on a Windows box
+CC	= gcc
+AR	= ar
+RANLIB	= ranlib
+
+#use this line if you are using MINGW32 CPD on a Unix box as cross compiler
+#CC	= i386-mingw32-gcc
+#AR	= i386-mingw32-ar
+#RANLIB	= i386-mingw32-ranlib
+RM	= rm
+
+## file suffixes ("extensions") ##
+
+C	= .c
+OBJ	= .o
+LIB	= .a
+EXE	= .exe
+DLL	= .dll
+
+# Prefix to construct static library name
+LIBPREFIX=lib
+# Prefix to construct dll name
+DLLPREFIX=
+# Suffix to construct library name
+LIBSUFFIX=cyg
+# Suffix to construct dll name
+DLLSUFFIX=
+
+## program options ##
+
+# compiler defines
+override CDEFS	+= $(PERLDEFS) $(HARDLINKS_NT4) $(HARDLINKS_W2K) $(HARDLINKS_XP)
+# common compiler options
+override CFLAGS	+= -I$(H_DIR) -I../.. -Wall -mno-cygwin
+# common linker options
+override LFLAGS	+= -mno-cygwin
+# options for compile only (link is off)
+OBJOPT	= -c
+# options for build static library
+override LIBOPT	+= -static
+# options for build dll
+override DLLOPT	+= -shared
+# option for specify output file name
+NAMEOPT	= -o
+# options for $(AR) program
+override AROPTS	+= rs
+
+# husky libraries:
+# static versions of husky libraries to build this module
+STATICLIBS	+=../../fidoconf/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(LIB)
+STATICLIBS	+=../../smapi/$(LIBPREFIX)smapi$(LIBSUFFIX)$(LIB)
+
+# DLL versions of husky libraries need to build this module
+DLL_LIBS	+=../../fidoconf/$(DLLPREFIX)fidoconf$(DLLSUFFIX)$(DLL)
+DLL_LIBS	+=../../smapi/$(DLLPREFIX)smapi$(DLLSUFFIX)$(DLL)
+
+# libraries need to build binary file
+LIBS	?=
+
+# Set optimisation for non-debug build
+ifndef DEBUG
+CFLAGS	+= -O3
 endif
-  CDEFS=  $(CFLAGS)
-# uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
-# CDEFS=  $(CFLAGS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CFLAGS) -D_WIN32_WINNT=0x0500
 
+## other ##
+UNAME	= $(shell uname -s)
+ifeq ( , $(findstring "CYGWIN", $(UNAME)) )
+CYGWIN_VERSION	= $(shell uname -r)
 
-all: $(OBJS) \
-     htick
+ifeq ( , $(findstring "1.3.9", $(CYGWIN_VERSION)) )
+ifeq ( , $(findstring "1.3.10", $(CYGWIN_VERSION)) )
+ifeq ( , $(findstring "1.3.11", $(CYGWIN_VERSION)) )
+ # new cygwin require library mingwex for build with '-mno-cygwin' option
+LIBS	+= -lmingwex
+endif
+endif
+endif
 
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CDEFS) $(SRC_DIR)$*.c
+endif
 
-htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfigcyg -lsmapicyg -lmingwex
+override CFLAGS	+= $(DEBUG)
+override LFLAGS	+= $(DEBUG)
 
-clean:
-	-rm -f *.o
-	-rm core
-	-rm htick
+###########
 
-distclean: clean
-	-rm htick
-	-rm *.1.gz
-	-rm *.log
+PROGRAMS	= commonprogs
+
+.PHONY:	distclean clean all static dll programs default dllprograms
+
+default:
+	@echo Run 'make dll' to build dll version of htick
+	@echo Run 'make static' to build static version of htick
+#	@echo Run 'make all' to build all above
+
+%$(OBJ): $(SRC_DIR)%.c
+	$(CC) $(CFLAGS) $(CDEFS) $(OBJOPT) $^
+
+include ../makefile.inc
+
+all: default
+
+static:
+	$(MAKE) -f makefile.cyg $(PROGRAMS) LIBS="$< $(STATICLIBS)"
+
+dll:
+	$(MAKE) -f makefile.cyg $(PROGRAMS) LIBS="$< $(DLL_LIBS)"
+
+clean: commonclean
+
+distclean: commondistclean
