@@ -26,7 +26,6 @@ void hatch()
    char *newticfile, sepname[13], *sepDir;
    time_t acttime;
    char tmp[100],timestr[40];
-   char logstr[200];
    int i, busy;
    struct stat stbuf;
    extern s_newfilereport **newFileReport;
@@ -42,8 +41,7 @@ void hatch()
    // Exist file?
    adaptcase(hatchfile);
    if (!fexist(hatchfile)) {
-       sprintf(logstr,"File %s, not found",hatchfile);
-       writeLogEntry(htick_log,'6',logstr);
+       writeLogEntry(htick_log,'6',"File %s, not found",hatchfile);
        disposeTic(&tic);
        return;
    }
@@ -68,8 +66,7 @@ void hatch()
    }
 */
    if (filearea == NULL) {
-      sprintf(logstr,"Cannot open or create File Area %s",tic.area);
-      writeLogEntry(htick_log,'9',logstr);
+      writeLogEntry(htick_log,'9',"Cannot open or create File Area %s",tic.area);
       fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
       disposeTic(&tic);
       return;
@@ -95,13 +92,11 @@ void hatch()
    strcat(filename,tic.file);
    strLower(filename);
    if (copy_file(hatchfile,filename)!=0) {
-      sprintf(logstr,"File %s not found or moveable",hatchfile);
-      writeLogEntry(htick_log,'9',logstr);
+      writeLogEntry(htick_log,'9',"File %s not found or moveable",hatchfile);
       disposeTic(&tic);
       return;
    } else {
-      sprintf(logstr,"Put %s to %s",hatchfile,filename);
-      writeLogEntry(htick_log,'6',logstr);
+      writeLogEntry(htick_log,'6',"Put %s to %s",hatchfile,filename);
    }
 
    if (filearea->pass != 1) {
@@ -144,22 +139,19 @@ void hatch()
          switch (readAccess) {
          case 0: break;
          case 3:
-            sprintf(logstr,"Not export to link %s, %s",
-                    filearea->downlinks[i]->link->name,
-                    addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'7',logstr);
+            writeLogEntry(htick_log,'7',"Not export to link %s, %s",
+            filearea->downlinks[i]->link->name,
+            addr2string(&filearea->downlinks[i]->link->hisAka));
 	    break;
          case 2:
-            sprintf(logstr,"Link %s, %s no access level",
+            writeLogEntry(htick_log,'7',"Link %s, %s no access level",
             filearea->downlinks[i]->link->name,
             addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'7',logstr);
 	    break;
          case 1:
-            sprintf(logstr,"Link %s, %s no access group",
+            writeLogEntry(htick_log,'7',"Link %s, %s no access group",
             filearea->downlinks[i]->link->name,
             addr2string(&filearea->downlinks[i]->link->hisAka));
-            writeLogEntry(htick_log,'7',logstr);
 	    break;
          }
 
@@ -229,11 +221,10 @@ void hatch()
 
                remove(filearea->downlinks[i]->link->bsyFile);
 
-               sprintf(logstr,"Forwarding %s for %s, %s",
+               writeLogEntry(htick_log,'6',"Forwarding %s for %s, %s",
                        tic.file,
                        filearea->downlinks[i]->link->name,
                        addr2string(&filearea->downlinks[i]->link->hisAka));
-               writeLogEntry(htick_log,'6',logstr);
 	    }
 	    free(filearea->downlinks[i]->link->bsyFile);
 	    filearea->downlinks[i]->link->bsyFile=NULL;
@@ -286,7 +277,7 @@ int send(char *filename, char *area, char *addr)
     s_link *link = NULL;
     s_filearea *filearea;
     s_addr address;
-    char sendfile[256], logstr[200], descr_file_name[256];
+    char sendfile[256], descr_file_name[256];
     char tmp[100], timestr[40], linkfilepath[256];
     char sepname[13], *sepDir, *newticfile;
     struct stat stbuf;
@@ -322,8 +313,7 @@ int send(char *filename, char *area, char *addr)
    adaptcase(sendfile);
    if (!fexist(sendfile)) {
          fprintf(stderr,"Error: File not found\n");
-         sprintf(logstr,"File %s, not found",sendfile);
-         writeLogEntry(htick_log,'6',logstr);
+         writeLogEntry(htick_log,'6',"File %s, not found",sendfile);
          disposeTic(&tic);
          return 3;
    }
@@ -411,9 +401,8 @@ int send(char *filename, char *area, char *addr)
 
       remove(link->bsyFile);
 
-      sprintf(logstr,"Send %s from %s for %s, %s",
+      writeLogEntry(htick_log,'6',"Send %s from %s for %s, %s",
               tic.file,tic.area,link->name,addr2string(&link->hisAka));
-      writeLogEntry(htick_log,'6',logstr);
       free(link->bsyFile);
    }
    free(link->floFile);

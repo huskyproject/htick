@@ -248,16 +248,14 @@ int createDirectoryTree(const char *pathName) {
          // this part of the path does not exist, create it
          if (mymkdir(start) != 0) {
             buff = (char *) malloc(strlen(start)+30);
-            sprintf(buff, "Could not create directory %s", start);
-            writeLogEntry(htick_log, '5', buff);
+            writeLogEntry(htick_log, '5', "Could not create directory %s", start);
             free(buff);
             free(start);
             return 1;
          }
       } else if(!S_ISDIR(buf.st_mode)) {
          buff = (char *) malloc(strlen(start)+30);
-         sprintf(buff, "%s is a file not a directory", start);
-         writeLogEntry(htick_log, '5', buff);
+         writeLogEntry(htick_log, '5', "%s is a file not a directory", start);
          free(buff);
          free(start);
          return 1;
@@ -274,7 +272,7 @@ int createDirectoryTree(const char *pathName) {
 int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 {
    FILE *f; // bsy file for current link
-   char name[13], bsyname[13], zoneSuffix[6], pntDir[14], *tolog;
+   char name[13], bsyname[13], zoneSuffix[6], pntDir[14];
 
 #ifdef UNIX
    char limiter='/';
@@ -339,13 +337,9 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    // maybe we have session with this link?
    if (fexist(link->bsyFile)) {
 
-           tolog = (char*) malloc (strlen(link->name)+40+1);
-           sprintf(tolog,"link %s is busy.", link->name);
-
-           writeLogEntry(htick_log, '7', tolog);
+           writeLogEntry(htick_log, '7', "link %s is busy.", link->name);
            //free (link->floFile); link->floFile = NULL;
            free (link->bsyFile); link->bsyFile = NULL;
-           free (tolog);
 
            return 1;
 

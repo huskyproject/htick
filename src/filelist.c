@@ -260,7 +260,6 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
 void filelist()
 {
     FILE *f;
-    char logstr[200];
     int i;
 
    if (strlen(flistfile) == 0) {
@@ -269,8 +268,7 @@ void filelist()
    }
 
    if ( (f = fopen(flistfile,"w")) == NULL ) {
-         sprintf(logstr,"Could not open for write file %s",flistfile);
-         writeLogEntry(htick_log,'6',logstr);
+         writeLogEntry(htick_log,'6',"Could not open for write file %s",flistfile);
          return;
    }
 
