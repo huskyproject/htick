@@ -2,6 +2,10 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Thu Jul 22 11:39:46 1999
+Georgi:
+* bugfix in move from .htk dir
+
 Tue Jul 20 14:32:20 1999
 Georgi:
 + FileFix now support %resend
