@@ -1,3 +1,26 @@
+/*****************************************************************************
+ * HTICK --- FTN Ticker / Request Processor
+ *****************************************************************************
+ * This file is part of HTICK, part of the Husky fidosoft project
+ * http://husky.physcip.uni-stuttgart.de
+ *
+ * HTICK is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU General Public License as published by the
+ * Free Software Foundation; either version 2, or (at your option) any
+ * later version.
+ *
+ * HTICK is distributed in the hope that it will be useful, but
+ * WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with HTICK; see the file COPYING.  If not, write to the Free
+ * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
+ *****************************************************************************
+ * $Id$
+ *****************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <add_desc.h>
@@ -241,3 +264,4 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
     w_log(LL_FILE, "getDesc OK for file: %s",file_name);
     return rc;
 }
+
