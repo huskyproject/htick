@@ -242,6 +242,30 @@ void processConfig()
       exit(1);
    };
 
+   w_log( '1', "Start");
+
+   if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
+   if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
+   if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
+   if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first");
+   if (config->announceSpool   == NULL) w_log( LL_CRIT, "You must set AnnounceSpool in fidoconfig first");
+   if (config->MaxTicLineLength && config->MaxTicLineLength<80)
+       w_log( LL_CRIT, "Parameter MaxTicLineLength (%d) in fidoconfig must be 0 or >80\n",config->MaxTicLineLength);
+
+   if (config->addrCount == 0 ||
+       config->linkCount == 0 ||
+       config->fileAreaBaseDir == NULL ||
+       config->passFileAreaDir == NULL ||
+       config->announceSpool   == NULL ||
+       (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
+      w_log( LL_CRIT, "Wrong config file, exit.");
+      closeLog();
+      if (config->lockfile != NULL) remove(config->lockfile);
+      disposeConfig(config);
+      exit(1);
+   }
+
+
    if (config->lockfile) {
       _lockfile = sstrdup(config->lockfile);
       if (config->advisoryLock) {
@@ -285,28 +309,6 @@ void processConfig()
 
    nfree(buff);
 
-   w_log( '1', "Start");
-
-   if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
-   if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
-   if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
-   if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first");
-   if (config->announceSpool   == NULL) w_log( LL_CRIT, "You must set AnnounceSpool in fidoconfig first");
-   if (config->MaxTicLineLength && config->MaxTicLineLength<80)
-       w_log( LL_CRIT, "Parameter MaxTicLineLength (%d) in fidoconfig must be 0 or >80\n",config->MaxTicLineLength);
-
-   if (config->addrCount == 0 ||
-       config->linkCount == 0 ||
-       config->fileAreaBaseDir == NULL ||
-       config->passFileAreaDir == NULL ||
-       config->announceSpool   == NULL ||
-       (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
-      w_log( LL_CRIT, "Wrong config file, exit.");
-      closeLog();
-      if (config->lockfile != NULL) remove(config->lockfile);
-      disposeConfig(config);
-      exit(1);
-   }
    if (config->busyFileDir == NULL) {
       config->busyFileDir = (char*) smalloc(strlen(config->outbound) + 10);
       strcpy(config->busyFileDir, config->outbound);
