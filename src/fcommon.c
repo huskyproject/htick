@@ -57,6 +57,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/adcase.h>
+#include <fidoconf/xstr.h>
 
 
 #include <smapi/typedefs.h>
@@ -153,7 +154,7 @@ e_prio cvtFlavour2Prio(e_flavour flavour)
 }
 
 int fileNameAlreadyUsed(char *pktName, char *packName) {
-   int i;
+   unsigned int i;
 
    for (i=0; i < config->linkCount; i++) {
       if ((config->links[i].pktFile != NULL) && (pktName != NULL))
@@ -459,4 +460,21 @@ int removeFileMask(char *directory, char *mask)
       closedir(dir);
    }
    return(numfiles);
+}
+
+char *makeMsgbFileName(char *s) {
+    // allowed symbols: 0..9, a..z, A..Z, ".,!@#$^()~-_{}[]"
+    static char defstr[]="\"*/:;<=>?\\|%`'&+"; // not allowed
+    char *name=NULL, *str;
+
+    if (config->notValidFNChars) str = config->notValidFNChars;
+    else str = defstr;
+
+    while (*s) {
+	if (strchr(str,*s)) xscatprintf(&name,"%%%x", *s);
+	else xscatprintf(&name, "%c", *s);
+	s++;
+    }
+
+    return name;
 }

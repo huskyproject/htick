@@ -136,3 +136,4 @@ int removeFileMask(char *directory, char *mask);
           mask is the file mask for remove file[s]
   Output: 
 */
+char *makeMsgbFileName(char *s);
