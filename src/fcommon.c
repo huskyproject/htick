@@ -331,23 +331,23 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    switch (typ) {
       case PKT:
-         name[namelen-4] = 'o'; name[namelen-3] = 'u'; name[namelen-2] = 't';
+         name[namelen-3] = 'o'; name[namelen-2] = 'u'; name[namelen-1] = 't';
          break;
       case REQUEST:
-         name[namelen-4] = 'r'; name[namelen-3] = 'e'; name[namelen-2] = 'q';
+         name[namelen-3] = 'r'; name[namelen-2] = 'e'; name[namelen-1] = 'q';
          break;
       case FLOFILE: break;
    } /* endswitch */
 
    if (typ != REQUEST) {
       switch (prio) {
-         case CRASH :    name[namelen-4] = 'c';
+         case CRASH :    name[namelen-3] = 'c';
                          break;
-         case HOLD  :    name[namelen-4] = 'h';
+         case HOLD  :    name[namelen-3] = 'h';
                          break;
-	 case DIRECT:    name[namelen-4] = 'd';
+	 case DIRECT:    name[namelen-3] = 'd';
 	                 break;
-	 case IMMEDIATE: name[namelen-4] = 'i';
+	 case IMMEDIATE: name[namelen-3] = 'i';
 	                 break;
          case NORMAL:    break;
       } /* endswitch */
@@ -365,7 +365,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    // create bsyFile
    strcpy(bsyname, name);
-   bsyname[namelen-4]='b';bsyname[namelen-3]='s';bsyname[namelen-2]='y';
+   bsyname[namelen-3]='b';bsyname[namelen-2]='s';bsyname[namelen-1]='y';
    strcat(link->bsyFile, bsyname);
 
    // maybe we have session with this link?
