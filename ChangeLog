@@ -1,3 +1,12 @@
+2003-05-21 Wednesday 08:58  sfpavel
+
+	* debian/control (htick-1_4-stable.3): Change debian maintainer's
+	E-mail
+
+2003-05-21 Wednesday 08:53  sfpavel
+
+	* debian/changelog (htick-1_4-stable.5): New version: 1.4-RC1
+
 2003-05-18 Sunday 10:38  d_sergienko
 
 	* src/toss.c (htick-1_4-stable.4): add our AKA if it is missed in
