@@ -1,3 +1,7 @@
+2003-12-11 Thursday 11:14  mche
+
+	* src/hatch.c (1.85): doSaveTic for hatched files
+
 2003-12-04 Thursday 15:33  mche
 
 	* src/areafix.c (1.124): %list, %linked command extension
