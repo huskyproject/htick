@@ -123,7 +123,9 @@ void getReportInfo()
 {
     DIR            *dir;
     struct dirent  *file;
+    s_ticfile      tmptic;
     char* fname = NULL;
+    UINT i = 0;
 
     dir = opendir(config->announceSpool);
     
@@ -131,10 +133,28 @@ void getReportInfo()
         if (patimat(file->d_name, "*.TIC") == 0)
             continue;
         xstrscat(&fname,config->announceSpool,file->d_name,NULL);
-        Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
         w_log(LL_DEBUG, "Parsing Report file %s",file->d_name);
-        parseTic( fname, &(Report[rCount]) );
-        rCount++;
+
+        if( parseTic( fname, &tmptic ) && tmptic.area && tmptic.file )
+        {
+            Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
+            Report[rCount].area = sstrdup( tmptic.area );
+            Report[rCount].file = sstrdup( tmptic.file );
+            Report[rCount].anzdesc = tmptic.anzdesc;
+            Report[rCount].desc = scalloc(sizeof(tmptic.desc),tmptic.anzdesc);
+            for( i = 0; i < tmptic.anzdesc; i++)
+            {
+                Report[rCount].desc[i]=sstrdup(tmptic.desc[i]);
+            }
+            Report[rCount].anzldesc = tmptic.anzldesc;
+            Report[rCount].ldesc = scalloc(sizeof(tmptic.ldesc),tmptic.anzldesc);
+            for( i = 0; i < tmptic.anzldesc; i++)
+            {
+                Report[rCount].ldesc[i]=sstrdup(tmptic.ldesc[i]);
+            }
+            rCount++;
+        }
+        disposeTic(&tmptic);
         nfree(fname);
     }
     closedir(dir);
@@ -208,22 +228,22 @@ char *formDescStr(char *desc)
    ch = strtok(tmp, " \t\r\n");
    while (ch) {
       if (strlen(ch) > 54 && !buff) {
-		  newDesc = (char*)srealloc(newDesc, strlen(newDesc)+55);
-		  strncat(newDesc, ch, 54);
-		  xstrscat(&newDesc, "\r", print_ch(24, ' '), NULL);
-		  ch += 54;
+          newDesc = (char*)srealloc(newDesc, strlen(newDesc)+55);
+          strncat(newDesc, ch, 54);
+          xstrscat(&newDesc, "\r", print_ch(24, ' '), NULL);
+          ch += 54;
       } else {
-		  if (buff && strlen(buff)+strlen(ch) > 54) {
-			  xstrscat(&newDesc, buff, "\r", print_ch(24, ' '), NULL);
-			  nfree(buff);
-		  } else {
-			  xstrscat(&buff, ch, " ", NULL);
-			  ch = strtok(NULL, " \t\r\n");
-		  }
+          if (buff && strlen(buff)+strlen(ch) > 54) {
+              xstrscat(&newDesc, buff, "\r", print_ch(24, ' '), NULL);
+              nfree(buff);
+          } else {
+              xstrscat(&buff, ch, " ", NULL);
+              ch = strtok(NULL, " \t\r\n");
+          }
       }
    }
    if (buff && strlen(buff) != 0) {
-	   xstrcat(&newDesc, buff);
+       xstrcat(&newDesc, buff);
    } nfree (buff);
 
    nfree(keepDesc);
