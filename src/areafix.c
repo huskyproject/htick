@@ -47,7 +47,7 @@
 #include <smapi/patmat.h>
 #include <ctype.h>
 #include <smapi/progprot.h>
-#include <strsep.h>
+#include <fidoconf/common.h>
 #include <areafix.h>
 #include <hatch.h>
 

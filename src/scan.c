@@ -48,7 +48,7 @@
 #include <areafix.h>
 
 #include <toss.h>
-#include <strsep.h>
+#include <fidoconf/common.h>
 
 
 void cvtAddr(const NETADDR aka1, s_addr *aka2)
