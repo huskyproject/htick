@@ -1,3 +1,12 @@
+2003-04-24 Thursday 06:21  andr_lukyanov
+
+	* dos/makefile.djg (1.7): Fixed DJGPP compilation with new library
+	structure
+
+2003-04-24 Thursday 06:20  andr_lukyanov
+
+	* src/toss.c (1.264): Fixed DJGPP compilation
+
 2003-04-23 Wednesday 07:05  mche
 
 	* src/toss.c (1.263): fix illegal address detection
