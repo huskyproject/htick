@@ -1,3 +1,15 @@
+2004-03-16 Tuesday 08:45  mche
+
+	* src/toss.c (1.281): new CRC values tested on MSVC OK
+
+2004-03-15 Monday 06:55  mche
+
+	* src/toss.c (1.280): fix compilation
+
+2004-03-14 Sunday 06:08  stas_degteff
+
+	* src/toss.c (1.279): Fix CRC16 values. Please test this.
+
 2004-02-28 Saturday 20:17  mche
 
 	* src/toss.c (1.278): CRC calculated for SUN by sir
