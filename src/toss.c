@@ -114,15 +114,6 @@
 #define CRC_LDESC       0x5394
 
 
-/* processTic(), sendToLinks() results */
-#define TIC_OK         0
-#define TIC_security   1
-#define TIC_NotOpen    2
-#define TIC_WrongTIC   3
-#define TIC_CantRename 3
-#define TIC_NotForUs   4
-#define TIC_NotRecvd   5
-
 
 void writeNetmail(s_message *msg, char *areaName)
 {
@@ -638,6 +629,9 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         old_anzseenby = tic->anzseenby;
         memcpy(&old_from,&tic->from,sizeof(hs_addr));
         memcpy(&old_to,&tic->to,sizeof(hs_addr));
+    } else {
+        memset(&old_from,0,sizeof(hs_addr));
+        memset(&old_to,0,sizeof(hs_addr));
     }
     
     for (i=0;i<filearea->downlinkCount;i++) {
@@ -662,9 +656,9 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     /* Checking to whom I shall forward */
     for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
-        if (  addrComp(old_from,downlink->hisAka)   !=0 &&
-            addrComp(old_to,downlink->hisAka)     !=0 &&
-            addrComp(tic->origin,downlink->hisAka)!=0)
+        if ( addrComp(old_from,downlink->hisAka)    !=0 &&
+             addrComp(old_to,downlink->hisAka)      !=0 &&
+             addrComp(tic->origin,downlink->hisAka) !=0)
         {
             /* Forward file to */
             

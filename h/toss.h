@@ -35,6 +35,16 @@
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
+enum TIC_state {
+                  TIC_OK = 0,
+                  TIC_security,
+                  TIC_NotOpen,
+                  TIC_WrongTIC,
+                  TIC_CantRename,
+                  TIC_NotForUs,
+                  TIC_NotRecvd
+};
+
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
 void disposeTic(s_ticfile *tic);
 void writeTic(char *ticfile,s_ticfile *tic);
