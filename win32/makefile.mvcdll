@@ -3,6 +3,11 @@
 CC=     cl
 CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h
 CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
+
+# uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
+# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
+# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
+
 COPT=   -O2
 TLIB=   lib -nologo
 
@@ -30,7 +35,7 @@ $(HTICKL): $(OBJS)
 	$(TLIB) /out:$@ $(OBJS)
 
 htick.exe:
-        $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(FCONFL) $(SMAPIL) $(HTICKL) USER32.LIB msvcrt.lib Kernel32.lib
+        $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(FCONFL) $(SMAPIL) $(HTICKL) USER32.LIB msvcrt.lib Kernel32.lib /link /opt:nowin98
 
 clean:
 	-del *.obj *.lib
