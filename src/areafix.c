@@ -846,7 +846,7 @@ void preprocText(char *preport, s_message *msg, char *flags)
                               NULL, &msg->origAddr, &msg->destAddr,
                               versionStr);
     if (flags)
-	xstrscat(&msg->text, "\001FLAGS ", flags, "\r");
+	xstrscat(&msg->text, "\001FLAGS ", flags, "\r", NULL);
     xstrcat(&msg->text, preport);
     xscatprintf(&msg->text, " \r--- %s FileFix\r", versionStr);
     msg->textLength=(int)strlen(msg->text);
