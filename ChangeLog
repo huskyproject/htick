@@ -1,3 +1,8 @@
+2003-08-21 Thursday 18:58  d_sergienko
+
+	* doc/htick.rus.texi (1.1): added russian doc translation from
+	vadim s. sabinich (2:5070/264)
+
 2003-08-17 Sunday 06:20  d_sergienko
 
 	* src/filelist.c (1.43): do not add directories to filelist
