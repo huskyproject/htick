@@ -1,3 +1,33 @@
+2002-11-10 Sunday 19:10  d_sergienko
+
+	* BUGS (1.3), BUGS.rus (1.4): removed obsolete files
+
+2002-11-10 Sunday 19:07  d_sergienko
+
+	* BUG-REPORTING (1.2), doc/bugreport.rus (1.1), doc/bugreport.txt
+	(1.1): syncing bugreporing with hpt
+
+2002-11-10 Sunday 19:06  d_sergienko
+
+	* FidoConfigKeywords (1.47), HISTORY (1.8), doc/htick.texi (1.10),
+	misc/config (1.7), src/report.c (1.31): fixed spelling (AnnAdr* ->
+	AnnAddr*)
+
+2002-11-10 Sunday 14:26  mche
+
+	* osf/makefile (1.7), beos/makefile.be (1.6), bsd/makefile.bsd
+	(1.6), linux/makefile.lnx (1.9), os2/makefile.wco (1.15),
+	win32/makefile.wcw (1.20): correct makefiles
+
+2002-11-10 Sunday 10:51  sfpavel
+
+	* misc/config (1.6): Fix example config
+
+2002-11-10 Sunday 09:36  sfpavel
+
+	* debian/info (1.1): file info was initially added on branch
+	htick-1_0-stable.
+
 2002-11-06 Wednesday 14:44  mche
 
 	* win32/makefile.mgw (1.4): corrected makefile
