@@ -1,51 +1,39 @@
-# HTICK DJGPP MAKEFILE
-# no support for the husky build environment
+# $Id$
+# Makefile to build HTICK/dpmi with gcc 3.x.x from DJGPP v2.03.
+# No support for the Husky build environment.
 
-DEBUG=-s
-# set to -g for debugging
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.djg
+include ../../huskymak.cfg
 
-.SUFFIXES:
-.SUFFIXES: .c .o
+include ../makefile.inc
 
-CC     =gcc
+# includes directories
+CINCL	= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf
 
-OBJ    =.o
-EXE    =.exe
-RM     =cmd /c del
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fconf$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-DIRSEP =/
-CFLAGS =-c -O3 $(DEBUG)
-CINCL  =-I../h -I../../fidoconf -I../../smapi -I../../huskylib
-CDEFS  =-DMSDOS -mcpu=i486
+READMEFILES= ../ChangeLog ../COPYING ../CREDITS ../HISTORY ../INSTALL \
+	     ../README ../TODO ../VERSION
 
-LFLAGS = $(DEBUG)
+default:
+	@echo
+	@echo Run \'make programs\' to build static version of programs \($(PROGRAMS)\)
+	@echo
+	@echo Run \'make all\' to build all above
 
-EXENAMEFLAG=-o
-SRC_DIR=../src/
+all:	programs
 
-LIBS   =../../fidoconf/make/fconfdjg.a ../../smapi/make/smapidjg.a ../../huskylib/make/huskydjg.a
+programs: $(PROGRAMS)
 
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
 
-OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
-          scan$(OBJ) areafix$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
-          hatch$(OBJ) filelist$(OBJ) filecase$(OBJ) report$(OBJ) clean$(OBJ)
-
-SRC_DIR = ../src/
-
-
-all: $(OBJS) \
-     htick.exe
-
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(SRC_DIR)$*.c
-
-htick.exe: $(OBJS)
-	$(CC) $(LFLAGS) -o htick.exe $(OBJS) $(LIBS)
-
-clean:
-	-del *.o
-	-del *.bak
-
-distclean: clean
-	-del *.exe
-
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@strip$(_EXE) $@

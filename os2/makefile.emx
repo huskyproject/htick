@@ -1,48 +1,36 @@
-# OS/2 EMX A.OUT STYLE MAKEFILE
-# no support for the husky build environment
+# $Id$
+# Makefile to build HTICK/OS2 with gcc 3.x.x from EMX v0.9d.
+# No support for the Husky build environment.
 
-DEBUG=-s
-# set to -g for debugging
+# include Husky-Makefile-Config,
+# copy this file from ../../huskybse/huskymak.cfg.emx
+include ../../huskymak.cfg
 
-.SUFFIXES:
-.SUFFIXES: .c .o
+include ../makefile.inc
 
-OBJ    =.o
-EXE    =.exe
-RM     =cmd /c del
-DIRSEP =/
-CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -DOS2 -Wall -Wno-char-subscripts -funsigned-char
-LFLAGS =-Zcrtdll $(DEBUG)
-CDEFS  =-DOS2
-CC     =gcc
-EXENAMEFLAG=-o
-SRC_DIR=../src/
-LIBS   =../../fidoconf/fconfemx.a ../../smapi/smapiemx.a
+# includes directories
+CINCL	= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf
 
+# libraries need to build binary file
+LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
+	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
-OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
-          scan$(OBJ) areafix$(OBJ) add_desc$(OBJ) seenby$(OBJ) \
-          hatch$(OBJ) filelist$(OBJ) filecase$(OBJ) report$(OBJ) clean$(OBJ)
+READMEFILES= ../ChangeLog ../COPYING ../CREDITS ../HISTORY ../INSTALL \
+	     ../README ../TODO ../VERSION
 
-SRC_DIR = ../src/
+default:
+	@echo Run 'make programs' to build static version of programs ($(PROGRAMS))
+	@echo Run 'make all' to build all above
 
+all:	programs
 
-all: $(OBJS) \
-     htick.exe
+programs: $(PROGRAMS)
 
-%.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+%$(_OBJ): $(_SRC_DIR)%$(_C)
+	@echo Compiling $<
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(OPTCFLAGS) $<
 
-htick.exe: $(OBJS)
-	$(CC) $(LFLAGS) -o htick.exe $(OBJS) $(LIBS)
-
-clean:
-	-del *.o 
-	-del *.bak
-
-distclean: clean
-	-del *.exe
-
-
-
-
+$(PROGRAMS): $(OBJS)
+	@echo Create $(PROGRAMS)
+	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
