@@ -10,7 +10,7 @@
  *
  * Novosibirsk, West Siberia, Russia
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -111,11 +111,29 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 		// 1 - need subscribe
 		// 2 - no access group
 		// 3 - area is hidden
+		if (area->manual) rc = 2;
+	} else rc = 4; // this is another area
+	
+	return rc;
+}
+
+int unsubscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link *link) {
+	int rc=4;
+	
+	if (!areaname) return rc;
+	
+	if (patimat(area->areaName,areaname)==1) {
+		rc=subscribeCheck(*area, msg, link);
+		// 0 - already subscribed
+		// 1 - need subscribe
+		// 2 - no access group
+		// 3 - area is hidden
 		if (area->mandatory) rc = 2;
 	} else rc = 4; // this is another area
 	
 	return rc;
 }
+
 
 void addlink(s_link *link, s_filearea *area) {
     s_arealink *arealink;
@@ -126,28 +144,32 @@ void addlink(s_link *link, s_filearea *area) {
 	arealink = area->downlinks[area->downlinkCount];
 	
 	if (link->numOptGrp > 0) {
-		// default set export on, import on, mandatory off
+		// default set export on, import on, mandatory off, manual off
 		arealink->export = 1;
 		arealink->import = 1;
 		arealink->mandatory = 0;
+		arealink->manual = 0;
 		
 		if (grpInArray(area->group,link->optGrp,link->numOptGrp)) {
 			arealink->export = link->export;
 			arealink->import = link->import;
 			arealink->mandatory = link->mandatory;
+			arealink->manual = link->manual;
 		}
 		
 	} else {
 		arealink->export = link->export;
 		arealink->import = link->import;
 		arealink->mandatory = link->mandatory;
+		arealink->manual = link->manual;
 	}
 	if (area->mandatory) arealink->mandatory = 1;
+	if (area->manual) arealink->manual = 1;
 	if (link->level < area->levelread)	arealink->export=0;
 	if (link->level < area->levelwrite) arealink->import=0;
 	// paused link can't receive mail
 	if ((link->Pause & FPAUSE) == FPAUSE) arealink->export = 0;
-    
+
     area->downlinkCount++;
 }
 
@@ -170,11 +192,11 @@ char *unlinked(s_message *msg, s_link *link)
     unsigned int i, rc, n;
     char *report=NULL;
     s_filearea *area;
-    
+
     area=config->fileAreas;
-    
+
     xscatprintf(&report, "Unlinked areas to %s\r\r", aka2str(link->hisAka));
-    
+
     for (i=n=0; i<config->fileAreaCount; i++) {
 	rc=subscribeCheck(area[i], msg, link);
 	if (rc == 1) {
@@ -231,7 +253,7 @@ char *list(s_message *msg, s_link *link) {
          xstrcat(&report, config->fileAreas[i].areaName);
          if (desclen!=0) {
             xstrcat(&report," ");
-            for (j=0;j<(maxlen)-areaslen[i];j++) 
+            for (j=0;j<(maxlen)-areaslen[i];j++)
                 xstrcat(&report,".");
             xstrcat(&report," ");
             xstrcat(&report,config->fileAreas[i].description);
@@ -255,12 +277,12 @@ char *linked(s_message *msg, s_link *link, int action)
     char *report=NULL;
     int readdeny, writedeny;
 
-    if ((link->Pause & FPAUSE) == FPAUSE) 
+    if ((link->Pause & FPAUSE) == FPAUSE)
         xscatprintf(&report, "\rPassive fileareas on %s\r\r", aka2str(link->hisAka));
     else
         xscatprintf(&report, "\rActive fileareas on %s\r\r", aka2str(link->hisAka));
 							
-    
+
     for (i=n=0; i<config->fileAreaCount; i++) {
 	rc=subscribeCheck(config->fileAreas[i], msg, link);
 	if (rc==0) {
@@ -271,7 +293,7 @@ char *linked(s_message *msg, s_link *link, int action)
                 xstrcat(&report,"& ");
             else if (writedeny)
                 xstrcat(&report,"+ ");
-            else 
+            else
                 xstrcat(&report,"* ");
         } else {
             xstrcat(&report," ");
@@ -281,9 +303,9 @@ char *linked(s_message *msg, s_link *link, int action)
 	    n++;
 	}
     }
-    if (action == 1) 
+    if (action == 1)
         xscatprintf(&report, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
-    else 
+    else
         xscatprintf(&report, "\r%u areas linked\r", n);
     return report;
 }
@@ -325,7 +347,7 @@ char *help(s_link *link) {
 	return NULL;
 }
 
-char *available(s_link *link) {                                                 
+char *available(s_link *link) {
     FILE *f;
     unsigned int j=0, found;
     unsigned int k;
@@ -360,7 +382,7 @@ char *available(s_link *link) {
                 running = line;
                 token = strseparate(&running, " \t\r\n");
                 addAreaListItem(al,0,token,running);
-                
+
             }
 		nfree(line);
 	    }
@@ -389,19 +411,19 @@ char *available(s_link *link) {
 	w_log(LL_AREAFIX, "Filefix: no links for creating Available File List");
     }
     return report;
-}                                                                               
+}
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     FILE *f_conf;
     char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL, *tmpPtr =NULL;
     long endpos, cfglen;
     long strbeg = 0, strend = -1;
-    
+
     areaName = area->areaName;
-    
+
     if (init_conf(fileName))
         return 1;
-    
+
     while ((cfgline = configline()) != NULL) {
         line = sstrdup(cfgline);
         line = trimLine(line);
@@ -410,7 +432,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
             tmpPtr = line = shell_expand(line);
             token = strseparate(&tmpPtr, " \t");
             if (stricmp(token, "filearea")==0) {
-                token = strseparate(&tmpPtr, " \t"); 
+                token = strseparate(&tmpPtr, " \t");
                 if (stricmp(token, areaName)==0) {
                     fileName = sstrdup(getCurConfName());
                     strend = get_hcfgPos();
@@ -429,7 +451,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
         nfree(fileName);
         return 1; // impossible
     }
-    
+
     if ((f_conf=fopen(fileName,"r+b")) == NULL)
     {
         if (!quiet) fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
@@ -438,7 +460,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
         return 1;
     }
     nfree(fileName);
-    
+
     fseek(f_conf, 0L, SEEK_END);
     endpos = ftell(f_conf);
     cfglen = endpos - strend;
@@ -448,9 +470,9 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     line[cfglen]='\0';
     fseek(f_conf, strbeg, SEEK_SET);
     setfsize( fileno(f_conf), strbeg );
-    
+
     switch (action) {
-    case 0: 
+    case 0:
         xstrscat(&cfgline, " ", aka2str(link->hisAka), NULL);
         break;
     case 1:
@@ -472,18 +494,18 @@ int forwardRequestToLink( char *areatag,  char *descr,
 {
     s_message *msg;
     char *base, pass[]="passthrough";
-    
+
     if (uplink->msg == NULL) {
-        msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, 
+        msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop,
             uplink->RemoteFileRobotName ? uplink->RemoteFileRobotName : "filefix",
             uplink->fileFixPwd ? uplink->fileFixPwd : "\x00", 1,
             config->filefixKillReports);
-        msg->text = createKludges(config->disableTID,NULL, 
+        msg->text = createKludges(config->disableTID,NULL,
             uplink->ourAka, &(uplink->hisAka),
             versionStr);
         uplink->msg = msg;
     } else msg = uplink->msg;
-    
+
     if (act==0) {
         if (getFileArea(config, areatag) == NULL) {
             base = uplink->fileBaseDir;
@@ -525,9 +547,9 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     qsort(Indexes,Requestable,sizeof(Indexes[0]),compare_links_priority);
     for (i = 0; i < Requestable; i++) {
 	uplink = &(config->links[Indexes[i]]);
-    
+
     if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
-        grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1) 
+        grpInArray(uplink->LinkGrp,dwlink->AccessGrp,dwlink->numAccessGrp) : 1)
     {
         if (uplink->forwardFileRequestFile!=NULL) {
             char *descr = NULL;
@@ -537,17 +559,17 @@ int forwardRequest(char *areatag, s_link *dwlink) {
                 forwardRequestToLink(areatag,descr,uplink,dwlink,0);
                 rc = 0;
             }
-            else  
+            else
             { rc = 2; }// found link with freqfile, but there is no areatag
             nfree(descr);
         } else {
             rc = 0;
-        }//(uplink->forwardRequestFile!=NULL) 
-        if (rc==0) { 
+        }//(uplink->forwardRequestFile!=NULL)
+        if (rc==0) {
             nfree(Indexes);
             return rc;
         }
-        
+
     }   // if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
     }   // for (i = 0; i < Requestable; i++) {
     // link with "forwardFileRequests on" not found
@@ -575,24 +597,24 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		
 		for (c = 0; c<area->downlinkCount; c++) {
 		    if (link == area->downlinks[c]->link) {
-			if (area->downlinks[c]->mandatory) rc=5;
+			if (area->downlinks[c]->manual) rc=5;
 			break;
 		    }
 		}
         found = 1;
 		switch (rc) {
-		    case 0: 
+		    case 0:
 			xscatprintf(&report, "%s Already linked\r", area->areaName);
 			w_log( LL_AREAFIX, "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
-		    case 1: 
-            case 3: 
+		    case 1:
+            case 3:
                 changeconfig (getConfigFileName(), area, link, 0);
                 addlink(link, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
                 break;
-            case 5: 
+            case 5:
                 xscatprintf(&report, "%s Link is not possible\r", area->areaName);
                 w_log( LL_AREAFIX, "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
                 break;
@@ -633,7 +655,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	line++;
 	
 	for (i = 0; i< config->fileAreaCount; i++) {
-		rc=subscribeAreaCheck(&(config->fileAreas[i]),msg,line, link);
+		rc=unsubscribeAreaCheck(&(config->fileAreas[i]),msg,line, link);
 		if ( rc==4 ) continue;
 	
 		area = &(config->fileAreas[i]);
@@ -655,7 +677,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 			xscatprintf(&report, "%s Not linked\r",line);
 			w_log( '8', "FileFix: area %s is not linked to %s", area->areaName, aka2str(link->hisAka));
 			break;
-		case 5: 
+		case 5:
             xscatprintf(&report, "%s Unlink is not possible\r", area->areaName);
 			w_log( '8', "FileFix: area %s -- unlink is not possible for %s", area->areaName, aka2str(link->hisAka));
 			break;
@@ -681,7 +703,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
     line=stripLeadingChars(line, " \t");
     token = strtok(line, " \t\0");
     if (token == NULL)
-    {       
+    {
         xscatprintf(&report, "Error in line! Format: %%Resend <file> <filearea>\r");
         return report;
     }
@@ -700,7 +722,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
         for (i = 0; i<area->downlinkCount;i++)
             if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
                 rc = 0;
-            if (rc == 1 && area->mandatory == 1) rc = 5;
+            if (rc == 1 && area->manual == 1) rc = 5;
             else rc = send(filename,filearea,aka2str(link->hisAka));
             switch (rc) {
             case 0: xscatprintf(&report, "Send %s from %s for %s\r",
@@ -723,7 +745,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
         xscatprintf(&report, "Error: filearea %s not found!\r",filearea);
         w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
     }
-    
+
     nfree(filearea);
     nfree(filename);
     return report;
@@ -734,9 +756,9 @@ char *pause_link(s_message *msg, s_link *link)
 {
     char *tmp = NULL;
     char *report=NULL;
-    
+
     if ((link->Pause & FPAUSE) != FPAUSE) {
-        if (Changepause(getConfigFileName(), link,0,FPAUSE) == 0) 
+        if (Changepause(getConfigFileName(), link,0,FPAUSE) == 0)
             return NULL;
     }
     xstrcat(&report, " System switched to passive\r");
@@ -750,7 +772,7 @@ char *pause_link(s_message *msg, s_link *link)
 char *resume_link(s_message *msg, s_link *link)
 {
     char *tmp = NULL, *report=NULL;
-    
+
     if ((link->Pause & FPAUSE) == FPAUSE) {
        if (Changepause(getConfigFileName(), link,0,FPAUSE) == 0)
           return NULL;
@@ -772,7 +794,7 @@ int tellcmd(char *cmd) {
 	line = cmd;
 
 	switch (line[0]) {
-	case '%': 
+	case '%':
 		line++;
 		if (*line == 0) return ERROR;
 		if (stricmp(line,"list")==0) return LIST;
@@ -878,7 +900,7 @@ char *areastatus(char *preport, char *text)
 
 void preprocText(char *preport, s_message *msg)
 {
-    msg->text = createKludges(config->disableTID, 
+    msg->text = createKludges(config->disableTID,
                               NULL, &msg->origAddr, &msg->destAddr,
                               versionStr);
     xstrcat(&msg->text, "\001FLAGS NPD\r");
@@ -890,22 +912,22 @@ void preprocText(char *preport, s_message *msg)
 char *textHead(void)
 {
     char *text_head=NULL;
-    
+
     xscatprintf(&text_head, " FileArea%sStatus\r",	print_ch(44,' '));
-	xscatprintf(&text_head, " %s  -------------------------\r",print_ch(50, '-')); 
+	xscatprintf(&text_head, " %s  -------------------------\r",print_ch(50, '-'));
     return text_head;
 }
 
 void RetMsg(s_message *msg, s_link *link, char *report, char *subj)
 {
     s_message *tmpmsg;
-    
+
     tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName,
                          subj, 1,config->filefixKillReports);
     preprocText(report, tmpmsg);
-    
+
     writeNetmail(tmpmsg, config->robotsArea);
-    
+
     freeMsgBuffers(tmpmsg);
     free(tmpmsg);
 }
@@ -920,12 +942,12 @@ void sendFilefixMessages()
         if (config->links[i].msg == NULL) continue;
         link = &(config->links[i]);
         linkmsg = link->msg;
-        
+
         xscatprintf(&(linkmsg->text), " \r--- %s Filefix\r", versionStr);
         linkmsg->textLength = strlen(linkmsg->text);
-        
+
         w_log(LL_AREAFIX, "Filefix: write netmail msg for %s", aka2str(link->hisAka));
-        
+
         writeNetmail(linkmsg, config->robotsArea);
 
         freeMsgBuffers(linkmsg);
@@ -1121,7 +1143,7 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
     else strLower(fileechoFileName);
 
-    bDir = (creatingLink->fileBaseDir) ? 
+    bDir = (creatingLink->fileBaseDir) ?
         creatingLink->fileBaseDir : config->fileAreaBaseDir;
 
 
@@ -1197,15 +1219,15 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
        }
        nfree(NewAutoCreate);
    }
-   else if (descr) 
+   else if (descr)
    {
        xscatprintf(&buff,"-d \"%s\"",descr);
    }
 
    xscatprintf(&buff," %s",hisaddr);
-   
+
    if(dwLink) xscatprintf(&buff," %s",aka2str(*dwLink));
-   
+
    fprintf(f, "%s\n", buff);
    fclose(f);
 
@@ -1218,9 +1240,9 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
       if (getNetMailArea(config, config->ReportTo) != NULL) {
          msg = makeMessage(area->useAka,
-                           area->useAka, 
-                           versionStr, 
-                           config->sysop, 
+                           area->useAka,
+                           versionStr,
+                           config->sysop,
                            "Created new fileareas", 1,
                            config->filefixKillReports);
          msg->text = createKludges(config->disableTID,NULL, area->useAka,area->useAka,versionStr);
