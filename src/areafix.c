@@ -31,6 +31,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200)) ) && (!defined(__TURBOC__)))
 #include <unistd.h>
 #endif
@@ -40,15 +41,14 @@
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
 
+#include <smapi/prog.h>
+#include <smapi/patmat.h>
+
 #include <fcommon.h>
 #include <global.h>
 #include <pkt.h>
 #include <version.h>
 #include <toss.h>
-#include <smapi/patmat.h>
-#include <ctype.h>
-#include <smapi/progprot.h>
-#include <fidoconf/common.h>
 #include <areafix.h>
 #include <hatch.h>
 
