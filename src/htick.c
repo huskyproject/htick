@@ -189,7 +189,7 @@ void processConfig()
    
    FILE *f;
 
-   config = readConfig();
+   config = readConfig(NULL);
    if (NULL == config) {
       printf("Config not found\n");
       exit(1);
