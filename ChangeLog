@@ -1,3 +1,13 @@
+2002-05-18 Saturday 17:04  mche
+
+	* src/add_desc.c (1.8): added log message for getDesc() loglevel
+	'O'
+
+2002-05-18 Saturday 12:05  mche
+
+	* src/hatch.c (1.49), src/toss.c (1.170), h/hatch.h (1.5): some
+	code improvement
+
 2002-05-17 Friday 17:18  mche
 
 	* FidoConfigKeywords (1.21): no message
