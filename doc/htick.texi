@@ -42,10 +42,10 @@ Processor for OS/2, Windows, BeOS and Unix clones.
 @menu
 * Overview::                    What is @value{HTICK}?
 * Installation::                Installation. @emph{Read this!}
-* Command Line::                Command Line OPTIONS and SWITCHES
+* Command Line::                Command Line OPTIONS and SWITCHES.
 * Configuration Reference::     Explanation of the configuration file.
 * Support::                     Support information.
-* Keyword Index::               Configuration File Keywords Index
+* Keyword Index::               Configuration File Keywords Index.
 @end menu
 
 @node Overview, Installation, Top, Top
@@ -58,8 +58,8 @@ supported by Husky Development Team (see @url{http://husk.sf.net/team.html}).
 @enumerate
 @item Tossing fileareas.
 @item Filefix (on the fly, from command line, limit for areas...).
-@item Autocreate on the fly.
-@item Automatic forwarding of requests for missing areas to the uplinks.
+@item Autocreating on the fly.
+@item Automatic forwarding requests for missing areas to the uplinks.
 @item Switching areas into passive (send-only) and back into active mode.
 @item Resending files from passthrough and none passthrough fileareas.
 @item Groups & levels for personal and public access to fileareas.
@@ -133,7 +133,7 @@ groups for @code{FileEchoAreas})
 @end table
 
 3. Compile and install smapi and fidoconf packages. Use "Makefile" for
-   dynamic executables and makefile.lnx (or what you need) for static
+   dynamic executables and makefile.lnx (or whatever you need) for static
    ones.
 
 4. Compile and install @value{HTICK}:
@@ -253,10 +253,10 @@ Scanning Netmail area for mails to filefix and process filefix command
 @item ffix <FTN address> <filefix command>
 Process filefix command @code{command} from command line
 @item ffix! <FTN address> <filefix command>
-Does the same job as 'ffix' and send subscride/unsubscribe letter to link
+Do the same job as 'ffix' and send subscride/unsubscribe letter to link
 that was manualy subscribed/unsubscribed by filefix command like:
 htick ffix! 2:464/910 -910.TEST
-This command remove file echo link 2:464/910 from 910.TEST and produce letter
+This command removes file echo link 2:464/910 from 910.TEST and produces letter
 to 2:464/910 with body "-910.TEST"
 @item clean
 Clean passthrough dir (remove sent files) and remove old files in fileechos
