@@ -421,7 +421,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
 
             w_log(LL_FILENAME,"Saving Tic-File %s to %s", ticFname, savetic->pathName);
             xscatprintf(&filename,"%s%s", savetic->pathName,ticFname);
-            if (copy_file(ticfile,filename)!=0) {
+            if (copy_file(ticfile,filename,1)!=0) { /* overwrite existing file if not same */
                 w_log(LL_ERROR,"File %s not found or not moveable",ticfile);
             };
             if( filearea &&
@@ -431,7 +431,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
                 xstrscat(&from, filearea->pathName, tic->file, NULL);
                 xstrscat(&to,   savetic->pathName, tic->file, NULL);
                 if( savetic->fileAction == 1)
-                   copy_file(from,to);
+                   copy_file(from,to,1); /* overwrite existing file if not same */
                 if( savetic->fileAction == 2)
                    link_file(from,to);
                 nfree(from); nfree(to);
@@ -503,8 +503,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    if (isToss == 1) {
        if (!filearea->sendorig) {
            if( fexist(filename) ){
-              unlink(newticedfile);
-              if (move_file(filename,newticedfile)!=0) {
+              if (move_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
                w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
                 return(2);
               } else {
@@ -514,8 +513,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
               w_log(LL_ERROR,"File %s not found",filename);
        } else {
            if( fexist(filename) ){
-             unlink(newticedfile);
-             if (copy_file(filename,newticedfile)!=0) {
+             if (copy_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
                w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
                return(2);
              } else {
@@ -526,8 +524,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
            strcpy(newticedfile,config->passFileAreaDir);
            strcat(newticedfile,MakeProperCase(tic->file));
            if( fexist(filename) ){
-             unlink(newticedfile);
-             if (move_file(filename,newticedfile)!=0) {
+             if (move_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
                w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
                return(2);
              } else {
@@ -538,8 +535,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        }
    } else if (strcasecmp(filename,newticedfile) != 0){
        if( fexist(filename) ){
-         unlink(newticedfile);
-         if (copy_file(filename,newticedfile)!=0) {
+         if (copy_file(filename,newticedfile,1)!=0) { /* overwrite existing file if not same */
                w_log(LL_ERROR,"File %s not moveable to %s",filename,newticedfile);
            return(2);
          } else {
@@ -783,7 +779,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                   if (!busy) { // FIXME: it always not busy!!!
                      *(strrchr(linkfilepath,PATH_DELIM))=0;
                      newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-                     if (move_file(ticfile,newticfile)==0) {
+                     if (move_file(ticfile,newticfile,0)==0) { /* don't overwrite existing file */
                         strcpy(ticedfile,ticfile);
                         *(strrchr(ticedfile,PATH_DELIM)+1)=0;
                         j = strlen(ticedfile);
@@ -1094,7 +1090,7 @@ void checkTmpDir(void)
                   strcat(newticfile,strrchr(ticfile,PATH_DELIM)+1);
                   if( !fexist(ticfile) )
                      w_log(LL_ERROR,"File %s not found",ticfile);
-                  else if (move_file(ticfile,newticfile)!=0) {
+                  else if (move_file(ticfile,newticfile,1)!=0) { /* overwrite existing file if not same */
                      w_log(LL_ERROR,"File %s not moveable to %s", ticfile, newticfile);
                      error = 1;
                   }

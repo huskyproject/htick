@@ -166,7 +166,7 @@ int removeDesc (char *descr_file_name, char *file_name)
     fclose (f1);
     fclose (f2);
     remove(descr_file_name);
-    move_file(descr_file_name_tmp,descr_file_name);
+    move_file(descr_file_name_tmp,descr_file_name, 1); /* overwrite old file */
     nfree(descr_file_name_tmp);
     return 0;
 }

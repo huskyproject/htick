@@ -414,9 +414,9 @@ int send(char *filename, char *area, char *addr)
         xstrscat(&tmpfile,config->passFileAreaDir,tic.file,NULL);
         adaptcase(tmpfile);
         
-        if (copy_file(sendfile,tmpfile)!=0) {
+        if (copy_file(sendfile,tmpfile,1)!=0) { /* overwrite existing file if not same */
             adaptcase(sendfile);
-            if (copy_file(sendfile,tmpfile)==0) {
+            if (copy_file(sendfile,tmpfile,1)==0) { /* overwrite existing file if not same */
                 w_log('6',"Copied %s to %s",sendfile,tmpfile);
             } else {
                 w_log('9',"File %s not found or not copyable",sendfile);
@@ -520,7 +520,7 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
         xstrcat(&linkfilepath, tic->file);
         if (link_file(newticedfile,linkfilepath ) == 0)
         {
-            if(copy_file(newticedfile,linkfilepath )==0) {
+            if(copy_file(newticedfile, linkfilepath, 1)==0) { /* overwrite existing file if not same */
                 w_log(LL_FILESENT,"Copied: %s",newticedfile);
                 w_log(LL_FILESENT,"    to: %s",linkfilepath);
             } else {
