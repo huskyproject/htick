@@ -37,7 +37,7 @@ Same as EchoArea, most options are valid:
 
     b) -lr <number>
 
-    "REad level": Min link level for send files from this filearea to this link.
+    "Read level": Min link level for send files from this filearea to this link.
 
     c) -lw <number>
 
