@@ -204,7 +204,9 @@ int removeFileMask(char *directory, char *mask)
 #ifdef _WIN32_WINNT
 #define _WINUSER_
 #define _WINUSER_H
-#	include <windows.h>
+#	ifdef __MINGW32__
+#		define CreateHardLink CreateHardLinkA
+#	endif
 #endif
 
 int link_file(const char *from, const char *to)
