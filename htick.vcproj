@@ -87,7 +87,7 @@ move /Y  htick.html $(OutDir)
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;.\h;..\fidoconf;..\huskylib;..\smapi"
+				AdditionalIncludeDirectories="..;.\h;..\fidoconf;..\huskylib;..\smapi;..\areafix"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_MAKE_DLL;_WIN32_WINNT=0x0400"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -107,7 +107,7 @@ move /Y  htick.html $(OutDir)
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalOptions="/MACHINE:I386"
-				AdditionalDependencies="msvcrtd.lib Kernel32.lib smapi.lib fidoconf.lib huskylib.lib"
+				AdditionalDependencies="msvcrtd.lib Kernel32.lib smapi.lib fidoconf.lib huskylib.lib areafix.lib"
 				OutputFile=".\..\nd_d\bin/htick.exe"
 				LinkIncremental="2"
 				SuppressStartupBanner="TRUE"
@@ -143,9 +143,6 @@ move /Y  htick.html $(OutDir)
 				RelativePath=".\src\add_desc.c">
 			</File>
 			<File
-				RelativePath=".\src\areafix.c">
-			</File>
-			<File
 				RelativePath=".\src\clean.c">
 			</File>
 			<File
@@ -165,6 +162,9 @@ move /Y  htick.html $(OutDir)
 			</File>
 			<File
 				RelativePath=".\src\htick.c">
+			</File>
+			<File
+				RelativePath="src\htickafix.c">
 			</File>
 			<File
 				RelativePath=".\src\report.c">
