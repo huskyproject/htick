@@ -102,7 +102,7 @@ int processHatchParams(int i, int argc, char **argv)
     hatchInfo->desc    = srealloc(hatchInfo->desc,(hatchInfo->anzdesc)*sizeof(&hatchInfo->desc));
     hatchInfo->desc[0] = sstrdup("-- description missing --");
 
-    // Check filename for 8.3, warn if not
+    /*  Check filename for 8.3, warn if not */
     basename = strrchr(hatchInfo->file, PATH_DELIM);
     if (basename==NULL) basename = hatchInfo->file; else basename++;
     if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
@@ -327,7 +327,7 @@ void processConfig()
                exit(EX_TEMPFAIL);
             }
          }
-      } else { // normal locking
+      } else { /*  normal locking */
          if ((lock_fd=open(config->lockfile,
             O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
             fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
@@ -385,14 +385,14 @@ int main(int argc, char **argv)
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
 
-   // init SMAPI
+   /*  init SMAPI */
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
    if (MsgOpenApi(&m) != 0) {
       exit_htick("MsgApiOpen Error",1);
    } /*endif */
 
-   // load recoding tables
+   /*  load recoding tables */
    initCharsets();
    if (config->intab != NULL) getctab(intab, (unsigned char*) config->intab);
    if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
@@ -418,7 +418,7 @@ int main(int argc, char **argv)
        disposeTic(hatchInfo);
        nfree(hatchInfo);
    }
-   // deinit SMAPI
+   /*  deinit SMAPI */
    MsgCloseApi();
 
    doneCharsets();

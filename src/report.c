@@ -353,7 +353,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
             versionStr);
         xstrcat(&(msg->text), "\001FLAGS NPD\r");
     }
-    else //report to file
+    else /* report to file */
     {
         msg = (s_message*) scalloc(1,sizeof(s_message));
         msg->netMail = 2; 

@@ -109,12 +109,12 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 	
 	if (patimat(area->areaName,areaname)==1) {
 		rc=subscribeCheck(*area, msg, link);
-		// 0 - already subscribed
-		// 1 - need subscribe
-		// 2 - no access group
-		// 3 - area is hidden
+		/*  0 - already subscribed */
+		/*  1 - need subscribe */
+		/*  2 - no access group */
+		/*  3 - area is hidden */
 		if (area->manual) rc = 2;
-	} else rc = 4; // this is another area
+	} else rc = 4; /*  this is another area */
 	
 	return rc;
 }
@@ -126,12 +126,12 @@ int unsubscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_lin
 	
 	if (patimat(area->areaName,areaname)==1) {
 		rc=subscribeCheck(*area, msg, link);
-		// 0 - already subscribed
-		// 1 - need subscribe
-		// 2 - no access group
-		// 3 - area is hidden
+		/*  0 - already subscribed */
+		/*  1 - need subscribe */
+		/*  2 - no access group */
+		/*  3 - area is hidden */
 		if (area->mandatory) rc = 2;
-	} else rc = 4; // this is another area
+	} else rc = 4; /*  this is another area */
 	
 	return rc;
 }
@@ -351,7 +351,7 @@ char *available(s_link *link) {
 
 	    xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
 
-	    // warning! do not ever use aka2str twice at once!
+	    /*  warning! do not ever use aka2str twice at once! */
 	    sprintf(linkAka, "%s", aka2str(link->hisAka));
 	    w_log(LL_AREAFIX, "Filefix: Available File List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
 	}
@@ -399,7 +399,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     if (strend == -1) {
         nfree(cfgline);
         nfree(fileName);
-        return 1; // impossible
+        return 1; /*  impossible */
     }
     switch (action) {
     case 0:
@@ -417,7 +417,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     return 0;
 }
 
-// subscribe if (act==0),  unsubscribe if (act==1)
+/*  subscribe if (act==0),  unsubscribe if (act==1) */
 int forwardRequestToLink( char *areatag,  char *descr,
                           s_link *uplink, s_link *dwlink,
                           int act)
@@ -440,7 +440,7 @@ int forwardRequestToLink( char *areatag,  char *descr,
         if (getFileArea(config, areatag) == NULL) {
             base = uplink->fileBaseDir;
             if (config->createFwdNonPass == 0) uplink->fileBaseDir = pass;
-            // create from own address
+            /*  create from own address */
             if (isOurAka(config,dwlink->hisAka)) {
                 uplink->fileBaseDir = base;
             }
@@ -496,15 +496,15 @@ int forwardRequest(char *areatag, s_link *dwlink) {
             rc = 1;   /* link is anabled for forward requests but 
                          has no forwardFileRequestFile defined 
                       */
-        }//(uplink->forwardRequestFile!=NULL)
+        }/* (uplink->forwardRequestFile!=NULL) */
         if (rc==0) {
             nfree(Indexes);
             return rc;
         }
 
-    }   // if (uplink->forwardFileRequests && (uplink->LinkGrp) ?
-    }   // for (i = 0; i < Requestable; i++) {
-    // link with "forwardFileRequests on" not found
+    }   /*  if (uplink->forwardFileRequests && (uplink->LinkGrp) ? */
+    }   /*  for (i = 0; i < Requestable; i++) { */
+    /*  link with "forwardFileRequests on" not found */
     nfree(Indexes);
     return rc;
 }
@@ -561,7 +561,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     if (rc!=0 && limitCheck(link,msg)) rc = 6; /* areas limit exceed for link */
     if(rc == 4 && link->denyFRA==0 && !found)
     {
-        // try to forward request
+        /*  try to forward request */
         if (forwardRequest(line, link) > 0) {
             xscatprintf(&report, "%s no uplinks to forward\r", line);
             w_log( LL_AREAFIX, "Filefix: %s - no uplinks to forward", line);
@@ -900,7 +900,7 @@ void sendFilefixMessages()
     }
 }
 
-//-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-
+/* -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=- */
 
 
 int processFileFix(s_message *msg)
@@ -910,19 +910,19 @@ int processFileFix(s_message *msg)
 	s_link *tmplink = NULL;
 	char *textBuff = NULL, *report=NULL, *preport = NULL, *token = NULL;
 	
-	// find link
+	/*  find link */
 	link=getLinkFromAddr(config, msg->origAddr);
 
-	// this is for me?
+	/*  this is for me? */
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
 	
-	// ignore msg for other link (maybe this is transit...)
+	/*  ignore msg for other link (maybe this is transit...) */
 	if (notforme) {
 		return 2;
 	}
 
 
-	// security ckeck. link,araefixing & password.
+	/*  security ckeck. link,araefixing & password. */
     if (link != NULL) {
         if (link->FileFix==1) {
             if (link->fileFixPwd!=NULL) {
@@ -993,7 +993,7 @@ int processFileFix(s_message *msg)
 			tmplink->hisAka.point = msg->origAddr.point;
 			link = tmplink;
 		}
-		// security problem
+		/*  security problem */
 		
 		switch (security) {
 		case 1:
@@ -1031,7 +1031,7 @@ int processFileFix(s_message *msg)
 	}
 
 	w_log( '8', "FileFix: sucessfully done for %s",aka2str(link->hisAka));
-    // send msg to the links (forward requests to areafix)
+    /*  send msg to the links (forward requests to areafix) */
     sendFilefixMessages();
 	return 1;
 }
@@ -1081,11 +1081,11 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     
     fileechoFileName = makeMsgbFileName(config, c_area);
     
-    // translating name of the area to lowercase/uppercase
+    /*  translating name of the area to lowercase/uppercase */
     if (config->createAreasCase == eUpper) strUpper(c_area);
     else strLower(c_area);
     
-    // translating filename of the area to lowercase/uppercase
+    /*  translating filename of the area to lowercase/uppercase */
     if (config->areasFileNameCase == eUpper) strUpper(fileechoFileName);
     else strLower(fileechoFileName);
     
@@ -1176,15 +1176,15 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     {
         xscatprintf(&buff," %s",aka2str(*dwLink));
     }
-    // fix if dummys del \n from the end of file
+    /*  fix if dummys del \n from the end of file */
     fseek (f, -1L, SEEK_END);
     if (getc(f) != '\n') {
-        fseek (f, 0L, SEEK_END);  // not neccesary, but looks better ;)
+        fseek (f, 0L, SEEK_END);  /*  not neccesary, but looks better ;) */
         fputs (cfgEol(), f);
     } else {
         fseek (f, 0L, SEEK_END);
     }
-    fprintf(f, "%s%s", buff, cfgEol()); // add line to config
+    fprintf(f, "%s%s", buff, cfgEol()); /*  add line to config */
     fclose(f);
     
     /* add new created echo to config in memory */

@@ -90,7 +90,7 @@ void exit_htick(char *logstr, int print) {
     w_log(LL_CRIT, logstr);
     if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
 
-    //writeDupeFiles();
+    /* writeDupeFiles(); */
     disposeConfig(config);
     doneCharsets();
     w_log(LL_STOP, "Exit");
@@ -140,14 +140,14 @@ int removeFileMask(char *directory, char *mask)
          if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
          if (patimat(file->d_name, mask) == 1) {
 
-            //remove file
+            /* remove file */
             xstrscat(&removefile, directory, file->d_name, NULL);
             if(removefile) remove(removefile);
             w_log('6',"Removed file: %s",removefile);
             numfiles++;
             nfree(removefile);
 
-            //remove description for file
+            /* remove description for file */
             xstrscat(&descr_file_name,directory, "files.bbs",NULL);
             adaptcase(descr_file_name);
             removeDesc(descr_file_name,file->d_name);
@@ -190,15 +190,15 @@ int link_file(const char *from, const char *to)
    DWORD StreamHeaderSize;
 
    BOOL bSuccess;
-   // 
-   // open existing file that we link to
-   // 
+   /*   */
+   /*  open existing file that we link to */
+   /*   */
    hFileSource = CreateFile(
                            from,
                            FILE_WRITE_ATTRIBUTES,
                            FILE_SHARE_READ | FILE_SHARE_WRITE
                            | FILE_SHARE_DELETE,
-                           NULL, // sa
+                           NULL, /*  sa */
                            OPEN_EXISTING,
                            0,
                            NULL
@@ -209,10 +209,10 @@ int link_file(const char *from, const char *to)
       return rc;
    }
 
-   // 
-   // validate and sanitize supplied link path and use the result
-   // the full path MUST be Unicode for BackupWrite
-   // 
+   /*   */
+   /*  validate and sanitize supplied link path and use the result */
+   /*  the full path MUST be Unicode for BackupWrite */
+   /*   */
    MultiByteToWideChar( CP_ACP, 0, to,
        strlen(to)+1, wto,   
        sizeof(wto)/sizeof(wto[0]) );
@@ -224,17 +224,17 @@ int link_file(const char *from, const char *to)
       return rc;
    }
 
-   cbPathLen = (cbPathLen + 1) * sizeof(WCHAR); // adjust for byte count
+   cbPathLen = (cbPathLen + 1) * sizeof(WCHAR); /*  adjust for byte count */
 
-   // 
-   // it might also be a good idea to verify the existence of the link,
-   // (and possibly bail), as the file specified in FileLink will be
-   // overwritten if it already exists
-   // 
+   /*   */
+   /*  it might also be a good idea to verify the existence of the link, */
+   /*  (and possibly bail), as the file specified in FileLink will be */
+   /*  overwritten if it already exists */
+   /*   */
 
-   // 
-   // prepare and write the WIN32_STREAM_ID out
-   // 
+   /*   */
+   /*  prepare and write the WIN32_STREAM_ID out */
+   /*   */
    lpContext = NULL;
 
    StreamId.dwStreamId = BACKUP_LINK;
@@ -243,48 +243,48 @@ int link_file(const char *from, const char *to)
    StreamId.Size.HighPart = 0;
    StreamId.Size.LowPart = cbPathLen;
 
-   // 
-   // compute length of variable size WIN32_STREAM_ID
-   // 
+   /*   */
+   /*  compute length of variable size WIN32_STREAM_ID */
+   /*   */
    StreamHeaderSize = (LPBYTE)&StreamId.cStreamName - (LPBYTE)&
                       StreamId+ StreamId.dwStreamNameSize ;
 
    bSuccess = BackupWrite(
                          hFileSource,
-                         (LPBYTE)&StreamId,  // buffer to write
-                         StreamHeaderSize,   // number of bytes to write
+                         (LPBYTE)&StreamId,  /*  buffer to write */
+                         StreamHeaderSize,   /*  number of bytes to write */
                          &dwBytesWritten,
-                         FALSE,              // don't abort yet
-                         FALSE,              // don't process security
+                         FALSE,              /*  don't abort yet */
+                         FALSE,              /*  don't process security */
                          &lpContext
                          );
 
    if (bSuccess)
    {
 
-      // 
-      // write out the buffer containing the path
-      // 
+      /*   */
+      /*  write out the buffer containing the path */
+      /*   */
       bSuccess = BackupWrite(
                             hFileSource,
-                            (LPBYTE)FileLink,   // buffer to write
-                            cbPathLen,          // number of bytes to write
+                            (LPBYTE)FileLink,   /*  buffer to write */
+                            cbPathLen,          /*  number of bytes to write */
                             &dwBytesWritten,
-                            FALSE,              // don't abort yet
-                            FALSE,              // don't process security
+                            FALSE,              /*  don't abort yet */
+                            FALSE,              /*  don't process security */
                             &lpContext
                             );
 
-      // 
-      // free context
-      // 
+      /*   */
+      /*  free context */
+      /*   */
       BackupWrite(
                  hFileSource,
-                 NULL,               // buffer to write
-                 0,                  // number of bytes to write
+                 NULL,               /*  buffer to write */
+                 0,                  /*  number of bytes to write */
                  &dwBytesWritten,
-                 TRUE,               // abort
-                 FALSE,              // don't process security
+                 TRUE,               /*  abort */
+                 FALSE,              /*  don't process security */
                  &lpContext
                  );
    }

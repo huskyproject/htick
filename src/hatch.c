@@ -308,7 +308,7 @@ void hatch()
 
     hatchedFile = sstrdup(hatchInfo->file);
     
-    // Exist file?
+    /*  Exist file? */
     adaptcase(hatchedFile);
     if (!fexist(hatchedFile)) {
         w_log(LL_ALERT,"File %s, not found",hatchedFile);
@@ -317,7 +317,7 @@ void hatch()
 
     xstrcpy(&hatchInfo->file, GetFilenameFromPathname(hatchedFile));
 
-    if(stricmp(hatchedFile,hatchInfo->file) == 0) //hatch from current dir
+    if(stricmp(hatchedFile,hatchInfo->file) == 0) /* hatch from current dir */
     {
         int len=0;
         getcwd( buffer, 256 );
@@ -350,7 +350,7 @@ void hatch()
     
     if(filearea->description)
         hatchInfo->areadesc = sstrdup(filearea->description);
-    // Adding crc
+    /*  Adding crc */
     hatchInfo->crc = filecrc32(hatchedFile);
     
     sendToLinks(0, filearea, hatchInfo, hatchedFile);
@@ -359,16 +359,16 @@ void hatch()
 }
 
 int send(char *filename, char *area, char *addr)
-//0 - OK
-//1 - Passthrough filearea
-//2 - filearea not found
-//3 - file not found
-//4 - link not found
+/* 0 - OK */
+/* 1 - Passthrough filearea */
+/* 2 - filearea not found */
+/* 3 - file not found */
+/* 4 - link not found */
 {
     s_ticfile tic;
     s_link *link = NULL;
     s_filearea *filearea;
-    //s_addr address;
+    /* s_addr address; */
     char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
     char timestr[40];
     struct stat stbuf;
@@ -399,7 +399,7 @@ int send(char *filename, char *area, char *addr)
     _createDirectoryTree(sendfile);
     xstrcat(&sendfile,filename);
     
-    // Exist file?
+    /*  Exist file? */
     adaptcase(sendfile);
     if (!fexist(sendfile)) {
         if (!quiet) fprintf(stderr,"Error: File not found\n");
@@ -439,7 +439,7 @@ int send(char *filename, char *area, char *addr)
     
     tic.origin = tic.from = *filearea->useAka;
     
-    // Adding crc
+    /*  Adding crc */
     tic.crc = filecrc32(sendfile);
     
     xstrscat(&descr_file_name, filearea->pathName,"files.bbs",NULL);
@@ -447,7 +447,7 @@ int send(char *filename, char *area, char *addr)
     
     GetDescFormBbsFile(descr_file_name, tic.file, &tic);
     
-    // Adding path
+    /*  Adding path */
     time(&acttime);
     strcpy(timestr,asctime(gmtime(&acttime)));
     timestr[strlen(timestr)-1]=0;
@@ -458,9 +458,9 @@ int send(char *filename, char *area, char *addr)
         aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
     tic.anzpath++;
     
-    // Adding Downlink to Seen-By
+    /*  Adding Downlink to Seen-By */
     seenbyAdd(&tic.seenby,&tic.anzseenby,&link->hisAka);
-    // Forward file to
+    /*  Forward file to */
     PutFileOnLink(sendfile, &tic, link);
 
     disposeTic(&tic);
@@ -501,7 +501,7 @@ void PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
         }
     }
     
-    // fileBoxes support
+    /*  fileBoxes support */
     if (needUseFileBoxForLink(config,downlink)) {
         nfree(linkfilepath);
         if (!downlink->fileBox) 

@@ -163,7 +163,7 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
     fprintf(f, "-%02u", year % 100);
     if (countdesc == 0) fprintf(f," Description not avaliable\n");
     else {
-        //desc = formatDesc(desc, &countdesc);
+        /* desc = formatDesc(desc, &countdesc); */
         for (i=0;i<countdesc;i++) {
             if (i == 0) fprintf(f," %s\n",desc[i]);
             else fprintf(f,"                               %s\n",desc[i]);

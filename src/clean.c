@@ -139,7 +139,7 @@ void cleanPassthroughDir(void)
             if (patimat(file->d_name, "*.TIC") != 1) {
                 xstrscat(&ticfile,config->passFileAreaDir,file->d_name,NULL);
         
-                if (direxist(ticfile)) { // do not touch dirs
+                if (direxist(ticfile)) { /*  do not touch dirs */
                     nfree(ticfile);
                     continue;
                 }
@@ -186,7 +186,7 @@ void purgeFileEchos()
                 continue;
 
             xstrscat(&filename,config->fileAreas[i].pathName,file->d_name,NULL);
-            if (direxist(filename)) { // do not touch dirs
+            if (direxist(filename)) { /*  do not touch dirs */
                 nfree(filename);
                 continue;
             }

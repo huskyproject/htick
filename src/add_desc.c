@@ -73,7 +73,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     
     MakeProperCase(namefile);
     xscatprintf(&desc_line, "%-12s",namefile);
-    //fprintf (descr_file, "%-12s", namefile);
+    /* fprintf (descr_file, "%-12s", namefile); */
     if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10) {
         char dlc[10];
         dlc[0] = ' ';
@@ -81,7 +81,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
         for(i = 1; i <= config->DLCDigits; i++) dlc[i+1] = '0';
         dlc[i+1] = ']';
         dlc[i+2] = '\x00';
-        //fprintf (descr_file, "%s", dlc);
+        /* fprintf (descr_file, "%s", dlc); */
         xstrcat(&desc_line, dlc);
     }
     if((strlen(namefile) > 12) && 
@@ -124,8 +124,8 @@ int removeDesc (char *descr_file_name, char *file_name)
     f1 = fopen (descr_file_name, "r");
     if (f1 == NULL) return 1;
     
-    //strcpy(descr_file_name_tmp,descr_file_name);
-    //strcat(descr_file_name_tmp,".tmp");
+    /* strcpy(descr_file_name_tmp,descr_file_name); */
+    /* strcat(descr_file_name_tmp,".tmp"); */
     
     xstrscat(&descr_file_name_tmp,descr_file_name,".tmp",NULL);
         
@@ -338,11 +338,11 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     const char * const *list;
 #endif
     
-    // find what unpacker to use
+    /*  find what unpacker to use */
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
         filehandle = fopen(fileName, "rb");
         if (filehandle == NULL) return 2;
-        // is offset is negative we look at the end
+        /*  is offset is negative we look at the end */
         fseek(filehandle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
         if (ferror(filehandle)) { fclose(filehandle); continue; };
         for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
@@ -352,7 +352,7 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         fclose(filehandle);
     }
     
-    // unpack file_id.diz (config->fileDescName)
+    /*  unpack file_id.diz (config->fileDescName) */
     if (found) {
         char buffer[256]="";
         getcwd( buffer, 256 );

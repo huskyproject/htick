@@ -523,8 +523,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    unsigned int minLinkCount;
 
 
-   if (isToss == 1) minLinkCount = 2; // uplink and downlink
-   else minLinkCount = 1;             // only downlink
+   if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
+   else minLinkCount = 1;             /*  only downlink */
 
    if (!filearea->pass)
       strcpy(fileareapath,filearea->pathName);
@@ -641,7 +641,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
    }
 
    if (isToss == 1) {
-      // Save seenby structure
+      /*  Save seenby structure */
       old_seenby = smalloc(tic->anzseenby*sizeof(s_addr));
       memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
       old_anzseenby = tic->anzseenby;
@@ -654,9 +654,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
            (readCheck(filearea, downlink) == 0)
            )
-       {  // if link is not in seen-by list &
-           // if link can recive files from filearea
-           // Adding Downlink to Seen-By
+       {  /*  if link is not in seen-by list & */
+           /*  if link can recive files from filearea */
+           /*  Adding Downlink to Seen-By */
            /*
            tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
            memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(s_addr));
@@ -849,7 +849,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                 if (createOutboundFileName(to_link,
                      to_link->fileEchoFlavour, FLOFILE)==0) {
                   strcpy(linkfilepath,to_link->floFile);
-                  if (!busy) { // FIXME: it always not busy!!!
+                  if (!busy) { /*  FIXME: it always not busy!!! */
                      *(strrchr(linkfilepath,PATH_DELIM))=0;
                      newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
                      if (move_file(ticfile,newticfile,0)==0) { /* don't overwrite existing file */
@@ -1142,7 +1142,7 @@ void checkTmpDir(void)
 
    while ((file = readdir(dir)) != NULL) {
       if (strlen(file->d_name) != 12) continue;
-      //if (!file->d_size) continue;
+      /* if (!file->d_size) continue; */
       ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file->d_name)+1);
       strcpy(ticfile, tmpdir);
       strcat(ticfile, file->d_name);
@@ -1150,8 +1150,8 @@ void checkTmpDir(void)
          memset(&tic,0,sizeof(tic));
          parseTic(ticfile,&tic);
          link = getLinkFromAddr(config, tic.to);
-	 // createFlo doesn't  support ASO!!!
-         //if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) {
+	 /*  createFlo doesn't  support ASO!!! */
+         /* if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) { */
         if (createOutboundFileName(link, link->fileEchoFlavour, FLOFILE)==0) {
 	     filearea=getFileArea(config,tic.area);
 	     if (filearea!=NULL) {
@@ -1233,7 +1233,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	    textWithoutArea = msg->text;
 
 	    if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
-		// jump over AREA:xxxxx\r
+		/*  jump over AREA:xxxxx\r */
 		while (*(textWithoutArea) != '\r') textWithoutArea++;
 		textWithoutArea++;
 		textLength -= (size_t) (textWithoutArea - msg->text);
@@ -1252,7 +1252,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 		if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
 		    p++;
 		    if (NULL != (q = strstr(p,"\001PATH: "))) {
-			// memmove(p,q,strlen(q)+1);
+			/*  memmove(p,q,strlen(q)+1); */
 			memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
 			textLength -= (size_t) (q - p);
 		    } else {
@@ -1266,14 +1266,14 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 	    ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
 						 (UCHAR **) &textStart,
 						 &textLength);
-	    // textStart is a pointer to the first non-kludge line
+	    /*  textStart is a pointer to the first non-kludge line */
 	    xmsg = createXMSG(config,msg, NULL, forceattr,NULL);
 
 	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
 			    textLength, (dword) textLength,
 			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0)
 		w_log(LL_ERROR, "Could not write msg in %s!", echo->fileName);
-	    else rc = 1; // normal exit
+	    else rc = 1; /*  normal exit */
 
 	    if (MsgCloseMsg(hmsg)!=0) {
 		w_log(LL_ERROR, "Could not close msg in %s!", echo->fileName);
@@ -1293,7 +1293,7 @@ int putMsgInBadArea(s_message *msg, s_addr pktOrigAddr)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
 
-    // get real name area
+    /*  get real name area */
     line = strchr(msg->text, '\r');
     if (strncmp(msg->text,"AREA:",5)==0) {
         *line = 0;

@@ -63,7 +63,7 @@ void cvtAddr(const NETADDR aka1, s_addr *aka2)
 
 void convertMsgHeader(XMSG xmsg, s_message *msg)
 {
-   // convert header
+   /*  convert header */
    msg->attributes  = xmsg.attr;
 
    msg->origAddr.zone  = xmsg.orig.zone;
@@ -83,7 +83,7 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    xstrcat(&(msg->toUserName), (char *) xmsg.to);
    xstrcat(&(msg->fromUserName), (char *) xmsg.from);
 
-   // recoding subjectLine to TransportCharset
+   /*  recoding subjectLine to TransportCharset */
    if (config->outtab != NULL) {
        recodeToTransportCharset((CHAR*)msg->subjectLine);
        recodeToTransportCharset((CHAR*)msg->fromUserName);
@@ -99,14 +99,14 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
    time_t  tm;
    struct tm *dt;
 
-   // get kludge lines
+   /*  get kludge lines */
    ctrlLen = MsgGetCtrlLen(SQmsg);
    ctrlBuff = (unsigned char *) smalloc(ctrlLen+1);
    MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
    kludgeLines = (char *) CvtCtrlToKludge(ctrlBuff);
    free(ctrlBuff);
 
-   // make text
+   /*  make text */
    msg->textLength = MsgGetTextLen(SQmsg);
 
    time(&tm);
@@ -119,9 +119,9 @@ void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
 
 
    strcpy(msg->text, kludgeLines);
-//   strcat(msg->text, "\001TID: ");
-//   strcat(msg->text, versionStr);
-//   strcat(msg->text, "\r");
+/*    strcat(msg->text, "\001TID: "); */
+/*    strcat(msg->text, versionStr); */
+/*    strcat(msg->text, "\r"); */
 
    MsgReadMsg(SQmsg, NULL, 0, msg->textLength, (unsigned char *) msg->text+strlen(msg->text), 0, NULL);
 
@@ -147,11 +147,11 @@ void scanNMArea(s_area *afixarea)
       highMsg = MsgGetHighMsg(netmail);
       w_log( '1', "Scanning %s", afixarea->areaName);
 
-      // scan all Messages for filefix
+      /*  scan all Messages for filefix */
       for (i=1; i<= highMsg; i++) {
          msg = MsgOpenMsg(netmail, MOPEN_RW, i);
 
-         // msg does not exist
+         /*  msg does not exist */
          if (msg == NULL) continue;
 
          MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
@@ -160,7 +160,7 @@ void scanNMArea(s_area *afixarea)
          for (j=0; j < config->addrCount; j++)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
-         // if for filefix - process it
+         /*  if for filefix - process it */
          if (fc_stristr(config->filefixNames,(char*)xmsg.to) &&
               for_us && (xmsg.attr & MSGREAD) != MSGREAD)
             {
