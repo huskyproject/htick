@@ -173,41 +173,30 @@ int removeFileMask(char *directory, char *mask)
 {
     DIR           *dir;
     struct dirent *file;
-    char          *removefile;
-    char          tmpDir[256], descr_file_name[256];
-    unsigned int  numfiles = 0, dirLen;
+    char          *removefile = NULL;
+    char          *descr_file_name = NULL;
+    unsigned int  numfiles = 0;
 
    if (directory == NULL) return(0);
-   dirLen = strlen(directory);
-   if (directory[dirLen-1] == PATH_DELIM) {
-      strcpy(tmpDir, directory);
-   } else {
-      strcpy(tmpDir, directory);
-      tmpDir[dirLen] = PATH_DELIM;
-      tmpDir[dirLen+1] = '\0';
-      dirLen++;
-   }
 
-   dir = opendir(tmpDir);
+   dir = opendir(directory);
    if (dir != NULL) {
       while ((file = readdir(dir)) != NULL) {
          if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
          if (patimat(file->d_name, mask) == 1) {
 
             //remove file
-            removefile = (char *) smalloc(dirLen+strlen(file->d_name)+1);
-            strcpy(removefile, tmpDir);
-            strcat(removefile, file->d_name);
+            xstrscat(&removefile, directory, file->d_name, NULL);
             remove(removefile);
             w_log('6',"Removed file: %s",removefile);
             numfiles++;
             free(removefile);
 
             //remove description for file
-            strcpy(descr_file_name, tmpDir);
-            strcat(descr_file_name, "files.bbs");
+            xstrscat(&descr_file_name,directory, "files.bbs",NULL);
             adaptcase(descr_file_name);
             removeDesc(descr_file_name,file->d_name);
+            nfree(descr_file_name);
          }
       }
       closedir(dir);

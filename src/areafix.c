@@ -85,51 +85,6 @@ char *errorRQ(char *line)
    return report;
 }
 
-s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char *toName, char *subject, char netmail)
-{
-    // netmail == 0 - echomail
-    // netmail == 1 - netmail
-    time_t time_cur;
-    s_message *msg;
-    
-    time_cur = time(NULL);
-    
-    msg = (s_message*)scalloc(1, sizeof(s_message));
-    
-    msg->origAddr.zone = origAddr->zone;
-    msg->origAddr.net = origAddr->net;
-    msg->origAddr.node = origAddr->node;
-    msg->origAddr.point = origAddr->point;
-
-    msg->destAddr.zone = destAddr->zone;
-    msg->destAddr.net = destAddr->net;
-    msg->destAddr.node = destAddr->node;
-    msg->destAddr.point = destAddr->point;
-
-	
-
-    msg->fromUserName = (char*)scalloc(strlen(fromName)+1, sizeof(char));
-    strcpy(msg->fromUserName, fromName);
-    
-    msg->toUserName = (char*)scalloc(strlen(toName)+1, sizeof(char));
-    strcpy(msg->toUserName, toName);
-    
-    msg->subjectLine = (char*)scalloc(strlen(subject)+1, sizeof(char));
-    strcpy(msg->subjectLine, subject);
-
-    msg->attributes = MSGLOCAL;
-    if (netmail) {
-       msg->attributes |= MSGPRIVATE;
-       msg->netMail = 1;
-    }
-    if (config->filefixKillReports) msg->attributes |= MSGKILL;
-    
-    fts_time(msg->datetime, localtime(&time_cur));
-    
-    
-    return msg;
-}
-
 int subscribeCheck(s_filearea area, s_message *msg, s_link *link)
 {
   unsigned int i;
@@ -377,30 +332,21 @@ void removelink(s_link *link, s_filearea *area) {
 char *unlinked(s_message *msg, s_link *link)
 {
     unsigned int i, rc, n;
-    char *report, addline[256];
+    char *report=NULL;
     s_filearea *area;
     
     area=config->fileAreas;
     
-    sprintf(addline, "Unlinked fileareas to %s\r\r", aka2str(link->hisAka));
-    report=(char*)scalloc(strlen(addline)+1, sizeof(char));
-    strcpy(report, addline);
+    xscatprintf(&report, "Unlinked areas to %s\r\r", aka2str(link->hisAka));
     
     for (i=n=0; i<config->fileAreaCount; i++) {
 	rc=subscribeCheck(area[i], msg, link);
 	if (rc == 1) {
-	    report=(char*)srealloc(report, strlen(report)+
-				strlen(area[i].areaName)+3);
-	    strcat(report, " ");
-	    strcat(report, area[i].areaName);
-	    strcat(report, "\r");
-	    n++;
+        xscatprintf(&report, " %s\r", area[i].areaName);
+        n++;
 	}
     }
-    sprintf(addline, "\r%u areas unlinked\r", n);
-    report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
-    strcat(report, addline);
-
+    xscatprintf(&report, "\r%u areas unlinked\r", n);
     w_log( '8', "FileFix: unlinked fileareas list sent to %s", aka2str(link->hisAka));
 
     return report;
@@ -408,10 +354,10 @@ char *unlinked(s_message *msg, s_link *link)
 
 char *list(s_message *msg, s_link *link) {
 
-    unsigned int i,j,active,avail,rc,desclen,len;
+    unsigned int i,j,active,avail,rc,desclen;
     unsigned int *areaslen;
     unsigned int maxlen;
-    char *report, addline[256];
+    char *report=NULL;
     int readdeny, writedeny;
 
    areaslen = smalloc(config->fileAreaCount * sizeof(int));
@@ -421,11 +367,7 @@ char *list(s_message *msg, s_link *link) {
       areaslen[i]=strlen(config->fileAreas[i].areaName);
       if (areaslen[i]>maxlen) maxlen = areaslen[i];
    }
-
-   sprintf(addline, "Available fileareas for %s\r\r", aka2str(link->hisAka));
-
-   report=(char*)scalloc(strlen(addline)+1,sizeof(char));
-   strcpy(report, addline);
+   xscatprintf(&report, "Available fileareas for %s\r\r", aka2str(link->hisAka));
 
    for (i=active=avail=0; i< config->fileAreaCount; i++) {
 
@@ -436,43 +378,37 @@ char *list(s_message *msg, s_link *link) {
          else
            desclen=0;
 
-         len=strlen(report)+areaslen[i]+(maxlen-areaslen[i])+desclen+6;
-
-         report=(char*) srealloc(report, len);
-
          if (rc==0) {
             readdeny = readCheck(&config->fileAreas[i], link);
             writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
             if (!readdeny && !writedeny)
-               strcat(report,"& ");
+               xstrcat(&report,"& ");
             else if (writedeny)
-               strcat(report,"+ ");
-            else strcat(report,"* ");
+               xstrcat(&report,"+ ");
+            else xstrcat(&report,"* ");
             active++;
             avail++;
          } else {
-            strcat(report,"  ");
+            xstrcat(&report,"  ");
             avail++;
          }
-         strcat(report, config->fileAreas[i].areaName);
+         xstrcat(&report, config->fileAreas[i].areaName);
          if (desclen!=0) {
-            strcat(report," ");
+            xstrcat(&report," ");
             for (j=0;j<(maxlen)-areaslen[i];j++) 
-	       strcat(report,".");
-            strcat(report," ");
-            strcat(report,config->fileAreas[i].description);
+                xstrcat(&report,".");
+            xstrcat(&report," ");
+            xstrcat(&report,config->fileAreas[i].description);
          }
-         strcat(report,"\r");
+         xstrcat(&report,"\r");
       }
    }
 
-   sprintf(addline,"\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
-   report=(char*) srealloc(report, strlen(report)+strlen(addline)+1);
-   strcat(report, addline);
+   xscatprintf(&report, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
 
    w_log( '8', "FileFix: list sent to %s", aka2str(link->hisAka));
 
-   free(areaslen);
+   nfree(areaslen);
 
    return report;
 }
@@ -480,44 +416,39 @@ char *list(s_message *msg, s_link *link) {
 char *linked(s_message *msg, s_link *link, int action)
 {
     unsigned int i, n, rc;
-    char *report, addline[256];
+    char *report=NULL;
     int readdeny, writedeny;
 
     if ((link->Pause & FPAUSE) == FPAUSE) 
-        sprintf(addline, "\rPassive fileareas on %s\r\r", aka2str(link->hisAka));
+        xscatprintf(&report, "\rPassive fileareas on %s\r\r", aka2str(link->hisAka));
     else
-	sprintf(addline, "\rActive fileareas on %s\r\r", aka2str(link->hisAka));
+        xscatprintf(&report, "\rActive fileareas on %s\r\r", aka2str(link->hisAka));
 							
-    report=(char*)scalloc(strlen(addline)+1, sizeof(char));
-    strcpy(report, addline);
     
     for (i=n=0; i<config->fileAreaCount; i++) {
 	rc=subscribeCheck(config->fileAreas[i], msg, link);
 	if (rc==0) {
-	    if (action == 1) {
-	       report=(char*)srealloc(report, strlen(report)+
-			       strlen(config->fileAreas[i].areaName)+4);
-               readdeny = readCheck(&config->fileAreas[i], link);
-               writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
-               if (!readdeny && !writedeny)
-                  strcat(report,"& ");
-               else if (writedeny)
-                  strcat(report,"+ ");
-               else strcat(report,"* ");
-	    } else {
-	    report=(char*)srealloc(report, strlen(report)+
-			    strlen(config->fileAreas[i].areaName)+3);
-	       strcat(report," ");
-	    }
-	    strcat(report, config->fileAreas[i].areaName);
-	    strcat(report, "\r");
+        if (action == 1) {
+            readdeny = readCheck(&config->fileAreas[i], link);
+            writedeny = writeCheck(&config->fileAreas[i], &(link->hisAka));
+            if (!readdeny && !writedeny)
+                xstrcat(&report,"& ");
+            else if (writedeny)
+                xstrcat(&report,"+ ");
+            else 
+                xstrcat(&report,"* ");
+        } else {
+            xstrcat(&report," ");
+        }
+	    xstrcat(&report, config->fileAreas[i].areaName);
+	    xstrcat(&report, "\r");
 	    n++;
 	}
     }
-    if (action == 1) sprintf(addline, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
-    else sprintf(addline, "\r%u areas linked\r", n);
-    report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
-    strcat(report, addline);
+    if (action == 1) 
+        xscatprintf(&report, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
+    else 
+        xscatprintf(&report, "\r%u areas linked\r", n);
     return report;
 }
 
@@ -648,7 +579,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 
 char *subscribe(s_link *link, s_message *msg, char *cmd) {
 	unsigned int i, c, rc=4;
-	char *line, *report, addline[256];
+	char *line, *report = NULL;
 	s_filearea *area;
 
 	line = cmd;
@@ -672,39 +603,36 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		
 		switch (rc) {
 		    case 0: 
-			sprintf(addline,"%s Already linked\r", area->areaName);
+			xscatprintf(&report, "%s Already linked\r", area->areaName);
 			w_log( '8', "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1: 
 		    case 3: 
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
-			sprintf(addline,"%s Added\r",area->areaName);
+			xscatprintf(&report, "%s Added\r",area->areaName);
 			w_log( '8', "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
 			break;
-		    case 5: sprintf(addline,"%s Link is not possible\r", area->areaName);
+		    case 5: 
+                xscatprintf(&report, "%s Link is not possible\r", area->areaName);
 			w_log( '8', "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
 			break;
 		    default :
 			w_log( '8', "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
 			continue;
 		}
-		report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
-		strcat(report, addline);
 	}
 	
-	if (*report == 0) {
-	    sprintf(addline,"%s Not found\r",line);
+	if (!report) {
+	    xscatprintf(&report,"%s Not found\r",line);
 	    w_log( '8', "FileFix: filearea %s is not found",line);
-	    report=(char*)srealloc(report, strlen(addline)+1);
-	    strcpy(report, addline);
 	}
 	return report;
 }
 
 char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	unsigned int i, c, rc = 2;
-	char *line, addline[256];
+	char *line;
 	char *report=NULL;
 	s_filearea *area;
 	
@@ -712,8 +640,6 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 	
 	if (line[1]=='-') return NULL;
 	line++;
-	
-	report=(char*)scalloc(1, sizeof(char));
 	
 	for (i = 0; i< config->fileAreaCount; i++) {
 		rc=subscribeAreaCheck(&(config->fileAreas[i]),msg,line, link);
@@ -731,28 +657,24 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		switch (rc) {
 		case 0: removelink(link, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
-			sprintf(addline,"%s Unlinked\r",area->areaName);
+			xscatprintf(&report, "%s Unlinked\r",area->areaName);
 			w_log( '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
 			break;
 		case 1: if (strstr(line, "*")) continue;
-			sprintf(addline,"%s Not linked\r",line);
+			xscatprintf(&report, "%s Not linked\r",line);
 			w_log( '8', "FileFix: area %s is not linked to %s", area->areaName, aka2str(link->hisAka));
 			break;
-		case 5: sprintf(addline,"%s Unlink is not possible\r", area->areaName);
+		case 5: 
+            xscatprintf(&report, "%s Unlink is not possible\r", area->areaName);
 			w_log( '8', "FileFix: area %s -- unlink is not possible for %s", area->areaName, aka2str(link->hisAka));
 			break;
 		default: w_log( '8', "FileFix: area %s -- no access for %s", area->areaName, aka2str(link->hisAka));
 			continue;
 		}
-		
-		report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
-		strcat(report, addline);
 	}
-	if (*report == 0) {
-		sprintf(addline,"%s Not found\r",line);
+	if (!report) {
+		xscatprintf(&report, "%s Not found\r",line);
 		w_log( '8', "FileFix: area %s is not found", line);
-		report=(char*)srealloc(report, strlen(addline)+1);
-		strcpy(report, addline);
 	}
 	return report;
 }
@@ -760,59 +682,60 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 char *resend(s_link *link, s_message *msg, char *cmd)
 {
     unsigned int rc, i;
-    char *line, addline[256];
-    char *report=NULL, *token, filename[100], filearea[100];
+    char *line;
+    char *report=NULL, *token, *filename=NULL, *filearea=NULL;
     s_filearea *area = NULL;
 
-   report=(char*)scalloc(1, sizeof(char));
-   line = cmd;
-   line=stripLeadingChars(line, " \t");
-   token = strtok(line, " \t\0");
-   if (token == NULL)
-      sprintf(addline,"Error in line! Format: %%Resend <file> <filearea>\r");
-   else {
-      strcpy(filename,token);
-      token=stripLeadingChars(strtok(NULL, "\0"), " ");
-      if (token == NULL)
-         sprintf(addline,"Error in line! Format: %%Resend <file> <filearea>\r");
-      else {
-         strcpy(filearea,token);
-	 area = getFileArea(config,filearea);
-	 if (area != NULL) {
-	    rc = 1;
-	    for (i = 0; i<area->downlinkCount;i++)
-	       if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
-	          rc = 0;
-	    if (rc == 1 && area->mandatory == 1) rc = 5;
-	    else rc = send(filename,filearea,aka2str(link->hisAka));
-	    switch (rc) {
-	    case 0: sprintf(addline,"Send %s from %s for %s\r",
-                            filename,filearea,aka2str(link->hisAka));
-                    break;
-	    case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
-		    w_log( '8', "FileFix %%Resend: Passthrough filearea %s", filearea);
-	            break;
-	    case 2: sprintf(addline,"Error: Filearea %s not found!\r",filearea);
-		    w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
-	            break;
-	    case 3: sprintf(addline,"Error: File %s not found!\r",filename);
-		    w_log( '8', "FileFix %%Resend: File %s not found", filename);
-	            break;
-	    case 5: sprintf(addline,"Error: You don't have access for filearea %s!\r",filearea);
-		    w_log( '8', "FileFix %%Resend: Link don't have access for filearea %s", filearea);
-	            break;
-	    }
-	 } else {
-	    sprintf(addline,"Error: filearea %s not found!\r",filearea);
-	    w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
-	 }
-      }
-   }
-
-   report=(char*)srealloc(report, strlen(report)+strlen(addline)+1);
-   strcat(report, addline);
-
-   return report;
+    line = cmd;
+    line=stripLeadingChars(line, " \t");
+    token = strtok(line, " \t\0");
+    if (token == NULL)
+    {       
+        xscatprintf(&report, "Error in line! Format: %%Resend <file> <filearea>\r");
+        return report;
+    }
+    filename = sstrdup(token);
+    token=stripLeadingChars(strtok(NULL, "\0"), " ");
+    if (token == NULL)
+    {
+        nfree(filename);
+        xscatprintf(&report, "Error in line! Format: %%Resend <file> <filearea>\r");
+        return report;
+    }
+    filearea = sstrdup(token);
+    area = getFileArea(config,filearea);
+    if (area != NULL) {
+        rc = 1;
+        for (i = 0; i<area->downlinkCount;i++)
+            if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
+                rc = 0;
+            if (rc == 1 && area->mandatory == 1) rc = 5;
+            else rc = send(filename,filearea,aka2str(link->hisAka));
+            switch (rc) {
+            case 0: xscatprintf(&report, "Send %s from %s for %s\r",
+                        filename,filearea,aka2str(link->hisAka));
+                break;
+            case 1: xscatprintf(&report, "Error: Passthrough filearea %s!\r",filearea);
+                w_log( '8', "FileFix %%Resend: Passthrough filearea %s", filearea);
+                break;
+            case 2: xscatprintf(&report, "Error: Filearea %s not found!\r",filearea);
+                w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
+                break;
+            case 3: xscatprintf(&report, "Error: File %s not found!\r",filename);
+                w_log( '8', "FileFix %%Resend: File %s not found", filename);
+                break;
+            case 5: xscatprintf(&report, "Error: You don't have access for filearea %s!\r",filearea);
+                w_log( '8', "FileFix %%Resend: Link don't have access for filearea %s", filearea);
+                break;
+            }
+    } else {
+        xscatprintf(&report, "Error: filearea %s not found!\r",filearea);
+        w_log( '8', "FileFix %%Resend: Filearea %s not found", filearea);
+    }
+    
+    nfree(filearea);
+    nfree(filename);
+    return report;
 }
 
 
@@ -960,7 +883,9 @@ char *areastatus(char *preport, char *text)
 
 void preprocText(char *preport, s_message *msg)
 {
-    msg->text = createKludges(config, NULL, &msg->origAddr, &msg->destAddr,versionStr);
+    msg->text = createKludges(config->disableTID, 
+                              NULL, &msg->origAddr, &msg->destAddr,
+                              versionStr);
     xstrcat(&msg->text, preport);
     xscatprintf(&msg->text, " \r--- %s FileFix\r", versionStr);
     msg->textLength=(int)strlen(msg->text);
@@ -968,12 +893,10 @@ void preprocText(char *preport, s_message *msg)
 
 char *textHead(void)
 {
-    char *text_head, tmpBuff[256];
+    char *text_head=NULL;
     
-    sprintf(tmpBuff, " FileArea%sStatus\r",	print_ch(44,' '));
-	sprintf(tmpBuff+strlen(tmpBuff)," %s  -------------------------\r",print_ch(50, '-')); 
-    text_head=(char*)scalloc(strlen(tmpBuff)+1, sizeof(char));
-    strcpy(text_head, tmpBuff);
+    xscatprintf(&text_head, " FileArea%sStatus\r",	print_ch(44,' '));
+	xscatprintf(&text_head, " %s  -------------------------\r",print_ch(50, '-')); 
     return text_head;
 }
 
@@ -981,7 +904,8 @@ void RetMsg(s_area *afixarea, s_message *msg, s_link *link, char *report, char *
 {
     s_message *tmpmsg;
     
-    tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName, subj, 1);
+    tmpmsg = makeMessage(link->ourAka, &(link->hisAka), msg->toUserName, msg->fromUserName,
+                         subj, 1,config->filefixKillReports);
     preprocText(report, tmpmsg);
     
     writeNetmail(tmpmsg, afixarea->areaName);
@@ -998,7 +922,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 	int security=1, notforme = 0;
 	s_link *link = NULL;
 	s_link *tmplink = NULL;
-	char tmp[80], *textBuff, *report=NULL, *preport, *token;
+	char *textBuff, *report=NULL, *preport, *token;
 	
 	// find link
 	link=getLinkFromAddr(config, msg->origAddr);
@@ -1084,22 +1008,20 @@ int processFileFix(s_area *afixarea, s_message *msg)
 		
 		switch (security) {
 		case 1:
-			sprintf(tmp, " \r your system is unknown\r");
+            report = sstrdup(" \r your system is unknown\r");
 			break;
 		case 2:
-			sprintf(tmp, " \r filefix is turned off\r");
+            report = sstrdup(" \r filefix is turned off\r");
 			break;
 		case 3:
-			sprintf(tmp, " \r password error\r");
+			report = sstrdup(" \r password error\r");
 			break;
 		default:
-			sprintf(tmp, " \r unknown error. mail to sysop.\r");
+			report = sstrdup(" \r unknown error. mail to sysop.\r");
 			break;
 		}
 		
-		report=(char*) smalloc(strlen(tmp)+1);
-		strcpy(report,tmp);
-		
+	
 		RetMsg(afixarea, msg, link, report, "security violation");
 		free(report);
 		
@@ -1113,8 +1035,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 
 	if ( report != NULL ) {
 		preport=linked(msg, link, 0);
-		report=(char*)srealloc(report, strlen(report)+strlen(preport)+1);
-		strcat(report, preport);
+		xstrcat(&report, preport);
 		free(preport);
 		RetMsg(afixarea, msg, link, report, "node change request");
 		free(report);

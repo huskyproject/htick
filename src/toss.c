@@ -684,11 +684,20 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    /* report about new filearea */
    if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(config, c_area)) != NULL) {
       if (getNetMailArea(config, config->ReportTo) != NULL) {
-         msg = makeMessage(area->useAka, area->useAka, versionStr, config->sysop, "Created new fileareas", 1);
-         msg->text = createKludges(config,NULL, area->useAka,area->useAka,versionStr);
+         msg = makeMessage(area->useAka,
+                           area->useAka, 
+                           versionStr, 
+                           config->sysop, 
+                           "Created new fileareas", 1,
+                           config->filefixKillReports);
+         msg->text = createKludges(config->disableTID,NULL, area->useAka,area->useAka,versionStr);
       } else {
-         msg = makeMessage(area->useAka, area->useAka, versionStr, "All", "Created new fileareas", 0);
-         msg->text = createKludges(config,config->ReportTo, area->useAka, area->useAka,versionStr);
+         msg = makeMessage(area->useAka,
+                           area->useAka,
+                           versionStr,
+                           "All", "Created new fileareas", 0,
+                           config->filefixKillReports);
+         msg->text = createKludges(config->disableTID,config->ReportTo, area->useAka, area->useAka,versionStr);
       } /* endif */
       sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,
           (area->description) ? area->description : "");
@@ -1934,21 +1943,23 @@ void reportNewFiles()
          if (newFileReport[i] != NULL) {
             if (newFileReport[i]->useAka == &(config->addr[c])) {
                if (msg == NULL) {
-                  if (getNetMailArea(config, annArea) != NULL) {
+                   if (getNetMailArea(config, annArea) != NULL) {
+                       msg = makeMessage(newFileReport[i]->useAka,
+                           newFileReport[i]->useAka,
+                           versionStr, config->sysop, "New Files", 1,
+                           config->filefixKillReports);
+                       msg->text = createKludges(
+                           config->disableTID,NULL,
+                           newFileReport[i]->useAka,
+                           newFileReport[i]->useAka,
+                           versionStr);
+                   } else {
                      msg = makeMessage(newFileReport[i]->useAka,
                         newFileReport[i]->useAka,
-                        versionStr, config->sysop, "New Files", 1);
+                        versionStr, "All", "New Files", 0,
+                        config->filefixKillReports);
                      msg->text = createKludges(
-                                     config,NULL,
-                                     newFileReport[i]->useAka,
-                                     newFileReport[i]->useAka,
-                                     versionStr);
-                  } else {
-                     msg = makeMessage(newFileReport[i]->useAka,
-                        newFileReport[i]->useAka,
-                        versionStr, "All", "New Files", 0);
-                     msg->text = createKludges(
-                                     config,annArea, 
+                                     config->disableTID,annArea, 
                                      newFileReport[i]->useAka, 
                                      newFileReport[i]->useAka,
                                      versionStr);

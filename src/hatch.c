@@ -15,6 +15,7 @@
 #include <version.h>
 #include <smapi/progprot.h>
 #include <fidoconf/adcase.h>
+#include <fidoconf/xstr.h>
 #include <filecase.h>
 
 void hatch()
@@ -92,8 +93,8 @@ int send(char *filename, char *area, char *addr)
     s_link *link = NULL;
     s_filearea *filearea;
     s_addr address;
-    char sendfile[256], descr_file_name[256], tmpfile[256];
-    char tmp[100], timestr[40], linkfilepath[256];
+    char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
+    char timestr[40], *linkfilepath=NULL;
     char *newticfile;
     struct stat stbuf;
     time_t acttime;
@@ -123,30 +124,28 @@ int send(char *filename, char *area, char *addr)
    memset(&tic,0,sizeof(tic));
 
    if (filearea->pass == 1)
-       strcpy(sendfile,config->passFileAreaDir);
+       sendfile = sstrdup(config->passFileAreaDir);
    else
-       strcpy(sendfile,filearea->pathName);
+       sendfile = sstrdup(filearea->pathName);
 
    strLower(sendfile);
    _createDirectoryTree(sendfile);
-   strcat(sendfile,filename);
+   xstrcat(&sendfile,filename);
 
    // Exist file?
    adaptcase(sendfile);
    if (!fexist(sendfile)) {
          if (!quiet) fprintf(stderr,"Error: File not found\n");
          w_log('6',"File %s, not found",sendfile);
+         nfree(sendfile);
          disposeTic(&tic);
          return 3;
    }
 
-   newticfile = strrchr(hatchfile,PATH_DELIM);
-   if (newticfile) tic.file = sstrdup(newticfile+1);
-   else tic.file = sstrdup(hatchfile);
+   tic.file = sstrdup(GetFilenameFromPathname(hatchfile));
 
    if (filearea->sendorig) {
-      strcpy(tmpfile,config->passFileAreaDir);
-      strcat(tmpfile,tic.file);
+      xstrscat(&tmpfile,config->passFileAreaDir,tic.file,NULL);
       adaptcase(tmpfile);
 
       if (copy_file(sendfile,tmpfile)!=0) {
@@ -156,6 +155,8 @@ int send(char *filename, char *area, char *addr)
          } else {
             w_log('9',"File %s not found or copyable",sendfile);
             disposeTic(&tic);
+            nfree(sendfile);
+            nfree(tmpfile);
             return(2);
          }
       } else {
@@ -164,7 +165,7 @@ int send(char *filename, char *area, char *addr)
       }
    }
 
-   strcpy(tic.area,area);
+   tic.area = sstrdup(area);
 
    stat(sendfile,&stbuf);
    tic.size = stbuf.st_size;
@@ -174,8 +175,7 @@ int send(char *filename, char *area, char *addr)
    // Adding crc
    tic.crc = filecrc32(sendfile);
 
-   strcpy(descr_file_name, filearea->pathName);
-   strcat(descr_file_name, "files.bbs");
+   xstrscat(&descr_file_name, filearea->pathName,"files.bbs",NULL);
    adaptcase(descr_file_name);
 
    getDesc(descr_file_name, tic.file, &tic);
@@ -185,10 +185,9 @@ int send(char *filename, char *area, char *addr)
    strcpy(timestr,asctime(gmtime(&acttime)));
    timestr[strlen(timestr)-1]=0;
    if (timestr[8]==' ') timestr[8]='0';
-   sprintf(tmp,"%s %lu %s UTC %s",
-           aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
    tic.path=srealloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
-   tic.path[tic.anzpath]=sstrdup(tmp);
+   xscatprintf(&tic.path[tic.anzpath],"%s %lu %s UTC %s",
+           aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
    tic.anzpath++;
 
    // Adding Downlink to Seen-By
@@ -209,13 +208,12 @@ int send(char *filename, char *area, char *addr)
    if (busy) {
       w_log( '7', "Save TIC in temporary dir");
       //Create temporary directory
-       strcpy(linkfilepath,config->busyFileDir);
+       linkfilepath = sstrdup(config->busyFileDir);
    } else {
        if (config->separateBundles) {
-          strcpy(linkfilepath, link->floFile);
-          sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
+           xscatprintf(&linkfilepath,"%s.sep%c",strrchr(link->floFile, '.'), PATH_DELIM);
        } else {
-           strcpy(linkfilepath, config->passFileAreaDir);
+           linkfilepath = sstrdup(config->passFileAreaDir);
        }
    }
    _createDirectoryTree(linkfilepath);
@@ -237,5 +235,9 @@ int send(char *filename, char *area, char *addr)
    }
    nfree(link->floFile);
    disposeTic(&tic);
+   nfree(sendfile);
+   nfree(tmpfile);
+   nfree(linkfilepath);
+   nfree(descr_file_name);
    return 0;
 }

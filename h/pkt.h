@@ -35,7 +35,6 @@
 #include <stdio.h>
 
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/typesize.h>
 #include <fcommon.h>
 
 #if !defined(__DOS__) && !defined(__MSDOS__)
@@ -44,22 +43,6 @@
 #define TEXTBUFFERSIZE 32*1024     // for Dose
 #endif
 
-struct message {
-   /*Address block */
-   s_addr destAddr, origAddr;
-
-   UINT16 attributes;
-   CHAR   datetime[21];
-   CHAR   netMail;
-   INT32  textLength;
-   INT    recode;
-
-   CHAR   *toUserName, *fromUserName, *subjectLine;
-   CHAR   *text;
-};
-
-typedef struct message   s_message;
-
 char        *getKludge(s_message msg, char *what);
 /*DOC
   Input:  a s_message struct
@@ -67,16 +50,5 @@ char        *getKludge(s_message msg, char *what);
   Output: getKludge returns a pointer to the text which followed the kludge
           If the kludge does not exist it returns NULL
 */
-// moved to fidoconfig  
-//char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka);
-/*DOC
-   Taken from the areafix.c
-   Input:  a s_addr struct
-   Output: createmsgid fills char space msgid with MSGID kludge
-
- * Note:
- * This is a simply msgid without any hash function...
- * Imho it is not necessary to create better msgid for this purpose.
- */
 
 #endif

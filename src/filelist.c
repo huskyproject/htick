@@ -13,6 +13,7 @@
 #include <add_desc.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/adcase.h>
+#include <fidoconf/xstr.h>
 
 unsigned long totalfilessize = 0;
 unsigned int totalfilesnumber = 0;
@@ -153,8 +154,8 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
 }
 
 void printFileArea(char *area_areaName, char *area_pathName, char *area_description, FILE *f, int bbs) {
-
-    char fileareapath[256], fbbsname[256], filename[256];
+    
+    char *fileareapath=NULL, *fbbsname=NULL, *filename=NULL;
     char *fbbsline;
     DIR            *dir;
     struct dirent  *file;
@@ -169,98 +170,99 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     FILE *fbbs;
     char *token = "";
     int flag = 0;
+    
+    fileareapath = sstrdup(area_pathName);
+    strLower(fileareapath);
+    _createDirectoryTree(fileareapath);
+    xstrscat(&fbbsname,fileareapath,"files.bbs",NULL);
+    adaptcase(fbbsname);
+    
+    dir = opendir(fileareapath);
+    if (dir == NULL) return;
 
-   strcpy(fileareapath,area_pathName);
-   strLower(fileareapath);
-   _createDirectoryTree(fileareapath);
-   strcpy(fbbsname,fileareapath);
-   strcat(fbbsname,"files.bbs");
-   adaptcase(fbbsname);
-
-   dir = opendir(fileareapath);
-   if (dir == NULL) return;
-
-   while ((file = readdir(dir)) != NULL) {
-      if (strcmp(file->d_name,".") == 0 || strcmp(file->d_name,"..") == 0)
-         continue;
-      strcpy(filename, fileareapath);
-      strcat(filename, file->d_name);
-      if (stricmp(filename, fbbsname) == 0) continue;
-      if (!flag) {
-         if (bbs) fprintf(f,"BbsArea: %s", area_areaName);
-         else fprintf(f,"FileArea: %s", area_areaName);
-         if (area_description!=NULL)
-            fprintf(f," (%s)\n", area_description);
-          else
-            fprintf(f,"\n");
-          fprintf(f,"-----------------------------------------------------------------------------\n");
-	  flag = 1;
-      }
-      memset(&tic,0,sizeof(tic));
-      if (getDesc(fbbsname, file->d_name, &tic) == 1) {
-         tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
-         tic.desc[tic.anzdesc]=sstrdup("Description not avaliable");
-	 tic.anzdesc = 1;
-         add_description(fbbsname, file->d_name, tic.desc, 1);
-      }
-      stat(filename,&stbuf);
-      fileTime = stbuf.st_mtime;
-      locTime = localtime(&fileTime);
-      totalsize += stbuf.st_size;
-      totalnumber++;
-      putFileInFilelist(f, file->d_name, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, tic.anzdesc, tic.desc);
-      disposeTic(&tic);
-   }
-   if (flag) {
-      fprintf(f,"-----------------------------------------------------------------------------\n");
-      fprintf(f,"Total files in area: %4d, total size: %10lu bytes\n\n",totalnumber,totalsize);
-   }
-   if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
-   while ((fbbsline = readLine(fbbs)) != NULL) {
-         if (*fbbsline == 0 || *fbbsline == 10 || *fbbsline == 13
-	     || *fbbsline == ' ' || *fbbsline == '\t' || *fbbsline == '>')
+    w_log( LL_INFO, "Processing: %s",area_areaName);
+    
+    while ((file = readdir(dir)) != NULL) {
+        if (strcmp(file->d_name,".") == 0 || strcmp(file->d_name,"..") == 0)
             continue;
-
-         Len = strlen(fbbsline);
-         if (fbbsline[Len-1]=='\n')
-            fbbsline[--Len]=0;
-
-         if (fbbsline[Len-1]=='\r')
-            fbbsline[--Len]=0;
-
-         token = strtok(fbbsline, " \t\0");
-
-         if (token==NULL)
+        nfree(filename);
+        xstrscat(&filename,fileareapath,file->d_name,NULL);
+        if (stricmp(filename, fbbsname) == 0) continue;
+        if (!flag) {
+            if (bbs) fprintf(f,"BbsArea: %s", area_areaName);
+            else fprintf(f,"FileArea: %s", area_areaName);
+            if (area_description!=NULL)
+                fprintf(f," (%s)\n", area_description);
+            else
+                fprintf(f,"\n");
+            fprintf(f,"-----------------------------------------------------------------------------\n");
+            flag = 1;
+        }
+        memset(&tic,0,sizeof(tic));
+        if (getDesc(fbbsname, file->d_name, &tic) == 1) {
+            tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
+            tic.desc[tic.anzdesc]=sstrdup("Description not avaliable");
+            tic.anzdesc = 1;
+            add_description(fbbsname, file->d_name, tic.desc, 1);
+        }
+        stat(filename,&stbuf);
+        fileTime = stbuf.st_mtime;
+        locTime = localtime(&fileTime);
+        totalsize += stbuf.st_size;
+        totalnumber++;
+        putFileInFilelist(f, file->d_name, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, tic.anzdesc, tic.desc);
+        disposeTic(&tic);
+    }
+    if (flag) {
+        fprintf(f,"-----------------------------------------------------------------------------\n");
+        fprintf(f,"Total files in area: %4d, total size: %10lu bytes\n\n",totalnumber,totalsize);
+    }
+    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
+    while ((fbbsline = readLine(fbbs)) != NULL) {
+        if (*fbbsline == 0 || *fbbsline == 10 || *fbbsline == 13
+            || *fbbsline == ' ' || *fbbsline == '\t' || *fbbsline == '>')
             continue;
-
-         strcpy(filename,fileareapath);
-         strcat(filename,token);
-         adaptcase(filename);
-	 if (!fexist(filename)) {
+        
+        Len = strlen(fbbsline);
+        if (fbbsline[Len-1]=='\n')
+            fbbsline[--Len]=0;
+        
+        if (fbbsline[Len-1]=='\r')
+            fbbsline[--Len]=0;
+        
+        token = strtok(fbbsline, " \t\0");
+        
+        if (token==NULL)
+            continue;
+        nfree(filename);
+        xstrscat(&filename,fileareapath,token,NULL);
+        adaptcase(filename);
+        if (!fexist(filename)) {
             removeFiles = srealloc(removeFiles, sizeof(char *)*(removeCount+1));
-	    removeFiles[removeCount] = (char *) smalloc(strlen(strrchr(filename,PATH_DELIM)+1)+1);
+            removeFiles[removeCount] = (char *) smalloc(strlen(strrchr(filename,PATH_DELIM)+1)+1);
             strcpy(removeFiles[removeCount], strrchr(filename,PATH_DELIM)+1);
-	    removeCount++;
-	 }
-	 nfree(fbbsline);
-   }
-   fclose(fbbs);
-   if (removeCount > 0) {
-      for (i=0; i<removeCount; i++) {
-        removeDesc(fbbsname,removeFiles[i]);
-	nfree(removeFiles[i]);
-      }
-      nfree(removeFiles);
-   }
-   totalfilessize += totalsize;
-   totalfilesnumber += totalnumber;
-   return;
+            removeCount++;
+        }
+        nfree(fbbsline);
+    }
+    fclose(fbbs);
+    if (removeCount > 0) {
+        for (i=0; i<removeCount; i++) {
+            removeDesc(fbbsname,removeFiles[i]);
+            nfree(removeFiles[i]);
+        }
+        nfree(removeFiles);
+    }
+    totalfilessize += totalsize;
+    totalfilesnumber += totalnumber;
+    nfree(filename);
+    return;
 }
 
 void filelist()
 {
     FILE *f;
-    int i;
+    unsigned int i;
 
    w_log( LL_INFO, "Start filelist...");
 
