@@ -341,7 +341,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
    if (tic->date!=0)
       fprintf(tichandle,"Date %lu\r\n",tic->date);
    if (tic->crc!=0)
-      fprintf(tichandle,"Crc %lX\r\n",tic->crc);
+      fprintf(tichandle,"Crc %08lX\r\n",tic->crc);
 
    for (i=0;i<tic->anzpath;i++)
        fprintf(tichandle,"Path %s\r\n",tic->path[i]);
@@ -1213,7 +1213,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (!filearea->noCRC) {
       crc = filecrc32(ticedfile);
       if (tic.crc != crc) {
-         writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%lx, need:%lx",tic.file,tic.crc,crc);
+         writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
          disposeTic(&tic);
          return(3);
       }
