@@ -1,3 +1,8 @@
+2002-08-22 Thursday 06:22  sfpavel
+
+	* debian/changelog (htick-1_0-stable.6): Correct apt location (now
+	http://husky.sourceforge.net/debian)
+
 2002-08-17 Saturday 07:05  sfpavel
 
 	* debian/: changelog, postinst (htick-1_0-stable.[5,4]): New debian
