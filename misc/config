@@ -15,6 +15,7 @@ OriginInAnnounce
 ConvertLongNames	DontTouch
 FileDescName		file_id.diz
 FileAreaCreatePerms	0755
+FileDescPos		13
 
 AnnounceSpool		/var/spool/ftn/announce
 
@@ -36,5 +37,9 @@ AnnAddrFrom	2:5080/159.1
 AnnAddrTo	2:5080/159.100
 AnnMessFlags	pvt k/s
 AnnOrigin	Express Mail Spy
+
+ExecOnFile	NODEDIFF nodediff.* make-ndl
+ExecOnFile	MU.AREALIST 5080elst.zip unzip -q -o -d /var/lib/ftn/husky
+ExecOnFile	MU.AREALIST 5080flst.zip unzip -q -o -d /var/lib/ftn/husky
 
 endif
