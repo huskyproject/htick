@@ -1882,21 +1882,21 @@ void reportNewFiles()
                       newFileReport[b]->useAka == &(config->addr[c]) &&
                       stricmp(newFileReport[i]->areaName,
                       newFileReport[b]->areaName) == 0) {
-                      xscatprintf(&tmp," %-12s %9ld ", strUpper(newFileReport[i]->fileName), 
-                          newFileReport[i]->fileSize);
+                      xscatprintf(&tmp," %-12s %9ld ", strUpper(newFileReport[b]->fileName), 
+                          newFileReport[b]->fileSize);
                       if(strlen(tmp) > 24)
                           xscatprintf(&(msg->text),"%s\r",tmp);
                       else
                           xstrcat(&(msg->text),tmp);
                       nfree(tmp);
                       
-                      tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
+                      tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       
                       xstrcat(&(msg->text),tmp);
                       if (config->originInAnnounce) {
                           xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                              newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
-                              newFileReport[i]->origin.node,newFileReport[i]->origin.point);
+                              newFileReport[b]->origin.zone,newFileReport[i]->origin.net,
+                              newFileReport[b]->origin.node,newFileReport[i]->origin.point);
                       }
                       if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
                       nfree(tmp);
