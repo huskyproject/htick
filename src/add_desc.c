@@ -32,6 +32,7 @@
 #include <global.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/dirlayer.h>
 #include <toss.h>
 #include <filecase.h>
 
