@@ -2,15 +2,20 @@
 .SH NAME
 htick \- Husky File-Ticker
 .SH SYNOPSIS
-.B htick <command>
+.B htick [-q] [-c config-file] <command>
+.SH "OPTIONS"
+.B -q
+Quiet mode: don't print any messages to screen
+.B -c config-file
+Specify alternate config file
 .SH "DESCRIPTION"
 .SS "Tossen"
 .B htick
 reads *.tic Files in your Protected Inbound. According to the Information
-/fBhtick/fR gets out of that *.tic Files it will process the received archives 
+/fBhtick/fR gets out of that *.tic Files it will process the received archives
 and sort them into the filebase.
 .SS "FileFix"
-.B htick 
+.B htick
 has a builtin FileFix. A FileFix helps your users to maintain their area-subscriptions
 without your interaction.
 .SS "Hatch"
@@ -58,8 +63,8 @@ Announce new files in text file (toss and hatch).
 Announce new fileecho in text file.
 .br
 .B replace [<filemask>]
-Hatch file into Area, using Description for file, if exist "replace", 
-then fill replace field in TIC; if not exist <filemask>, then put <file> 
+Hatch file into Area, using Description for file, if exist "replace",
+then fill replace field in TIC; if not exist <filemask>, then put <file>
 in field.
 
 .SH "RETURN VALUE"
@@ -77,7 +82,7 @@ wenn ein Fehler gefunden.
 \fI/fido/etc/config\fR  Default Fidoconfig.
 .SH NOTES
 All Husky-Software is written by various developers. For detailed information
-about the Husky-Team take a look at 
+about the Husky-Team take a look at
 http://husky.physcip.uni-stuttgart.de/team.html.
 .sp 1
 Not all features are implemented yet, you are welcome to implement them :)

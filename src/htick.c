@@ -86,17 +86,20 @@ int __stdcall SetFileApisToOEM(void);
 #define CharToOem CharToOemA
 #endif
 
+static char *cfgfile=NULL;
+
 int processCommandLine(int argc, char **argv)
 {
     int i = 0;
     int rc = 1;
     char *basename, *extdelim;
-    
+
     if (argc == 1) {
         printf(
             "\nUsage: htick [-q] <command>\n"
             "\n"
             " -q                      Quiet mode (display only urgent messages to console)\n"
+            " -c config-file          Specify alternate config file\n"
             "\n"
             "Commands:\n"
             " toss                    Reading *.tic and tossing files\n"
@@ -120,11 +123,15 @@ int processCommandLine(int argc, char **argv)
             );
         return 0;
     }
-    
+
     while (i < argc-1) {
         i++;
         if ( !strcmp(argv[i], "-q") ) {
             quiet=1;
+            continue;
+        }
+        if ( !strcmp(argv[i], "-c") && ++i<argc ) {
+            cfgfile = argv[i];
             continue;
         }
         if (0 == stricmp(argv[i], "toss")) {
@@ -145,7 +152,7 @@ int processCommandLine(int argc, char **argv)
             basename = strrchr(hatchfile, PATH_DELIM);
             if (basename==NULL) basename = hatchfile; else basename++;
             if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
-            
+
             if (extdelim - basename > 8 || strlen(extdelim) > 4) {
                 if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
             }
@@ -195,7 +202,7 @@ int processCommandLine(int argc, char **argv)
                     i++;
                     dlistfile = sstrdup(argv[i]);
                 }
-            } 
+            }
             continue;
         } else if (stricmp(argv[i], "announce") == 0) {
             cmAnnounce = 1;
@@ -225,7 +232,7 @@ int processCommandLine(int argc, char **argv)
             fprintf(stderr, "Unrecognized Commandline Option %s!\n", argv[i]);
             rc = 0;
         }
-        
+
    } /* endwhile */
    return rc;
 }
@@ -236,7 +243,7 @@ void processConfig()
 
    setvar("module", "htick");
    SetAppModule(M_HTICK);
-   config = readConfig(NULL);
+   config = readConfig(cfgfile);
    if (NULL == config) {
       fprintf(stderr, "Config file not found\n");
       exit(1);
@@ -295,7 +302,7 @@ void processConfig()
             exit(EX_CANTCREAT);
          }
       }
-   }   
+   }
 
    // open Logfile
    htick_log = NULL;
