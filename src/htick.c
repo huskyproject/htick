@@ -332,6 +332,7 @@ int main(int argc, char **argv)
    } /*endif */
 
    // load recoding tables
+   initCharsets();
    if (config->intab != NULL) getctab(intab, (unsigned char*) config->intab);
    if (config->outtab != NULL) getctab(outtab, (unsigned char*) config->outtab);
 
@@ -347,6 +348,7 @@ int main(int argc, char **argv)
    // deinit SMAPI
    MsgCloseApi();
 
+   doneCharsets();
    writeLogEntry(htick_log, '1', "End");
    closeLog();
    if (config->lockfile != NULL) remove(config->lockfile);
