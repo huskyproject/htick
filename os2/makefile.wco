@@ -1,40 +1,29 @@
-# makefile for Watcom OS/2 32
-
-# include Husky-Makefile-Config
-!include ..\..\huskymak.cfg
+# makefile for os/2 with watcom c
 
 CC      = wcc386
 LINK    = WLINK
 
-OBJS    = htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj, filecase.obj
+OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj add_descr.obj seenby.obj recode.obj crc32.obj hatch.obj filelist.obj filecase.obj
 SRC_DIR = ..\src
 
-!IF $(DEBUG) == 1
-CFLAGS  = -d2 -hw -i=..\h;$(INCDIR) -oneatx -zq
-LFLAGS  = DEBUG Watcom
-!ELSE
-CFLAGS  = -i..\h;$(INCDIR) -oneatx -zq
-LFLAGS  =
-!ENDIF
+CFLAGS  = -zq -wx -bt=os2v2 -j -i=..\..;..\h -oneatx -5 -DOS2
+LFLAGS  = system os2v2
 
-all: $(OBJS) \
-     htick.exe
+all: $(OBJS) htick.exe
 
-$(OBJS): $(SRC_DIR)\$*.c
-  @echo compiling $*.c
+$(OBJS): $(SRC_DIR)\*.c
+  @echo compiling *.c
   $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
 htick.exe: $(OBJS)
    @echo linking htick
-  $(LINK) $(LFLAGS) FILE $(OBJS) Library $(LIBDIR)\smapiwco, $(LIBDIR)\fidoconfig.lib NAME htick.exe
+  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, log.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, strsep.obj, add_descr.obj, seenby.obj, recode.obj, crc32.obj, hatch.obj, filelist.obj, filecase.obj Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib NAME htick.exe
 
+.IGNORE
 
 clean:
-	del *.obj *.bak
+	DEL *.obj
 
 distclean: clean
-	del *.exe
-
-install: htick.exe
-	copy htick.exe $(BINDIR)
-
+	DEL htick.exe
+	
