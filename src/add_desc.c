@@ -47,6 +47,7 @@
 #include <huskylib/recode.h>
 #include <huskylib/xstr.h>
 #include <huskylib/dirlayer.h>
+#include <areafix/areafix.h> /* for print_ch() */
 
 #ifdef USE_HPTZIP
 #   include <hptzip/hptzip.h>

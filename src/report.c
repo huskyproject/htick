@@ -39,6 +39,7 @@
 #include <huskylib/recode.h>
 #include <fidoconf/afixcmd.h>
 #include <huskylib/dirlayer.h>
+#include <areafix/areafix.h> /* for print_ch() */
 
 #include "toss.h"
 #include "global.h"
