@@ -1,3 +1,8 @@
+2002-04-22 Monday 15:48  mche
+
+	* src/hatch.c (1.45): resend files from passFileAreaDir let's try
+	to catch it :)
+
 2002-04-19 Friday 16:21  mche
 
 	* src/: areafix.c (1.52), toss.c (1.141): pause statement expanded
