@@ -430,7 +430,7 @@ int forwardRequestToLink( char *areatag,  char *descr,
             uplink->RemoteFileRobotName ? uplink->RemoteFileRobotName : "filefix",
             uplink->fileFixPwd ? uplink->fileFixPwd : "\x00", 1,
             config->filefixKillReports);
-        msg->text = createKludges(config->disablePID,NULL,
+        msg->text = createKludges(config, NULL,
             uplink->ourAka, &(uplink->hisAka),
             versionStr);
         uplink->msg = msg;
@@ -839,7 +839,7 @@ char *areastatus(char *preport, char *text)
 
 void preprocText(char *preport, s_message *msg)
 {
-    msg->text = createKludges(config->disablePID,
+    msg->text = createKludges(config,
                               NULL, &msg->origAddr, &msg->destAddr,
                               versionStr);
     xstrcat(&msg->text, "\001FLAGS NPD\r");
@@ -1201,14 +1201,14 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
                 config->sysop,
                 "Created new fileareas", 1,
                 config->filefixKillReports);
-            msg->text = createKludges(config->disablePID,NULL, area->useAka,area->useAka,versionStr);
+            msg->text = createKludges(config, NULL, area->useAka, area->useAka, versionStr);
         } else {
             msg = makeMessage(area->useAka,
                 area->useAka,
                 versionStr,
                 "All", "Created new fileareas", 0,
                 config->filefixKillReports);
-            msg->text = createKludges(config->disablePID,config->ReportTo, area->useAka, area->useAka,versionStr);
+            msg->text = createKludges(config, config->ReportTo, area->useAka, area->useAka, versionStr);
         } /* endif */
         xstrcat(&msg->text, "\001FLAGS NPD\r");
         sprintf(buff, "\r \rNew filearea: %s\r\rDescription : %s\r", area->areaName,

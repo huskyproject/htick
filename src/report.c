@@ -341,8 +341,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         
         msg->attributes = pRepDef->attributes;
         
-        msg->text = createKludges(  
-            config->disablePID,
+        msg->text = createKludges(config,
             reportDst ? NULL : pRepDef->annAreaTag,  /* reportDst!=dstechomail ? */
             pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
             pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]), 
