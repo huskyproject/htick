@@ -31,7 +31,7 @@ Same as EchoArea, most options are valid:
     a) -a <address>
 
     Our address
-    
+
     b) -lr <number>
 
     Min level for recieve files from this filearea
@@ -46,38 +46,42 @@ Same as EchoArea, most options are valid:
 
     e) -manual
 
-    Disallow remote changes (only manual connect/disconnect)
+    Disallow remote subscribe
 
-    f) -sendorig
+    f) -mandatory
+
+    Disallow remote unsubscribe
+
+    g) -sendorig
 
     to send files from PassFileAreaDir for non passthrough areas
 
-    g) -nopause
+    h) -nopause
 
     %PAUSE has no effect to this filearea
 
-    h) -noCRC
+    j) -noCRC
 
     to disable CRC on incoming files
 
-    i) -g <group>
+    k) -g <group>
 
     Group for this filearea
 
-    j) -d "<string>"
+    l) -d "<string>"
 
     Description for this filearea
 
-    k) -noreplace
+    m) -noreplace
 
     No replace exists files in this filearea
 
-	l) -nodiz
+    n) -nodiz
 	
-	Do not try to get description from <fileDescName>
+    Do not try to get description from <fileDescName>
 
 7) ExecOnFile <filearea> <filemask> <command>
-  
+
 Execute some command on receiving file. Command get full filepath as parameter.
 
 8) In Link section:
@@ -90,7 +94,7 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     c) AutoFileCreateFile <file>
 
-    d) AutoFileCreateDefaults <string> 
+    d) AutoFileCreateDefaults <string>
 
     Defaults for File Area Autocreate
 
@@ -105,33 +109,33 @@ Execute some command on receiving file. Command get full filepath as parameter.
 
     If file not recieved, then remove TIC
 
-    f) FileFixFSC87Subset 
+    f) FileFixFSC87Subset
 
-    This boolean switch will change on a per link basis how TIC files 
+    This boolean switch will change on a per link basis how TIC files
     are processed. By default this switch is ON. htick will then operate
     only on FSC87-compliant keywords and ignore unknown keywords in the
-    TIC file processed. 
+    TIC file processed.
     If this switch is set to OFF all implemented keywords will be used
     which can (and, in interaction with some tick processors, WILL) lead
-    to severe problems. Unknown keywords found in a TIC file will make 
+    to severe problems. Unknown keywords found in a TIC file will make
     htick stop processing that file.
     If you don't know what all this is about set FileFixFSC87Subset to
     ON for all your links. It won't hurt.
-   
-    g) TickerPackToBox on|off 
-    
+
+    g) TickerPackToBox on|off
+
     If link has file box - toss files and tics there
 
-    h) LinkFileBaseDir 
-    
+    h) LinkFileBaseDir
+
     Where autocreated file echos will be placed (may be "passthrough")
-    
+
     i) ForwardFileRequests on|off
 
     Allow forward requests for file areas
 	
-	k) ForwardFilePriority <number>
-	   
+    k) ForwardFilePriority <number>
+	
     Priority when requests file-area from uplinks
 
     l) ForwardFileRequestFile
@@ -144,9 +148,9 @@ Execute some command on receiving file. Command get full filepath as parameter.
 <FileOption>   - save files with tics
                  may be:
                  1) empty - files will not be copied
-                 2) -l    - link files from fileechodir to <DirToSaveTic> 
+                 2) -l    - link files from fileechodir to <DirToSaveTic>
                  3) -c    - copy files from fileechodir to <DirToSaveTic>
-                 -l,-c works only for non-Passthrough file echos 
+                 -l,-c works only for non-Passthrough file echos
 
 10) originInAnnounce
 
@@ -167,7 +171,7 @@ or more than 8.3
 
 14) ConvertShortNames {Upper|Lower|DontTouch}
 
-What do with short names when toss or hatch. Short name is DOS-like name, 
+What do with short names when toss or hatch. Short name is DOS-like name,
 8.3, without mixed case.
 
 15) addDLC
@@ -221,16 +225,16 @@ Name of remote file (tic) robot (need for FileForwardRequest)
 
 Place for accumulating report information
 
-26) AnnAreaTag     
-   
+26) AnnAreaTag
+
 Name of area when annouce will be placed
 Begins new announce difenition section
 
-27) AnnInclude   
+27) AnnInclude
 
-Array of fileecho names|masks that will be announced in this annAreaTag   
+Array of fileecho names|masks that will be announced in this annAreaTag
 
-28) AnnExclude     
+28) AnnExclude
 
 Array of fileecho names|masks that won't be announced in this annAreaTag
 
@@ -244,7 +248,7 @@ Field FROMNAME: in announce message
 
 31) Annsubj <string>
 
-Field SUBJ:     in announce message         
+Field SUBJ:     in announce message
 
 32) Annadrto  <addres>
 
@@ -252,4 +256,5 @@ Field ADRTO:    in announce message  (must be present if AnnAreaTag is netmail a
 
 33) Annadrfrom  <addres>
 
-Field ADRFROM:  in announce message    
+Field ADRFROM:  in announce message
+
