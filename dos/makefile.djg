@@ -7,16 +7,23 @@ DEBUG=-s
 .SUFFIXES:
 .SUFFIXES: .c .o
 
+CC     =gcc
+
 OBJ    =.o
 EXE    =.exe
 RM     =cmd /c del
+
 DIRSEP =/
-CFLAGS =-I../h -I../.. -c -O3 $(DEBUG) -DMSDOS -DNOSEMAPHORES -mcpu=i486
+CFLAGS =-c -O3 $(DEBUG)
+CINCL  =-I../h -I../../fidoconf -I../../smapi -I../../huskylib
+CDEFS  =-DMSDOS -mcpu=i486
+
 LFLAGS = $(DEBUG)
-CC     =gcc
+
 EXENAMEFLAG=-o
 SRC_DIR=../src/
-LIBS   =../../fidoconf/fconfdjg.a ../../smapi/smapidjg.a
+
+LIBS   =../../fidoconf/make/fconfdjg.a ../../smapi/make/smapidjg.a ../../huskylib/make/huskydjg.a
 
 
 OBJS    = htick$(OBJ) global$(OBJ) toss$(OBJ) fcommon$(OBJ) \
@@ -30,7 +37,7 @@ all: $(OBJS) \
      htick.exe
 
 %.o: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(SRC_DIR)$*.c
 
 htick.exe: $(OBJS)
 	$(CC) $(LFLAGS) -o htick.exe $(OBJS) $(LIBS)
