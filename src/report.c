@@ -53,11 +53,15 @@ typedef struct {
 } s_FAreaRepInfo;
 
 s_ticfile* Report = NULL;
+/* Report uses field password for saving ticfilename */
+/* Report uses field anzpath  for flag of deleting  ticfile*/
+
 UINT rCount = 0;
 
 s_FAreaRepInfo*   aList = NULL;
 UINT aCount = 0;
 
+char* Tics4del[];
 
 void doSaveTic4Report(s_ticfile *tic)
 {
@@ -144,7 +148,7 @@ void getReportInfo()
         if( parseTic( fname, &tmptic ) && tmptic.area && tmptic.file )
         {
             Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
-            memset(&(Report[rCount]),0,sizeof(s_ticfile));    
+            memset(&(Report[rCount]),0,sizeof(s_ticfile)); 
             Report[rCount].size   = tmptic.size;
             Report[rCount].origin = tmptic.origin;
             Report[rCount].from   = tmptic.from;
@@ -162,6 +166,7 @@ void getReportInfo()
             {
                 Report[rCount].ldesc[i]=sstrdup(tmptic.ldesc[i]);
             }
+            xstrscat(&(Report[rCount].password),config->announceSpool,file->d_name,NULL);
             rCount++;
         }
         disposeTic(&tmptic);
@@ -281,26 +286,20 @@ char *formDesc(char **desc, int count)
 void freeReportInfo()
 {
     unsigned i = 0;
-    DIR           *dir;
-    struct dirent *file;
-    char* fname   = NULL;
 
+    w_log( LL_INFO, "Deleting report files");
     for(i = 0; i < rCount; i++)
+    {
+        if(Report[i].anzpath)
+        {
+            remove(Report[i].password);
+            w_log(LL_DELETE,"Removed file: %s",Report[i].password);
+            Report[i].anzpath = 0;
+        }
         disposeTic(&(Report[i]));
+    }
     nfree(Report);
     nfree(aList);
-    
-    dir = opendir(config->announceSpool);
-    w_log( LL_INFO, "Deleting report files");
-    while ((file = readdir(dir)) != NULL) {
-        if (patimat(file->d_name, "*.TIC") == 0)
-            continue;
-        xstrscat(&fname,config->announceSpool,file->d_name,NULL);
-        remove(fname);
-        w_log(LL_DELETE,"Removed file: %s",fname);
-        nfree(fname);
-    }
-    closedir(dir);
 }
 
 void MakeDefaultRepDef()
@@ -373,6 +372,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
 void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
 {
     char *tmp = NULL;
+    tic->anzpath = 1; /* mark tic file as deleted */
     if(strlen(tic->file) > 12)
         xscatprintf(&(msg->text)," %s\r%23ld ",
         tic->file,
