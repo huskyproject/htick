@@ -368,6 +368,8 @@ int main(int argc, char **argv)
    xstrcat(&version, "/w32");
 #elif defined(__sun__)
    xstrcat(&version, "/sun");
+#elif defined(__DJGPP__)
+   xstrcat(&version, "/dpmi");
 #elif defined(MSDOS)
    xstrcat(&version, "/dos");
 #elif defined(__BEOS__)
