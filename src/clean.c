@@ -223,11 +223,60 @@ void purgeFileEchos()
 
 }
 
+void purgeOldTics()
+{
+    UINT i;
+    s_savetic *savetic;
+    char* filename = NULL;
+    time_t tnow;
+
+    husky_DIR      *dir;
+    char           *file;
+    struct stat    st;
+
+    time( &tnow );
+
+
+    for (i = 0; i< config->saveTicCount; i++)
+    {
+        savetic = &(config->saveTic[i]);
+        if (savetic->days2save == 0) {
+            continue;
+        }
+        w_log(LL_INFO,  "Cleaning %s ...", savetic->pathName);
+        dir = husky_opendir(savetic->pathName);
+        if (dir == NULL) {
+            continue;
+        }
+        while ((file = husky_readdir(dir)) != NULL) {
+            if (patimat(file, "*.TIC") == 0)
+                continue;
+
+            xstrscat(&filename,savetic->pathName,file,NULL);
+            if (direxist(filename)) { /*  do not touch dirs */
+                nfree(filename);
+                continue;
+            }
+            memset(&st, 0, sizeof(st));
+            stat(filename, &st);
+            if(st.st_mtime + (time_t)(savetic->days2save * 86400) > tnow ) {
+                nfree(filename);
+                continue;
+            }
+            w_log(LL_INFO,  "Deleting file %s that is %d days old", file,(tnow-st.st_mtime)/86400);
+            removeFileMask(savetic->pathName, file);
+            nfree(filename);
+        }
+        husky_closedir(dir);
+    }
+}
+
 void Purge(void)
 {
-    w_log( LL_INFO, "Start clean (purging files in passthrough dir) ...");
+    w_log(LL_INFO, "Clean (purging files in passthrough dir) ...");
     cleanPassthroughDir();
-    w_log(LL_STOP,  "End   Cleaning Passthrough Dir");
-
+    w_log(LL_INFO,  "Clean FileEchos");
     purgeFileEchos();
+    w_log(LL_INFO,  "Clean old tics in savetic dirs");
+    purgeOldTics();
 }

@@ -435,9 +435,9 @@ This statement can be repeated.
 @findex SaveTic
 @table @asis
 @item Syntax:
-@code{SaveTic <FileEchoMask> <FileOption> <DirToSaveTic>}
+@code{SaveTic <FileEchoMask> <FileOption> <DirToSaveTic> <DaysToKeepTics>}
 @item Example:
-@code{SaveTic husky -l /usr/local/husky}
+@code{SaveTic husky -l /usr/local/husky 365}
 @end table
 
 @table @asis
@@ -461,7 +461,14 @@ copy files from fileechodir to <DirToSaveTic>
 @end table
 
 Options @option{-l} and @option{-c} work only for non-Passthrough fileechos
+
+@item <DaysToKeepTics>
+<DaysToKeepTics> is optional. If defined  tics are saved in <DirToSaveTic> will be kept for
+<DaysToKeepTics> days.
+
 @end table
+
+
 
 This statement can be repeated.
 
@@ -621,7 +628,7 @@ Default is "pvt loc k/s npd".
 
 This statement cannot be repeated.
 
-@node BBSarea, fileDescName, filefixReportsAttr, Keywords
+@node BBSarea, fileDescription, filefixReportsAttr, Keywords
 @subsection BBSarea
 @findex BBSarea
 @table @asis
@@ -636,7 +643,7 @@ Use for filelist generation only (`htick filelist` command).
 
 This statement cannot be repeated.
 
-@node fileDescription, fileDescName, FileAreaCreatePerms, BBSarea, Keywords
+@node fileDescription, fileDescName, BBSarea, Keywords
 @subsection fileDescription
 @findex fileDescription
 @table @asis
@@ -650,7 +657,7 @@ Name of file to hold file descriptions, by default files.bbs
 
 This statement can be repeated.
 
-@node fileDescName, FileAreaCreatePerms, BBSarea, Keywords
+@node fileDescName, FileAreaCreatePerms, fileDescription, Keywords
 @subsection fileDescName
 @findex fileDescName
 @table @asis
