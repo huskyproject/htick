@@ -155,13 +155,8 @@ int processHatchParams(int i, int argc, char **argv)
     return 1;
 }
 
-int processCommandLine(int argc, char **argv)
-{
-    int i = 0;
-    int rc = 1;
-    
-
-    if (argc == 1) {
+void start_help(void) {
+        printf("%s",versionStr);
         printf(
             "\nUsage: htick [-q] <command>\n"
             "\n"
@@ -187,7 +182,17 @@ int processCommandLine(int argc, char **argv)
             "\n"
             "Not all features are implemented yet, you are welcome to implement them :)\n"
             );
-        return 0;
+}
+
+int processCommandLine(int argc, char **argv)
+{
+    int i = 0;
+    int rc = 1;
+    
+
+    if (argc == 1) { 
+       start_help();
+       return 0;
     }
 
     while (i < argc-1) {
@@ -379,7 +384,6 @@ int main(int argc, char **argv)
 
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
-   if (!quiet) printf("%s\n", versionStr);
 
    // init SMAPI
    m.req_version = 0;
