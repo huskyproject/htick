@@ -1,3 +1,7 @@
+2004-10-29 Friday 13:02  mche
+
+	* src/areafix.c (1.129): one more fix for checking area access
+
 2004-10-06 Wednesday 14:54  mche
 
 	* src/areafix.c (1.128): fix for previous patch: variable 'i' is
