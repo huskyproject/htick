@@ -87,24 +87,6 @@ int    createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ);
           0 else
           */
 
-#if defined (__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
- int truncate(const char *fileName, long length);
- /*DOC
-   Truncates the file at given position
- */
- int fTruncate( int fd, long length );
- /*DOC
-   Truncates the file at given position
- */
-#endif
-
-#if defined(__MINGW32__)
- int fTruncate( int fd, long length );
-#endif
-
-//int    createLockFile(char *lockFile);
-#endif
-
 int removeFileMask(char *directory, char *mask);
 /*DOC
   Input:  directory is the directory where remove file[s]
@@ -112,3 +94,5 @@ int removeFileMask(char *directory, char *mask);
   Output: 
 */
 int link_file(const char *from, const char *to);
+
+#endif
