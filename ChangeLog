@@ -1,3 +1,15 @@
+2003-01-28 Tuesday 14:28  stas_degteff
+
+	* TODO (1.4): Add todo about templates & etc
+
+2003-01-28 Tuesday 14:28  stas_degteff
+
+	* doc/htick.texi (1.23): Create 'Common husky keywords' section
+
+2003-01-28 Tuesday 14:07  stas_degteff
+
+	* doc/htick.texi (1.22): Describe the 'filefix' token
+
 2003-01-27 Monday 20:12  stas_degteff
 
 	* VERSION (1.5): Move from 'Attic'
