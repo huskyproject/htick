@@ -822,7 +822,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       else repl++;
       num_files = removeFileMask(fileareapath,repl);
       if (num_files>0) {
-         writeLogEntry(htick_log,'6',"Removed %d file[s]. Filemask: %s",num_files,tic->replaces);
+         writeLogEntry(htick_log,'6',"Removed %d file[s]. Filemask: %s",num_files,repl);
       }
    }
 

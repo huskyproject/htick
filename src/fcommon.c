@@ -397,7 +397,7 @@ int removeFileMask(char *directory, char *mask)
    if (dir != NULL) {
       while ((file = readdir(dir)) != NULL) {
          if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
-         if (patimat(file->d_name, mask) != 1) {
+         if (patimat(file->d_name, mask) == 1) {
             removefile = (char *) malloc(dirLen+strlen(file->d_name)+1);
             strcpy(removefile, tmpDir);
             strcat(removefile, file->d_name);
