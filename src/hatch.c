@@ -198,28 +198,30 @@ void hatch()
       } // Forward file
 
    }
-   // report about new files
-   newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
-   newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
-   newFileReport[newfilesCount]->useAka = filearea->useAka;
-   newFileReport[newfilesCount]->areaName = filearea->areaName;
-   newFileReport[newfilesCount]->areaDesc = filearea->description;
-   newFileReport[newfilesCount]->fileName = strdup(tic.file);
+   // report about new files - if not hidden
+   if (!filearea->hide) {
+      newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
+      newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
+      newFileReport[newfilesCount]->useAka = filearea->useAka;
+      newFileReport[newfilesCount]->areaName = filearea->areaName;
+      newFileReport[newfilesCount]->areaDesc = filearea->description;
+      newFileReport[newfilesCount]->fileName = strdup(tic.file);
 
-   newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
-   for (i = 0; i < tic.anzdesc; i++) {
-      newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
-      if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
-   } /* endfor */
-   newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+      newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
+      for (i = 0; i < tic.anzdesc; i++) {
+         newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+         if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
+      } /* endfor */
+      newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
 
-   newFileReport[newfilesCount]->fileSize = tic.size;
+      newFileReport[newfilesCount]->fileSize = tic.size;
 
-   newfilesCount++;
+      newfilesCount++;
+
+      reportNewFiles();
+   }
 
    disposeTic(&tic);
-   
-   reportNewFiles();
 }
 
 int send(char *filename, char *area, char *addr)

@@ -262,7 +262,7 @@ void filelist()
    }
 
    for (i=0; i<config->fileAreaCount; i++) {
-      if (config->fileAreas[i].pass != 1)
+      if (config->fileAreas[i].pass != 1 && !(config->filesAreas[i].hide))
          printFileArea(config->fileAreas[i].areaName, config->fileAreas[i].pathName, config->fileAreas[i].description, f, 0);
    }
 
