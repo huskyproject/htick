@@ -341,7 +341,7 @@ int processFileFix(s_message *msg)
 
 	/*  security ckeck. link,araefixing & password. */
     if (link != NULL) {
-        if (link->FileFix==1) {
+        if (link->filefix.on) {
             if (link->filefix.pwd) {
                 if (stricmp(link->filefix.pwd, msg->subjectLine)==0) security=0;
                 else security=3;

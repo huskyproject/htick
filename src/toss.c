@@ -953,7 +953,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    filearea=getFileArea(tic.area);
 
    w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
-   if (filearea==NULL && from_link->autoFileCreate) {
+   if (filearea==NULL && from_link->filefix.autoCreate) {
        char *descr = NULL;
        if(tic.areadesc)           descr = sstrdup(tic.areadesc);
        if(config->intab && descr) recodeToInternalCharset(descr);
@@ -964,7 +964,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    if (filearea == NULL) {
-      if( from_link->autoFileCreate ){
+      if( from_link->filefix.autoCreate ){
         w_log(LL_ERROR,"Cannot create File Area %s",tic.area);
         if (!quiet) fprintf(stderr,"Cannot create File Area %s !\n",tic.area);
       }else{
