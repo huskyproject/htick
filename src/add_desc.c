@@ -48,6 +48,10 @@
 #include <huskylib/xstr.h>
 #include <huskylib/dirlayer.h>
 
+#ifdef USE_HPTZIP
+#   include <hptzip/hptzip.h>
+#endif
+
 
 #include <add_desc.h>
 #include <global.h>
@@ -329,29 +333,31 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         return 3;
     }
     unpacker = i - 1;
+    getcwd( buffer, 256 );
     /*  unpack file_id.diz (config->fileDescName) */
     for( i = 0; i < config->fDescNameCount; i++)
     {
-        getcwd( buffer, 256 );
         fillCmdStatement(cmd,config->unpack[unpacker].call,fileName,config->fileDescNames[i],config->tempInbound);
         w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
         chdir(config->tempInbound);
-        if( fc_stristr(config->unpack[unpacker].call, "zipInternal") )
+        if( fc_stristr(config->unpack[unpacker].call, ZIPINTERNAL) )
         {
             cmdexit = 1;
-#ifdef USE_HPT_ZLIB
-            cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+#ifdef USE_HPTZIP
+            cmdexit = UnPackWithZlib(fileName, config->fileDescNames[i], config->tempInbound);
 #endif
         }
         else
         {
-            if ((cmdexit = cmdcall(cmd)) != 0) {
-                w_log( LL_ERROR, "exec failed, code %d", cmdexit);
-                chdir(buffer);
-                return 3;
-            }
+            cmdexit = cmdcall(cmd);
         }
+
         chdir(buffer);
+
+        if (cmdexit  != 0) {
+            w_log( LL_ERROR, "exec failed, code %d", cmdexit);
+            continue;
+        }
 
         xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescNames[i]);
 
