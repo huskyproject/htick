@@ -96,24 +96,24 @@ char *versionStr;
 
 /* tic keywords calculated crc */
 
-#define CRC_CREATED      0xACDA; /*0x4EC6*/
-#define CRC_FILE         0x9AF9; /*0x1A66*/
-#define CRC_AREADESC     0xD824; /*0xB621*/
-#define CRC_DESC         0x717B; /*0xECBD*/
-#define CRC_AREA         0x825A; /*0x825A*/
-#define CRC_CRC          0x5487; /*0x5487*/
-#define CRC_REPLACES     0xCE24; /*0xCF01*/
-#define CRC_ORIGIN       0xE52A; /*0xFCDC*/
-#define CRC_FROM         0xFD30; /*0x1293*/
-#define CRC_TO           0x7B50; /*0x7B50*/
-#define CRC_PATH         0x5411; /*0x5411*/
-#define CRC_SEENBY       0xF84C; /*0xC3D4*/
-#define CRC_PW           0x24AD; /*0x24AD*/
-#define CRC_SIZE         0x94CE; /*0x5593*/
-#define CRC_DATE         0x54EA; /*0xD4BD*/
-#define CRC_DESTINATION  0x6F36; /*0xA9D1*/
-#define CRC_MAGIC        0x7FF4; /*0xD858*/
-#define CRC_LDESC        0xEB38; /*0x5394*/
+#define CRC_CREATED      0xACDA /*0x4EC6*/
+#define CRC_FILE         0x9AF9 /*0x1A66*/
+#define CRC_AREADESC     0xD824 /*0xB621*/
+#define CRC_DESC         0x717B /*0xECBD*/
+#define CRC_AREA         0x825A /*0x825A*/
+#define CRC_CRC          0x5487 /*0x5487*/
+#define CRC_REPLACES     0xCE24 /*0xCF01*/
+#define CRC_ORIGIN       0xE52A /*0xFCDC*/
+#define CRC_FROM         0xFD30 /*0x1293*/
+#define CRC_TO           0x7B50 /*0x7B50*/
+#define CRC_PATH         0x5411 /*0x5411*/
+#define CRC_SEENBY       0xF84C /*0xC3D4*/
+#define CRC_PW           0x24AD /*0x24AD*/
+#define CRC_SIZE         0x94CE /*0x5593*/
+#define CRC_DATE         0x54EA /*0xD4BD*/
+#define CRC_DESTINATION  0x6F36 /*0xA9D1*/
+#define CRC_MAGIC        0x7FF4 /*0xD858*/
+#define CRC_LDESC        0xEB38 /*0x5394*/
 
 
 void writeNetmail(s_message *msg, char *areaName)
@@ -381,7 +381,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
             param=stripLeadingChars(strtok(NULL, "\0"), "\t");
             if(!param)
             {
-                if( key == CRC_DESC || key == CRC_LDESC )
+                if( (key == CRC_DESC) || (key == CRC_LDESC) )
                     param = emptyline;
                 else
                     continue;
