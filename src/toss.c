@@ -1223,7 +1223,8 @@ int hidden (char *filename)
    unsigned fattrs;
    _dos_getfileattr(filename, &fattrs);
    return fattrs & _A_HIDDEN;
-#elif defined (WINNT)
+#elif defined (WINNT) || defined(__NT__)
+   unsigned fattrs;
    fattrs = (GetFileAttributes(filename) & 0x2) ? _A_HIDDEN : 0;
    return fattrs & _A_HIDDEN;
 #elif defined (OS2)
