@@ -1,3 +1,14 @@
+2002-01-30 Wednesday 07:16  stas
+
+	* Makefile (1.9): Remove binary in 'distclean' Makefile tag only,
+	not 'clean' tag.
+
+2002-01-30 Wednesday 05:45  stas
+
+	* os2/makefile.wco (1.12), win32/makefile.bcw (1.7),
+	win32/makefile.wcw (1.15): Makefiles fix for Borland & Watcom
+	compilers (remove strsep.* from makefiles).
+
 2002-01-27 Sunday 21:55  stas
 
 	* src/: filelist.c (1.22), hatch.c (1.40), htick.c (1.45), scan.c
