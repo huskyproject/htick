@@ -1,3 +1,10 @@
+2003-03-09 Sunday 05:35  nssoft
+
+	* Makefile (1.17), h/filelist.h (1.10), src/add_desc.c (1.34),
+	src/areafix.c (1.116), src/fcommon.c (1.65), src/filecase.c (1.8),
+	src/hatch.c (1.78), src/htick.c (1.92), src/toss.c (1.257): link
+	with huskylib
+
 2003-03-04 Tuesday 12:25  stas_degteff
 
 	* UPGRADE (1.1): file UPGRADE was initially added on branch
