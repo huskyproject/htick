@@ -402,7 +402,7 @@ This statement cannot be repeated.
 @code{FileFixHelp /usr/local/fido/filefix.hlp}
 @end table
 
-Help file for FileFix, same as AreaFixHelp for AreaFix
+Help file for FileFix, same as AreaFixHelp for HPT's AreaFix
 
 This statement cannot be repeated.
 
@@ -1018,10 +1018,10 @@ Hide area (don't show in %LIST and in an announcement).
 Min link level allowed to post into this filearea files received from link.
 
 @item -mandatory
-Disallow remote unsubscribe (disable unsubscribe areafix command).
+Disallow remote unsubscribe (disable unsubscribe filefix command).
 
 @item -manual
-Disallow remote subscribe (disable subscribe areafix command).
+Disallow remote subscribe (disable subscribe filefix command).
 
 @item -noCRC
 Disable CRC check for incoming files.
