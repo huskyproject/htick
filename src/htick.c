@@ -276,8 +276,10 @@ void processConfig()
          }
       }
    }   
+   
+   nfree(buff);
 
-   // open Logfile
+   /* open Logfile */
    htick_log = NULL;
    if (config->logFileDir != NULL) {
      buff = (char *) smalloc(strlen(config->logFileDir)+strlen(LogFileName)+1);
@@ -289,8 +291,6 @@ void processConfig()
        fprintf(stderr, "You have no logFileDir in your config, there will be no log created");
 
    nfree(buff);
-
-   w_log( '1', "Start");
 
    if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined\n");
    if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified\n");
@@ -347,10 +347,10 @@ int main(int argc, char **argv)
    xscatprintf(&versionStr,"HTick %s", version);
    nfree(version);
 
-   if (!quiet) printf("%s\n", versionStr);
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
 
+   if (!quiet) printf("%s\n", versionStr);
    // init SMAPI
    m.req_version = 0;
    m.def_zone = config->addr[0].zone;
