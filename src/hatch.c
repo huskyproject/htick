@@ -160,7 +160,8 @@ void hatch()
             memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
             memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
                    sizeof(s_addr));
-            strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
+            if (filearea->downlinks[i]->link->ticPwd!=NULL)
+		strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
 
             busy = 0;
 
