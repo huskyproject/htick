@@ -1,29 +1,41 @@
-# makefile for os/2 with watcom c
+# $Id$
+# Makefile for Watcom C and OpenWatcom (OS/2 library & executables)
+# no support for huskymak.cfg
+#
+# Predefines: __WATCOMC__, __OS2__ (don't defined in Openwatcom)
 
 CC      = wcc386
 LINK    = WLINK
+RM	= del
 
-OBJS    = htick.obj global.obj toss.obj fcommon.obj scan.obj areafix.obj add_desc.obj seenby.obj hatch.obj filelist.obj filecase.obj report.obj clean.o
+OBJS    = htick.obj global.obj toss.obj fcommon.obj scan.obj areafix.obj \
+          add_desc.obj seenby.obj hatch.obj filelist.obj filecase.obj \
+          report.obj clean.obj
+
 SRC_DIR = ..\src
 
-CFLAGS  = -zq -wx -bt=os2v2 -j -i=..\..;..\h -oneatx -5 -D__OS2__ -DOS2
+CFLAGS  = -zq -wx -bt=os2v2 -j -i=..\..;..\h -oneatx -5 -DOS2 -D__OS2__
 LFLAGS  = system os2v2
 
 all: $(OBJS) htick.exe
 
 $(OBJS): $(SRC_DIR)\*.c
-  @echo compiling *.c
-  $(CC) $(CFLAGS) $(SRC_DIR)\$*.c
+	@echo compiling $*.c
+	$(CC) $(CFLAGS) $(SRC_DIR)\$*.c
 
 htick.exe: $(OBJS)
-   @echo linking htick
-  $(LINK) $(LFLAGS) FILE htick.obj, global.obj, toss.obj, fcommon.obj, scan.obj, areafix.obj, add_desc.obj, seenby.obj, hatch.obj, filelist.obj, filecase.obj, report.obj Library ..\..\fidoconf\fconfwco.lib, ..\..\smapi\smapiwco.lib NAME htick.exe
+	@echo linking htick
+	$(LINK) $(LFLAGS) FILE htick.obj, global.obj, toss.obj, fcommon.obj, \
+	scan.obj, areafix.obj, add_desc.obj, seenby.obj, hatch.obj, \
+	filelist.obj, filecase.obj, report.obj, clean.obj \
+	Library ..\..\smapi\smapiwco.lib, ..\..\fidoconf\fconfwco.lib \
+	NAME htick.exe
 
 .IGNORE
 
 clean:
-	DEL *.obj
+	-$(RM) *.obj *.err
 
 distclean: clean
-	DEL htick.exe
+	-$(RM) htick.exe
 	
