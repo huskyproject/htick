@@ -1079,7 +1079,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     s_message *msg;
     s_filearea *area;
     FILE *echotosslog;
-    size_t configlen;
+    size_t configlen=0;
 
     w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
     
