@@ -1191,7 +1191,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     }
     configlen = ftell(f); /* config file length */
     /*  add line to config */
-    if (fprintf(f, "%s%s", buff, cfgEol()) != strlen(buff)+strlen(cfgEol()) ||
+    if (fprintf(f, "%s%s", buff, cfgEol()) != (int)(strlen(buff)+strlen(cfgEol())) ||
         fflush(f) != 0) {
 	w_log(LL_ERR, "Error creating filearea %s, config write failed: %s!",
 	      c_area, strerror(errno));
