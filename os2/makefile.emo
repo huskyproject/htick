@@ -11,9 +11,9 @@ OBJ    =.obj
 EXE    =.exe
 RM     =cmd /c del
 DIRSEP =/
-CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG) -DOS2 -funsigned-char -Wall -Wno-char-subscripts
+CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG) -funsigned-char -Wall -Wno-char-subscripts
 LFLAGS =-Zomf -Zsys -Zlinker /PM:VIO $(DEBUG)
-CDEFS  =-DOS2
+CDEFS  =-D__OS2__ -DOS2
 CC     =gcc
 EXENAMEFLAG=-o
 SRC_DIR=../src/
@@ -31,7 +31,7 @@ all: $(OBJS) \
      htick.exe
 
 %.obj: $(SRC_DIR)%.c
-	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
+	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
 htick.exe: $(OBJS)
 	$(CC) $(LFLAGS) -o htick.exe $(OBJS) $(LIBS)
