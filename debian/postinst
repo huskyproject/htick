@@ -1,0 +1,29 @@
+#! /bin/sh
+#
+# $Id$
+#
+set -e
+
+case "$1" in
+    configure)
+	#
+	# Setgid/setuid hpt binary
+	#
+	OVERRIDEN=
+	OVERRIDEN=`dpkg-statoverride --list /usr/bin/htick` || true
+	[ "${OVERRIDEN}" = "" ] && dpkg-statoverride --update --add ftn ftn 6755 /usr/bin/htick
+    ;;
+
+    abort-upgrade|abort-remove|abort-deconfigure)
+
+    ;;
+
+    *)
+        echo "postinst called with unknown argument \`$1'" >&2
+        exit 1
+    ;;
+esac
+
+#DEBHELPER#
+
+exit 0
