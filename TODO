@@ -18,3 +18,10 @@ Document tokens (add to tparser & dumpcfg):
     ForwardFilePriority
     forwardFileRequests
     filefixhelp
+
+New tokens for files.bbs handle:
+    filesBBSname	(default: files.bbs)
+    descriptionsSubDir	(no default)
+    
+    If descriptionsSubDir set, every file has it's own description in this
+    dir, i.e. "file.ext" has description in ".desc/file.ext.desc"
