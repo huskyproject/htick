@@ -143,7 +143,7 @@ int removeFileMask(char *directory, char *mask)
             remove(removefile);
             w_log('6',"Removed file: %s",removefile);
             numfiles++;
-            free(removefile);
+            nfree(removefile);
 
             //remove description for file
             xstrscat(&descr_file_name,directory, "files.bbs",NULL);
