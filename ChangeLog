@@ -1,3 +1,24 @@
+2002-10-23 Wednesday 11:55  mche
+
+	* h/areafix.h (1.13), src/areafix.c (1.96): fix ERROR redefinition
+
+2002-10-23 Wednesday 10:26  mche
+
+	* src/toss.c (1.226): clean type redefinition for win32 compilers
+
+2002-10-23 Wednesday 10:21  mche
+
+	* src/htick.c (1.76): clean type redefinition for win32 compilers
+
+2002-10-23 Wednesday 08:37  stas_degteff
+
+	* src/htick.c (1.75): Fix banner output for quiet mode
+
+2002-10-23 Wednesday 08:25  stas_degteff
+
+	* Makefile (1.14), win32/makefile.cyg (1.11), win32/makefile.wcw
+	(1.18): Prevent remove files like 'Makefile' on non-unix OS
+
 2002-10-22 Tuesday 14:12  stas_degteff
 
 	* src/htick.c (1.74): Add DPMI build info
