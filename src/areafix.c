@@ -523,7 +523,7 @@ char *help(s_link *link) {
 		fseek(f,0l,SEEK_END);
 		endpos=ftell(f);
 		
-		help=(char*) calloc((size_t) endpos,sizeof(char));
+		help=(char*) calloc((size_t) endpos + 1,sizeof(char));
 
 		fseek(f,0l,SEEK_SET);
 		fread(help,1,(size_t) endpos,f);
