@@ -117,7 +117,7 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 	
 	return rc;
 }
-
+/*
 int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
     char *buff = NULL, *sbuff = NULL, *ptr = NULL, *tmp = NULL, *line = NULL;
@@ -189,7 +189,7 @@ int addstring(FILE *f, char *aka) {
 
 	//current position
 #ifndef UNIX
-	/* in dos and win32 by default \n translates into 2 chars */
+	// in dos and win32 by default \n translates into 2 chars 
 	fseek(f,-2,SEEK_CUR);
 #else                                                   
 	fseek(f,-1,SEEK_CUR);
@@ -264,7 +264,7 @@ int delstring(FILE *f, char *fileName, char *straka, int before_str) {
 	free(cfg);
 	return 0;
 }
-
+*/
 void addlink(s_link *link, s_filearea *area) {
     s_arealink *arealink;
 
@@ -507,9 +507,10 @@ char *available(s_link *link) {
 }                                                                               
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
-	FILE *f;
+	FILE *f_conf;
 	char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL;
-	long pos=-1;
+    long endpos, cfglen;
+    long strbeg = 0, strend = -1;
 
 	areaName = area->areaName;
 
@@ -517,47 +518,64 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 		return 1;
 
 	while ((cfgline = configline()) != NULL) {
-		cfgline = trimLine(cfgline);
-		cfgline = stripComment(cfgline);
-		if (cfgline[0] != 0) {
-			line = cfgline = shell_expand(cfgline);
+        line = sstrdup(cfgline);
+		line = trimLine(line);
+		line = stripComment(line);
+		if (line[0] != 0) {
+			line = shell_expand(line);
 			token = strseparate(&line, " \t");
 			if (stricmp(token, "filearea")==0) {
 				token = strseparate(&line, " \t"); 
 				if (stricmp(token, areaName)==0) {
 					fileName = sstrdup(getCurConfName());
-					pos = get_hcfgPos();
+					strend = get_hcfgPos();
 					break;
 				}
 			}
 		}
+        strbeg = get_hcfgPos();
 		nfree(cfgline);
+        nfree(line);
 	}
 	close_conf();
-	if (pos == -1) {
+    nfree(line);
+	if (strend == -1) {
+        nfree(cfgline);
 		return 1; // impossible
 	}
-	nfree(cfgline);
-
-	if ((f=fopen(fileName,"r+b")) == NULL)
-		{
-			if (!quiet) fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
-			nfree(fileName);
-			return 1;
-		}
-	fseek(f, pos, SEEK_SET);
+	
+    if ((f_conf=fopen(fileName,"r+b")) == NULL)
+    {
+        if (!quiet) fprintf(stderr, "FileFix: cannot open config file %s \n", fileName);
+        nfree(cfgline);
+        nfree(fileName);
+        return 1;
+    }
+    nfree(fileName);
+    
+    fseek(f_conf, 0L, SEEK_END);
+    endpos = ftell(f_conf);
+    cfglen = endpos - strend;
+    line = (char*) smalloc((size_t) cfglen+1);
+    fseek(f_conf, strend, SEEK_SET);
+    cfglen = fread(line, sizeof(char), cfglen, f_conf);
+    line[cfglen]='\0';
+    fseek(f_conf, strbeg, SEEK_SET);
+    setfsize( fileno(f_conf), strbeg );
 
 	switch (action) {
 	    case 0: 
-		addstring(f, aka2str(link->hisAka));
+            xstrscat(&cfgline, " ", aka2str(link->hisAka), NULL);
 		break;
  	    case 1:
-		delLinkFromArea(f, fileName, aka2str(link->hisAka));
+            DelLinkFromString(cfgline, link->hisAka);
 		break;
 	    default: break;
 	}
-	fclose(f);
-	nfree(fileName);
+    fprintf(f_conf, "%s%s%s", cfgline, cfgEol(), line);
+	fclose(f_conf);
+	nfree(line);
+    nfree(cfgline);
 	return 0;
 }
 
