@@ -451,7 +451,7 @@ char *list(s_message *msg, s_link *link) {
       }
    }
 
-   sprintf(addline,"\r '+'  You are receive files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
+   sprintf(addline,"\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
    report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
    strcat(report, addline);
 
@@ -499,7 +499,7 @@ char *linked(s_message *msg, s_link *link, int action)
 	    n++;
 	}
     }
-    if (action == 1) sprintf(addline, "\r '+'  You are receive files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
+    if (action == 1) sprintf(addline, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%u areas linked for %s\r", n, aka2str(link->hisAka));
     else sprintf(addline, "\r%u areas linked\r", n);
     report=(char*)realloc(report, strlen(report)+strlen(addline)+1);
     strcat(report, addline);
