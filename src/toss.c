@@ -1016,11 +1016,14 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
+
+   /* do toss zero-length files
    if (!tic.size) {
       w_log('6',"File %s from filearea %s has zero size",tic.file,tic.area);
       disposeTic(&tic);
       return TIC_NotRecvd;
    }
+   */
 
    writeAccess = e_writeCheck(config,filearea,getLinkFromAddr(config,tic.from));
 
