@@ -2,6 +2,11 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Wed Jul 15  19:23:54
+Georgi:
+* bugfix in toss
+* small change FileFix
+
 Wed Jul 14  20:48:50
 Georgi:
 * bugfix if link is busy
