@@ -2,6 +2,10 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Thu Jul 01  15:30:55
+Georgi:
+* Fixed bug with seenby
+
 Mon Jun 28  16:47:00
 Fedor:
 + Added direct and immediate flavours
