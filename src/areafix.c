@@ -433,12 +433,18 @@ char *list(s_message *msg, s_link *link) {
 			report=(char*) realloc(report, len);
 				
 			if (rc==0) {
-				if (atoi(config->fileAreas[i].wgrp) <= link->level
-				    && atoi(config->fileAreas[i].rgrp) <= link->level)
+				if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level
+				    && config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
 				    strcat(report,"& ");
-				else if (atoi(config->fileAreas[i].rgrp) <= link->level)
+				else if (config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
 				    strcat(report,"+ ");
-				else if (atoi(config->fileAreas[i].wgrp) <= link->level)
+				else if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level)
+				    strcat(report,"* ");
+				else if (config->fileAreas[i].wgrp == NULL && config->fileAreas[i].rgrp == NULL)
+				    strcat(report,"& ");
+				else if (config->fileAreas[i].rgrp == NULL)
+				    strcat(report,"+ ");
+				else if (config->fileAreas[i].wgrp == NULL)
 				    strcat(report,"* ");
 				active++;
 				avail++;
@@ -490,13 +496,19 @@ char *linked(s_message *msg, s_link *link, int action)
 	    if (action == 1) {
 	       report=(char*)realloc(report, strlen(report)+
 			       strlen(config->fileAreas[i].areaName)+4);
-	       if (atoi(config->fileAreas[i].wgrp) <= link->level
-		   && atoi(config->fileAreas[i].rgrp) <= link->level)
-	          strcat(report,"& ");
-	       else if (atoi(config->fileAreas[i].rgrp) <= link->level)
-	               strcat(report,"+ ");
-	       else if (atoi(config->fileAreas[i].wgrp) <= link->level)
-	               strcat(report,"* ");
+	        if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level
+				    && config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
+		    strcat(report,"& ");
+		else if (config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
+		    strcat(report,"+ ");
+		else if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level)
+		    strcat(report,"* ");
+		else if (config->fileAreas[i].wgrp == NULL && config->fileAreas[i].rgrp == NULL)
+		    strcat(report,"& ");
+		else if (config->fileAreas[i].rgrp == NULL)
+		    strcat(report,"+ ");
+		else if (config->fileAreas[i].wgrp == NULL)
+		    strcat(report,"* ");
 	    } else {
 	    report=(char*)realloc(report, strlen(report)+
 			    strlen(config->fileAreas[i].areaName)+3);
