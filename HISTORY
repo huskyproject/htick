@@ -1,6 +1,6 @@
-HTICK 1.3-current
+HTICK 1.4-stable
 
-This file describe changes between htick-1.0-stable and htick-1.3-current
+This file describe changes between htick-1.0-stable and htick-1.4-stable
 
 1. MAJOR feature improvements:
    - configurable announces about received files;
@@ -9,7 +9,14 @@ This file describe changes between htick-1.0-stable and htick-1.3-current
      (optional);
    - Change statistics information in log file;
    - Allow unconditional forward subscribe when forwardFileRequestsFile for
-     link not defined in config.
+     link not defined in config;
+   - New command 'ffix!' in addition to 'ffix'. It does the same job as 'ffix'
+     and send subscride/unsubscribe letter to link that was manualy
+     subscribed/unsubscribed by filefix command	like:
+        htick ffix! 2:464/910 -910.TEST
+     This command remove file echo link 2:464/910 from 910.TEST and produce
+     letter to 2:464/910 with body "-910.TEST";
+   - Write documentation at texinfo format.
 
 2. CONFIG changes:
    - area definition options -manual & -mandatory are different:

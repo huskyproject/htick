@@ -35,9 +35,9 @@
 
 /* basic version number */
 #define VER_MAJOR 1
-#define VER_MINOR 3
+#define VER_MINOR 4
 #define VER_PATCH 0
-#define VER_BRANCH BRANCH_CURRENT
+#define VER_BRANCH BRANCH_STABLE
 
 extern char      *versionStr;
 

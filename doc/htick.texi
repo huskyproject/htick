@@ -252,6 +252,12 @@ Reading *.tic and tossing files
 Scanning Netmail area for mails to filefix and process filefix command
 @item ffix <FTN address> <filefix command>
 Process filefix command @code{command} from command line
+@item ffix! <FTN address> <filefix command>
+Does the same job as 'ffix' and send subscride/unsubscribe letter to link
+that was manualy subscribed/unsubscribed by filefix command like:
+htick ffix! 2:464/910 -910.TEST
+This command remove file echo link 2:464/910 from 910.TEST and produce letter
+to 2:464/910 with body "-910.TEST"
 @item clean
 Clean passthrough dir (remove sent files) and remove old files in fileechos
 @item announce
