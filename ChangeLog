@@ -1,3 +1,8 @@
+2003-01-10 Friday 18:06  mche
+
+	* src/: add_desc.c (1.23), hatch.c (1.74): remove macro
+	redefenition
+
 2003-01-09 Thursday 12:55  stas_degteff
 
 	* doc/Makefile (1.2): set permissions for install documentations &
