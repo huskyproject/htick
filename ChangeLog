@@ -1,3 +1,12 @@
+2002-10-30 Wednesday 08:52  mche
+
+	* src/toss.c (1.232): syntax of changeFileSuffix is expanded
+
+2002-10-30 Wednesday 05:26  stas_degteff
+
+	* win32/: makefile.mgw (1.3), makefile.mvc (1.9), makefile.mvcdll
+	(1.8): cosmetic fix
+
 2002-10-29 Tuesday 12:18  stas_degteff
 
 	* doc/htick.texi (1.6): Fix Announces example
