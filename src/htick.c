@@ -33,43 +33,48 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+
 #ifndef __IBMC__
-#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
-#  include <unistd.h>
+#  if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
+#    include <unistd.h>
+#  endif
 #endif
-#endif
+
 #include <sys/types.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/stat.h>
+
 #if ((defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__TURBOC__) || defined(__DJGPP__)) || defined(__MINGW32__)
 #  include <io.h>
 #endif
 
-#ifdef OS2
-#define INCL_DOSPROCESS
-#define INCL_DOSERRORS
-#include <os2.h>
-#ifndef __OS2__
-#define __OS2__
-#endif
+#if defined(OS2) || defined(__OS2__)
+# define INCL_DOSPROCESS
+# define INCL_DOSERRORS
+# include <os2.h>
+# ifndef __OS2__
+#  define __OS2__
+# endif
+# ifndef OS2
+#  define OS2
+# endif
 #endif
 
 #include <smapi/msgapi.h>
-
-#include <version.h>
+#include <smapi/progprot.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/log.h>
-
-#include <smapi/progprot.h>
-#include <htick.h>
-#include <global.h>
-#include <cvsdate.h>
-
 #include <fidoconf/recode.h>
 #include <fidoconf/xstr.h>
+
+
+#include <version.h>
+#include <cvsdate.h>
+#include <htick.h>
+#include <global.h>
 #include <toss.h>
 #include <scan.h>
 #include <hatch.h>
@@ -77,12 +82,12 @@
 #include <areafix.h>
 
 #if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
-/* we can't include windows.h for several reasons ... */
-#ifdef __MINGW32__
-int __stdcall CharToOemA(char *, char *);
-int __stdcall SetFileApisToOEM(void);
-#endif
-#define CharToOem CharToOemA
+  /* we can't include windows.h for prevent type & constant redeclarations */
+# ifdef __MINGW32__
+    int __stdcall CharToOemA(char *, char *);
+    int __stdcall SetFileApisToOEM(void);
+# endif
+# define CharToOem CharToOemA
 #endif
 
 int processCommandLine(int argc, char **argv)
