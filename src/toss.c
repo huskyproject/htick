@@ -568,7 +568,6 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 {
    unsigned int i, z;
    char descr_file_name[256], newticedfile[256], fileareapath[256];
-   char *linkfilepath=NULL;
    char timestr[40];
    time_t acttime;
    s_addr *old_seenby = NULL;

@@ -88,7 +88,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     fclose (descr_file);
     nfree(namefile);
     return 0;
-};
+}
 
 int removeDesc (char *descr_file_name, char *file_name)
 {

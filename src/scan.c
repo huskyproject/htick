@@ -50,6 +50,8 @@
 #include <toss.h>
 #include <fidoconf/common.h>
 #include <fidoconf/afixcmd.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/recode.h>
 
 
 void cvtAddr(const NETADDR aka1, s_addr *aka2)
@@ -78,13 +80,17 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    msg->destAddr.point = xmsg.dest.point;
    msg->destAddr.domain = NULL;
 
-   strcpy(msg->datetime, (char *) xmsg.__ftsc_date);
-   msg->subjectLine = (char *) smalloc(strlen((char *)xmsg.subj)+1);
-   msg->toUserName  = (char *) smalloc(strlen((char *)xmsg.to)+1);
-   msg->fromUserName = (char *) smalloc(strlen((char *)xmsg.from)+1);
-   strcpy(msg->subjectLine, (char *) xmsg.subj);
-   strcpy(msg->toUserName, (char *) xmsg.to);
-   strcpy(msg->fromUserName, (char *) xmsg.from);
+   strcpy((char *)msg->datetime, (char *) xmsg.__ftsc_date);
+   xstrcat(&(msg->subjectLine), (char *) xmsg.subj);
+   xstrcat(&(msg->toUserName), (char *) xmsg.to);
+   xstrcat(&(msg->fromUserName), (char *) xmsg.from);
+
+   // recoding subjectLine to TransportCharset
+   if (config->outtab != NULL) {
+       recodeToTransportCharset((CHAR*)msg->subjectLine);
+       recodeToTransportCharset((CHAR*)msg->fromUserName);
+       recodeToTransportCharset((CHAR*)msg->toUserName);
+   }
 }
 
 void convertMsgText(HMSG SQmsg, s_message *msg, s_addr ourAka)
