@@ -1,3 +1,8 @@
+2002-07-03 Wednesday 08:38  mche
+
+	* src/: hatch.c (1.58), toss.c (1.193): do not report not saved
+	files
+
 2002-07-02 Tuesday 16:25  stas
 
 	* debian/postinst (1.2): Add debian control file.
