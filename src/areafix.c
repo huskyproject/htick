@@ -140,6 +140,9 @@ int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
         if (i == echo->downlinkCount) return 4;
     } else if ( echo->msgbType  == MSGTYPE_PASSTHROUGH ) {
         return 4;
+    } else if (echo->downlinkCount == 0) {
+        /* always OK for nolinks (need for hpucode's tics) */      
+        return 0;
     }
 
     if (echo->group) {
