@@ -1,3 +1,7 @@
+2003-03-14 Friday 14:02  stas_degteff
+
+	* src/toss.c (1.258): Make less strong tick files check
+
 2003-03-12 Wednesday 05:06  stas_degteff
 
 	* VERSION (1.7): Add huskylib into 'require' list
