@@ -1,16 +1,18 @@
 2005-03-20 Sunday 01:47  sfpavel
 
-	* debian/changelog (htick-1_4-stable.8): 1.4-RC3 release
+	* debian/changelog (tags: stable) (htick-1_4-stable.8): 1.4-RC3
+	release
 
 2004-07-26 Monday 05:17  andr_lukyanov
 
-	* src/filelist.c (htick-1_4-stable.2): do not add directories to
-	filelist
+	* src/filelist.c (tags: stable) (htick-1_4-stable.2): do not add
+	directories to filelist
 
 2004-06-07 Monday 11:44  sfpavel
 
-	* debian/: changelog, compat, control, rules
-	(htick-1_4-stable.[7,1,4,3]): New debian version
+	* debian/: changelog, compat (tags: stable), control (tags:
+	stable), rules (tags: stable) (htick-1_4-stable.[7,1,4,3]): New
+	debian version
 
 2004-06-07 Monday 11:44  sfpavel
 
@@ -19,7 +21,7 @@
 
 2004-06-02 Wednesday 16:12  sfpavel
 
-	* src/toss.c (htick-1_4-stable.10): Fix debug log
+	* src/toss.c (tags: stable) (htick-1_4-stable.10): Fix debug log
 
 2004-03-18 Thursday 18:51  stas_degteff
 
@@ -27,8 +29,8 @@
 
 2004-03-09 Tuesday 10:04  sfpavel
 
-	* h/global.h, win32/makefile.wcw (htick-1_4-stable.[1,1]): Fix
-	compiling (patch from sir)
+	* h/global.h, win32/makefile.wcw (htick-1_4-stable.[1,1]) (utags:
+	stable): Fix compiling (patch from sir)
 
 2004-03-09 Tuesday 10:04  sfpavel
 
@@ -42,14 +44,15 @@
 
 2004-01-08 Thursday 00:23  d_sergienko
 
-	* HISTORY, h/toss.h, src/hatch.c (htick-1_4-stable.[5,2,2]):
-	doSaveTic for hatched files
+	* HISTORY, h/toss.h, src/hatch.c (htick-1_4-stable.[5,2,2]) (utags:
+	stable): doSaveTic for hatched files
 
 2004-01-06 Tuesday 11:02  d_sergienko
 
-	* HISTORY, Makefile, src/toss.c (htick-1_4-stable.[4,2,7]): replace
-	char 026 to space in generated tics to prevent incorrect TIC
-	processing by old DOS fileechoprocessors.
+	* HISTORY, Makefile (tags: stable), src/toss.c
+	(htick-1_4-stable.[4,2,7]): replace char 026 to space in generated
+	tics to prevent incorrect TIC processing by old DOS
+	fileechoprocessors.
 
 2003-12-28 Sunday 00:58  d_sergienko
 
@@ -58,25 +61,27 @@
 
 2003-12-27 Saturday 22:18  d_sergienko
 
-	* src/global.c (htick-1_4-stable.1): fix compiler warning about
-	unused wariable
+	* src/global.c (tags: stable) (htick-1_4-stable.1): fix compiler
+	warning about unused wariable
 
 2003-11-11 Tuesday 20:14  i_zkh
 
-	* doc/htick.rus.texi (htick-1_4-stable.1): Added Russian doc
+	* doc/htick.rus.texi (tags: stable) (htick-1_4-stable.1): Added
+	Russian doc
 
 2003-11-01 Saturday 22:09  i_zkh
 
-	* doc/htick.texi (htick-1_4-stable.3): Minor fix
+	* doc/htick.texi (tags: stable) (htick-1_4-stable.3): Minor fix
 
 2003-09-22 Monday 08:05  andr_lukyanov
 
-	* os2/makefile.wco (htick-1_4-stable.2): Fixed OS/2 WatcomC
-	compilation
+	* os2/makefile.wco (tags: stable) (htick-1_4-stable.2): Fixed OS/2
+	WatcomC compilation
 
 2003-09-22 Monday 01:59  andr_lukyanov
 
-	* os2/makefile.emx (htick-1_4-stable.2): Fixed OS/2 EMX compilation
+	* os2/makefile.emx (tags: stable) (htick-1_4-stable.2): Fixed OS/2
+	EMX compilation
 
 2003-09-18 Thursday 19:27  i_zkh
 
@@ -98,9 +103,10 @@
 
 2003-05-25 Sunday 22:52  d_sergienko
 
-	* BUGS, h/hatch.h, h/toss.h, src/hatch.c, src/toss.c
-	(htick-1_4-stable.[1,1,1,1,5]): skip writing of tic file when we
-	can't do this (perms/etc), but don't crash.
+	* BUGS (tags: stable), h/hatch.h (tags: stable), h/toss.h,
+	src/hatch.c, src/toss.c (htick-1_4-stable.[1,1,1,1,5]): skip
+	writing of tic file when we can't do this (perms/etc), but don't
+	crash.
 
 2003-05-21 Wednesday 08:58  sfpavel
 
@@ -118,13 +124,13 @@
 
 2003-05-08 Thursday 21:42  d_sergienko
 
-	* HISTORY, src/clean.c (htick-1_4-stable.[3,1]): when exists
-	FileArea passthrough with -p defined htick clean won't crash
-	anymore
+	* HISTORY, src/clean.c (tags: stable) (htick-1_4-stable.[3,1]):
+	when exists FileArea passthrough with -p defined htick clean won't
+	crash anymore
 
 2003-04-16 Wednesday 06:35  andr_lukyanov
 
-	* os2/: makefile.emo, makefile.emx, makefile.wco
+	* os2/: makefile.emo (tags: stable), makefile.emx, makefile.wco
 	(htick-1_4-stable.[1,1,1]): Fixed OS/2 compilation
 
 2003-03-07 Friday 13:30  stas_degteff
@@ -133,7 +139,7 @@
 
 2003-03-05 Wednesday 03:35  sfpavel
 
-	* UPGRADE (htick-1_4-stable.2): Update documentation
+	* UPGRADE (tags: stable) (htick-1_4-stable.2): Update documentation
 
 2003-03-04 Tuesday 12:25  stas_degteff
 
@@ -147,7 +153,7 @@
 
 2003-03-02 Sunday 17:43  stas_degteff
 
-	* doc/htick-FAQ.russian (1.6): Update header
+	* doc/htick-FAQ.russian (1.6, stable): Update header
 
 2003-03-02 Sunday 17:30  stas_degteff
 
@@ -159,11 +165,13 @@
 
 2003-03-01 Saturday 08:01  stas_degteff
 
-	* makefile.inc (1.1): Common part of makefiles (include-file)
+	* makefile.inc (1.1, stable): Common part of makefiles
+	(include-file)
 
 2003-03-01 Saturday 08:00  stas_degteff
 
-	* win32/makefile.cyg (1.14): Allow DLL build, check cygwin version
+	* win32/makefile.cyg (1.14, stable): Allow DLL build, check cygwin
+	version
 
 2003-02-28 Friday 08:09  stas_degteff
 
@@ -171,12 +179,12 @@
 
 2003-02-27 Thursday 06:21  sfpavel
 
-	* misc/fileareas (1.3): Fix typo at sample config
+	* misc/fileareas (1.3, stable): Fix typo at sample config
 
 2003-02-26 Wednesday 10:36  stas_degteff
 
-	* src/areafix.c (htick-1_4-stable.1): MFC: Use FilefixFromName when
-	posting filefix reports
+	* src/areafix.c (tags: stable) (htick-1_4-stable.1): MFC: Use
+	FilefixFromName when posting filefix reports
 
 2003-02-25 Tuesday 10:01  sfpavel
 
@@ -204,7 +212,7 @@
 
 2003-02-11 Tuesday 11:59  sfpavel
 
-	* VERSION (htick-1_4-stable.2): Correct VERSION file
+	* VERSION (tags: stable) (htick-1_4-stable.2): Correct VERSION file
 
 2003-02-11 Tuesday 11:01  sfpavel
 
@@ -213,9 +221,10 @@
 
 2003-02-11 Tuesday 10:55  sfpavel
 
-	* HISTORY, VERSION, doc/bugreport.rus, doc/bugreport.txt,
-	doc/htick.texi, h/version.h (htick-1_4-stable.[1,1,2,2,2,1]): Set
-	version to 1.4.0-stable
+	* HISTORY, VERSION, doc/bugreport.rus (tags: stable),
+	doc/bugreport.txt (tags: stable), doc/htick.texi, h/version.h
+	(tags: stable) (htick-1_4-stable.[1,1,2,2,2,1]): Set version to
+	1.4.0-stable
 
 2003-02-11 Tuesday 10:33  sfpavel
 
@@ -245,9 +254,9 @@
 2003-02-06 Thursday 12:40  sfpavel
 
 	* Makefile (1.16), debian/changelog (1.14), debian/control (1.9),
-	debian/copyright (1.5), debian/doc-base (1.1), debian/docs (1.4),
-	debian/info (1.2), debian/rules (1.11), doc/Makefile (1.3): New
-	debian version
+	debian/copyright (1.5, stable), debian/doc-base (1.1, stable),
+	debian/docs (1.4, stable), debian/info (1.2, stable), debian/rules
+	(1.11), doc/Makefile (1.3, stable): New debian version
 
 2003-02-06 Thursday 12:36  sfpavel
 
@@ -255,7 +264,7 @@
 
 2003-02-04 Tuesday 21:05  d_sergienko
 
-	* src/report.c (1.37): comment out unused Tics4del array
+	* src/report.c (1.37, stable): comment out unused Tics4del array
 
 2003-02-04 Tuesday 10:35  mche
 
@@ -278,12 +287,12 @@
 2003-01-31 Friday 18:37  mche
 
 	* h/global.h (1.22), src/areafix.c (1.112), src/global.c (1.26),
-	src/htick.c (1.90): New command 'ffix!' in addition to 'ffix' It
-	does the same job as 'ffix' and send subscride/unsubscribe letter
-	to link that was manualy subscribed/unsubscribed by filefix command
-	like: htick ffix! 2:464/910 -910.TEST This command remove file echo
-	link 2:464/910 from 910.TEST and produce letter to 2:464/910 with
-	body "-910.TEST"
+	src/htick.c (1.90, stable): New command 'ffix!' in addition to
+	'ffix' It does the same job as 'ffix' and send
+	subscride/unsubscribe letter to link that was manualy
+	subscribed/unsubscribed by filefix command like: htick ffix!
+	2:464/910 -910.TEST This command remove file echo link 2:464/910
+	from 910.TEST and produce letter to 2:464/910 with body "-910.TEST"
 
 2003-01-31 Friday 13:21  mche
 
@@ -306,7 +315,7 @@
 
 2003-01-28 Tuesday 14:28  stas_degteff
 
-	* TODO (1.4): Add todo about templates & etc
+	* TODO (1.4, stable): Add todo about templates & etc
 
 2003-01-28 Tuesday 14:28  stas_degteff
 
@@ -336,7 +345,7 @@
 
 2003-01-26 Sunday 12:23  mche
 
-	* src/add_desc.c (1.32): fix unpacker detecteion
+	* src/add_desc.c (1.32, stable): fix unpacker detecteion
 
 2003-01-26 Sunday 08:28  stas_degteff
 
@@ -353,14 +362,14 @@
 
 2003-01-21 Tuesday 06:19  stas_degteff
 
-	* htick.dsp (1.3): 0x0a --> 0x0d0x0a for *.dsp
+	* htick.dsp (1.3, stable): 0x0a --> 0x0d0x0a for *.dsp
 
 2003-01-20 Monday 06:25  stas_degteff
 
-	* h/filelist.h (1.9), src/areafix.c (1.110), src/fcommon.c (1.63),
-	src/filecase.c (1.7), src/hatch.c (1.75), src/htick.c (1.87),
-	src/report.c (1.35), src/toss.c (1.245): Use defines from
-	compiler.h; fix cygwin/mingw build
+	* h/filelist.h (1.9, stable), src/areafix.c (1.110), src/fcommon.c
+	(1.63, stable), src/filecase.c (1.7, stable), src/hatch.c (1.75),
+	src/htick.c (1.87), src/report.c (1.35), src/toss.c (1.245): Use
+	defines from compiler.h; fix cygwin/mingw build
 
 2003-01-19 Sunday 15:12  mche
 
@@ -441,8 +450,8 @@
 
 2002-12-31 Tuesday 09:34  stas_degteff
 
-	* h/fcommon.h (1.20), src/clean.c (1.11), src/fcommon.c (1.61),
-	src/hatch.c (1.73), src/toss.c (1.243): PackAka token
+	* h/fcommon.h (1.20, stable), src/clean.c (1.11), src/fcommon.c
+	(1.61), src/hatch.c (1.73), src/toss.c (1.243): PackAka token
 	implementation: pack echomail via third link which may be not
 	described in config. (Patch From Alexander Reznikov 2:4600/220.)
 
@@ -500,7 +509,7 @@
 
 2002-12-02 Monday 07:43  stas_degteff
 
-	* misc/config (1.8): Use FileFixReportsAttr instead
+	* misc/config (1.8, stable): Use FileFixReportsAttr instead
 	filefixkillreports
 
 2002-11-29 Friday 14:15  mche
@@ -545,9 +554,9 @@
 2002-11-25 Monday 09:00  mche
 
 	* src/areafix.c (1.103), src/global.c (1.23), src/hatch.c (1.72),
-	src/scan.c (1.27), src/seenby.c (1.11), src/toss.c (1.237),
-	h/areafix.h (1.15), h/global.h (1.19), h/seenby.h (1.9), h/toss.h
-	(1.20): s_addr --> hs_addr
+	src/scan.c (1.27, stable), src/seenby.c (1.11, stable), src/toss.c
+	(1.237), h/areafix.h (1.15, stable), h/global.h (1.19), h/seenby.h
+	(1.9, stable), h/toss.h (1.20): s_addr --> hs_addr
 
 2002-11-23 Saturday 20:28  stas_degteff
 
@@ -611,8 +620,8 @@
 
 2002-11-10 Sunday 19:07  d_sergienko
 
-	* BUG-REPORTING (1.2), doc/bugreport.rus (1.1), doc/bugreport.txt
-	(1.1): syncing bugreporing with hpt
+	* BUG-REPORTING (1.2, stable), doc/bugreport.rus (1.1),
+	doc/bugreport.txt (1.1): syncing bugreporing with hpt
 
 2002-11-10 Sunday 19:06  d_sergienko
 
@@ -621,9 +630,10 @@
 
 2002-11-10 Sunday 14:26  mche
 
-	* osf/makefile (1.7), beos/makefile.be (1.6), bsd/makefile.bsd
-	(1.6), linux/makefile.lnx (1.9), os2/makefile.wco (1.15),
-	win32/makefile.wcw (1.20): correct makefiles
+	* osf/makefile (1.7, stable), beos/makefile.be (1.6, stable),
+	bsd/makefile.bsd (1.6, stable), linux/makefile.lnx (1.9, stable),
+	os2/makefile.wco (1.15), win32/makefile.wcw (1.20): correct
+	makefiles
 
 2002-11-10 Sunday 10:51  sfpavel
 
@@ -636,7 +646,7 @@
 
 2002-11-06 Wednesday 14:44  mche
 
-	* win32/makefile.mgw (1.4): corrected makefile
+	* win32/makefile.mgw (1.4, stable): corrected makefile
 
 2002-11-06 Wednesday 09:18  stas_degteff
 
@@ -705,8 +715,8 @@
 
 2002-10-30 Wednesday 05:26  stas_degteff
 
-	* win32/: makefile.mgw (1.3), makefile.mvc (1.9), makefile.mvcdll
-	(1.8): cosmetic fix
+	* win32/: makefile.mgw (1.3), makefile.mvc (1.9, stable),
+	makefile.mvcdll (1.8, stable): cosmetic fix
 
 2002-10-29 Tuesday 12:18  stas_degteff
 
@@ -745,17 +755,17 @@
 
 2002-10-25 Friday 21:51  stas_degteff
 
-	* doc/: Makefile (1.1), htick.texi (1.1), makefile.unx (1.1): Htick
-	manual written by Tema Zelikin 2:5097/31
+	* doc/: Makefile (1.1), htick.texi (1.1), makefile.unx (1.1,
+	stable): Htick manual written by Tema Zelikin 2:5097/31
 
 2002-10-25 Friday 11:30  stas_degteff
 
-	* h/areafix.h (1.14), h/fcommon.h (1.19), h/filecase.h (1.2),
-	h/seenby.h (1.8), src/add_desc.c (1.21), src/clean.c (1.9),
-	src/fcommon.c (1.55), src/filecase.c (1.6), src/filelist.c (1.33),
-	src/global.c (1.22), src/hatch.c (1.69), src/htick.c (1.77),
-	src/report.c (1.20), src/scan.c (1.25), src/toss.c (1.231): Sort
-	includes to prevent redefines
+	* h/areafix.h (1.14), h/fcommon.h (1.19), h/filecase.h (1.2,
+	stable), h/seenby.h (1.8), src/add_desc.c (1.21), src/clean.c
+	(1.9), src/fcommon.c (1.55), src/filecase.c (1.6), src/filelist.c
+	(1.33), src/global.c (1.22), src/hatch.c (1.69), src/htick.c
+	(1.77), src/report.c (1.20), src/scan.c (1.25), src/toss.c (1.231):
+	Sort includes to prevent redefines
 
 2002-10-25 Friday 09:41  pgul
 
@@ -991,13 +1001,15 @@
 
 2002-09-19 Thursday 08:45  sfpavel
 
-	* dos/makefile.djg (1.6), src/toss.c (1.210): Fix DJGPP build
+	* dos/makefile.djg (1.6, stable), src/toss.c (1.210): Fix DJGPP
+	build
 
 2002-09-18 Wednesday 15:02  mche
 
-	* src/add_desc.c (1.18), h/add_desc.h (1.5), h/global.h (1.17),
-	man/htick.1 (1.6), src/global.c (1.21), src/htick.c (1.69),
-	src/toss.c (1.209): "announce to file" functionality was removed
+	* src/add_desc.c (1.18), h/add_desc.h (1.5, stable), h/global.h
+	(1.17), man/htick.1 (1.6, stable), src/global.c (1.21), src/htick.c
+	(1.69), src/toss.c (1.209): "announce to file" functionality was
+	removed
 
 2002-09-18 Wednesday 10:18  pgul
 
@@ -1074,13 +1086,13 @@
 
 2002-08-29 Thursday 12:59  sfpavel
 
-	* debian/changelog (1.11), debian/dirs (1.3), debian/rules (1.9),
-	man/htick.1 (1.4): New debian package
+	* debian/changelog (1.11), debian/dirs (1.3, stable), debian/rules
+	(1.9), man/htick.1 (1.4): New debian package
 
 2002-08-29 Thursday 12:38  stas_degteff
 
-	* misc/: README (1.4), config (1.2), fileareas (1.2): Small change
-	in documentation; fix config sample.
+	* misc/: README (1.4, stable), config (1.2), fileareas (1.2): Small
+	change in documentation; fix config sample.
 
 2002-08-29 Thursday 12:21  sfpavel
 
@@ -1141,11 +1153,11 @@
 
 2002-08-22 Thursday 10:31  sfpavel
 
-	* debian/postinst (1.5): Re-add debian/postinst
+	* debian/postinst (1.5, stable): Re-add debian/postinst
 
 2002-08-22 Thursday 07:19  sfpavel
 
-	* misc/: README (1.2), purge_fileecho (1.1): Add
+	* misc/: README (1.2), purge_fileecho (1.1, stable): Add
 	misc/purge_fileecho from hpt
 
 2002-08-21 Wednesday 12:41  mche
@@ -1277,20 +1289,20 @@
 
 2002-07-09 Tuesday 16:45  mche
 
-	* src/clean.c (1.2), src/htick.c (1.65), h/htick.h (1.4), h/toss.h
-	(1.17): added purging for file echos
+	* src/clean.c (1.2), src/htick.c (1.65), h/htick.h (1.4, stable),
+	h/toss.h (1.17): added purging for file echos
 
 2002-07-08 Monday 15:59  mche
 
 	* src/clean.c (1.1), src/toss.c (1.199), Makefile (1.13),
-	osf/makefile (1.6), dos/makefile.bcd (1.5), dos/makefile.djg (1.5),
-	os2/makefile.bco (1.5), os2/makefile.emo (1.10), os2/makefile.emx
-	(1.6), os2/makefile.wco (1.14), sun/makefile (1.8),
-	win32/makefile.bcw (1.9), win32/makefile.cyg (1.7),
-	win32/makefile.mvc (1.7), win32/makefile.mvcdll (1.5),
-	win32/makefile.wcw (1.17), beos/makefile.be (1.5), bsd/makefile.bsd
-	(1.5), h/toss.h (1.16), linux/makefile.lnx (1.8): redesign of
-	cleanPassthroughDir function
+	osf/makefile (1.6), dos/makefile.bcd (1.5, stable),
+	dos/makefile.djg (1.5), os2/makefile.bco (1.5, stable),
+	os2/makefile.emo (1.10), os2/makefile.emx (1.6), os2/makefile.wco
+	(1.14), sun/makefile (1.8, stable), win32/makefile.bcw (1.9,
+	stable), win32/makefile.cyg (1.7), win32/makefile.mvc (1.7),
+	win32/makefile.mvcdll (1.5), win32/makefile.wcw (1.17),
+	beos/makefile.be (1.5), bsd/makefile.bsd (1.5), h/toss.h (1.16),
+	linux/makefile.lnx (1.8): redesign of cleanPassthroughDir function
 
 2002-07-08 Monday 13:19  mche
 
@@ -1355,8 +1367,8 @@
 
 2002-07-02 Tuesday 14:21  stas
 
-	* INSTALL (1.5), Makefile (1.12), README (1.4): Update
-	documentation
+	* INSTALL (1.5, stable), Makefile (1.12), README (1.4, stable):
+	Update documentation
 
 2002-07-02 Tuesday 09:22  mche
 
@@ -1390,8 +1402,8 @@
 
 2002-06-29 Saturday 13:44  mche
 
-	* src/report.c (1.2), h/report.h (1.2), src/toss.c (1.190): reports
-	cosmetiq
+	* src/report.c (1.2), h/report.h (1.2, stable), src/toss.c (1.190):
+	reports cosmetiq
 
 2002-06-29 Saturday 11:02  mche
 
@@ -1399,7 +1411,8 @@
 
 2002-06-28 Friday 12:57  stas
 
-	* misc/st_htick.pl (1.3): Fix: Add line feeds in some strings.
+	* misc/st_htick.pl (1.3, stable): Fix: Add line feeds in some
+	strings.
 
 2002-06-28 Friday 12:56  stas
 
@@ -1446,13 +1459,14 @@
 
 2002-06-13 Thursday 07:36  stas
 
-	* misc/: README (1.1), filefix.866 (1.1, htick-1_0_4-release,
-	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release),
-	filefix.hlp (1.8, htick-1_0_4-release, htick-1_0_3-release,
-	htick-1_0_2-release, htick-1_0-release), st_htick.pl (1.1,
+	* misc/: README (1.1), filefix.866 (1.1, stable,
 	htick-1_0_4-release, htick-1_0_3-release, htick-1_0_2-release,
-	htick-1_0-release): Add thick statistic generator; translate
-	filefix help to russian; change example for filefix help.
+	htick-1_0-release), filefix.hlp (1.8, stable, htick-1_0_4-release,
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release),
+	st_htick.pl (1.1, htick-1_0_4-release, htick-1_0_3-release,
+	htick-1_0_2-release, htick-1_0-release): Add thick statistic
+	generator; translate filefix help to russian; change example for
+	filefix help.
 
 2002-06-12 Wednesday 12:55  mche
 
@@ -2146,7 +2160,7 @@
 
 2001-05-13 Sunday 19:21  wulf.krueger
 
-	* .cvs2cl (1.1, htick-1_0_4-release, htick-1_0_3-release,
+	* .cvs2cl (1.1, stable, htick-1_0_4-release, htick-1_0_3-release,
 	htick-1_0_2-release, htick-1_0-release): 
 	Modified Files: 	ChangeLog Added Files:		.cvs2cl
 	-------------------------------------------------------------------
@@ -2194,9 +2208,9 @@
 
 2001-04-05 Thursday 12:08  joerg.jaspert
 
-	* man/: README (1.1, htick-1_0_4-release, htick-1_0_3-release,
-	htick-1_0_2-release, htick-1_0-release), htick.1 (1.1): Small
-	manpage for htick. Please check for errors.
+	* man/: README (1.1, stable, htick-1_0_4-release,
+	htick-1_0_3-release, htick-1_0_2-release, htick-1_0-release),
+	htick.1 (1.1): Small manpage for htick. Please check for errors.
 
 2000-12-09 Saturday 07:47  ml
 
@@ -2409,7 +2423,7 @@
 2000-04-15 Saturday 18:09  tobi
 
 	* h/fcommon.h (1.6), h/filelist.h (1.5), h/global.h (1.9),
-	h/hatch.h (1.4, htick-0_9a-release), h/scan.h (1.3,
+	h/hatch.h (1.4, htick-0_9a-release), h/scan.h (1.3, stable,
 	htick-1_0_4-release, htick-1_0_3-release, htick-1_0_2-release,
 	htick-1_0-release, htick-0_9a-release), h/seenby.h (1.5,
 	htick-0_9a-release), src/areafix.c (1.32), src/fcommon.c (1.13),
