@@ -700,27 +700,38 @@ int writeCheck(s_filearea *echo, s_addr *aka)
   return 0;
 }
 
-void doSaveTic(char *ticfile,s_ticfile *tic)
+void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
 {
-   char *filename = NULL;
-   unsigned int i;
-   s_savetic *savetic;
+    char *filename = NULL;
+    unsigned int i;
+    s_savetic *savetic;
+    
+    for (i = 0; i< config->saveTicCount; i++)
+    {
+        savetic = &(config->saveTic[i]);
+        if (patimat(tic->area,savetic->fileAreaNameMask)==1) {
 
-   for (i = 0; i< config->saveTicCount; i++)
-     {
-       savetic = &(config->saveTic[i]);
-       if (patimat(tic->area,savetic->fileAreaNameMask)==1) {
-          w_log('6',"Saving Tic-File %s to %s",strrchr(ticfile,PATH_DELIM) + 1,savetic->pathName);
-          xscatprintf(&filename,"%s%s",savetic->pathName,strrchr(ticfile, PATH_DELIM) + 1);
-          if (copy_file(ticfile,filename)!=0) {
-             w_log('9',"File %s not found or not moveable",ticfile);
-          };
-          break;
-       };
+            char *ticFname = GetFilenameFromPathname(ticfile);
 
-     };
-   nfree(filename);
-   return;
+            w_log('6',"Saving Tic-File %s to %s", ticFname, savetic->pathName);
+            xscatprintf(&filename,"%s%s", savetic->pathName,ticFname);
+            if (copy_file(ticfile,filename)!=0) {
+                w_log('9',"File %s not found or not moveable",ticfile);
+            };
+            if(filearea && !filearea->pass && !filearea->sendorig)
+            {
+                char *from = NULL, *to = NULL;
+                xstrscat(&from, filearea->pathName, tic->file, NULL);
+                xstrscat(&to,   savetic->pathName, tic->file, NULL);
+                link_file(from,to);
+                nfree(from); nfree(to);
+            }
+            break;
+        };
+        
+    };
+    nfree(filename);
+    return;
 }
 
 int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
@@ -1172,7 +1183,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                      }
                   }
                }
-               doSaveTic(ticfile,&tic);
+               doSaveTic(ticfile,&tic,NULL);
                disposeTic(&tic);
                return(0);
             }
@@ -1352,7 +1363,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
 
-   doSaveTic(ticfile,&tic);
+   doSaveTic(ticfile,&tic,filearea);
    disposeTic(&tic);
    return(rc);
 }
