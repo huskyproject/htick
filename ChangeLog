@@ -1,3 +1,7 @@
+2003-04-25 Friday 05:02  andr_lukyanov
+
+	* win32/makefile.cyg (1.17): Fixed compilation. Remark DEBUG mode.
+
 2003-04-24 Thursday 06:21  andr_lukyanov
 
 	* dos/makefile.djg (1.7): Fixed DJGPP compilation with new library
