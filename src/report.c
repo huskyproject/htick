@@ -469,7 +469,7 @@ void reportNewFiles()
         if(!msg) continue;
         
         xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
-        xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r",
+        xscatprintf(&(msg->text), ">Total %u bytes in %u file(s)\r\r",
             fileSizeTotal, fileCountTotal);
         
         if(msg->netMail > 1)
