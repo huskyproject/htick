@@ -1921,12 +1921,12 @@ void reportNewFiles()
 
                if(strlen(newFileReport[i]->fileName) > 12)
                    xscatprintf(&(msg->text)," %s\r%23ld ",
-                                 strUpper(newFileReport[i]->fileName),
+                                 newFileReport[i]->fileName,
                                  newFileReport[i]->fileSize
                                );
                else
                    xscatprintf(&(msg->text)," %-12s %9ld ",
-                                strUpper(newFileReport[i]->fileName), 
+                                newFileReport[i]->fileName, 
                                 newFileReport[i]->fileSize
                                 );
 
@@ -1948,12 +1948,12 @@ void reportNewFiles()
                       newFileReport[b]->areaName) == 0) {
                       if(strlen(newFileReport[b]->fileName) > 12)
                           xscatprintf(&(msg->text)," %s\r%23ld ",
-                          strUpper(newFileReport[b]->fileName),
+                          newFileReport[b]->fileName,
                           newFileReport[b]->fileSize
                           );
                       else
                           xscatprintf(&(msg->text)," %-12s %9ld ",
-                          strUpper(newFileReport[b]->fileName), 
+                          newFileReport[b]->fileName, 
                           newFileReport[b]->fileSize
                           );
                       
