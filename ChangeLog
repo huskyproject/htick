@@ -1,3 +1,11 @@
+2003-02-06 Thursday 14:47  mche
+
+	* src/toss.c (1.248): initilize tic structure before using
+
+2003-02-06 Thursday 14:27  mche
+
+	* src/toss.c (1.247): validate pointers before using
+
 2003-02-06 Thursday 12:40  sfpavel
 
 	* Makefile (1.16), debian/changelog (1.14), debian/control (1.9),
