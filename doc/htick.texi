@@ -419,7 +419,7 @@ Execute some command on receiving file.
 Command gets full filepath as parameter (space and file pathname should be
 appended to command string before execution).
 
-This statement cannot be repeated.
+This statement can be repeated.
 
 @node SaveTic, MaxTicLineLength, ExecOnFile, Keywords
 @subsection SaveTic
@@ -454,7 +454,7 @@ copy files from fileechodir to <DirToSaveTic>
 Options @option{-l} and @option{-c} work only for non-Passthrough fileechos
 @end table
 
-This statement cannot be repeated.
+This statement can be repeated.
 
 @node MaxTicLineLength, BusyFileDir, SaveTic, Keywords
 @subsection MaxTicLineLength
