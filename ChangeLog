@@ -1,3 +1,13 @@
+2002-11-20 Wednesday 10:17  stas_degteff
+
+	* doc/htick.texi (htick-1_0-stable.4): Fix spelling (about long
+	name): thanks to Igor Zakharoff, 2:5030/290.36
+
+2002-11-20 Wednesday 10:13  stas_degteff
+
+	* doc/htick.texi (htick-1_0-stable.3): Fix spelling (about long
+	name): thanks to Igor Zakharoff, 2:5030/290.36
+
 2002-11-10 Sunday 09:36  sfpavel
 
 	* debian/info (1.1): file info was initially added on branch
