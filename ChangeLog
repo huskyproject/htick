@@ -1,3 +1,13 @@
+2002-08-26 Monday 13:33  d_sergienko
+
+	* FidoConfigKeywords (1.34), src/areafix.c (1.86): areafixFromName
+	feature
+
+2002-08-26 Monday 09:02  sfpavel
+
+	* debian/changelog (1.10), debian/copyright (1.4), debian/rules
+	(1.8), src/hatch.c (1.62): New debian package
+
 2002-08-25 Sunday 18:17  d_sergienko
 
 	* src/add_desc.c (1.16): 
