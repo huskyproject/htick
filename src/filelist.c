@@ -115,15 +115,21 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     unsigned int removeCount = 0, i, Len;
     FILE *fbbs;
     char *token = "";
+    char *files_bbs;
     int flag = 0;
     static BigSize bs;
     memset(&bs,0,sizeof(BigSize));
 
-    
+    if(config->fileDescription) {
+        files_bbs = config->fileDescription;
+    } else {
+        files_bbs = "files.bbs";
+    }
+   
     fileareapath = sstrdup(area_pathName);
     strLower(fileareapath);
     _createDirectoryTree(fileareapath);
-    xstrscat(&fbbsname,fileareapath,"files.bbs",NULL);
+    xstrscat(&fbbsname,fileareapath, files_bbs,NULL);
     adaptcase(fbbsname);
     
     dir = husky_opendir(fileareapath);

@@ -509,6 +509,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     unsigned int i, z;
     char descr_file_name[256], newticedfile[256], fileareapath[256];
     char timestr[40];
+    char *files_bbs;
     time_t acttime;
     hs_addr *old_seenby = NULL;
     hs_addr old_from, old_to;
@@ -519,6 +520,12 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     char *p;
     unsigned int minLinkCount;
     
+    if(config->fileDescription) {
+        files_bbs = config->fileDescription;
+    } else {
+        files_bbs = "files.bbs";
+    }
+
     if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
     else minLinkCount = 1;             /*  only downlink */
 
@@ -621,7 +628,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     
     if (filearea->msgbType != MSGTYPE_PASSTHROUGH) {
         strcpy(descr_file_name, filearea->fileName);
-        strcat(descr_file_name, "files.bbs");
+        strcat(descr_file_name, files_bbs);
         adaptcase(descr_file_name);
         removeDesc(descr_file_name,tic->file);
         if (tic->anzldesc>0)

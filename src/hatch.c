@@ -94,6 +94,7 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
     char *basename        = NULL;
     char *ldFileName      = NULL;
     char *sdFileName      = NULL;
+    char *files_bbs;
     char ctmp;
     int  SdescOPT  = 0;
     int  LdescOPT = 0;
@@ -101,6 +102,12 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
     char **tmpArray = NULL;
     UINT i;
 
+    if(config->fileDescription) {
+        files_bbs = config->fileDescription;
+    } else {
+        files_bbs = "files.bbs";
+    }
+   
     memset(&tmptic,0,sizeof(s_ticfile));    
     if(tic->anzdesc > 0)
     {
@@ -132,10 +139,10 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
             basename = strrchr(tic->file,PATH_DELIM);
             ctmp = *basename;
             *basename  = '\0';
-            xscatprintf(&descr_file_name, "%s%c%s", tic->file,PATH_DELIM,"files.bbs");    
+            xscatprintf(&descr_file_name, "%s%c%s", tic->file,PATH_DELIM,files_bbs);    
             *basename  = ctmp;    
         } else {
-            xstrcat(&descr_file_name, "files.bbs");    
+            xstrcat(&descr_file_name, files_bbs);    
         }
         adaptcase(descr_file_name);
         if( GetDescFormBbsFile(descr_file_name, tic->file, &tmptic) == 0)
@@ -371,10 +378,17 @@ int send(char *filename, char *area, char *addr)
     s_link *link = NULL;
     s_area *filearea;
     char *sendfile=NULL, *descr_file_name=NULL, *tmpfile=NULL;
+    char *files_bbs;
     char timestr[40];
     struct stat stbuf;
     time_t acttime;
     int rc;
+
+    if(config->fileDescription) {
+        files_bbs = config->fileDescription;
+    } else {
+        files_bbs = "files.bbs";
+    }
 
     w_log( LL_INFO, "Start file send (%s in %s to %s)",filename,area,addr);
     
@@ -445,7 +459,7 @@ int send(char *filename, char *area, char *addr)
     /*  Adding crc */
     tic.crc = filecrc32(sendfile);
     
-    xstrscat(&descr_file_name, filearea->fileName,"files.bbs",NULL);
+    xstrscat(&descr_file_name, filearea->fileName,files_bbs,NULL);
     adaptcase(descr_file_name);
     
     GetDescFormBbsFile(descr_file_name, tic.file, &tic);
