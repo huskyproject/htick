@@ -1,3 +1,11 @@
+2002-05-15 Wednesday 19:23  mche
+
+	* src/toss.c (1.167): fix cygwin compilation
+
+2002-05-15 Wednesday 13:00  mche
+
+	* src/: fcommon.c (1.45), toss.c (1.166): fix msvc compilation
+
 2002-05-14 Tuesday 16:18  pavel.gulchouck
 
 	* h/areafix.h (1.8), h/fcommon.h (1.16), src/fcommon.c (1.44),
