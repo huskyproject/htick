@@ -658,7 +658,7 @@ char *pause_link(s_message *msg, s_link *link)
     char *report=NULL;
 
     if ((link->Pause & FILEAREA) != FILEAREA) {
-        if (Changepause(getConfigFileName(), link,0,FILEAREA) == 0)
+        if (Changepause(cfgFile?cfgFile:getConfigFileName(), link,0,FILEAREA) == 0)
             return NULL;
     }
     xstrcat(&report, " System switched to passive\r");
@@ -674,7 +674,7 @@ char *resume_link(s_message *msg, s_link *link)
     char *tmp = NULL, *report=NULL;
 
     if ((link->Pause & FILEAREA) == FILEAREA) {
-       if (Changepause(getConfigFileName(), link,0,FILEAREA) == 0)
+       if (Changepause(cfgFile?cfgFile:getConfigFileName(), link,0,FILEAREA) == 0)
           return NULL;
     }
     xstrcat(&report, " System switched to active\r");
@@ -1087,7 +1087,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
     }
 
 
-    fileName = creatingLink->autoFileCreateFile ? creatingLink->autoFileCreateFile : getConfigFileName();
+    fileName = creatingLink->autoFileCreateFile ? creatingLink->autoFileCreateFile : cfgFile ? cfgFile:getConfigFileName();
 
     f = fopen(fileName, "a+b");
     if (f == NULL) {
