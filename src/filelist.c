@@ -200,7 +200,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     if (dir == NULL) return;
     
     w_log( LL_INFO, "Processing: %s",area_areaName);
-    
+
     while ((file = readdir(dir)) != NULL) {
         if (strcmp(file->d_name,".") == 0 || strcmp(file->d_name,"..") == 0)
             continue;
@@ -236,7 +236,10 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         fprintf(f,"-----------------------------------------------------------------------------\n");
         fprintf(f,"Total files in area: %4d, total size: %10lu bytes\n\n",totalnumber,totalsize);
     }
-    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
+    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) {
+	closedir(dir);
+	return;
+    }
     while ((fbbsline = readLine(fbbs)) != NULL) {
         if (*fbbsline == 0 || *fbbsline == 10 || *fbbsline == 13
             || *fbbsline == ' ' || *fbbsline == '\t' || *fbbsline == '>')
@@ -275,6 +278,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     totalfilessize += totalsize;
     totalfilesnumber += totalnumber;
     nfree(filename);
+    closedir(dir);
     return;
 }
 
