@@ -1,3 +1,7 @@
+2002-11-20 Wednesday 10:12  stas_degteff
+
+	* doc/htick.texi (1.13): Fix spelling (about long name)
+
 2002-11-15 Friday 17:48  pgul
 
 	* src/areafix.c (1.102): Fixed memory leak
