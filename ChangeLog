@@ -1,3 +1,21 @@
+2003-01-27 Monday 20:12  stas_degteff
+
+	* VERSION (1.5): Move from 'Attic'
+
+2003-01-27 Monday 19:44  stas_degteff
+
+	* VERSION (1.3), HISTORY (1.11): Change version number to 1.3
+
+2003-01-27 Monday 19:39  stas_degteff
+
+	* HISTORY (1.10): Allow unconditional forward subscribe when
+	forwardFileRequestsFile not defined
+
+2003-01-27 Monday 19:34  stas_degteff
+
+	* src/areafix.c (1.111): Allow unconditional forward subscribe when
+	forwardFileRequestsFile not defined
+
 2003-01-26 Sunday 12:23  mche
 
 	* src/add_desc.c (1.32): fix unpacker detecteion
