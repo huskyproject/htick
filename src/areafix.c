@@ -31,7 +31,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
+#endif
 
 #ifndef MSDOS
 #include <fidoconf/fidoconf.h>
@@ -125,7 +127,7 @@ s_message *makeMessage(s_addr *origAddr, s_addr *destAddr, char *fromName, char 
     }
     if (config->filefixKillReports) msg->attributes |= MSGKILL;
     
-    strftime(msg->datetime, 21, "%d %b %y  %T", localtime(&time_cur));
+    strftime(msg->datetime, 21, "%d %b %y  %H:%M:%S", localtime(&time_cur));
     
     
     return msg;

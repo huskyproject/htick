@@ -36,7 +36,9 @@
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
+#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
+#endif
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>

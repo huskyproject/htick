@@ -37,7 +37,9 @@
 #include <sys/types.h>
 #endif
 #include <sys/stat.h>
+#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
+#endif
 #ifdef __IBMC__
 #include <direct.h>
 #endif
@@ -72,16 +74,18 @@ int createLockFile(char *lockfile) {
         return 0;
 }
 
-#if defined(__TURBOC__) || defined(__IBMC__)
+#if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
 
 #include <io.h>
 #include <fcntl.h>
 
+#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #define S_ISDIR(a) (((a) & S_IFDIR) != 0)
+#endif
 
 #endif
 
-#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__)
+#if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
 
 int truncate(const char *fileName, long length)
 {

@@ -32,10 +32,15 @@
 #include <string.h>
 #include <ctype.h>
 #ifndef __IBMC__
+#if !(defined(_MSC_VER) && (_MSC_VER >= 1200))
 #include <unistd.h>
+#endif
 #endif
 #include <sys/types.h>
 #include <signal.h>
+#if defined(_MSC_VER) && (_MSC_VER >= 1200)
+#include <sys/stat.h>
+#endif
 
 #include <smapi/msgapi.h>
 

@@ -1,0 +1,42 @@
+# Microsoft Visual C++ Makefile
+
+CC=     cl
+CFLAGS= -nologo -Zp1 -I..\.. -I..\h
+CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE
+COPT=   -O2
+TLIB=   lib -nologo
+
+FCONFL=	..\..\fidoconf\fconfmvc.lib
+SMAPIL=	..\..\smapi\smapimvc.lib
+HTICKL=	htickmvc.lib
+
+OBJS    = global.obj \
+          log.obj \
+          toss.obj \
+          fcommon.obj \
+          scan.obj \
+          areafix.obj \
+          strsep.obj \
+          add_descr.obj \
+          seenby.obj \
+          recode.obj \
+          crc32.obj \
+          hatch.obj \
+          filelist.obj
+
+{..\src}.c.obj:
+	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
+
+all: $(HTICKL) htick.exe
+
+$(HTICKL): $(OBJS)
+	$(TLIB) /out:$@ $(OBJS)
+
+htick.exe:
+        $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(FCONFL) $(SMAPIL) $(HTICKL) USER32.LIB
+
+clean:
+	-del *.obj *.lib
+
+distclean: clean
+	-del *.exe
