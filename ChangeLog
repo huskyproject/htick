@@ -1,3 +1,13 @@
+2003-12-28 Sunday 00:58  d_sergienko
+
+	* src/toss.c (htick-1_4-stable.6): fixed coredump when area is not
+	defined in tic
+
+2003-12-27 Saturday 22:18  d_sergienko
+
+	* src/global.c (htick-1_4-stable.1): fix compiler warning about
+	unused wariable
+
 2003-11-11 Tuesday 20:14  i_zkh
 
 	* doc/htick.rus.texi (htick-1_4-stable.1): Added Russian doc
