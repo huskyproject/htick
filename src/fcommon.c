@@ -208,7 +208,7 @@ int link_file(const char *from, const char *to)
    int rc = FALSE;
 #if (_WIN32_WINNT >= 0x0500)
    rc = CreateHardLink(to, from, NULL);
-#elif defined (_UNISTD_H)
+#elif defined (_UNISTD_H) && !defined(OS2)
    rc = (link(from, to) == 0);
 #endif
    return rc;
