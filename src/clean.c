@@ -194,8 +194,13 @@ void purgeFileEchos()
     for (i=0; i<config->fileAreaCount; i++) {
         if(config->fileAreas[i].purge == 0)
             continue;
-        w_log(LL_INFO,  "Cleaning %s ...", config->fileAreas[i].areaName);
-        dir = opendir(config->fileAreas[i].pathName);
+        if (config->fileAreas[i].pathName) {
+            w_log(LL_INFO,  "Cleaning %s ...", config->fileAreas[i].areaName);
+            dir = opendir(config->fileAreas[i].pathName);
+        } else {
+            w_log(LL_INFO,  "FileArea %s is passthrough, skipping...", config->fileAreas[i].areaName);
+            continue;
+        }
         if (dir == NULL) 
             continue;
 
