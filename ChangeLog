@@ -1,3 +1,10 @@
+2002-12-31 Tuesday 09:34  stas_degteff
+
+	* h/fcommon.h (1.20), src/clean.c (1.11), src/fcommon.c (1.61),
+	src/hatch.c (1.73), src/toss.c (1.243): PackAka token
+	implementation: pack echomail via third link which may be not
+	described in config. (Patch From Alexander Reznikov 2:4600/220.)
+
 2002-12-30 Monday 13:23  stas_degteff
 
 	* doc/htick.texi (1.17): replace 'areafix' to 'filefix'
