@@ -1,3 +1,21 @@
+2003-03-02 Sunday 17:43  stas_degteff
+
+	* doc/htick-FAQ.russian (1.6): Update header
+
+2003-03-02 Sunday 17:30  stas_degteff
+
+	* doc/htick-FAQ.russian (1.5): Update header
+
+2003-03-02 Sunday 15:08  stas_degteff
+
+	* win32/: makefile.bcw (1.11), makefile.cyg (1.15), makefile.mgw
+	(1.6), makefile.mvc (1.11), makefile.mvcdll (1.10), makefile.wcw
+	(1.22): Fix spelling. Path from Igor Zakharov
+
+2003-03-01 Saturday 22:27  i_zkh
+
+	* doc/: htick-FAQ.russian (1.4), htick.texi (1.25): Fixed spelling
+
 2003-03-01 Saturday 08:01  stas_degteff
 
 	* makefile.inc (1.1): Common part of makefiles (include-file)
