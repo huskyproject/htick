@@ -66,4 +66,17 @@ int removeFileMask(char *directory, char *mask);
 */
 int link_file(const char *from, const char *to);
 
+/* structure for big file size handling */
+typedef struct {
+    UINT mb;
+    UINT kb;
+    UINT b;
+}  BigSize;
+
+void IncBigSize(BigSize*, ULONG);
+void IncBigSize2(BigSize* bs, BigSize* inc);
+
+char* PrintBigSize(BigSize*);
+
+
 #endif

@@ -310,3 +310,64 @@ int link_file(const char *from, const char *to)
    return rc;
 }
 
+
+void IncBigSize(BigSize* bs, ULONG inc)
+{
+    UINT b,kb,mb,res;            
+
+    b   = inc%1024;
+    inc = inc/1024;
+    kb  = inc%1024;
+    mb  = inc/1024;
+    /* check result: res = inc */
+    res = 1024*1024*mb + 1024*kb + b;
+
+    bs->b += b;
+    if( bs->b >= 1024)
+    {
+        bs->b -= 1024;
+        bs->kb++;
+    }
+    bs->kb += kb;
+    if( bs->kb >= 1024)
+    {
+        bs->kb -= 1024;
+        bs->mb++;
+    }
+    bs->mb += mb;
+}
+
+void IncBigSize2(BigSize* bs, BigSize* inc)
+{
+    bs->b += inc->b;
+    if( bs->b >= 1024)
+    {
+        bs->b -= 1024;
+        bs->kb++;
+    }
+    bs->kb += inc->kb;
+    if( bs->kb >= 1024)
+    {
+        bs->kb -= 1024;
+        bs->mb++;
+    }
+    bs->mb += inc->mb;
+}
+
+char* PrintBigSize(BigSize* bs)
+{
+    static char out[50];
+    *out = '\0';
+
+    if( bs->mb > 9) {
+        sprintf(out,"%d.%02dM", bs->mb, (int)(bs->kb/10.24));
+/*
+    } else if ( bs->kb > 100) {
+        sprintf(out,"%d.%02dK", bs->mb*1024 + bs->kb, (int)(bs->b/10.24));
+*/
+    } else {
+        sprintf(out,"%d", bs->mb*1024*1024+bs->kb*1024 + bs->b);
+    }
+    return out;
+}
+

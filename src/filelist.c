@@ -42,96 +42,25 @@
 #include "add_desc.h"
 #include "global.h"
 #include "version.h"
+#include "fcommon.h"
 #include "filelist.h"
 #include "toss.h"
 
 
-unsigned long totalfilessize = 0;
+static BigSize totalfilessize;
 unsigned int totalfilesnumber = 0;
 
-/*
-#define LenDesc 46
-
-char** formatDesc(char **desc, int *count)
-{
-    int i;
-    char *descLine=NULL;
-    char *begin,*end;
-    
-    for(i = 0; i < (*count); i++ )
-    {
-        if(strlen(desc[i]) > LenDesc)
-            break;
-    }
-    if(i == *count)
-    {
-        printf("%s\n",desc[0]);
-        return desc;
-    }
-
-    for(i = 0; i < (*count); i++ )
-    {
-        if(strlen(desc[i]) < LenDesc)
-            xstrcat(&desc[i],"\r");
-        if(i == 0)
-            xstrcat(&descLine,desc[i]);
-        else
-            xstrscat(&descLine, " " , desc[i],NULL);
-        nfree(desc[i]);
-    }
-    begin = end =descLine; i = 0;
-    while(*end)
-    {
-        if(end == "\r")
-        {
-            *end     = '\0';
-            if(i == *count)
-            {
-                (*count)++;
-                desc = srealloc(desc,sizeof(char *) * (*count) );
-            }
-            desc[i] = sstrdup(begin);
-            begin = end = end + 1;
-            i++;
-            continue;
-        }
-        if(end-begin > LenDesc)
-        {   
-            end--;
-            while(!isspace(*(end)) && end+1 > begin)
-                end--;
-            *end     = '\0';
-            if(i == *count)
-            {
-                (*count)++;
-                desc = srealloc(desc,sizeof(char *) * (*count) );
-            }
-            desc[i] = sstrdup(begin);
-            begin = end = end + 1;
-            i++;
-            continue;
-        }
-        end++;
-    }
-    if(i == *count)
-    {
-        (*count)++;
-        desc = srealloc(desc,sizeof(char *) * (*count) );
-    }
-    desc[i] = sstrdup(begin);
-    printf("%s\n",descLine);
-    nfree(descLine);
-    return desc;
-}
-*/
 
 void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, int year, int countdesc, char **desc)
 {
     int i;
-    
+    static BigSize bs;
+    memset(&bs,0,sizeof(BigSize));
+    IncBigSize(&bs, (ULONG)size);
     fprintf(f,"%-12s",filename);
-    fprintf(f,"%8lu ",(unsigned long) size);
+    fprintf(f,"% 8s ",PrintBigSize(&bs));
     fprintf(f, "%02u-", day);
+
     switch (month) {
     case 0: fprintf(f, "Jan");
         break;
@@ -183,12 +112,14 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     time_t fileTime;
     struct tm *locTime;
     unsigned int totalnumber = 0;
-    unsigned long totalsize = 0;
     char **removeFiles = NULL;
     unsigned int removeCount = 0, i, Len;
     FILE *fbbs;
     char *token = "";
     int flag = 0;
+    static BigSize bs;
+    memset(&bs,0,sizeof(BigSize));
+
     
     fileareapath = sstrdup(area_pathName);
     strLower(fileareapath);
@@ -227,7 +158,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         stat(filename,&stbuf);
         fileTime = stbuf.st_mtime > 0 ? stbuf.st_mtime : 0;
         locTime = localtime(&fileTime);
-        totalsize += stbuf.st_size;
+        IncBigSize(&bs, (ULONG)stbuf.st_size);
         totalnumber++;
         putFileInFilelist(f, file, stbuf.st_size, locTime->tm_mday, locTime->tm_mon, locTime->tm_year, tic.anzdesc, tic.desc);
         disposeTic(&tic);
@@ -235,7 +166,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     husky_closedir(dir);
     if (flag) {
         fprintf(f,"-----------------------------------------------------------------------------\n");
-        fprintf(f,"Total files in area: %4d, total size: %10lu bytes\n\n",totalnumber,totalsize);
+        fprintf(f,"Total files in area: %6d, total size: %10s bytes\n\n",totalnumber,PrintBigSize(&bs));
     }
     if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
     while ((fbbsline = readLine(fbbs)) != NULL) {
@@ -273,7 +204,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
         }
         nfree(removeFiles);
     }
-    totalfilessize += totalsize;
+    IncBigSize2(&totalfilessize,&bs);
     totalfilesnumber += totalnumber;
     nfree(filename);
     return;
@@ -317,7 +248,7 @@ void filelist()
     }
     
     fprintf(f,"=============================================================================\n");
-    fprintf(f,"Total files in filelist: %4d, total size: %10lu bytes\n",totalfilesnumber,totalfilessize);
+    fprintf(f,"Total files in filelist: %6d, total size: %10s bytes\n",totalfilesnumber,PrintBigSize(&totalfilessize));
     fprintf(f,"=============================================================================\n\n");
     
     fclose(f);
