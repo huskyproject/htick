@@ -323,7 +323,7 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
            sprintf(tolog,"link %s is busy.", link->name);
 
            writeLogEntry(htick_log, '7', tolog);
-           free (link->floFile); link->floFile = NULL;
+           //free (link->floFile); link->floFile = NULL;
            free (link->bsyFile); link->bsyFile = NULL;
            free (tolog);
 
