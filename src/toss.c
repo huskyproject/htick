@@ -137,18 +137,16 @@ void writeNetmail(s_message *msg, char *areaName)
       msgHandle = MsgOpenMsg(netmail, MOPEN_CREATE, 0);
 
       if (msgHandle != NULL) {
-         msgHeader = createXMSG(config,msg,NULL,MSGLOCAL,NULL);
-         /* Create CtrlBuf for SMAPI */
-         ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
-
-         /* recode: we must recode only if config->recodeMsgBase = 0
-              only then we will get local2transport translation */
          if ((!config->recodeMsgBase) && (config->outtab != NULL)) {
              recodeToTransportCharset((CHAR*)msg->subjectLine);
              recodeToTransportCharset((CHAR*)msg->fromUserName);
              recodeToTransportCharset((CHAR*)msg->toUserName);
              recodeToTransportCharset((CHAR*)msg->text);
          }
+
+          msgHeader = createXMSG(config,msg,NULL,MSGLOCAL,NULL);
+         /* Create CtrlBuf for SMAPI */
+         ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
 
          /* write message */
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
