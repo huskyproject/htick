@@ -479,8 +479,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
   return(1);
 }
 
-//#ifdef USE_FILE_ID_DIZ
-
 void fillCmdStatement(char *cmd, const char *call, const char *archiv, const char *file, const char *path) {
     const char *start, *tmp, *add;
 
@@ -601,8 +599,6 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
 
   return(1);
 }
-
-//#endif
 
                                 /* we do NOT check for a dosish ':' here
                                    because mkdir "C:" is nonsense */
@@ -1118,11 +1114,9 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          }
    //}
 
-//#ifdef USE_FILE_ID_DIZ
    if (tic->anzldesc==0)
       if (config->fileDescName)
          parseFileDesc(newticedfile, tic);
-//#endif
 
    if (!filearea->pass) {
       strcpy(descr_file_name, filearea->pathName);
