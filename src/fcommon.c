@@ -124,14 +124,7 @@ int removeFileMask(char *directory, char *mask)
     char          *file;
     char          *removefile = NULL;
     char          *descr_file_name = NULL;
-    char          *files_bbs;
     unsigned int  numfiles = 0;
-
-   if(config->fileDescription) {
-       files_bbs = config->fileDescription;
-   } else {
-       files_bbs = "files.bbs";
-   }
 
    if (directory == NULL) return(0);
 
@@ -149,7 +142,7 @@ int removeFileMask(char *directory, char *mask)
             nfree(removefile);
 
             /* remove description for file */
-            xstrscat(&descr_file_name,directory, files_bbs,NULL);
+            xstrscat(&descr_file_name,directory, config->fileDescription, NULL);
             adaptcase(descr_file_name);
             removeDesc(descr_file_name,file);
             nfree(descr_file_name);
