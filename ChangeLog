@@ -1,3 +1,7 @@
+2005-03-20 Sunday 01:47  sfpavel
+
+	* debian/changelog (htick-1_4-stable.8): 1.4-RC3 release
+
 2004-07-26 Monday 05:17  andr_lukyanov
 
 	* src/filelist.c (htick-1_4-stable.2): do not add directories to
