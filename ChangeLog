@@ -1,3 +1,8 @@
+2002-12-21 Saturday 12:44  stas_degteff
+
+	* src/fcommon.c (1.58): Check parameters of link_file(): prevent
+	reading from stirng pointed to NULL
+
 2002-12-20 Friday 15:27  stas_degteff
 
 	* src/: htick.c (1.82), toss.c (1.239): Bugfix: memory fault if
