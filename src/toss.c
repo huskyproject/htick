@@ -1097,16 +1097,16 @@ void processDir(char *directory, e_tossSecurity sec)
 
             switch (rc) {
                case TIC_security:  /* pktpwd problem */
-                  changeFileSuffix(dummy, "sec");
+                  changeFileSuffix(dummy, "sec", 1);
                   break;
                case TIC_NotOpen:   /* could not open file */
-                  changeFileSuffix(dummy, "acs");
+                  changeFileSuffix(dummy, "acs", 1);
                   break;
                case TIC_WrongTIC:  /* not/wrong pkt */
-                  changeFileSuffix(dummy, "bad");
+                  changeFileSuffix(dummy, "bad", 1);
                   break;
                case TIC_NotForUs:  /* not to us */
-                  changeFileSuffix(dummy, "ntu");
+                  changeFileSuffix(dummy, "ntu", 1);
                   break;
                case TIC_NotRecvd:  /* file not recieved */
                   break;
