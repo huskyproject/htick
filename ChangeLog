@@ -1,8 +1,22 @@
+2002-12-30 Monday 15:03  stas_degteff
+
+	* VERSION, src/global.c (htick-1_0-stable.[3,5]): Set version to
+	1.0.2-stable
+
+2002-12-30 Monday 15:02  stas_degteff
+
+	* VERSION, src/global.c (htick-1_0-stable.[2,4]) (utags:
+	htick-1_0_2-release): 1.0.2-release
+
+2002-12-30 Monday 13:28  stas_degteff
+
+	* FidoConfigKeywords (htick-1_0-stable.2): Cosmetics
+
 2002-12-27 Friday 13:15  sfpavel
 
-	* debian/changelog, doc/htick.texi, src/global.c
-	(htick-1_0-stable.[14,6,3]) (utags: htick-1_0_2-release): htick
-	1.0.2 release
+	* debian/changelog (tags: htick-1_0_2-release), doc/htick.texi
+	(tags: htick-1_0_2-release), src/global.c
+	(htick-1_0-stable.[14,6,3]): htick 1.0.2 release
 
 2002-12-26 Thursday 12:35  stas_degteff
 
@@ -364,9 +378,8 @@
 	BUGS, BUGS.rus, INSTALL (tags: htick-1_0_2-release,
 	htick-1_0-release), Makefile (tags: htick-1_0-release), README
 	(tags: htick-1_0_2-release, htick-1_0-release), VERSION (tags:
-	htick-1_0_2-release, htick-1_0-release)
-	(htick-1_0-stable.[1,1,1,1,1,1,1]): Update documentation (set to
-	-stable)
+	htick-1_0-release) (htick-1_0-stable.[1,1,1,1,1,1,1]): Update
+	documentation (set to -stable)
 
 2002-06-24 Monday 13:44  stas
 
