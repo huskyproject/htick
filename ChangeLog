@@ -1,3 +1,11 @@
+2002-12-30 Monday 13:23  stas_degteff
+
+	* doc/htick.texi (1.17): replace 'areafix' to 'filefix'
+
+2002-12-30 Monday 13:22  stas_degteff
+
+	* FidoConfigKeywords (1.48): Remove obsolete documentation
+
 2002-12-28 Saturday 15:12  mche
 
 	* src/toss.c (1.242): fix previous patch - copy file to filechodir
