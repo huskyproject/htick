@@ -27,6 +27,7 @@ int add_description (char *descr_file_name, char *file_name, char **description,
       else
          fprintf(descr_file,"             %s\n",desc_line);
    }
+   if (count_desc == 0) fprintf(descr_file,"\n");
    fclose (descr_file);
    return 0;
 };
