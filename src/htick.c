@@ -381,9 +381,9 @@ int main(int argc, char **argv)
    xscatprintf(&versionStr,"HTick %s", version);
    nfree(version);
 
-   if (!quiet) printf("%s\n", versionStr);
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
+   if (!quiet) printf("%s\n", versionStr);
 
    // init SMAPI
    m.req_version = 0;
