@@ -1,3 +1,14 @@
+2002-11-10 Sunday 09:36  sfpavel
+
+	* debian/info (1.1): file info was initially added on branch
+	htick-1_0-stable.
+
+2002-11-10 Sunday 09:36  sfpavel
+
+	* debian/changelog, debian/huskymak.cfg, debian/info, debian/rules,
+	doc/Makefile, doc/htick.texi, src/global.c
+	(htick-1_0-stable.[13,2,1,5,2,2,2]): htick 1.0 release
+
 2002-11-06 Wednesday 16:04  stas_degteff
 
 	* doc/: Makefile, htick.texi, makefile.unx
