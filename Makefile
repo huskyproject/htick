@@ -15,6 +15,10 @@ MAN1PAGE = man/htick.1
 MAN1DIR  = $(MANDIR)$(DIRSEP)man1
 SRC_DIR = src/
 
+ifndef ECHO
+ECHO	= echo
+endif
+
 ifeq ($(DEBUG), 1)
   CFLAGS = $(DEBCFLAGS) -Ih -I$(INCDIR) $(WARNFLAGS)
   LFLAGS = $(DEBLFLAGS)
@@ -51,6 +55,7 @@ distclean: clean
 install: htick$(EXE)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(BINDIR)
 	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(MAN1DIR)
+	$(ECHO) To install documentation: change directory to doc and run make install
 
 uninstall:
 	$(RM) $(RMOPT) $(BINDIR)$(DIRSEP)htick$(EXE)
