@@ -1,3 +1,13 @@
+2002-05-03 Friday 14:32  mche
+
+	* src/areafix.c (1.55), src/toss.c (1.146), h/pkt.h (1.5):
+	createKludgesmoved to fidoconfig for common use in hpt htick
+	txt2pkt
+
+2002-05-03 Friday 09:51  mche
+
+	* src/toss.c (1.145): more fixed-length strings bugfixs
+
 2002-04-30 Tuesday 14:11  mche
 
 	* src/hatch.c (1.46), src/toss.c (1.144), h/fcommon.h (1.15):
