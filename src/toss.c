@@ -122,16 +122,6 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
    }
 }
 
-int to_us(const s_addr destAddr)
-{
-   unsigned int i = 0;
-
-   while (i < config->addrCount)
-     if (addrComp(destAddr, config->addr[i++]) == 0)
-       return 0;
-   return !0;
-}
-
 char *createKludges(const char *area, const s_addr *ourAka, const s_addr *destAka)
 {
    static time_t preTime=0L;
@@ -181,7 +171,7 @@ XMSG createXMSG(s_message *msg)
                 /* attributes of netmail must be fixed */
                 msgHeader.attr = msg->attributes;
 
-                if (to_us(msg->destAddr)==0) {
+                if (isOurAka(config,msg->destAddr)==0) {
                         msgHeader.attr &= ~(MSGCRASH | MSGREAD | MSGSENT | MSGKILL | MSGLOCAL | MSGHOLD
                           | MSGFRQ | MSGSCANNED | MSGLOCKED | MSGFWD); /* kill these flags */
                         msgHeader.attr |= MSGPRIVATE; /* set this flags */
@@ -304,19 +294,6 @@ void writeNetmail(s_message *msg, char *areaName)
    } /* endif */
 }
 
-
-char *addr2string(s_addr *addr)
-{
-   static char hlp[50];
-
-   if (addr->point==0)
-      sprintf(hlp,"%u:%u/%u",addr->zone,addr->net,addr->node);
-     else
-    sprintf(hlp,"%u:%u/%u.%u",addr->zone,addr->net,addr->node,addr->point);
-
-   return(hlp);
-}
-
 void writeTic(char *ticfile,s_ticfile *tic)
 {
    FILE *tichandle;
@@ -339,11 +316,11 @@ void writeTic(char *ticfile,s_ticfile *tic)
    if (tic->replaces[0]!=0)
       fprintf(tichandle,"Replaces %s\r\n",tic->replaces);
    if (tic->from.zone!=0)
-      fprintf(tichandle,"From %s\r\n",addr2string(&tic->from));
+      fprintf(tichandle,"From %s\r\n",aka2str(tic->from));
    if (tic->to.zone!=0)
-      fprintf(tichandle,"To %s\r\n",addr2string(&tic->to));
+      fprintf(tichandle,"To %s\r\n",aka2str(tic->to));
    if (tic->origin.zone!=0)
-      fprintf(tichandle,"Origin %s\r\n",addr2string(&tic->origin));
+      fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
    if (tic->size!=0)
       fprintf(tichandle,"Size %u\r\n",tic->size);
    if (tic->date!=0)
@@ -355,7 +332,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
        fprintf(tichandle,"Path %s\r\n",tic->path[i]);
 
    for (i=0;i<tic->anzseenby;i++)
-       fprintf(tichandle,"Seenby %s\r\n",addr2string(&tic->seenby[i]));
+       fprintf(tichandle,"Seenby %s\r\n",aka2str(tic->seenby[i]));
 
    if (tic->password[0]!=0)
       fprintf(tichandle,"Pw %s\r\n",tic->password);
@@ -687,8 +664,8 @@ int autoCreate(char *c_area, s_addr pktOrigAddr, char *desc)
    aka = creatingLink->ourAka;
 
    /* making local address and address of uplink */
-   strcpy(myaddr,addr2string(aka));
-   strcpy(hisaddr,addr2string(&pktOrigAddr));
+   strcpy(myaddr,aka2str(*aka));
+   strcpy(hisaddr,aka2str(pktOrigAddr));
 
    /* write new line in config file */
 
@@ -845,7 +822,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
 
   if (!addrComp(*aka,*echo->useAka)) return 0;
 
-  link = getLinkForFileArea (config, addr2string(aka), echo);
+  link = getLinkForFileArea (config, aka2str(*aka), echo);
   if (link == NULL) return 4;
 
   for (i=0; i<echo->downlinkCount; i++)
@@ -1103,7 +1080,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
       if (timestr[8]==' ') timestr[8]='0';
 
       sprintf(hlp,"%s %lu %s UTC %s",
-              addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
+              aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
 
       tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
       tic->path[tic->anzpath]=sstrdup(hlp);
@@ -1147,23 +1124,23 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
          case 0: break;
          case 5:
             w_log('7',"Link %s paused",
-                    addr2string(&filearea->downlinks[i]->link->hisAka));
+                    aka2str(filearea->downlinks[i]->link->hisAka));
             break;
          case 4:
             w_log('7',"Link %s not subscribe to File Area %s",
-                    addr2string(&old_from), tic->area);
+                    aka2str(old_from), tic->area);
             break;
          case 3:
             w_log('7',"Not export to link %s",
-                    addr2string(&filearea->downlinks[i]->link->hisAka));
+                    aka2str(filearea->downlinks[i]->link->hisAka));
             break;
          case 2:
             w_log('7',"Link %s no access level",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
+                    aka2str(filearea->downlinks[i]->link->hisAka));
             break;
          case 1:
             w_log('7',"Link %s no access group",
-            addr2string(&filearea->downlinks[i]->link->hisAka));
+                    aka2str(filearea->downlinks[i]->link->hisAka));
             break;
          }
 
@@ -1171,7 +1148,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
                w_log('7',"File %s already seenby %s",
                        tic->file,
-                       addr2string(&filearea->downlinks[i]->link->hisAka));
+                       aka2str(filearea->downlinks[i]->link->hisAka));
             } else {
 //               memcpy(&tic->from,filearea->useAka,sizeof(s_addr));
                memcpy(&tic->from,filearea->downlinks[i]->link->ourAka,sizeof(s_addr));
@@ -1220,7 +1197,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
                   w_log('6',"Forwarding %s for %s",
                           tic->file,
-                          addr2string(&filearea->downlinks[i]->link->hisAka));
+                          aka2str(filearea->downlinks[i]->link->hisAka));
                }
                nfree(filearea->downlinks[i]->link->bsyFile);
                nfree(filearea->downlinks[i]->link->floFile);
@@ -1373,18 +1350,17 @@ int processTic(char *ticfile, e_tossSecurity sec)
    parseTic(ticfile,&tic);
 
    w_log('6',"File: %s Area: %s From: %s Orig: %u:%u/%u.%u",
-           tic.file, tic.area, addr2string(&tic.from),
+           tic.file, tic.area, aka2str(tic.from),
            tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
 
    if (tic.to.zone!=0) {
-      if (to_us(tic.to)) {
+      if (!isOurAka(config,tic.to)) {
          /* Forwarding tic and file to other link? */
          to_link=getLinkFromAddr(config,tic.to);
          if ( (to_link != NULL) && (to_link->forwardPkts != fOff) ) {
             if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
             else { /* Forwarding */
-		busy = 0; // FIXME: see below
-//               if (createFlo(to_link, cvtFlavour2Prio(to_link->fileEchoFlavour))==0) {
+                busy = 0;
                 if (createOutboundFileName(to_link,
                      to_link->fileEchoFlavour, FLOFILE)==0) {
                   strcpy(linkfilepath,to_link->floFile);
@@ -1414,8 +1390,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
             }
          }
          /* not to us and no forward */
-         w_log('9',"Tic File adressed to %s, not to us",
-                 addr2string(&tic.to));
+         w_log('9',"Tic File adressed to %s, not to us", aka2str(tic.to));
          disposeTic(&tic);
          return(4);
       }
@@ -1425,7 +1400,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    from_link=getLinkFromAddr(config,tic.from);
    if (from_link == NULL) {
       w_log('9',"Link for Tic From Adress '%s' not found",
-              addr2string(&tic.from));
+              aka2str(tic.from));
       disposeTic(&tic);
       return(1);
    }
@@ -1433,7 +1408,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
        (stricmp(tic.password,from_link->ticPwd)!=0))) {
       w_log('9',"Wrong Password %s from %s",
-              tic.password,addr2string(&tic.from));
+              tic.password,aka2str(tic.from));
       disposeTic(&tic);
       return(1);
    }
@@ -1487,69 +1462,68 @@ int processTic(char *ticfile, e_tossSecurity sec)
       if (tic.crc != crc) {
           strcpy(dirname, ticedfile);
           pos = strrchr(dirname, PATH_DELIM);
-	  if (pos) {
-	      *pos = 0;
-	      findfile = pos+1;
-	      pos = strrchr(findfile, '.');
-	      if (pos) {
-
-	          *(++pos) = 0;
-		  strcat(findfile, "*");
+          if (pos) {
+              *pos = 0;
+              findfile = pos+1;
+              pos = strrchr(findfile, '.');
+              if (pos) {
+                  
+                  *(++pos) = 0;
+                  strcat(findfile, "*");
 #ifdef DEBUG_HPT
                   printf("NoCRC! dirname = %s, findfile = %s\n", dirname, findfile);
 #endif
-		  dir = opendir(dirname);
+                  dir = opendir(dirname);
+                  
+                  if (dir) {
+                      while ((file = readdir(dir)) != NULL) {
+                          if (patimat(file->d_name, findfile)) {
+                              stat(file->d_name,&stbuf);
+                              if (stbuf.st_size == tic.size) {
+                                  crc = filecrc32(file->d_name);
+                                  if (crc == tic.crc) {
+                                      fileisfound = 1;
+                                      sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file->d_name);
+                                      break;
+                                  }
+                              }
+                              
+                          }
+                      }
+                      closedir(dir);
+                  }
+              }
+          }
 
-		  if (dir) {
-		      while ((file = readdir(dir)) != NULL) {
-		          if (patimat(file->d_name, findfile)) {
-			      stat(file->d_name,&stbuf);
-			      if (stbuf.st_size == tic.size) {
-			          crc = filecrc32(file->d_name);
-				  if (crc == tic.crc) {
-				      fileisfound = 1;
-				      sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file->d_name);
-				      break;
-				  }
-			      }
-
-			  }
-		      }
-		      closedir(dir);
-		  }
-
-	      }
-	  }
-
-	  if (fileisfound) {
-	      realfile = smalloc(strlen(dirname)+1);
-	      strcpy(realfile, dirname);
-	      *(strrchr(dirname, PATH_DELIM)) = 0;
-	      findfile = makeUniqueDosFileName(dirname,"tmp",config);
-	      if (rename(ticedfile, findfile) != 0 ) {
-	          w_log('9',"Can't file %s rename to %s", ticedfile, findfile);
-		  nfree(findfile);
-		  nfree(realfile);
+          if (fileisfound) {
+              realfile = smalloc(strlen(dirname)+1);
+              strcpy(realfile, dirname);
+              *(strrchr(dirname, PATH_DELIM)) = 0;
+              findfile = makeUniqueDosFileName(dirname,"tmp",config);
+              if (rename(ticedfile, findfile) != 0 ) {
+                  w_log('9',"Can't file %s rename to %s", ticedfile, findfile);
+                  nfree(findfile);
+                  nfree(realfile);
                   disposeTic(&tic);
                   return(3);
-	      }
-	      if (rename(realfile, ticedfile) != 0) {
-	          w_log('9',"Can't file %s rename to %s", realfile, ticedfile);
-		  nfree(findfile);
-		  nfree(realfile);
+              }
+              if (rename(realfile, ticedfile) != 0) {
+                  w_log('9',"Can't file %s rename to %s", realfile, ticedfile);
+                  nfree(findfile);
+                  nfree(realfile);
                   disposeTic(&tic);
                   return(3);
-	      }
-	      if (rename(findfile, realfile) != 0) {
-	          remove(findfile);
-	      }
-	      nfree(findfile);
-	      nfree(realfile);
-	  } else {
-	      w_log('9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
+              }
+              if (rename(findfile, realfile) != 0) {
+                  remove(findfile);
+              }
+              nfree(findfile);
+              nfree(realfile);
+          } else {
+              w_log('9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
               disposeTic(&tic);
               return(3);
-	  }
+          }
       }
    }
 
@@ -1568,22 +1542,22 @@ int processTic(char *ticfile, e_tossSecurity sec)
    case 0: break;
    case 4:
       w_log('9',"Link %s not subscribed to File Area %s",
-              addr2string(&tic.from), tic.area);
+              aka2str(tic.from), tic.area);
       disposeTic(&tic);
       return(3);
    case 3:
       w_log('9',"Not import from link %s",
-              addr2string(&from_link->hisAka));
+              aka2str(from_link->hisAka));
       disposeTic(&tic);
       return(3);
    case 2:
       w_log('9',"Link %s no access level",
-      addr2string(&from_link->hisAka));
+      aka2str(from_link->hisAka));
       disposeTic(&tic);
       return(3);
    case 1:
       w_log('9',"Link %s no access group",
-      addr2string(&from_link->hisAka));
+      aka2str(from_link->hisAka));
       disposeTic(&tic);
       return(3);
    }
@@ -1708,7 +1682,7 @@ void checkTmpDir(void)
                   fclose(flohandle);
 
                   w_log('6',"Forwarding save file %s for %s",
-                     tic.file, addr2string(&link->hisAka));
+                     tic.file, aka2str(link->hisAka));
                }
             } /* if filearea */
          } /* if createFlo */
@@ -1928,7 +1902,7 @@ void writeMsgToSysop(s_message *msg, char *areaName)
 {
    s_area       *echo;
 
-   xstrscat(&(msg->text), " \r--- ", versionStr,"\r * Origin: ", (config->name) ? config->name : "", " (", addr2string(&(msg->origAddr)), ")\r", NULL);
+   xstrscat(&(msg->text), " \r--- ", versionStr,"\r * Origin: ", (config->name) ? config->name : "", " (", aka2str(msg->origAddr), ")\r", NULL);
    msg->textLength = strlen(msg->text);
    if (msg->netMail == 1) writeNetmail(msg, areaName);
    else {
