@@ -1,3 +1,20 @@
+2002-07-05 Friday 22:34  stas
+
+	* src/toss.c (1.197): Fix include for UNIXes (& BeOS)
+
+2002-07-05 Friday 11:07  mche
+
+	* src/report.c (1.8): do not try to report non-existed area
+
+2002-07-05 Friday 10:21  mche
+
+	* src/areafix.c (1.72): fix problem with autocreating
+
+2002-07-05 Friday 09:56  mche
+
+	* src/: report.c (1.7), toss.c (1.196): recodeToTransportCharset of
+	farea->description added.  patch by [Yuriy Talakan'  2:5042/13.13]
+
 2002-07-04 Thursday 18:08  mche
 
 	* src/hatch.c (1.59), src/seenby.c (1.8), h/seenby.h (1.6),
