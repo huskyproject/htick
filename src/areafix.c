@@ -322,11 +322,11 @@ char *help(s_link *link) {
 
 	if (config->filefixhelp!=NULL) {
 		if ((f=fopen(config->filefixhelp,"r")) == NULL)
-			{
-				if (!quiet) fprintf(stderr,"FileFix: cannot open help file \"%s\"\n",
+		  {
+		    w_log( LL_ERR,"FileFix: cannot open help file '%s'",
 						config->filefixhelp);
-				return NULL;
-			}
+		    return NULL;
+		  }
 		
 		fseek(f,0l,SEEK_END);
 		endpos=ftell(f);
@@ -1126,6 +1126,8 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     s_message *msg;
     s_filearea *area;
     FILE *echotosslog;
+
+    w_log( LL_FUNC, "%s::autoCreate() begin", __FILE__ );
     
     creatingLink = getLinkFromAddr(config, *pktOrigAddr);
     
@@ -1141,7 +1143,6 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     
     bDir = (creatingLink->fileBaseDir) ?
         creatingLink->fileBaseDir : config->fileAreaBaseDir;
-    
     
     if( strcasecmp(bDir,"passthrough") )
     {
@@ -1162,12 +1163,13 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
             w_log(LL_ERROR, "cannot make all subdirectories for %s\n",
                 fileechoFileName);
             nfree(buff);
+            w_log( LL_FUNC, "%s::autoCreate() rc=1", __FILE__ );
             return 1;
         }
 #if defined (UNIX)
         if(config->fileAreaCreatePerms && chmod(buff, config->fileAreaCreatePerms))
-            fprintf(stderr, "Cannot chmod() for newly created filearea: %s\n",
-            strerror(errno));
+            w_log(LL_ERR, "Cannot chmod() for newly created filearea directory '%s': %s",
+            sstr(buff), strerror(errno));
 #endif
         nfree(buff);
     }
@@ -1177,7 +1179,7 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
     
     f = fopen(fileName, "a+b");
     if (f == NULL) {
-        fprintf(stderr,"autocreate: cannot open config file\n");
+        w_log( LL_ERR,"autocreate: cannot open config file %s", fileName);
         w_log( LL_FUNC, "%s::autoCreate() rc=9", __FILE__ );
         return 1;
     }
@@ -1280,13 +1282,15 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
 
     if (config->afcFlag) {
         if (NULL == (f = fopen(config->afcFlag, "a")))
-            w_log(LL_ERR, "Could not open autoAreaCreate flag: %s", config->afcFlag);
+            w_log( LL_ERR, "Could not open autoAreaCreate flag '%s': %s",
+                   config->afcFlag, strerror(errno) );
         else {
             w_log(LL_FLAG, "Created autoAreaCreate flag: %s", config->afcFlag);
             fclose(f);
         }
     }
-    
+
+    w_log( LL_FUNC, "%s::autoCreate() rc=0", __FILE__ );
     return 0;
 }
  

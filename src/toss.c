@@ -858,18 +858,25 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    filearea=getFileArea(config,tic.area);
 
+   w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
    if (filearea==NULL && from_link->autoFileCreate) {
        char *descr = NULL;
        if(tic.areadesc)           descr = sstrdup(tic.areadesc);
        if(config->intab && descr) recodeToInternalCharset(descr);
        autoCreate(tic.area,descr,&(tic.from),NULL);
        filearea=getFileArea(config,tic.area);
+       w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
        nfree(descr);
    }
 
    if (filearea == NULL) {
-      w_log(LL_ERROR,"Cannot open or create File Area %s",tic.area);
-      if (!quiet) fprintf(stderr,"Cannot open or create File Area %s !\n",tic.area);
+      if( from_link->autoFileCreate ){
+        w_log(LL_ERROR,"Cannot create File Area %s",tic.area);
+        if (!quiet) fprintf(stderr,"Cannot create File Area %s !\n",tic.area);
+      }else{
+        w_log(LL_ERROR,"Cannot open File Area %s, autocreate not allowed",tic.area);
+        if (!quiet) fprintf(stderr,"Cannot open File Area %s, autocreate not allowed !\n",tic.area);
+      }
       disposeTic(&tic);
       return(2);
    }
