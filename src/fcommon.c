@@ -95,8 +95,7 @@ void exit_htick(char *logstr, int print) {
     w_log(LL_STOP, "Exit");
     closeLog();
     if (config->lockfile) {
-        close(lock_fd);
-        remove(config->lockfile);
+       FreelockFile(config->lockfile ,lock_fd);
     }
     disposeConfig(config);
     exit(EX_SOFTWARE);

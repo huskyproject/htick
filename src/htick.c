@@ -420,8 +420,7 @@ int main(int argc, char **argv)
    w_log( LL_STOP, "End");
    closeLog();
    if (config->lockfile) {
-      close(lock_fd);
-      remove(config->lockfile);
+      FreelockFile(config->lockfile ,lock_fd);
    }
    disposeConfig(config);
    nfree(versionStr);
