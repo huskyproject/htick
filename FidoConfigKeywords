@@ -212,3 +212,7 @@ Defaults are switched off with empty 'fileAreaDefaults'.
 
 If no LDESC defined in tic file, use <name> file from archive fill it.
 'unpack' action should be defined for archive and contain $f parameter.
+
+24) RemoteFileRobotName <name>
+
+Name of remote file (tic) robot (need for FileForwardRequest)
