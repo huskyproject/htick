@@ -85,7 +85,7 @@
 #include <fcommon.h>
 #include <global.h>
 #include <toss.h>
-#include <areafix.h>
+#include <htickafix.h>
 #include <add_desc.h>
 #include <seenby.h>
 #include <filecase.h>

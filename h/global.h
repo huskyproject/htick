@@ -63,6 +63,7 @@ extern s_log     *htick_log;
 extern s_fidoconfig *config;
 extern unsigned char quiet;	/* Quiet mode */
 extern char         *cfgFile;
+extern s_robot      *robot;
 
 char *print_ch(int len, char ch);
 

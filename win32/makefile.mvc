@@ -37,15 +37,15 @@ _EXE	  = .exe
 
 ## programs ##
 CFLAGS	= -nologo -Zp1
-CINCL	= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI)
+CINCL	= -I$(H_DIR) -I..\..\areafix -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI)
 CDEFS	= $(CDEFS) -D__NT__ -DNT -DWINNT -D_CONSOLE $(HPTZIPD)
 COPT	= -O2
 
 #EXEFLAGS= /link /nodefaultlib /opt:nowin98
 EXENAMEFLAG = -Fe
 
-LIBS	= ..\..\huskylib\make\huskymvc.lib \
-	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\make\fconfmvc.lib \
+LIBS	= ..\..\huskylib\make\huskymvc.lib ..\..\smapi\make\smapimvc.lib \
+	  ..\..\fidoconf\make\fconfmvc.lib ..\..\areafix\make\areafix.lib \
 	  USER32.lib $(HPTZIPL)
 
 default:

@@ -15,7 +15,7 @@ OBJS    = global.obj \
           toss.obj \
           fcommon.obj \
           scan.obj \
-          areafix.obj \
+          hptafix.obj \
           add_desc.obj \
           seenby.obj \
           hatch.obj \
@@ -28,8 +28,8 @@ OBJS    = global.obj \
 SRC_DIR = ..\src
 
 CDEFS	=  -DNT -D__NT__ -DWINNT
-CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
-LFLAGS  = -WC -v -w -L..\..\huskylib\make -L..\..\smapi\make -L..\..\fidoconf
+CINCL	= -I..\h -I..\..\areafix -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
+LFLAGS  = -WC -v -w -L..\..\huskylib\make -L..\..\smapi\make -L..\..\fidoconf -L..\..\areafix\make
 
 all: $(OBJS) htick.exe
 

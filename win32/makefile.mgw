@@ -6,15 +6,15 @@ RM	= del
 
 CFLAGS	= -Wall
 CDEFS	= -D__NT__ -c
-CINCL	= -I../h -I../../fidoconf -I../../smapi -I../../huskylib
+CINCL	= -I../h -I../../areafix -I../../fidoconf -I../../smapi -I../../huskylib
 COPT	= -O3
 
 # uncomment one of these lines if you want to enable hardlinking on NTFS 4.0, 5.0
 # CDEFS+= -D_WIN32_WINNT=0x0400
 # CDEFS+= -D_WIN32_WINNT=0x0500
 
-LFLAGS	= -L../../huskylib/make -L../../smapi/make -L../../fidoconf
-LIBS	= -lfidoconfigmgw -lsmapimgw -lhuskymgw -luser32
+LFLAGS	= -L../../huskylib/make -L../../smapi/make -L../../fidoconf -L../../areafix/make
+LIBS	= -lareafixmgw -lfidoconfigmgw -lsmapimgw -lhuskymgw -luser32
 SRC_DIR	= ../src/
 
 default: all
@@ -26,7 +26,7 @@ OBJS    = htick.o    \
           toss.o     \
           fcommon.o  \
           scan.o     \
-          areafix.o  \
+          htickafix.o  \
           add_desc.o \
           seenby.o   \
           hatch.o    \

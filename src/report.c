@@ -349,7 +349,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
             pRepDef->annto      ? pRepDef->annto      : (reportDst ? NULL : "All"), /* reportDst!=dstechomail ? */
             pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
             (int)reportDst,
-            config->filefixReportsAttr);
+            robot->reportsAttr);
         
         msg->attributes = pRepDef->attributes;
         
@@ -358,8 +358,8 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
             pRepDef->annaddrfrom,
             pRepDef->annaddrto   ? pRepDef->annaddrto   : &(config->addr[0]),
             versionStr);
-	if (config->filefixReportsFlags)
-            xstrscat(&(msg->text), "\001FLAGS ", config->filefixReportsFlags, "\r",NULL);
+	if (robot->reportsFlags)
+            xstrscat(&(msg->text), "\001FLAGS ", robot->reportsFlags, "\r",NULL);
     }
     else /* report to file */
     {

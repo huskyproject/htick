@@ -46,7 +46,7 @@
 #include <fcommon.h>
 #include <scan.h>
 #include <global.h>
-#include <areafix.h>
+#include <htickafix.h>
 #include <toss.h>
 
 char *versionStr;
@@ -154,7 +154,7 @@ void scanNMArea(s_area *afixarea)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
          /*  if for filefix - process it */
-         if (fc_stristr(config->filefixNames,(char*)xmsg.to) &&
+         if (fc_stristr(robot->names,(char*)xmsg.to) &&
               for_us && (xmsg.attr & MSGREAD) != MSGREAD)
             {
                 convertMsgHeader(xmsg, &filefixmsg);
@@ -168,7 +168,7 @@ void scanNMArea(s_area *afixarea)
                 freeMsgBuffers(&filefixmsg);
                 
                 MsgCloseMsg(msg);
-                if (config->filefixKillRequests) MsgKillMsg(netmail, i);
+                if (robot->killRequests) MsgKillMsg(netmail, i);
             }
             else
                 MsgCloseMsg(msg);

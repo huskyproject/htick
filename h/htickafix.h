@@ -26,48 +26,48 @@
  * You should have received a copy of the GNU General Public License
  * along with HTICK; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
- *****************************************************************************
- * $Id$
  *****************************************************************************/
 
-#include <string.h>
+#ifndef _HTICKAFIX_H
+#define _HTICKAFIX_H
 
-#include <global.h>
+#include "fcommon.h"
 
-s_log     *htick_log;
-s_fidoconfig *config;
-unsigned char quiet=0;
-char         *cfgFile = NULL;
-s_robot      *robot   = NULL;
+#define NOTHING 0
+#define LIST    1
+#define HELP    2
+#define ADD     3
+#define DEL     4
+#define AVAIL   5
+#define UNLINK  6
+#define PAUSE   7
+#define RESUME  8
+#define INFO    9
+#define RESEND  10
+#define LINKED  11
+#define FFERROR 255
 
-char      *versionStr=NULL;
+int   processFileFix(s_message *msg);
+void  ffix(hs_addr addr, char *cmd);
+//int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink);
+int init_htickafix(void);
 
-int       cmToss = 0;
-int       cmScan = 0;
-int       cmHatch = 0;
-int       cmSend = 0;
-int       cmFlist = 0;
-int       cmClean = 0;
-int       cmAfix = 0;
-int       cmNotifyLink = 0;
+/* these two functions are to be removed from htick after merging filefix and */
+/* areafix */
 
-char      *flistfile = NULL;
-char      *dlistfile = NULL;
+int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link);
+/*  '\x0000' access o'k */
+/*  '\x0001' no access group */
+/*  '\x0002' no access level */
+/*  '\x0003' no access export */
+/*  '\x0004' not linked */
 
-s_ticfile*       hatchInfo = NULL;
+int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link);
+/*  '\x0000' access o'k */
+/*  '\x0001' no access group */
+/*  '\x0002' no access level */
+/*  '\x0003' no access import */
+/*  '\x0004' not linked */
 
 
-char      sendfile[256];
-char      sendarea[256];
-char      sendaddr[256];
-
-int       cmAnnounce = 0;
-char      announceArea[256];
-
-int       cmAnnNewFileecho = 0;
-char      announcenewfileecho[256];
-
-int       lock_fd;
-
-hs_addr   afixAddr = {0,0,0,0};
-char      *afixCmd = NULL;
+#endif

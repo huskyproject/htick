@@ -80,7 +80,7 @@
 #include <scan.h>
 #include <hatch.h>
 #include <filelist.h>
-#include <areafix.h>
+#include <htickafix.h>
 #include "report.h"
 
 int processHatchParams(int i, int argc, char **argv)
@@ -368,6 +368,9 @@ int main(int argc, char **argv)
 
    if (!(config->netMailAreas))
      w_log( LL_CRIT, "Netmailarea not defined, filefix not allowed!");
+
+   /* init areafix */
+   if ( !init_htickafix() ) exit_htick("Can't init Areafix library", 1);
 
    /*  init SMAPI */
    m.req_version = 0;

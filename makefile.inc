@@ -23,7 +23,7 @@ VERH	= $(VERMAJOR).$(VERMINOR)
 VER	= $(VERH).$(VERPATCH)
 
 # Object files (please sort list to easy check by human)
-OBJS1	= add_desc$(_OBJ) areafix$(_OBJ) clean$(_OBJ) fcommon$(_OBJ)
+OBJS1	= add_desc$(_OBJ) htickafix$(_OBJ) clean$(_OBJ) fcommon$(_OBJ)
 OBJS2	= filecase$(_OBJ) filelist$(_OBJ) global$(_OBJ) hatch$(_OBJ)
 OBJS3	= htick$(_OBJ) report$(_OBJ) scan$(_OBJ) seenby$(_OBJ) toss$(_OBJ)
 OBJS	= $(OBJS1) $(OBJS2) $(OBJS3)

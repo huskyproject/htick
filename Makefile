@@ -9,7 +9,7 @@ include ../huskymak.cfg
 endif
 
 OBJS    = htick$(_OBJ) global$(_OBJ) toss$(_OBJ) fcommon$(_OBJ) \
-          scan$(_OBJ) areafix$(_OBJ) add_desc$(_OBJ) seenby$(_OBJ) \
+          scan$(_OBJ) htickafix$(_OBJ) add_desc$(_OBJ) seenby$(_OBJ) \
 	  hatch$(_OBJ) filelist$(_OBJ) filecase$(_OBJ) report$(_OBJ) clean$(_OBJ)
 MAN1PAGE = man/htick.1
 MAN1DIR  = $(MANDIR)$(DIRSEP)man1
@@ -28,9 +28,9 @@ else
 endif
 
 ifeq ($(SHORTNAME), 1)
-  LIBS=-L$(LIBDIR) -lfidoconf -lsmapi -lhusky
+  LIBS=-L$(LIBDIR) -lareafix -lfidoconf -lsmapi -lhusky
 else
-  LIBS=-L$(LIBDIR) -lfidoconfig -lsmapi -lhusky
+  LIBS=-L$(LIBDIR) -lareafix -lfidoconfig -lsmapi -lhusky
 endif
 
 ifeq ($(USE_HPTZIP), 1)
