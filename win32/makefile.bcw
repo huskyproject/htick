@@ -32,7 +32,6 @@ toss.obj
 fcommon.obj
 scan.obj
 areafix.obj
-strsep.obj
 add_desc.obj
 seenby.obj
 hatch.obj
