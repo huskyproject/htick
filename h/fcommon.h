@@ -40,10 +40,11 @@ struct ticfiletype {
                 char file[50];      // Name of the file affected by Tic
                 char area[50];      // Name of File Area
                 char areadesc[100]; // Description of File Area
-                char desc[100];     // Short Description of file
+                char **desc;        // Short Description of file
+                int anzdesc;        // Number of Desc Lines
                 char replaces[50];  // Replaces File
                 int size;           // Size of file
-                char crc[30];       // CRC of File
+                unsigned long crc;  // CRC of File
                 unsigned long date; // Date
                 s_addr from;        // From Addr
                 s_addr to;          // To Addr
