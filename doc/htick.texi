@@ -324,8 +324,8 @@ FIDOCONFIG about location of config file and keywords ideology.
 * addDLC::               Add Download counters to FILES.BBS.
 * DLCDigits::            How much digits DLC must be.
 * ticOutbound::          TICs are stored here and killed after transmission
-* filefixKillReports::   Set kill/sent flag to filefix replies.
 * filefixKillRequests::  Kill filefix request after processing.
+* filefixReportsAttr::   Set kill/sent flag to filefix replies.
 * BBSarea::              File area without subscribing (for `htick filelist`).
 * fileDescName::         If no LDESC defined in tic file, use <name> file from
                          archive fill it.
@@ -543,7 +543,7 @@ How much digits DLC must be. DLC has [000] form.
 
 This statement cannot be repeated.
 
-@node ticOutbound, filefixKillReports, DLCDigits, Keywords
+@node ticOutbound, filefixKillRequests, DLCDigits, Keywords
 @subsection ticOutbound
 @findex ticOutbound
 @table @asis
@@ -557,21 +557,7 @@ TICs are stored here and killed after transmission. Default: use PassFileAreaDir
 
 This statement cannot be repeated.
 
-@node filefixKillReports, filefixKillRequests, ticOutbound, Keywords
-@subsection filefixKillReports
-@findex filefixKillReports
-@table @asis
-@item Syntax:
-@code{filefixKillReports <bool>}
-@item Example:
-@code{filefixKillReports yes}
-@end table
-
-Set kill/sent flag to filefix replies.
-
-This statement cannot be repeated.
-
-@node filefixKillRequests, BBSarea, filefixKillReports, Keywords
+@node filefixKillRequests, filefixReportsAttr, ticOutbound, Keywords
 @subsection filefixKillRequests
 @findex filefixKillRequests
 @table @asis
@@ -585,7 +571,49 @@ Kill filefix request after processing.
 
 This statement cannot be repeated.
 
-@node BBSarea, fileDescName, filefixKillRequests, Keywords
+@node filefixReportsAttr, BBSarea, filefixKillRequests, Keywords
+@subsection filefixReportsAttr
+@findex filefixReportsAttr
+@table @asis
+@item Syntax:
+@code{filefixReportsAttr <attr>}
+@item Example:
+@code{filefixReportsAttr pvt,kill,loc}
+@end table
+
+Set flags to filefix replies.
+
+Valid attributes are:
+@table @asis
+@item pvt
+@item crash
+@item read
+@item sent
+@item att
+@item fwd
+@item orphan
+@item k/s
+@item loc
+@item fwd
+@item xx2
+@item frq
+@item rrq
+@item cpt
+@item arq
+@item urq
+@item kfs
+@item tfs
+@item dir
+@item imm
+@item cfm
+@item npd
+@end table
+
+Default is "pvt loc k/s npd".
+
+This statement cannot be repeated.
+
+@node BBSarea, fileDescName, filefixReportsAttr, Keywords
 @subsection BBSarea
 @findex BBSarea
 @table @asis
