@@ -1513,11 +1513,9 @@ void writeMsgToSysop(s_message *msg, char *areaName)
    if (msg->netMail == 1) writeNetmail(msg, areaName);
    else {
       echo = getArea(config, areaName);
-      if (echo != &(config->badArea)) {
-         if (echo->msgbType != MSGTYPE_PASSTHROUGH) {
-            putMsgInArea(echo, msg,1,MSGLOCAL);
-            w_log( LL_POSTING , "Post report message to %s area", echo->areaName);
-         }
+      if (echo != &(config->badArea) && echo->msgbType != MSGTYPE_PASSTHROUGH) {
+          putMsgInArea(echo, msg,1,MSGLOCAL);
+          w_log( LL_POSTING , "Post report message to %s area", echo->areaName);
       } else {
           w_log( LL_POSTING , "Post report message to %s area", config->badArea.areaName);
           putMsgInBadArea(msg, msg->origAddr); 

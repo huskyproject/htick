@@ -270,7 +270,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         pRepDef->annadrfrom ? pRepDef->annadrfrom : &(config->addr[0]),
         pRepDef->annadrto   ? pRepDef->annadrto   : &(config->addr[0]),
         pRepDef->annfrom    ? pRepDef->annfrom    : versionStr, 
-        pRepDef->annto      ? pRepDef->annto      : (netmail ? config->sysop : "All"),
+        pRepDef->annto      ? pRepDef->annto      : (netmail ? NULL : "All"),
         pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
         netmail,
         config->filefixKillReports);
@@ -316,16 +316,27 @@ int IsAreaMatched(char* areaname, ps_anndef pRepDef)
 {
     int nRet = 0;
     UINT i   = 0;
-    if(!pRepDef->annInclude)
-    {
+
+    if(pRepDef->numbI == 0)
         nRet = 1;
-    }
+
     for(i = 0; i < pRepDef->numbI; i++)
     {
         if(patimat(areaname,pRepDef->annInclude[i]) == 1)
         {
             nRet = 1;
             break;
+        }
+    }
+    if(nRet == 1)
+    {
+        for(i = 0; i < pRepDef->numbE; i++)
+        {
+            if(patimat(areaname,pRepDef->annExclude[i]) == 1)
+            {
+                nRet = 0;
+                break;
+            }
         }
     }
     return nRet;
