@@ -1,3 +1,13 @@
+2003-02-26 Wednesday 13:05  stas_degteff
+
+	* src/toss.c (1.254): Improve TIC file check (Some FSC-87
+	requirements)
+
+2003-02-26 Wednesday 10:32  stas_degteff
+
+	* src/areafix.c (1.114): Use FilefixFromName when posting filefix
+	reports
+
 2003-02-25 Tuesday 12:01  stas_degteff
 
 	* HISTORY (1.14): Cosmetics fix
