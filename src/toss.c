@@ -113,7 +113,7 @@ void writeNetmail(s_message *msg, char *areaName)
             recodeToInternalCharset(msg->subjectLine);
          }
 */
-         msgHeader = createXMSG(config,msg,NULL,0,NULL);
+         msgHeader = createXMSG(config,msg,NULL,MSGLOCAL,NULL);
          /* Create CtrlBuf for SMAPI */
          ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
          /* write message */
