@@ -42,6 +42,7 @@
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
+#include <fidoconf/arealist.h>
 
 #include <smapi/prog.h>
 #include <smapi/patmat.h>
@@ -240,7 +241,7 @@ char *list(s_message *msg, s_link *link) {
 
    xscatprintf(&report, "\r '+'  You are receiving files from this area.\r '*'  You can send files to this file echo.\r '&'  You can send and receive files.\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
 
-   w_log( '8', "FileFix: list sent to %s", aka2str(link->hisAka));
+   w_log( LL_AREAFIX, "FileFix: list sent to %s", aka2str(link->hisAka));
 
    nfree(areaslen);
 
@@ -315,7 +316,7 @@ char *help(s_link *link) {
 
 		fclose(f);
 
-		w_log( '8', "FileFix: help sent to %s", aka2str(link->hisAka));
+		w_log( LL_AREAFIX, "FileFix: help sent to %s", aka2str(link->hisAka));
 
 		return help;
 	}
@@ -324,36 +325,69 @@ char *help(s_link *link) {
 }
 
 char *available(s_link *link) {                                                 
-/*        FILE *f;                                                                
-        int i=1;                                                                
-        char *avail;                                              
-        long endpos;                                                            
+    FILE *f;
+    unsigned int j=0, found;
+    unsigned int k;
+    char *report = NULL, *line, *token, *running, linkAka[SIZE_aka2str];
+    s_link *uplink=NULL;
+    ps_arealist al;
 
-        if (config->available!=NULL) {                                          
-                if ((f=fopen(config->available,"r")) == NULL)                   
-                        {                                                       
-                                if (!quiet) fprintf(stderr,"FileFix: cannot open Available Areas file \"%s\"\n",
-                                                config->available);
-                                return NULL;                                    
-                        }                                                       
 
-                fseek(f,0l,SEEK_END);                                           
-                endpos=ftell(f);                                                
+    for (j = 0; j < config->linkCount; j++) {
+	uplink = &(config->links[j]);
 
-                avail=(char*) scalloc((size_t) endpos,sizeof(char*));            
+	found = 0;
+	for (k = 0; k < link->numAccessGrp && uplink->LinkGrp; k++)
+	    if (strcmp(link->AccessGrp[k], uplink->LinkGrp) == 0)
+		found = 1;
 
-                fseek(f,0l,SEEK_SET);                                           
-                endpos = fread(avail,1,(size_t) endpos,f);                               
-                for (i=0; i<endpos; i++) if (avail[i]=='\n') avail[i]='\r';     
+	if ((uplink->forwardFileRequests && uplink->forwardFileRequestFile) &&
+	    ((uplink->LinkGrp == NULL) || (found != 0))) {
+	    if ((f=fopen(uplink->forwardFileRequestFile,"r")) == NULL) {
+		w_log(LL_AREAFIX, "Filefix: cannot open forwardRequestFile \"%s\": %s",
+		      uplink->forwardRequestFile, strerror(errno));
+		return report;
+	    }
 
-                fclose(f);                                                      
+	    xscatprintf(&report, "Available File List from %s:\r",
+			aka2str(uplink->hisAka));
 
-                w_log( '8', "FileFix: Available Area List sent to %s",link->name);
-                                   
-                return avail;                                                   
-        }                                                                       
-  */                                                                              
-        return NULL;                                                            
+	    al = newAreaList();
+        while ((line = readLine(f)) != NULL) {
+            line = trimLine(line);
+            if (line[0] != '\0') {
+                running = line;
+                token = strseparate(&running, " \t\r\n");
+                addAreaListItem(al,0,token,running);
+                
+            }
+		nfree(line);
+	    }
+	    fclose(f);
+
+	    if(al->count) {
+		sortAreaList(al);
+		line = formatAreaList(al,78,NULL);
+		xstrcat(&report,"\r");
+		xstrcat(&report,line);
+		nfree(line);
+	    }
+
+	    freeAreaList(al);
+
+	    xscatprintf(&report, " %s\r\r",print_ch(77,'-'));
+
+	    // warning! do not ever use aka2str twice at once!
+	    sprintf(linkAka, "%s", aka2str(link->hisAka));
+	    w_log(LL_AREAFIX, "Filefix: Available File List from %s sent to %s", aka2str(uplink->hisAka), linkAka);
+	}
+    }
+
+    if (report==NULL) {
+	xstrcat(&report, "\r  no links for creating Available File List\r");
+	w_log(LL_AREAFIX, "Filefix: no links for creating Available File List");
+    }
+    return report;
 }                                                                               
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
@@ -547,21 +581,21 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		switch (rc) {
 		    case 0: 
 			xscatprintf(&report, "%s Already linked\r", area->areaName);
-			w_log( '8', "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
+			w_log( LL_AREAFIX, "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1: 
 		    case 3: 
 			changeconfig (getConfigFileName(), area, link, 0);
 			addlink(link, area);
 			xscatprintf(&report, "%s Added\r",area->areaName);
-			w_log( '8', "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
+			w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
 			break;
 		    case 5: 
                 xscatprintf(&report, "%s Link is not possible\r", area->areaName);
-			w_log( '8', "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
+			w_log( LL_AREAFIX, "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
 			break;
 		    default :
-			w_log( '8', "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
+			w_log( LL_AREAFIX, "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
 			continue;
 		}
         found = 1;
@@ -580,7 +614,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     }
     if (!report) {
         xscatprintf(&report,"%s Not found\r",line);
-        w_log( '8', "FileFix: filearea %s is not found",line);
+        w_log( LL_AREAFIX, "FileFix: filearea %s is not found",line);
     }
     return report;
 }
@@ -743,6 +777,7 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"help")==0) return HELP;
 		if (stricmp(line,"unlinked")==0) return UNLINK;
 		if (stricmp(line,"linked")==0) return LINKED;
+        if (stricmp(line,"avail")==0) return AVAIL;
 		if (stricmp(line,"query")==0) return LINKED;
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
@@ -785,6 +820,9 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 		break;
 	case LINKED: report = linked (msg, link, 1);
 		RetFix=LINKED;
+		break;
+	case AVAIL: report = available (link);
+		RetFix=AVAIL;
 		break;
 	case PAUSE: report = pause_link (msg, link);
 		RetFix=PAUSE;
@@ -951,6 +989,9 @@ int processFileFix(s_message *msg)
 				case LINKED:
     					RetMsg(msg, link, preport, "FileFix reply: linked request");
 					w_log( '8', "FileFix: linked fileareas list sent to %s", aka2str(link->hisAka));
+					break;
+				case AVAIL:
+    			    RetMsg(msg, link, preport, "FileFix reply: avail request");
 					break;
 				case PAUSE: case RESUME:
 					RetMsg(msg, link, preport, "FileFix reply: node change request");

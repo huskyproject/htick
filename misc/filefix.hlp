@@ -6,6 +6,7 @@ Here's some help about how you can use FileFix to change your fileareas.
 %unlinked       list of unlinked fileareas
 %linked         list of linked fileareas
 %query          the same
+%avail          list all fileareas that are available at this system's uplinks
 %pause          stop recieve files
 %resume         recieved files again
 %resend <file>
@@ -31,6 +32,8 @@ Example:
  -*                           <- Remove all linked fileareas
  %INFO                        <- Ask for general information
  %LIST                        <- List available fileareas
+ %AVAIL                       <- List all fileareas that are available at
+                                 this system's uplinks
  %UNLINKED                    <- List available fileareas to which
                                  you are currently not linked
  %QUERY                       <- To request a list of fileareas for which 

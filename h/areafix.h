@@ -38,7 +38,7 @@
 #define HELP    2
 #define ADD     3
 #define DEL     4
-//#define AVAIL   5
+#define AVAIL   5
 #define UNLINK  6
 #define PAUSE   7
 #define RESUME  8
