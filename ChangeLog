@@ -1,3 +1,13 @@
+2003-05-18 Sunday 10:36  d_sergienko
+
+	* src/toss.c (1.271): Fixed adding SeenBy 0:0/0 if To: missing in
+	tic
+
+2003-05-18 Sunday 04:46  d_sergienko
+
+	* src/: add_desc.c (1.37), htick.c (1.98), scan.c (1.32), toss.c
+	(1.270): CRLF->LF; recoding fixes
+
 2003-05-15 Thursday 01:07  nssoft
 
 	* Makefile (1.21): Fix makefiles.
