@@ -1,3 +1,8 @@
+2003-03-17 Monday 13:08  stas_degteff
+
+	* src/htick.c (1.96): Hide getctab() and arrays intab, outtab: new
+	function getctabs()
+
 2003-03-15 Saturday 22:02  d_sergienko
 
 	* h/fcommon.h (1.21), h/global.h (1.23), src/add_desc.c (1.35),
