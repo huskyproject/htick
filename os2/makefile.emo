@@ -1,29 +1,37 @@
-# makefile for PGCC/EMX 1.1.1
+# OS/2 EMX .OMF style makefile
+# no support for the husky build environment
 
-# include Husky-Makefile-Config
-include ../../huskymak.cfg
+DEBUG=-s
+# set to -g for debugging
 
-CC      = gcc 
+.SUFFIXES:
+.SUFFIXES: .c .obj
+
+OBJ    =.obj
+EXE    =.exe
+RM     =cmd /c del
+DIRSEP =/
+CFLAGS =-Zomf -I../h -I../.. -c -O3 $(DEBUG) -DOS2
+LFLAGS =-Zomf -Zsys $(DEBUG)
+CDEFS  =-DOS2
+CC     =gcc
+EXENAMEFLAG=-o
+SRC_DIR=../src/
+LIBS   =../../fidoconf/fconfemo.lib ../../smapi/smapiemo.lib
+
 
 OBJS    = htick.obj global.obj log.obj toss.obj fcommon.obj scan.obj areafix.obj strsep.obj filecase.obj
 SRC_DIR = ../src/
 
-ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I$(INCDIR) -Wall -ggdb -O3 -DUNIX
-  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
-else
-  CFLAGS  = -c -fomit-frame-pointer -fstrength-reduce -Zomf -Zcrtdll -I../h -I$(INCDIR) -Wall -Os -s -DOS2
-  LFLAGS  = -Zomf -Zcrtdll -L$(LIBDIR) -lwrap
-endif
 
 all: $(OBJS) \
-     htick.exe 
+     htick.exe
 
 %.obj: $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 htick.exe: $(OBJS)
-	$(CC) $(LFLAGS) -o htick.exe $(OBJS) -lsmapiemo -lfidoconfig
+	$(CC) $(LFLAGS) -o htick.exe $(OBJS) $(LIBS)
 
 clean:
 	-del *.obj *.bak
@@ -31,6 +39,6 @@ clean:
 distclean: clean
 	-del *.exe
 
-install: htick.exe
-	copy htick.exe $(BINDIR)
+
+
 

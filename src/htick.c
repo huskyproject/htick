@@ -10,7 +10,7 @@
  *
  * Vienna, Austria, Europe
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -62,6 +62,15 @@
 #include <hatch.h>
 #include <filelist.h>
 
+#ifdef OS2
+#define INCL_DOSPROCESS
+#define INCL_DOSERRORS
+#include <os2.h>
+#ifndef __OS2__
+#define __OS2__
+#endif
+#endif
+
 int processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
@@ -78,7 +87,7 @@ int processCommandLine(int argc, char **argv)
 " [annfile <file>]        Announce new files in text file (toss and hatch)\n"
 " [annfecho <file>]       Announce new fileecho in text file\n"
 " scan                    Scanning Netmail area for mails to filefix\n"
-" hatch <file> <area> [<description>]\n" 
+" hatch <file> <area> [<description>]\n"
 " [replace [<filemask>]]  Hatch file into Area, using Description for file,\n"
 "                         if exist \"replace\", then fill replace field in TIC;\n"
 "                         if not exist <filemask>, then put <file> in field\n"
@@ -90,7 +99,7 @@ int processCommandLine(int argc, char **argv)
 " request <Adress> <file> Request file from adress (not implemented)\n"
 "\n"
 "Not all features are implemented yet, you are welcome to implement them :)\n"
-);  
+);
   }
 
    while (i < argc-1) {
@@ -105,7 +114,7 @@ int processCommandLine(int argc, char **argv)
          if (argc-i < 3) {
             printf("insufficient number of arguments\n");
             return(0);
-         } 
+         }
          cmHatch = 1;
          i++;
          strcpy(hatchfile, argv[i++]);
@@ -184,9 +193,9 @@ void processConfig()
    struct   stat stat_file;
 #endif
    char *buff = NULL;
-   
+
    unsigned long pid;
-   
+
    FILE *f;
 
    config = readConfig(NULL);
@@ -194,16 +203,16 @@ void processConfig()
       printf("Config not found\n");
       exit(1);
    };
-   
+
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
       f = fopen(config->lockfile, "rt");
       fscanf(f, "%lu\n", &pid);
       fclose(f);
       /* Checking process PID */
-#ifdef __OS2__
+#if defined(__OS2__)
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
-#elif UNIX
+#elif defined(UNIX)
       if (kill(pid, 0) == 0) {
 #else
       if (stat(config->lockfile, &stat_file) != -1) {
@@ -270,13 +279,13 @@ int main(int argc, char **argv)
 
 #ifdef __linux__
    sprintf(versionStr, "HTick/LNX v%u.%02u", VER_MAJOR, VER_MINOR);
-#elif __freebsd__
+#elif defined(__freebsd__)
    sprintf(versionStr, "HTick/BSD v%u.%02u", VER_MAJOR, VER_MINOR);
-#elif __OS2__
+#elif defined(__OS2__)
     sprintf(versionStr, "HTick/OS2 v%u.%02u", VER_MAJOR, VER_MINOR);
-#elif __NT__
+#elif defined(__NT__)
     sprintf(versionStr, "HTick/NT v%u.%02u", VER_MAJOR, VER_MINOR);
-#elif __sun__
+#elif defined(__sun__)
     sprintf(versionStr, "HTick/SUN v%u.%02u", VER_MAJOR, VER_MINOR);
 #else
     sprintf(versionStr, "HTick v%u.%02u", VER_MAJOR, VER_MINOR);
