@@ -766,14 +766,13 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    //Save seenby structure
    old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
-   memcpy(old_seenby,tic.seenby,sizeof(s_addr));
+   memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
    old_anzseenby = tic.anzseenby;
 
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
             addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0 &&
             addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-          //addrComp(tic.to, *filearea->downlinks[i]->ourAka)!=0 &&
             seenbyComp (tic.seenby, tic.anzseenby,
             filearea->downlinks[i]->link->hisAka) != 0) {
          // Adding Downlink to Seen-By
@@ -790,7 +789,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
             addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0 &&
-          //addrComp(tic.to, *filearea->downlinks[i]->ourAka)!=0 &&
             addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0) {
          // Forward file to
          if (seenbyComp (old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
@@ -871,6 +869,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    newFileReport[newfilesCount]->useAka = filearea->useAka;
    newFileReport[newfilesCount]->areaName = filearea->areaName;
    newFileReport[newfilesCount]->areaDesc = filearea->description;
+   if (config->outtab != NULL) recodeToTransportCharset(newFileReport[newfilesCount]->areaDesc);
    newFileReport[newfilesCount]->fileName = strdup(tic.file);
 
    newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
