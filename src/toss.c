@@ -217,7 +217,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 #else
    // insure that ticfile won't be removed while parsing
    int fh = 0;
-   fh = sopen( ticfile, _O_RDWR | O_BINARY, SH_DENYWR);
+   fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
    tichandle = fdopen(fh,"r");
 #endif
 
