@@ -15,25 +15,17 @@ export VERSION=1.1
 # Next Line to build debug-versions !
 # export DEB_BUILD_OPTIONS=nostrip
 
-configure: configure-stamp
-configure-stamp:
-	dh_testdir
-	# Add here commands to configure the package.
-	
-	touch configure-stamp
-
-build: configure-stamp build-stamp
+build: build-stamp
 build-stamp:
 	dh_testdir
 	# Add here commands to compile the package.
 	$(MAKE)
-	#/usr/bin/docbook-to-man debian/htick.sgml > htick.1
 	touch build-stamp
 
 clean:
 	dh_testdir
 	dh_testroot
-	rm -f build-stamp configure-stamp
+	rm -f build-stamp
 	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
 	dh_clean
@@ -46,8 +38,8 @@ install: build
 	# Add here commands to install the package into debian/htick.
 	$(MAKE) install DESTDIR=$(CURDIR)/debian/htick
 	cp misc/config debian/htick/etc/husky/config.htick
-	cp misc/fileareas debian/htick/etc/husky/
-	cp misc/purge_fileecho misc/st_htick.pl debian/htick/usr/share/doc/htick/misc/
+	cp misc/fileareas misc/filefix.* debian/htick/etc/husky
+	cp misc/purge_fileecho misc/st_htick.pl debian/htick/usr/share/doc/htick/misc
 
 # Build architecture-independent files here.
 binary-indep: build install
@@ -84,4 +76,4 @@ binary-arch: build install
 	dh_builddeb
 
 binary: binary-indep binary-arch
-.PHONY: build clean binary-indep binary-arch binary install configure
+.PHONY: build clean binary-indep binary-arch binary install

@@ -1,3 +1,11 @@
+htick (1.1.0-20021004-1) unstable; urgency=low
+
+  * New cvs version
+  * Install /etc/filefix.hlp into /etc/husky
+  * Clean up debian/rules
+
+ -- Pavel Andreew <pavel@collage.etel.ru>  Fri,  4 Oct 2002 18:09:00 +0600
+
 htick (1.1.0-20020829-1) unstable; urgency=low
 
   * Install configs to /etc/husky
