@@ -1195,8 +1195,11 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
             } else {
                 xstrcat(&buff, NewAutoCreate);
             }
-        } else if (descr) {
-            xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
+        } else {
+            if (descr) 
+                xscatprintf(&buff,"%s -d \"%s\"",NewAutoCreate,descr);
+            else
+                xstrcat(&buff, NewAutoCreate);
         }
         nfree(NewAutoCreate);
     }
