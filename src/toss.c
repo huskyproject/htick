@@ -818,8 +818,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    w_log('6',"Processing Tic-File %s",ticfile);
 
-   parseTic(ticfile,&tic);
-
+   if(!parseTic(ticfile,&tic))
+     return TIC_NotOpen;
 
    if ( tic.file && strpbrk(tic.file, "/\\:") )
    {
