@@ -168,7 +168,7 @@ void getReportInfo()
         nfree(fname);
     }
     closedir(dir);
-    w_log(LL_DEBUG, "Sortin report information. number of entries: %d",rCount);
+    w_log(LL_DEBUG, "Sorting report information. Number of entries: %d",rCount);
     qsort( (void*)Report, rCount, sizeof(s_ticfile), cmp_reportEntry ); 
 }
 
