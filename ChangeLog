@@ -1,3 +1,21 @@
+2002-07-01 Monday 16:04  mche
+
+	* src/report.c (1.6): fix compilation warning
+
+2002-07-01 Monday 15:36  mche
+
+	* src/: report.c (1.5), toss.c (1.192): groups of announces
+
+2002-07-01 Monday 14:39  stas
+
+	* debian/postinst (1.1): file postinst was initially added on
+	branch htick-1_0-stable.
+
+2002-07-01 Monday 14:35  mche
+
+	* src/report.c (1.4), src/toss.c (1.191), FidoConfigKeywords
+	(1.28): groups of announces
+
 2002-06-30 Sunday 11:22  mche
 
 	* src/report.c (1.3): fixed bug with missed files in report
