@@ -42,7 +42,7 @@ int seenbyComp ( s_addr *seenby, int anzseenby, s_addr Aka)
     return !0;
 }
 
-int seenbyAdd ( s_addr **seenby, int *anzseenby, s_addr* Aka)
+int seenbyAdd ( s_addr **seenby, UINT *anzseenby, s_addr* Aka)
 {
     s_addr* tmp = *seenby;
     
