@@ -1,3 +1,7 @@
+2003-04-09 Wednesday 21:33  i_zkh
+
+	* win32/makefile.mvcdll (1.11): Fixed compiling
+
 2003-04-07 Monday 15:53  mche
 
 	* src/toss.c (1.262): toss tics without origin
