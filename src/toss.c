@@ -639,7 +639,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                w_log('6',"Moved %s to %s",filename,newticedfile);
            }
        }
-   } else if (copy_file(filename,newticedfile)!=0) {
+   } else if (strcasecmp(filename,newticedfile) != 0 && 
+              copy_file(filename,newticedfile)!=0) {
        w_log('9',"File %s not found or not moveable",filename);
        return(2);
    } else {

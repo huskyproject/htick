@@ -426,6 +426,7 @@ int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
     nfree(line);
     if (strend == -1) {
         nfree(cfgline);
+        nfree(fileName);
         return 1; // impossible
     }
     
