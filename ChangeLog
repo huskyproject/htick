@@ -1,3 +1,12 @@
+2002-09-05 Thursday 12:27  mche
+
+	* src/report.c (1.13): fix announce generation
+
+2002-09-05 Thursday 07:55  mche
+
+	* src/report.c (1.12): do not recodeToTransportCharset filearea
+	description taken from config
+
 2002-09-04 Wednesday 18:54  stas_degteff
 
 	* src/toss.c (1.207): Test for success opened TIC file in
