@@ -7,7 +7,7 @@ OBJS    = htick.o global.o log.o toss.o fcommon.o scan.o areafix.o strsep.o add_
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O3 -s -DUNIX
+  CFLAGS  = -c -I../h -I../../fidoconfig -I../../smapi -Wall -ggdb -O6 -mpentium -s -DUNIX
 # LFLAGS  = -L../../fidoconfig -L../../smapi 
   LFLAGS  =
 else

@@ -175,8 +175,8 @@ void scanNMArea(void)
 	    freeMsgBuff(&filefixmsg);
 
             MsgCloseMsg(msg);
-//            MsgKillMsg(netmail, i);
-//            i--;
+	    if (config->filefixKillRequests) MsgKillMsg(netmail, i);
+//              i--;
             }
            else
             MsgCloseMsg(msg);
