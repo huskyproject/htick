@@ -1,3 +1,20 @@
+2002-07-08 Monday 17:59  mche
+
+	* src/clean.c (1.1), src/toss.c (1.199), Makefile (1.13),
+	osf/makefile (1.6), dos/makefile.bcd (1.5), dos/makefile.djg (1.5),
+	os2/makefile.bco (1.5), os2/makefile.emo (1.10), os2/makefile.emx
+	(1.6), os2/makefile.wco (1.14), sun/makefile (1.8),
+	win32/makefile.bcw (1.9), win32/makefile.cyg (1.7),
+	win32/makefile.mvc (1.7), win32/makefile.mvcdll (1.5),
+	win32/makefile.wcw (1.17), beos/makefile.be (1.5), bsd/makefile.bsd
+	(1.5), h/toss.h (1.16), linux/makefile.lnx (1.8): redesign of
+	cleanPassthroughDir function
+
+2002-07-08 Monday 15:19  mche
+
+	* src/seenby.c (1.9), h/seenby.h (1.7): fix cygwin compilation
+	warnings
+
 2002-07-06 Saturday 18:38  stas
 
 	* FidoConfigKeywords (1.29): Update documentation: add the
