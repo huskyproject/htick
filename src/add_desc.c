@@ -37,14 +37,15 @@ int add_description (char *descr_file_name, char *file_name, char **description,
         //fprintf (descr_file, "%s", dlc);
         xstrcat(&desc_line, dlc);
     }
-    if(strlen(desc_line) + strlen(description[0]) < 80 && count_desc == 1)
-    {
-        fprintf (descr_file, "%s",desc_line);
-    }
-    else
+    if((strlen(namefile) > 12) && 
+       (strlen(desc_line) + strlen(description[0]) > 78))
     {
         fprintf (descr_file, "%s\n",desc_line);
         descOnNewLine = 1;
+    }
+    else
+    {
+        fprintf (descr_file, "%s",desc_line);
     }
     for ( i = 0; i < count_desc; i++ ) {
         desc_line = sstrdup(description[i]);
