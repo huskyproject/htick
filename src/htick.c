@@ -57,6 +57,12 @@
 #include <hatch.h>
 #include <filelist.h>
 
+#ifdef __NT__
+#define WIN32_LEAN_AND_MEAN
+#define NOMSG
+#include <windows.h>
+#endif
+
 void processCommandLine(int argc, char **argv)
 {
    unsigned int i = 0;
@@ -97,8 +103,12 @@ void processCommandLine(int argc, char **argv)
          i++;
          strcpy(hatchfile, argv[i++]);
          strcpy(hatcharea, argv[i++]);
-         if (i < argc)
+         if (i < argc) {
            strcpy(hatchdesc, argv[i]);
+#ifdef __NT__
+           CharToOem(hatchdesc, hatchdesc);
+#endif
+         }
          else
            strcpy(hatchdesc, "-- description missing --");
          continue;

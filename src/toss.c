@@ -302,7 +302,7 @@ void writeTic(char *ticfile,s_ticfile *tic)
    FILE *tichandle;
    int i;
 
-   tichandle=fopen(ticfile,"w");
+   tichandle=fopen(ticfile,"wb");
    
    fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
    fprintf(tichandle,"File %s\r\n",tic->file);
