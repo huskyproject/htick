@@ -40,7 +40,8 @@
 #include <sys/stat.h>
 
 /* compiler.h */
-#include <smapi/compiler.h>
+#include <huskylib/compiler.h>
+#include <huskylib/huskylib.h>
 
 #ifdef __OS2__
 #define INCL_DOSFILEMGR /* for hidden() routine */
@@ -66,9 +67,6 @@
 #ifdef HAS_PROCESS_H
 #  include <process.h>
 #endif
-
-/* smapi */
-#include <huskylib/huskylib.h>
 
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
@@ -333,7 +331,11 @@ int parseTic(char *ticfile,s_ticfile *tic)
     {
         int fh = 0;
         /* insure that ticfile won't be removed while parsing */
-        fh = sopen( ticfile, O_RDWR | O_BINARY, SH_DENYWR);
+#ifdef __UNIX__
+        fh = sopen(ticfile, O_RDWR | O_BINARY, SH_DENYNO, S_IWRITE | S_IREAD);
+#else
+        fh = sopen(ticfile, O_RDWR | O_BINARY, SH_DENYRW);
+#endif
         if( fh<0 ){
             w_log(LL_ERROR, "Can't open '%s': %s (sopen())", ticfile, strerror(errno));
             return 0;
