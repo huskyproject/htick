@@ -1,6 +1,9 @@
 htick 0.01
 ----------
 
+Mo 22.03.1999
+  + Support for Magic Tag
+
 Su 21.03.1999
   + Areafix now writes mails to the right sender name
   + As the to Field in tic file is not necessarily needed as FSC says,

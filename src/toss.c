@@ -363,6 +363,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
             string2addr(param,&tic->to); else
          if (stricmp(token,"origin")==0) 
             string2addr(param,&tic->origin); else
+         if (stricmp(token,"magic")==0) 
+            {;} else
          if (stricmp(token,"seenby")==0) 
             {
             tic->seenby=
