@@ -172,11 +172,7 @@ int link_file(const char *from, const char *to)
 {
    int rc = FALSE;
 
-#if   _WIN32_WINNT >= 0x0500
-
-   rc = CreateHardLink(to, from, NULL);
-
-#elif _WIN32_WINNT == 0x0400
+#if _WIN32_WINNT == 0x0400
    
    WCHAR  FileLink[ MAX_PATH + 1 ];
    WCHAR  wto[ MAX_PATH + 1 ];
@@ -191,6 +187,21 @@ int link_file(const char *from, const char *to)
    DWORD StreamHeaderSize;
 
    BOOL bSuccess;
+#endif
+
+   /* Test parameters: prevent read from NULL[]  */
+   if (!from || !to) {
+     if(!from) w_log(LL_ERR, __FILE__ "::link_file(): source file name is NULL");
+     if(!to)   w_log(LL_ERR, __FILE__ "::link_file(): destination file name is NULL");
+     return FALSE;
+   }
+
+#if   _WIN32_WINNT >= 0x0500
+
+   rc = CreateHardLink(to, from, NULL);
+
+#elif _WIN32_WINNT == 0x0400
+   
    /*   */
    /*  open existing file that we link to */
    /*   */
