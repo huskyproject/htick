@@ -2,7 +2,7 @@
 # Legacy makefile to build dll version of htick with Microsoft Visual C++
 
 CC=     cl
-CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h
+CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib
 CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
 
 # uncomment one of these lines if you want to enable hardlinking on NTFS 4.0, 5.0
@@ -13,7 +13,7 @@ COPT=   -O2
 TLIB=   lib -nologo
 
 FCONFL=	..\..\fidoconf\fconfmvc.lib
-SMAPIL=	..\..\smapi\smapimvc.lib
+SMAPIL=	..\..\smapi\make\smapimvc.lib ..\..\huskylib\make\huskymvc.lib
 HTICKL=	htickmvc.lib
 
 OBJS    = global.obj \
