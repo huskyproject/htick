@@ -4,7 +4,7 @@
  * Filelist generator routines.
  *
  * This file is part of HTICK, part of the Husky fidosoft project
- * http://husky.physcip.uni-stuttgart.de
+ * http://husky.sf.net
  *
  * HTICK is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -27,15 +27,18 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <fidoconf/log.h>
-
 #include <string.h>
-#include <fidoconf/common.h>
+
+
 #include <smapi/progprot.h>
+
+#include <fidoconf/log.h>
+#include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/afixcmd.h>
+
 #include "add_desc.h"
 #include "global.h"
 #include "version.h"

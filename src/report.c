@@ -32,6 +32,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+
 #include <fidoconf/log.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>

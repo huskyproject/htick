@@ -35,23 +35,21 @@
 #include <time.h>
 
 #include <smapi/msgapi.h>
+#include <smapi/patmat.h>
 
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
-
-#include <fcommon.h>
-#include <smapi/patmat.h>
-#include <scan.h>
-#include <fidoconf/log.h>
-#include <global.h>
-#include <version.h>
-#include <areafix.h>
-
-#include <toss.h>
 #include <fidoconf/common.h>
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/recode.h>
+#include <fidoconf/log.h>
+
+#include <fcommon.h>
+#include <scan.h>
+#include <global.h>
+#include <version.h>
+#include <areafix.h>
+#include <toss.h>
 
 
 void cvtAddr(const NETADDR aka1, s_addr *aka2)

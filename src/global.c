@@ -30,8 +30,9 @@
  * $Id$
  *****************************************************************************/
 
-#include <global.h>
 #include <string.h>
+
+#include <global.h>
 
 s_log     *htick_log;
 s_fidoconfig *config;

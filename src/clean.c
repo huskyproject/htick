@@ -17,15 +17,16 @@
  * by the Free Software Foundation; either version 2, or (at your option)
  * any later version.
  *
- * FIDOCONFIG library is distributed in the hope that it will be useful,
+ * HTICK is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License
- * along with FIDOCONFIG library; see the file COPYING.  If not, write
- * to the Free Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA
- * or visit http://www.gnu.org
+ * You should have received a copy of the GNU General Public License along 
+ * with HTICK; see the file COPYING.  If not, write to the Free Software
+ * Foundation, 675 Mass Ave, Cambridge, MA 02139, USA
+ *
+ * See also http://www.gnu.org
  *****************************************************************************
  * $Id$
  */
@@ -34,13 +35,15 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+
+#include <smapi/progprot.h>
+
 #include <fidoconf/log.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/tree.h>
-
-#include <smapi/progprot.h>
 
 #include "toss.h"
 #include "htick.h"

@@ -57,6 +57,10 @@
 #include <process.h>
 #endif
 
+
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/common.h>
@@ -70,8 +74,6 @@
 #define _A_HIDDEN A_HIDDEN
 #endif
 
-#include <smapi/progprot.h>
-#include <smapi/compiler.h>
 
 #include <fcommon.h>
 #include <global.h>

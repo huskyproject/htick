@@ -35,6 +35,10 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <stdio.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <errno.h>
+
 #ifdef __EMX__
 #include <sys/types.h>
 #endif
@@ -52,9 +56,14 @@
 #include <dir.h>
 #endif
 
-#include <sys/stat.h>
-#include <fcntl.h>
-#include <errno.h>
+/*
+#include <smapi/typedefs.h>
+#include <smapi/compiler.h>
+#include <smapi/stamp.h>
+#include <smapi/progprot.h>
+#include <smapi/ffind.h>
+#include <smapi/patmat.h>
+*/
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
@@ -62,13 +71,6 @@
 #include <fidoconf/adcase.h>
 #include <fidoconf/xstr.h>
 #include <fidoconf/recode.h>
-
-//#include <smapi/typedefs.h>
-//#include <smapi/compiler.h>
-//#include <smapi/stamp.h>
-//#include <smapi/progprot.h>
-//#include <smapi/ffind.h>
-//#include <smapi/patmat.h>
 
 #include <fcommon.h>
 #include <global.h>

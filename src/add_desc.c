@@ -24,21 +24,15 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
-#include <add_desc.h>
-#include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>
 #include <string.h>
-#include <smapi/progprot.h>
-#include <global.h>
-#include <fidoconf/recode.h>
-#include <fidoconf/xstr.h>
-#include <fidoconf/dirlayer.h>
-#include <toss.h>
-#include <filecase.h>
 
 #if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
 #include <dos.h>
 #include <process.h>
+#endif
+
+#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <unistd.h>
 #endif
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1200))
@@ -48,9 +42,21 @@
 #define getcwd  _getcwd
 #endif
 
-#if defined (UNIX)
-#include <unistd.h>
-#endif
+
+#include <smapi/progprot.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/common.h>
+#include <fidoconf/recode.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/dirlayer.h>
+
+
+#include <add_desc.h>
+#include <global.h>
+#include <toss.h>
+#include <filecase.h>
+
 
 int add_description (char *descr_file_name, char *file_name, char **description, unsigned int count_desc)
 {

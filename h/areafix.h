@@ -31,7 +31,7 @@
 #ifndef _AREAFIX_H
 #define _AREAFIX_H
 
-#include <fcommon.h>
+#include "fcommon.h"
 
 #define NOTHING 0
 #define LIST    1

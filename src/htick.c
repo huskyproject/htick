@@ -29,6 +29,7 @@
  *****************************************************************************
  * $Id$
  *****************************************************************************/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -56,20 +57,19 @@
 #endif
 
 #include <smapi/msgapi.h>
+#include <smapi/progprot.h>
 
-#include <version.h>
 
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/log.h>
+#include <fidoconf/recode.h>
+#include <fidoconf/xstr.h>
 
-#include <smapi/progprot.h>
 #include <htick.h>
 #include <global.h>
 #include <cvsdate.h>
-
-#include <fidoconf/recode.h>
-#include <fidoconf/xstr.h>
+#include <version.h>
 #include <toss.h>
 #include <scan.h>
 #include <hatch.h>

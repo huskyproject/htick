@@ -29,6 +29,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <unistd.h>
+#endif
+
+
+#include <smapi/compiler.h>
+#include <smapi/progprot.h>
+
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/common.h>
@@ -37,9 +45,6 @@
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
-
-#include <smapi/progprot.h>
-#include <smapi/compiler.h>
 
 #include <filecase.h>
 #include <seenby.h>
@@ -52,10 +57,6 @@
 
 #if (defined(_MSC_VER) && (_MSC_VER >= 1200))
 #define getcwd  _getcwd
-#endif
-
-#if defined (UNIX)
-#include <unistd.h>
 #endif
 
 
