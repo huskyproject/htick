@@ -446,7 +446,7 @@ This statement cannot be repeated.
 @end table
 
 What to do with long names when toss or hatch. 
-Term "long name" treat as a mixed cased name or a name longer than 8.3
+Saying 'long name' we mean a mixed cased name or a name longer than 8.3
 
 This statement cannot be repeated.
 
