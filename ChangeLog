@@ -1,3 +1,8 @@
+2004-06-07 Monday 11:44  sfpavel
+
+	* debian/compat (1.1): file compat was initially added on branch
+	htick-1_4-stable.
+
 2004-05-09 Sunday 15:49  andrew_ladutsko
 
 	* h/areafix.h (1.16), src/areafix.c (1.126): functions
