@@ -1,3 +1,11 @@
+2002-12-26 Thursday 12:35  stas_degteff
+
+	* beos/makefile.be, Makefile, dos/makefile.bcd, linux/makefile.lnx,
+	os2/makefile.bco, os2/makefile.emo, os2/makefile.emx,
+	os2/makefile.wco, osf/makefile
+	(htick-1_0-stable.[1,2,1,1,1,1,1,1,1]): compile with 
+	-DNOSEMAPHORES
+
 2002-12-20 Friday 15:10  stas_degteff
 
 	* src/: htick.c, toss.c (htick-1_0-stable.[5,11]): bugfix: memory
