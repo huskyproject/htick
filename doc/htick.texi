@@ -546,7 +546,7 @@ This statement cannot be repeated.
 
 If no LDESC defined in tic file, use <name> file from archive fill it 
 (usually file_id.diz). 'unpack' action should be defined for archive
-and contain $fparameter.
+and contain @code{$f} parameter.
 
 This statement cannot be repeated.
 
