@@ -2,6 +2,12 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Apr 29 2:10:00 MSK 2000
+Nestyurkin Nikolay:
+* announce in area bugfix
+* ExecOnFile always work (not only then announcing in area, as early)
+
+----- cvs ci ------
 Wed Apr 26 11:29:36 MSD 2000
 max (patch from Serguei Revtov):
 * exit on error in command line, additional command line check
