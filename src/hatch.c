@@ -90,6 +90,7 @@ void hatch()
 
    strcpy(filename,fileareapath);
    strcat(filename,tic.file);
+   strLower(filename);
    if (copy_file(hatchfile,filename)!=0) {
       sprintf(logstr,"File %s not found or moveable",hatchfile);
       writeLogEntry(htick_log,'9',logstr);
