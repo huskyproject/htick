@@ -1,3 +1,23 @@
+2002-06-06 Thursday 16:41  mche
+
+	* h/fcommon.h (1.17): filearea option added: -nodiz Do not try to
+	get description from <fileDescName>
+
+2002-06-06 Thursday 16:35  mche
+
+	* FidoConfigKeywords (1.23): filearea option added: -nodiz Do not
+	try to get description from <fileDescName>
+
+2002-06-06 Thursday 15:39  mche
+
+	* src/filelist.c (1.28), src/global.c (1.17), src/htick.c (1.58),
+	h/global.h (1.15): added generation of dirlist
+
+2002-06-06 Thursday 15:38  mche
+
+	* src/fcommon.c (1.51): some defines for anable hardlinks in htick
+	for cygwin
+
 2002-06-05 Wednesday 17:16  mche
 
 	* src/fcommon.c (1.50), win32/makefile.cyg (1.4): some defines for
