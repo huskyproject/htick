@@ -15,7 +15,8 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 {
     FILE *descr_file;
     unsigned int i;
-    char *desc_line, *namefile;
+    char *desc_line = NULL;
+    char *namefile  = NULL;
     
     descr_file = fopen (descr_file_name, "a");
     if (descr_file == NULL) return 1;
@@ -55,9 +56,10 @@ int add_description (char *descr_file_name, char *file_name, char **description,
 int removeDesc (char *descr_file_name, char *file_name)
 {
     FILE *f1, *f2;
-    char *line, *tmp, *token, *descr_file_name_tmp=NULL, *LDescString;
+    char *line, *tmp, *token, *descr_file_name_tmp, *LDescString;
     int flag = 0;
     
+    line = tmp = token = descr_file_name_tmp = LDescString = NULL ;
     f1 = fopen (descr_file_name, "r");
     if (f1 == NULL) return 1;
     
@@ -118,7 +120,7 @@ int announceInFile (char *announcefile, char *file_name, int size, char *area, s
 {
     FILE *ann_file;
     int i;
-    char *desc_line;
+    char *desc_line = NULL;
     
     if (!fexist(announcefile)) {
         ann_file = fopen (announcefile, "w");
@@ -164,7 +166,7 @@ int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
 int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
 {
     FILE *f1;
-    char hlp[1024] = "", tmp[1024] = "", *token;
+    char hlp[1024] = "", tmp[1024] = "", *token = NULL;
     int flag = 0, rc = 1;
     
     f1 = fopen (descr_file_name, "r");

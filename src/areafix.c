@@ -62,26 +62,10 @@ void freeMsgBuff(s_message *msg)
     free(msg->text);
 }
 
-int strncasesearch(char *strL, char *strR, unsigned int len)
-{
-    char *str;
-    int ret;
-    
-    str = (char*)scalloc(strlen(strL)+1, sizeof(char));
-    strcpy(str, strL);
-    if (strlen(str) > len) str[len] = 0;
-    ret = stricmp(str, strR);
-    free(str);
-    return ret;
-}
-
 char *errorRQ(char *line)
 {
-   char *report, err[] = "Error line";
-
-   report = (char*)scalloc(strlen(line)+strlen(err)+3, sizeof(char));
-   sprintf(report, "%s %s\r", line, err);
-
+   char *report = NULL, err[] = "Error line";
+   xscatprintf(&report,"%s %s\r", line, err);
    return report;
 }
 
@@ -136,7 +120,7 @@ int subscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_link 
 
 int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
-    char *buff, *sbuff, *ptr, *tmp, *line;
+    char *buff = NULL, *sbuff = NULL, *ptr = NULL, *tmp = NULL, *line = NULL;
 	
     fseek(f, getCurConfPos(), SEEK_SET);
     curpos = ftell(f);
@@ -166,9 +150,9 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
 		break;
 	    }
 	    else {
-		if (strncasesearch(ptr, "-r", 2)) {
-		    if (strncasesearch(ptr, "-w", 2)) {
-			if (strncasesearch(ptr, "-mn", 3)) {
+		if (strncasecmp(ptr, "-r", 2)) {
+		    if (strncasecmp(ptr, "-w", 2)) {
+			if (strncasecmp(ptr, "-mn", 3)) {
 			    linelen = ptr-line;
 			    break;
 			}
@@ -455,7 +439,7 @@ char *linked(s_message *msg, s_link *link, int action)
 char *help(s_link *link) {
 	FILE *f;
 	int i=1;
-	char *help;
+	char *help = NULL;
 	long endpos;
 
 	if (config->filefixhelp!=NULL) {
@@ -524,7 +508,7 @@ char *available(s_link *link) {
 
 int changeconfig(char *fileName, s_filearea *area, s_link *link, int action) {
 	FILE *f;
-	char *cfgline, *line, *token, *areaName;
+	char *cfgline = NULL, *line = NULL, *token = NULL, *areaName = NULL;
 	long pos=-1;
 
 	areaName = area->areaName;
@@ -683,7 +667,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
 {
     unsigned int rc, i;
     char *line;
-    char *report=NULL, *token, *filename=NULL, *filearea=NULL;
+    char *report=NULL, *token = NULL, *filename=NULL, *filearea=NULL;
     s_filearea *area = NULL;
 
     line = cmd;
@@ -741,7 +725,7 @@ char *resend(s_link *link, s_message *msg, char *cmd)
 
 char *pause_link(s_message *msg, s_link *link)
 {
-    char *tmp;
+    char *tmp = NULL;
     char *report=NULL;
     
     if ((link->Pause & FPAUSE) != FPAUSE) {
@@ -758,7 +742,7 @@ char *pause_link(s_message *msg, s_link *link)
 
 char *resume_link(s_message *msg, s_link *link)
 {
-    char *tmp, *report=NULL;
+    char *tmp = NULL, *report=NULL;
     
     if ((link->Pause & FPAUSE) == FPAUSE) {
        if (Changepause(getConfigFileName(), link,0,FPAUSE) == 0)
@@ -772,9 +756,9 @@ char *resume_link(s_message *msg, s_link *link)
 }
 
 int tellcmd(char *cmd) {
-	char *line;
+	char *line = NULL;
 
-	if (strncasesearch(cmd, "* Origin:", 9) == 0) return NOTHING;
+	if (strncasecmp(cmd, "* Origin:", 9) == 0) return NOTHING;
 	line = strpbrk(cmd, " \t");
 	if (line && *cmd != '%') *line = 0;
 
@@ -792,7 +776,7 @@ int tellcmd(char *cmd) {
 		if (stricmp(line,"pause")==0) return PAUSE;
 		if (stricmp(line,"resume")==0) return RESUME;
 		if (stricmp(line,"info")==0) return INFO;
-		if (strncasesearch(line, "resend", 6)==0)
+		if (strncasecmp(line, "resend", 6)==0)
 		   if (line[6] != 0) return RESEND;
 		return ERROR;
 	case '\001': return NOTHING;
@@ -807,7 +791,7 @@ int tellcmd(char *cmd) {
 
 char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 	
-	char *report;
+	char *report = NULL;
 	
 	switch (cmd) {
 
@@ -854,7 +838,7 @@ char *processcmd(s_link *link, s_message *msg, char *line, int cmd) {
 
 char *areastatus(char *preport, char *text)
 {
-    char *pth, *ptmp, *tmp, *report, tmpBuff[256];
+    char *pth = NULL, *ptmp = NULL, *tmp = NULL, *report = NULL, tmpBuff[256];
     pth = (char*)scalloc(1, sizeof(char));
     tmp = preport;
     ptmp = strchr(tmp, '\r');
@@ -923,7 +907,7 @@ int processFileFix(s_area *afixarea, s_message *msg)
 	int security=1, notforme = 0;
 	s_link *link = NULL;
 	s_link *tmplink = NULL;
-	char *textBuff, *report=NULL, *preport, *token;
+	char *textBuff = NULL, *report=NULL, *preport = NULL, *token = NULL;
 	
 	// find link
 	link=getLinkFromAddr(config, msg->origAddr);
