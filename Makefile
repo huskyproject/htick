@@ -33,6 +33,11 @@ else
   LIBS=-L$(LIBDIR) -lfidoconfig -lsmapi -lhusky
 endif
 
+ifeq ($(USE_HPTZIP), 1)
+  LIBS+= -lhptzip
+  CFLAGS += -DUSE_HPTZIP
+endif
+
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
 all: $(OBJS) htick$(EXE)
