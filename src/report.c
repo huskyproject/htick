@@ -139,6 +139,9 @@ void getReportInfo()
         {
             Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
             memset(&(Report[rCount]),0,sizeof(s_ticfile));    
+            Report[rCount].size   = tmptic.size;
+            Report[rCount].origin = tmptic.origin;
+            Report[rCount].from   = tmptic.from;
             Report[rCount].area = sstrdup( tmptic.area );
             Report[rCount].file = sstrdup( tmptic.file );
             Report[rCount].anzdesc = tmptic.anzdesc;
