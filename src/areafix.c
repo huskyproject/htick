@@ -483,17 +483,19 @@ int forwardRequest(char *areatag, s_link *dwlink) {
     {
         if (uplink->forwardFileRequestFile!=NULL) {
             char *descr = NULL;
-            // first try to find the areatag in forwardRequestFile
+            /* first try to find the areatag in forwardRequestFile */
             if (IsAreaAvailable(areatag,uplink->forwardFileRequestFile,&descr,1))
             {
                 forwardRequestToLink(areatag,descr,uplink,dwlink,0);
                 rc = 0;
             }
             else
-            { rc = 2; }// found link with freqfile, but there is no areatag
+            { rc = 2; }/* found link with freqfile, but there is no areatag */
             nfree(descr);
         } else {
-            rc = 0;
+            rc = 1;   /* link is anabled for forward requests but 
+                         has no forwardFileRequestFile defined 
+                      */
         }//(uplink->forwardRequestFile!=NULL)
         if (rc==0) {
             nfree(Indexes);
@@ -539,18 +541,17 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			w_log( LL_AREAFIX, "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1:
-            case 3:
                 changeconfig (getConfigFileName(), area, link, 0);
                 Addlink(link, NULL, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
                 break;
+            case 3: /* report that area not found for hidden areas */
+                break;
             case 5:
                 xscatprintf(&report, "%s Link is not possible\r", area->areaName);
                 w_log( LL_AREAFIX, "FileFix: area %s -- link is not possible for %s", area->areaName, aka2str(link->hisAka));
                 break;
-            case 6:
- 		break;
             default :
                 xscatprintf(&report, "%s No access\r", area->areaName);
                 w_log( LL_AREAFIX, "FileFix: filearea %s -- no access for %s", area->areaName, aka2str(link->hisAka));
@@ -561,11 +562,11 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
     if(rc == 4 && link->denyFRA==0 && !found)
     {
         // try to forward request
-        if ((rc=forwardRequest(line, link))==2) {
+        if (forwardRequest(line, link) > 0) {
             xscatprintf(&report, "%s no uplinks to forward\r", line);
             w_log( LL_AREAFIX, "Filefix: %s - no uplinks to forward", line);
         }
-        else if (rc==0) {
+        else {
             xscatprintf(&report, "%s request forwarded\r", line);
             w_log( LL_AREAFIX, "Filefix: %s - request forwarded", line);
         }
