@@ -1,3 +1,26 @@
+2002-10-25 Friday 11:30  stas_degteff
+
+	* h/areafix.h (1.14), h/fcommon.h (1.19), h/filecase.h (1.2),
+	h/seenby.h (1.8), src/add_desc.c (1.21), src/clean.c (1.9),
+	src/fcommon.c (1.55), src/filecase.c (1.6), src/filelist.c (1.33),
+	src/global.c (1.22), src/hatch.c (1.69), src/htick.c (1.77),
+	src/report.c (1.20), src/scan.c (1.25), src/toss.c (1.231): Sort
+	includes to prevent redefines
+
+2002-10-25 Friday 09:41  pgul
+
+	* src/toss.c (1.230): fix previous patch (broken compilation under
+	unix)
+
+2002-10-25 Friday 08:55  stas_degteff
+
+	* win32/makefile.wcw (1.19): Insert comma into linkage command
+
+2002-10-25 Friday 06:53  stas_degteff
+
+	* src/toss.c (1.229): Prevent compilation warning about sopen():
+	include io.h
+
 2002-10-24 Thursday 11:49  mche
 
 	* htick.dsp (1.1): Microsoft Developer Studio Project Files added
