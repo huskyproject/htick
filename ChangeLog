@@ -2,6 +2,19 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
+Tue Jul 20 14:32:20 1999
+Georgi:
++ FileFix now support %resend
++ Added "htick send"
+
+Tue Jul 20 01:15:25 1999
+Georgi:
+* small bugfix in "htick filelist"
+
+Sun Jul 18 22:41:05 1999
+Georgi:
++ support Passthrough fileareas
+
 Thu Jul 16  20:57:45
 Georgi:
 * FileFix now support mask
