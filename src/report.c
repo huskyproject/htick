@@ -335,8 +335,15 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
     
     if( reportDst > dstfile ) /* dstechomail or dstnetmail */
     {
+        s_area * AreaToPost = getArea(config,pRepDef->annAreaTag);
+
+        if( AreaToPost == &(config->badArea) )
+            pRepDef->annaddrfrom = pRepDef->annaddrfrom ? pRepDef->annaddrfrom : &(config->addr[0]);
+        else
+            pRepDef->annaddrfrom = pRepDef->annaddrfrom ? pRepDef->annaddrfrom : AreaToPost->useAka;
+
         msg = makeMessage(
-            pRepDef->annaddrfrom ? pRepDef->annaddrfrom : &(config->addr[0]),
+            pRepDef->annaddrfrom,
             pRepDef->annaddrto   ? pRepDef->annaddrto   : &(config->addr[0]),
             pRepDef->annfrom    ? pRepDef->annfrom    : versionStr, 
             pRepDef->annto      ? pRepDef->annto      : (reportDst ? NULL : "All"), /* reportDst!=dstechomail ? */
@@ -348,7 +355,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         
         msg->text = createKludges(config,
             reportDst ? NULL : pRepDef->annAreaTag,  /* reportDst!=dstechomail ? */
-            pRepDef->annaddrfrom ? pRepDef->annaddrfrom : &(config->addr[0]),
+            pRepDef->annaddrfrom,
             pRepDef->annaddrto   ? pRepDef->annaddrto   : &(config->addr[0]),
             versionStr);
         xstrcat(&(msg->text), "\001FLAGS NPD\r");
