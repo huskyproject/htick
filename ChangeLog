@@ -1,3 +1,24 @@
+2002-06-10 Monday 16:22  mche
+
+	* src/areafix.c (1.66), h/areafix.h (1.12), misc/filefix.hlp (1.7):
+	added %avail  command to filefix
+
+2002-06-10 Monday 14:12  mche
+
+	* BUGS.rus (1.2), src/global.c (1.18): version was updated
+
+2002-06-10 Monday 08:05  mche
+
+	* src/hatch.c (1.55): add areadesc when hatch
+
+2002-06-10 Monday 07:37  mche
+
+	* src/filelist.c (1.30): fix filelist generation
+
+2002-06-10 Monday 07:26  mche
+
+	* FidoConfigKeywords (1.24): forwardrequests added
+
 2002-06-09 Sunday 14:28  mche
 
 	* win32/makefile.cyg (1.5), src/add_desc.c (1.12), src/scan.c
