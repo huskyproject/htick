@@ -1,3 +1,16 @@
+2003-09-18 Thursday 19:27  i_zkh
+
+	* doc/htick.texi (1.26): Fixed few misprints
+
+2003-09-18 Thursday 19:27  i_zkh
+
+	* doc/htick.rus.texi (1.2): Completely retranslated doc
+
+2003-09-18 Thursday 13:54  mche
+
+	* src/areafix.c (1.123): fix incorrect configfile handling when
+	configfile is passed by command line
+
 2003-09-17 Wednesday 09:05  mche
 
 	* src/areafix.c (1.122), src/global.c (1.27), src/htick.c (1.100),
