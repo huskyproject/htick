@@ -40,7 +40,8 @@ htick.exe:
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(FCONFL) $(SMAPIL) $(HTICKL) USER32.LIB msvcrt.lib Kernel32.lib /link /opt:nowin98
 
 clean:
-	-del *.obj *.lib
+	-del *.obj
+	-del *.lib
 
 distclean: clean
 	-del *.exe
