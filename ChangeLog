@@ -1,3 +1,8 @@
+2003-01-27 Monday 19:21  stas_degteff
+
+	* src/areafix.c (htick-1_0-stable.4): Fix forward subscribe (Patch
+	from Anthony Sharobaiko 2:5030/1489.48
+
 2003-01-20 Monday 07:30  stas_degteff
 
 	* FidoConfigKeywords (htick-1_0-stable.3): Update documentation
