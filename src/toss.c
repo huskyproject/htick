@@ -1758,7 +1758,7 @@ void reportNewFiles()
                       sprintf(buff, " %s%s", strUpper(newFileReport[b]->fileName), print_ch(25, ' '));
                       tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
-                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
+                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+((tmp==NULL)?0:strlen(tmp))+2);
                       sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
                       if (config->originInAnnounce) {
                          msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);

@@ -1,4 +1,9 @@
 ----- cvs ci ------
+Sat Dec  9 13:52:05 NOVT 2000
+max (patch from Alex Bronin):
+* yet another fix crash if no desc in tic
+
+----- cvs ci ------
 Tue Nov 28 11:31:37 NOVT 2000
 max (patch from Alex Bronin):
 * fix crash if no desc in tic
