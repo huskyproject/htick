@@ -431,8 +431,9 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 tic->anzldesc++;
                 break;
             case CRC_SEENBY:
-                string2addr(param,&Aka);
-                seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
+                if (string2addr(param,&Aka)) {
+                    seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
+                }
                 break;
             case CRC_PATH:
                 tic->path=
