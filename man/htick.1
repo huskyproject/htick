@@ -1,13 +1,14 @@
-.TH HTICK 1 "Husky Tick v0.09a" "04 April 2001" "Husky - Portable Fido Software"
+.TH HTICK 1 "Husky Tick v1.0.0" "05 September 2002" "Husky - Portable Fido Software"
 .SH NAME
 htick \- Husky File-Ticker
 .SH SYNOPSIS
 .B htick <command>
 .SH "DESCRIPTION"
-.SS "Tossen"
+.SS "Toss"
 .B htick
 reads *.tic Files in your Protected Inbound. According to the Information
-/fBhtick/fR gets out of that *.tic Files it will process the received archives 
+.B htick
+gets out of that *.tic Files it will process the received archives 
 and sort them into the filebase.
 .SS "FileFix"
 .B htick 
@@ -15,8 +16,10 @@ has a builtin FileFix. A FileFix helps your users to maintain their area-subscri
 without your interaction.
 .SS "Hatch"
 .B htick
-could send files to FileEchos. This is called "to /fIhatch/fR" a File.
-.SS "FileListe"
+could send files to FileEchos. This is called
+.I "to hatch"
+a File.
+.SS "FileList"
 .B htick
 makes a complete Filelist of your Filebase.
 .SS "Announce"
@@ -63,11 +66,10 @@ in field.
 
 .SH "RETURN VALUE"
 .B 0
-wenn kein Fehler vorhanden.
+Success.
 .SH ERRORS
 .B 1
-wenn ein Fehler gefunden.
-.B Hmm, muss ich rausfinden *such*
+Error.
 .SH FILES
 .br
 .nf
@@ -77,10 +79,11 @@ wenn ein Fehler gefunden.
 .SH NOTES
 All Husky-Software is written by various developers. For detailed information
 about the Husky-Team take a look at 
-http://husky.physcip.uni-stuttgart.de/team.html.
+http://husky.sourceforge.net/team.html.
 .sp 1
 Not all features are implemented yet, you are welcome to implement them :)
 .SH AUTHOR
 This manual page was written by Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>,
 for the Debian GNU/Linux system (but may be used by others).
-
+.br
+Updated by Pavel Andreew <pavel@collage.etel.ru>
