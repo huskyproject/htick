@@ -676,7 +676,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
     
   if (i < echo->downlinkCount)
   {
-    if (echo->downlinks[i]->import == 0) return 3;
+    if (link->import == 0) return 3;
   }
 
   return 0;
