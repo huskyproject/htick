@@ -1,6 +1,12 @@
 htick 0.02
 ----------
 
+Wen Jun 23 14:52:45 IZHST 1999
+georgi:
+*many change for "htick toss"
++adding "htick hatch"
++adding "htick filelist"
+
 Tue Jun 22 01:31:04 NOVST 1999
 max:
 - dirty hack for forward files
