@@ -34,9 +34,22 @@ s_log     *htick_log;
 s_fidoconfig *config;
 
 const int VER_MAJOR = 0;
-const int VER_MINOR = 01;
+const int VER_MINOR = 02;
 char      versionStr[30];
 
 int       cmToss = 0;
 int       cmScan = 0;
+int       cmHatch = 0;
+int       cmFlist = 0;
+
+char      flistfile[256];
+char      hatchfile[256];
+char      hatcharea[256];
+char      hatchdesc[256];
+
+int       cmAnnFile = 0;
+char      announcefile[256];
+
+int       cmAnnNewFileecho = 0;
+char      announcenewfileecho[256];
 
