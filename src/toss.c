@@ -1004,7 +1004,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
          add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
    }
 
-   if (cmAnnFile)
+   if (cmAnnFile && !filearea->hide)
    {
       if (tic.anzldesc>0)
          announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
@@ -1167,37 +1167,41 @@ int processTic(char *ticfile, e_tossSecurity sec)
       } /* Forward file */
    }
 
-   /* report about new files */
-   newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
-   newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
-   newFileReport[newfilesCount]->useAka = filearea->useAka;
-   newFileReport[newfilesCount]->areaName = filearea->areaName;
-   newFileReport[newfilesCount]->areaDesc = filearea->description;
-   newFileReport[newfilesCount]->fileName = strdup(tic.file);
-   newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
-   newFileReport[newfilesCount]->origin.net = tic.origin.net;
-   newFileReport[newfilesCount]->origin.node = tic.origin.node;
-   newFileReport[newfilesCount]->origin.point = tic.origin.point;
+   if (!filearea->hide) {
+   /* report about new files - if filearea not hidden */
+      newFileReport = (s_newfilereport**)realloc(newFileReport, (newfilesCount+1)*sizeof(s_newfilereport*));
+      newFileReport[newfilesCount] = (s_newfilereport*)calloc(1, sizeof(s_newfilereport));
+      newFileReport[newfilesCount]->useAka = filearea->useAka;
+      newFileReport[newfilesCount]->areaName = filearea->areaName;
+      newFileReport[newfilesCount]->areaDesc = filearea->description;
+      newFileReport[newfilesCount]->fileName = strdup(tic.file);
+      if (config->originInAnnounce) {
+         newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
+         newFileReport[newfilesCount]->origin.net = tic.origin.net;
+         newFileReport[newfilesCount]->origin.node = tic.origin.node;
+         newFileReport[newfilesCount]->origin.point = tic.origin.point;
+      }
 
-   if (tic.anzldesc>0) {
-      newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
-      for (i = 0; i < tic.anzldesc; i++) {
-         newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
-         if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
-      } /* endfor */
-      newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
-   } else {
-      newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
-      for (i = 0; i < tic.anzdesc; i++) {
-         newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
-         if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
-      } /* endfor */
-      newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+      if (tic.anzldesc>0) {
+         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
+         for (i = 0; i < tic.anzldesc; i++) {
+            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
+            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
+         } /* endfor */
+         newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
+      } else {
+         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
+         for (i = 0; i < tic.anzdesc; i++) {
+            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+            if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
+         } /* endfor */
+         newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+      }
+
+      newFileReport[newfilesCount]->fileSize = tic.size;
+
+      newfilesCount++;
    }
-
-   newFileReport[newfilesCount]->fileSize = tic.size;
-
-   newfilesCount++;
 
    free(old_seenby);
    doSaveTic(ticfile,&tic);
@@ -1677,11 +1681,14 @@ void reportNewFiles()
                sprintf(buff, " %s%s", strUpper(newFileReport[i]->fileName), print_ch(25, ' '));
                tmp = formDesc(newFileReport[i]->fileDesc, newFileReport[i]->filedescCount);
                sprintf(buff+14, "% 9i", newFileReport[i]->fileSize);
-               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2+75);
+               msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
-               sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                       newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
-                       newFileReport[i]->origin.node,newFileReport[i]->origin.point);
+               if (config->originInAnnounce) {
+                  msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);
+                  sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                          newFileReport[i]->origin.zone,newFileReport[i]->origin.net,
+                          newFileReport[i]->origin.node,newFileReport[i]->origin.point);
+	       }
 	       if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
                free(tmp);
                fileCount++;
@@ -1694,12 +1701,15 @@ void reportNewFiles()
                       sprintf(buff, " %s%s", strUpper(newFileReport[b]->fileName), print_ch(25, ' '));
                       tmp = formDesc(newFileReport[b]->fileDesc, newFileReport[b]->filedescCount);
                       sprintf(buff+14, "% 9i", newFileReport[b]->fileSize);
-                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2+75);
+                      msg->text = (char*)realloc(msg->text, strlen(msg->text)+strlen(buff)+strlen(tmp)+2);
                       sprintf(msg->text+strlen(msg->text), "%s %s", buff, tmp);
-                      sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                              newFileReport[b]->origin.zone,newFileReport[b]->origin.net,
-                              newFileReport[b]->origin.node,newFileReport[b]->origin.point);
-	              if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
+                      if (config->originInAnnounce) {
+                         msg->text = (char*)realloc(msg->text, strlen(msg->text)+75);
+                         sprintf(msg->text+strlen(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
+                                 newFileReport[b]->origin.zone,newFileReport[b]->origin.net,
+                                 newFileReport[b]->origin.node,newFileReport[b]->origin.point);
+	              }
+		      if (tmp == NULL || tmp[0] == 0) strcat(msg->text,"\r");
                       free(tmp);
                       fileCount++;
                       fileSize += newFileReport[b]->fileSize;

@@ -216,10 +216,12 @@ void hatch()
       newFileReport[newfilesCount]->areaName = filearea->areaName;
       newFileReport[newfilesCount]->areaDesc = filearea->description;
       newFileReport[newfilesCount]->fileName = strdup(tic.file);
-      newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
-      newFileReport[newfilesCount]->origin.net = tic.origin.net;
-      newFileReport[newfilesCount]->origin.node = tic.origin.node;
-      newFileReport[newfilesCount]->origin.point = tic.origin.point;
+      if (config->originInAnnounce) {
+         newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
+         newFileReport[newfilesCount]->origin.net = tic.origin.net;
+         newFileReport[newfilesCount]->origin.node = tic.origin.node;
+         newFileReport[newfilesCount]->origin.point = tic.origin.point;
+      }
 
       newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
       for (i = 0; i < tic.anzdesc; i++) {

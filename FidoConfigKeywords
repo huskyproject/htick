@@ -7,36 +7,46 @@ Same as MsgBaseDir
 
 Where shall be put files from Passthrough File areas (and TICs)
 
-3) AutoFileCreateDefaults <string> 
-
-Defaults for File Area Autocreate
-
-4) FileDescPos <number>
+3) FileDescPos <number>
 
 Position in files.bbs for description, if description more then 1 line
 Reccomended 13
 
-5) fileLDescString <string>
+4) fileLDescString <string>
 
 String before description, if description for file more then 1 line.
 
-6) FileFixHelp <file>
+5) FileFixHelp <file>
 
 Help file for FileFix  (Same as AreaFixHelp for AreaFix)
 
-7) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
+6) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
 
 Same as EchoArea, most options are valid
 new option: noCRC to disable CRC on incoming files
 
-8) ExecOnFile <filearea> <filemask> <command>
+7) ExecOnFile <filearea> <filemask> <command>
   
 Execute some command on receiving file. Command get full filepath as parameter.
 
-9) noTIC
+8) In Link section:
 
-Link Option: Disable TIC File Creation
+    a) noTIC
 
-10) SaveTic <FileEchoMask> <DirToSaveTic>
+    Disable TIC File Creation
+
+    b) autoFileCreate on|off
+
+    c) AutoFileCreateFile <file>
+
+    d) AutoFileCreateDefaults <string> 
+
+    Defaults for File Area Autocreate
+
+9) SaveTic <FileEchoMask> <DirToSaveTic>
 
 <DirToSaveTic> - where put TIC for fileecho[es] <FileEchoMask>
+
+10) originInAnnounce
+
+Show Origin in announce

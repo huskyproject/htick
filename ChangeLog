@@ -2,6 +2,11 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Feb 12 19:40:00 IZH 2000
+Georgi:
+* added new token originInAnnounce for htick
+
+----- cvs ci ------
 Sat Feb 12 16:45:00 IZH 2000
 Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 * added new keyword:
