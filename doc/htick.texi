@@ -982,9 +982,9 @@ definition from config.
 * AnnTo::              Announce message destination name.
 * AnnFrom::            Announce message originator name.
 * AnnSubj::            Announce message subject.
-* AnnAddrTo::           Announce message destination address (use for netmail
+* AnnAddrTo::          Announce message destination address (use for netmail
                        area only)
-* AnnAddrFrom::         Announce message originate address.
+* AnnAddrFrom::        Announce message originate address.
 * AnnOrigin::          Origin line in announce message.
 * AnnMessFlags::       Announce message attributes (k/s loc hld ...).
 * AnnFileRFrom::       Show in announce: address of system which file received
@@ -1217,9 +1217,9 @@ AnnAreaTag      netmail
 AnnInclude      union.*
 AnnSubj         New mp3's arrives
 AnnTo           Max Inda Houze
-Annaddrto        2:464/108
+Annaddrto       2:464/108
 AnnFrom         Fullfeed Distribution Site
-Annaddrfrom      2:464/910.108
+Annaddrfrom     2:464/910.108
 AnnOrigin       *** seumbieky forever ***
 AnnMessFlags    k/s loc hld
 AnnFileOrigin   on
