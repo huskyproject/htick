@@ -347,7 +347,7 @@ int main(int argc, char **argv)
    xscatprintf(&versionStr,"HTick %s", version);
    nfree(version);
 
-   if (!quiet) printf("%s (by Gabriel Plutzar)\n", versionStr);
+   if (!quiet) printf("%s\n", versionStr);
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();
 
