@@ -1,3 +1,14 @@
+2003-02-06 Thursday 12:40  sfpavel
+
+	* Makefile (1.16), debian/changelog (1.14), debian/control (1.9),
+	debian/copyright (1.5), debian/doc-base (1.1), debian/docs (1.4),
+	debian/huskymak.cfg (1.8), debian/info (1.2), debian/rules (1.11),
+	doc/Makefile (1.3): New debian version
+
+2003-02-06 Thursday 12:36  sfpavel
+
+	* h/version.h (1.5): Change version number
+
 2003-02-04 Tuesday 21:05  d_sergienko
 
 	* src/report.c (1.37): comment out unused Tics4del array
