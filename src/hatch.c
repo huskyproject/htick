@@ -75,7 +75,7 @@ void hatch()
    // Adding crc
    tic.crc = filecrc32(hatchfile);
 
-   sendToLinks(0, filearea, tic, hatchfile);
+   sendToLinks(0, filearea, &tic, hatchfile);
 
    disposeTic(&tic);
 }

@@ -775,7 +775,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic)
    return;
 }
 
-int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
+int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                 char *filename)
 /*
    if isToss == 1 - tossing
@@ -812,14 +812,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
 
    createDirectoryTree(fileareapath);
 
-   if (tic.replaces && !filearea->pass ) {
+   if (tic->replaces && !filearea->pass ) {
       /* Delete old file */
       /*
       strcpy(newticedfile,fileareapath);
       strcat(newticedfile,tic.replaces);
       adaptcase(newticedfile);
       */
-      if (removeFileMask(fileareapath,tic.replaces)>0) {
+      if (removeFileMask(fileareapath,tic->replaces)>0) {
          writeLogEntry(htick_log,'6',"Removed file %s one request",newticedfile);
       }
    }
@@ -831,7 +831,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
       p = strrchr(newticedfile,PATH_DELIM); 
       if(p) strLower(p+1);
       */
-      strcat(newticedfile,MakeProperCase(tic.file));
+      strcat(newticedfile,MakeProperCase(tic->file));
 
       if (isToss)
          if (move_file(filename,newticedfile)!=0) {
@@ -855,19 +855,19 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
       strcpy(descr_file_name, filearea->pathName);
       strcat(descr_file_name, "files.bbs");
       adaptcase(descr_file_name);
-      removeDesc(descr_file_name,tic.file);
-      if (tic.anzldesc>0)
-         add_description (descr_file_name, tic.file, tic.ldesc, tic.anzldesc);
+      removeDesc(descr_file_name,tic->file);
+      if (tic->anzldesc>0)
+         add_description (descr_file_name, tic.file, tic->ldesc, tic->anzldesc);
       else
-         add_description (descr_file_name, tic.file, tic.desc, tic.anzdesc);
+         add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
    }
 
    if (cmAnnFile && !filearea->hide)
    {
-      if (tic.anzldesc>0)
-         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.ldesc, tic.anzldesc);
+      if (tic->anzldesc>0)
+         announceInFile (announcefile, tic->file, tic->size, tic->area, tic->origin, tic->ldesc, tic->anzldesc);
       else
-         announceInFile (announcefile, tic.file, tic.size, tic.area, tic.origin, tic.desc, tic.anzdesc);
+         announceInFile (announcefile, tic->file, tic->size, tic->area, tic->origin, tic->desc, tic->anzdesc);
    }
 
    if (filearea->downlinkCount>=minLinkCount) {
@@ -880,32 +880,32 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
       sprintf(hlp,"%s %lu %s UTC %s",
               addr2string(filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
 
-      tic.path=realloc(tic.path,(tic.anzpath+1)*sizeof(*tic.path));
-      tic.path[tic.anzpath]=strdup(hlp);
-      tic.anzpath++;
+      tic->path=realloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
+      tic->path[tic->anzpath]=strdup(hlp);
+      tic->anzpath++;
 
       if (isToss) {
          /* Save seenby structure */
-         old_seenby = malloc(tic.anzseenby*sizeof(s_addr));
-         memcpy(old_seenby,tic.seenby,tic.anzseenby*sizeof(s_addr));
-         old_anzseenby = tic.anzseenby;
-         memcpy(&old_from,&tic.from,sizeof(s_addr));
-         memcpy(&old_to,&tic.to,sizeof(s_addr));
+         old_seenby = malloc(tic->anzseenby*sizeof(s_addr));
+         memcpy(old_seenby,tic->seenby,tic->anzseenby*sizeof(s_addr));
+         old_anzseenby = tic->anzseenby;
+         memcpy(&old_from,&tic->from,sizeof(s_addr));
+         memcpy(&old_to,&tic->to,sizeof(s_addr));
       }
    }
 
    for (i=0;i<filearea->downlinkCount;i++) {
-      if (addrComp(tic.from,filearea->downlinks[i]->link->hisAka)!=0 && 
-            (isToss && addrComp(tic.to,filearea->downlinks[i]->link->hisAka)!=0) &&
-            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0 &&
-            (isToss && seenbyComp (tic.seenby, tic.anzseenby,
+      if (addrComp(tic->from,filearea->downlinks[i]->link->hisAka)!=0 && 
+            (isToss && addrComp(tic->to,filearea->downlinks[i]->link->hisAka)!=0) &&
+            addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0 &&
+            (isToss && seenbyComp (tic->seenby, tic->anzseenby,
                filearea->downlinks[i]->link->hisAka) != 0)) {
          /* Adding Downlink to Seen-By */
-         tic.seenby=realloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
-         memcpy(&tic.seenby[tic.anzseenby],
+         tic->seenby=realloc(tic->seenby,(tic->anzseenby+1)*sizeof(s_addr));
+         memcpy(&tic->seenby[tic->anzseenby],
             &filearea->downlinks[i]->link->hisAka,
             sizeof(s_addr));
-         tic.anzseenby++;
+         tic->anzseenby++;
       }
    }
 
@@ -913,7 +913,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
    for (i=0;i<filearea->downlinkCount;i++) {
       if (addrComp(old_from,filearea->downlinks[i]->link->hisAka)!=0 && 
             addrComp(old_to,filearea->downlinks[i]->link->hisAka)!=0 &&
-            addrComp(tic.origin,filearea->downlinks[i]->link->hisAka)!=0) {
+            addrComp(tic->origin,filearea->downlinks[i]->link->hisAka)!=0) {
          /* Forward file to */
 
          readAccess = readCheck(filearea, filearea->downlinks[i]->link);
@@ -925,7 +925,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
             break;
          case 4:
             writeLogEntry(htick_log,'7',"Link %s not subscribe to File Area %s",
-                    addr2string(&old_from), tic.area);
+                    addr2string(&old_from), tic->area);
             break;
          case 3:
             writeLogEntry(htick_log,'7',"Not export to link %s",
@@ -944,14 +944,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
          if (readAccess == 0) {
             if (isToss && seenbyComp(old_seenby, old_anzseenby, filearea->downlinks[i]->link->hisAka) == 0) {
                writeLogEntry(htick_log,'7',"File %s already seenby %s",
-                       tic.file,
+                       tic->file,
                        addr2string(&filearea->downlinks[i]->link->hisAka));
             } else {
-               memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
-               memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
+               memcpy(&tic->from,filearea->useAka,sizeof(s_addr));
+               memcpy(&tic->to,&filearea->downlinks[i]->link->hisAka,
                       sizeof(s_addr));
                if (filearea->downlinks[i]->link->ticPwd!=NULL)
-                  strcpy(tic.password,filearea->downlinks[i]->link->ticPwd);
+                  strcpy(tic->password,filearea->downlinks[i]->link->ticPwd);
 
                busy = 0;
 
@@ -991,7 +991,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
                   remove(filearea->downlinks[i]->link->bsyFile);
 
                   writeLogEntry(htick_log,'6',"Forwarding %s for %s",
-                          tic.file,
+                          tic->file,
                           addr2string(&filearea->downlinks[i]->link->hisAka));
                }
                free(filearea->downlinks[i]->link->bsyFile);
@@ -1010,31 +1010,31 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
       newFileReport[newfilesCount]->useAka = filearea->useAka;
       newFileReport[newfilesCount]->areaName = filearea->areaName;
       newFileReport[newfilesCount]->areaDesc = filearea->description;
-      newFileReport[newfilesCount]->fileName = strdup(tic.file);
+      newFileReport[newfilesCount]->fileName = strdup(tic->file);
       if (config->originInAnnounce) {
-         newFileReport[newfilesCount]->origin.zone = tic.origin.zone;
-         newFileReport[newfilesCount]->origin.net = tic.origin.net;
-         newFileReport[newfilesCount]->origin.node = tic.origin.node;
-         newFileReport[newfilesCount]->origin.point = tic.origin.point;
+         newFileReport[newfilesCount]->origin.zone = tic->origin.zone;
+         newFileReport[newfilesCount]->origin.net = tic->origin.net;
+         newFileReport[newfilesCount]->origin.node = tic->origin.node;
+         newFileReport[newfilesCount]->origin.point = tic->origin.point;
       }
 
-      if (tic.anzldesc>0) {
-         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzldesc, sizeof(char*));
-         for (i = 0; i < tic.anzldesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.ldesc[i]);
+      if (tic->anzldesc>0) {
+         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic->anzldesc, sizeof(char*));
+         for (i = 0; i < tic->anzldesc; i++) {
+            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic->ldesc[i]);
             if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
-         newFileReport[newfilesCount]->filedescCount = tic.anzldesc;
+         newFileReport[newfilesCount]->filedescCount = tic->anzldesc;
       } else {
-         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic.anzdesc, sizeof(char*));
-         for (i = 0; i < tic.anzdesc; i++) {
-            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic.desc[i]);
+         newFileReport[newfilesCount]->fileDesc = (char**)calloc(tic->anzdesc, sizeof(char*));
+         for (i = 0; i < tic->anzdesc; i++) {
+            newFileReport[newfilesCount]->fileDesc[i] = strdup(tic->desc[i]);
             if (config->intab != NULL) recodeToInternalCharset(newFileReport[newfilesCount]->fileDesc[i]);
          } /* endfor */
-         newFileReport[newfilesCount]->filedescCount = tic.anzdesc;
+         newFileReport[newfilesCount]->filedescCount = tic->anzdesc;
       }
 
-      newFileReport[newfilesCount]->fileSize = tic.size;
+      newFileReport[newfilesCount]->fileSize = tic->size;
 
       newfilesCount++;
    }
@@ -1044,18 +1044,18 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile tic,
    /* execute external program */
    for (z = 0; z < config->execonfileCount; z++) {
      if (stricmp(filearea->areaName,config->execonfile[z].filearea) != 0) continue;
-       if (patimat(tic.file,config->execonfile[z].filename) == 0) continue;
+       if (patimat(tic->file,config->execonfile[z].filename) == 0) continue;
        else {
          comm = (char *) malloc(strlen(config->execonfile[z].command)+1
                                 +(!filearea->pass ? strlen(filearea->pathName) : strlen(config->passFileAreaDir))
-                                +strlen(tic.file)+1);
+                                +strlen(tic->file)+1);
          if (comm == NULL) {
             writeLogEntry(htick_log, '9', "Exec failed - not enough memory");
             continue;
          }
          sprintf(comm,"%s %s%s",config->execonfile[z].command,
                                 (!filearea->pass ? filearea->pathName : config->passFileAreaDir),
-                                tic.file);
+                                tic->file);
          writeLogEntry(htick_log, '6', "Executing %s", comm);
          if ((cmdexit = system(comm)) != 0) {
            writeLogEntry(htick_log, '9', "Exec failed, code %d", cmdexit);
@@ -1093,7 +1093,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    parseTic(ticfile,&tic);
 
    writeLogEntry(htick_log,'6',"File: %s Area: %s From: %s Orig: %u:%u/%u.%u",
-           tic.file, tic.area, addr2string(&tic.from),
+           tic->file, tic.area, addr2string(&tic.from),
            tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
 
    /* Security Check */
@@ -1222,7 +1222,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(3);
    }
 
-   sendToLinks(1, filearea, tic, ticedfile);
+   sendToLinks(1, filearea, &tic, ticedfile);
 
    doSaveTic(ticfile,&tic);
    disposeTic(&tic);
