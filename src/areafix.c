@@ -787,10 +787,10 @@ char *resend(s_link *link, s_message *msg, char *cmd)
 	       if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
 	          rc = 0;
 	    if (rc == 1 && area->mandatory == 1) rc = 5;
-	    else rc = send(filename,filearea,addr2string(&link->hisAka));
+	    else rc = send(filename,filearea,aka2str(link->hisAka));
 	    switch (rc) {
 	    case 0: sprintf(addline,"Send %s from %s for %s\r",
-                            filename,filearea,addr2string(&link->hisAka));
+                            filename,filearea,aka2str(link->hisAka));
                     break;
 	    case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
 		    w_log( '8', "FileFix %%Resend: Passthrough filearea %s", filearea);
