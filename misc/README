@@ -1,8 +1,8 @@
 The 'misc' subdirectory in htick contents some contributed files & programs
 for htick:
 
-config		simple config file
-fileareas	simple areas definition
+config		sample config file
+fileareas	sample areas definition
 filefix.hlp  	filefix help (english)
 filefix.866  	filefix help (russian, cp866)
 

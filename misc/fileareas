@@ -1,4 +1,4 @@
-# Simple list of FileAreas (include it to main $FIDOCONFIG)
+# Sample list of FileAreas (include it to main $FIDOCONFIG)
 
 FileArea NODEDIFF /home/ftp/pub/nodediff 2:5080/68 -lw 100 -g official -d "Nodediffs" -p 60
 FileArea PNT Passtrough 2:5080/68 -g local -d "Local area" -h
