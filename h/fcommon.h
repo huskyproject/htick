@@ -107,3 +107,4 @@ int removeFileMask(char *directory, char *mask);
           mask is the file mask for remove file[s]
   Output: 
 */
+int link_file(const char *from, const char *to);

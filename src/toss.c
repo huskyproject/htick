@@ -1194,11 +1194,15 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                if (!busy) {
                    if (needUseFileBoxForLink(config,downlink)) {
                        xstrcat(&linkfilepath, tic->file);
-                       if (copy_file(newticedfile,linkfilepath )==0)
-                           w_log('6',"Copied %s to %s",newticedfile,linkfilepath);
-                       else 
-                           w_log('9',"File %s not found or not copyable",newticedfile);
-                           
+                       if (link_file(newticedfile,linkfilepath ) == 0)
+                       {
+                          if(copy_file(newticedfile,linkfilepath )==0)
+                             w_log('6',"Copied %s to %s",newticedfile,linkfilepath);
+                          else 
+                             w_log('9',"File %s not found or not copyable",newticedfile);
+                       } else {
+                             w_log('6',"Linked %s to %s",newticedfile,linkfilepath);
+                       }
                    } else {
                        flohandle=fopen(downlink->floFile,"a");
                        fprintf(flohandle,"%s\n",newticedfile);

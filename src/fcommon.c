@@ -208,3 +208,16 @@ int removeFileMask(char *directory, char *mask)
    }
    return(numfiles);
 }
+
+#ifdef _MAKE_DLL_MVC_
+#	include <Winbase.h>
+#endif
+
+int link_file(const char *from, const char *to)
+{
+   int rc = FALSE;
+#if (_WIN32_WINNT >= 0x0500)
+   rc = CreateHardLink(to, from, NULL);
+#  endif
+   return rc;
+}
