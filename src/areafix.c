@@ -404,82 +404,76 @@ char *unlinked(s_message *msg, s_link *link)
 
 char *list(s_message *msg, s_link *link) {
 
-	int i,j,active,avail,rc,desclen,len;
-	int *areaslen;
-	int maxlen;
-	char *report, addline[256];
-	
-	areaslen = malloc(config->fileAreaCount * sizeof(int));
+    int i,j,active,avail,rc,desclen,len;
+    int *areaslen;
+    int maxlen;
+    char *report, addline[256];
 
-	maxlen = 0;
-	for (i=0; i< config->fileAreaCount; i++) {
-	   areaslen[i]=strlen(config->fileAreas[i].areaName);
-	   if (areaslen[i]>maxlen) maxlen = areaslen[i];
-	}
-	
-	sprintf(addline, "Available fileareas for %s\r\r", aka2str(link->hisAka));
+   areaslen = malloc(config->fileAreaCount * sizeof(int));
 
-	report=(char*)calloc(strlen(addline)+1,sizeof(char));
-	strcpy(report, addline);
+   maxlen = 0;
+   for (i=0; i< config->fileAreaCount; i++) {
+      areaslen[i]=strlen(config->fileAreas[i].areaName);
+      if (areaslen[i]>maxlen) maxlen = areaslen[i];
+   }
 
-	for (i=active=avail=0; i< config->fileAreaCount; i++) {
+   sprintf(addline, "Available fileareas for %s\r\r", aka2str(link->hisAka));
 
-	    rc=subscribeCheck(config->fileAreas[i],msg, link);
-	    if (rc < 2) {
-			if (config->fileAreas[i].description!=NULL)
-			       desclen=strlen(config->fileAreas[i].description);
-			else
-			       desclen=0;
+   report=(char*)calloc(strlen(addline)+1,sizeof(char));
+   strcpy(report, addline);
 
-			len=strlen(report)+areaslen[i]+(maxlen-areaslen[i])+desclen+6;
+   for (i=active=avail=0; i< config->fileAreaCount; i++) {
 
-			report=(char*) realloc(report, len);
-				
-			if (rc==0) {
-				if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level
-				    && config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
-				    strcat(report,"& ");
-				else if (config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
-				    strcat(report,"+ ");
-				else if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level)
-				    strcat(report,"* ");
-				else if (config->fileAreas[i].wgrp == NULL && config->fileAreas[i].rgrp == NULL)
-				    strcat(report,"& ");
-				else if (config->fileAreas[i].rgrp == NULL)
-				    strcat(report,"+ ");
-				else if (config->fileAreas[i].wgrp == NULL)
-				    strcat(report,"* ");
-				active++;
-				avail++;
-			} else {
-				strcat(report,"  ");
-				avail++;
-			}
-			strcat(report, config->fileAreas[i].areaName);
-			if (desclen!=0)
-			{
-			       strcat(report," ");
-			       for (j=0;j<(maxlen)-areaslen[i];j++) strcat(report,".");
-                               strcat(report," ");
-                               strcat(report,config->fileAreas[i].description);
-			}
-			strcat(report,"\r");
-	    }
-	}
-	
-	sprintf(addline,"\r '+'  You are receive files from this area.
-	\r '*'  You can send files to this file echo.
-	\r '&'  You can send and receive files.
-	\r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
-	report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
-	strcat(report, addline);
+      rc=subscribeCheck(config->fileAreas[i],msg, link);
+      if (rc < 2) {
+         if (config->fileAreas[i].description!=NULL)
+            desclen=strlen(config->fileAreas[i].description);
+         else
+           desclen=0;
 
-	sprintf(addline,"FileFix: list sent to %s", aka2str(link->hisAka));
-	writeLogEntry(htick_log, '8', addline);
+         len=strlen(report)+areaslen[i]+(maxlen-areaslen[i])+desclen+6;
 
-        free(areaslen);
-	
-	return report;
+         report=(char*) realloc(report, len);
+
+         if (rc==0) {
+            if (config->fileAreas[i].levelwrite <= link->level
+                && config->fileAreas[i].levelread <= link->level)
+               strcat(report,"& ");
+            else if (config->fileAreas[i].levelread <= link->level)
+                    strcat(report,"+ ");
+            else if (config->fileAreas[i].levelwrite <= link->level)
+                    strcat(report,"* ");
+            active++;
+            avail++;
+         } else {
+            strcat(report,"  ");
+            avail++;
+         }
+         strcat(report, config->fileAreas[i].areaName);
+         if (desclen!=0) {
+            strcat(report," ");
+            for (j=0;j<(maxlen)-areaslen[i];j++) 
+	       strcat(report,".");
+            strcat(report," ");
+            strcat(report,config->fileAreas[i].description);
+         }
+         strcat(report,"\r");
+      }
+   }
+
+   sprintf(addline,"\r '+'  You are receive files from this area.
+   \r '*'  You can send files to this file echo.
+   \r '&'  You can send and receive files.
+   \r\r%i areas available for %s, %i areas active\r", avail, aka2str(link->hisAka), active);
+   report=(char*) realloc(report, strlen(report)+strlen(addline)+1);
+   strcat(report, addline);
+
+   sprintf(addline,"FileFix: list sent to %s", aka2str(link->hisAka));
+   writeLogEntry(htick_log, '8', addline);
+
+   free(areaslen);
+
+   return report;
 }
 
 char *linked(s_message *msg, s_link *link, int action)
@@ -501,19 +495,13 @@ char *linked(s_message *msg, s_link *link, int action)
 	    if (action == 1) {
 	       report=(char*)realloc(report, strlen(report)+
 			       strlen(config->fileAreas[i].areaName)+4);
-	        if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level
-				    && config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
-		    strcat(report,"& ");
-		else if (config->fileAreas[i].rgrp != NULL && atoi(config->fileAreas[i].rgrp) <= link->level)
-		    strcat(report,"+ ");
-		else if (config->fileAreas[i].wgrp != NULL && atoi(config->fileAreas[i].wgrp) <= link->level)
-		    strcat(report,"* ");
-		else if (config->fileAreas[i].wgrp == NULL && config->fileAreas[i].rgrp == NULL)
-		    strcat(report,"& ");
-		else if (config->fileAreas[i].rgrp == NULL)
-		    strcat(report,"+ ");
-		else if (config->fileAreas[i].wgrp == NULL)
-		    strcat(report,"* ");
+	       if (config->fileAreas[i].levelwrite <= link->level
+                   && config->fileAreas[i].levelread <= link->level)
+                  strcat(report,"& ");
+               else if (config->fileAreas[i].levelread <= link->level)
+                       strcat(report,"+ ");
+               else if (config->fileAreas[i].levelwrite <= link->level)
+                       strcat(report,"* ");
 	    } else {
 	    report=(char*)realloc(report, strlen(report)+
 			    strlen(config->fileAreas[i].areaName)+3);
@@ -774,7 +762,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 
 char *resend(s_link *link, s_message *msg, char *cmd)
 {
-    int rc = 0, i;
+    int rc, i;
     char *line, addline[256], logmsg[256];
     char *report=NULL, *token, filename[100], filearea[100];
     s_filearea *area = NULL;
@@ -792,34 +780,39 @@ char *resend(s_link *link, s_message *msg, char *cmd)
          sprintf(addline,"Error in line! Format: %%Resend <file> <filearea>\r");
       else {
          strcpy(filearea,token);
-	 rc = 1;
-	 for (i = 0; i<area->downlinkCount;i++) {
-	    if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
-	       rc = 0;
-	 }
 	 area = getFileArea(config,filearea);
-	 if (area != NULL && rc == 1 && area->manual == 1) rc = 5;
-	 else rc = send(filename,filearea,addr2string(&link->hisAka));
-	 switch (rc) {
-	 case 0: sprintf(addline,"Send %s from %s for %s, %s\r",
-                         filename,filearea,link->name,addr2string(&link->hisAka));
-		 break;
-	 case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
-		 sprintf(logmsg,"FileFix %%Resend: Passthrough filearea %s", filearea);
-		 writeLogEntry(htick_log, '8', logmsg);
-	         break;
-	 case 2: sprintf(addline,"Error: Filearea %s not found!\r",filearea);
-		 sprintf(logmsg,"FileFix %%Resend: Filearea %s not found", filearea);
-		 writeLogEntry(htick_log, '8', logmsg);
-	         break;
-	 case 3: sprintf(addline,"Error: File %s not found!\r",filename);
-		 sprintf(logmsg,"FileFix %%Resend: File %s not found", filename);
-		 writeLogEntry(htick_log, '8', logmsg);
-	         break;
-	 case 5: sprintf(addline,"Error: You don't have access for filearea %s!\r",filearea);
-		 sprintf(logmsg,"FileFix %%Resend: Link don't have access for filearea %s", filearea);
-		 writeLogEntry(htick_log, '8', logmsg);
-	         break;
+	 if (area != NULL) {
+	    rc = 1;
+	    for (i = 0; i<area->downlinkCount;i++)
+	       if (addrComp(msg->origAddr, area->downlinks[i]->link->hisAka)==0)
+	          rc = 0;
+	    if (rc == 1 && area->manual == 1) rc = 5;
+	    else rc = send(filename,filearea,addr2string(&link->hisAka));
+	    switch (rc) {
+	    case 0: sprintf(addline,"Send %s from %s for %s, %s\r",
+                            filename,filearea,link->name,addr2string(&link->hisAka));
+                    break;
+	    case 1: sprintf(addline,"Error: Passthrough filearea %s!\r",filearea);
+		    sprintf(logmsg,"FileFix %%Resend: Passthrough filearea %s", filearea);
+		    writeLogEntry(htick_log, '8', logmsg);
+	            break;
+	    case 2: sprintf(addline,"Error: Filearea %s not found!\r",filearea);
+		    sprintf(logmsg,"FileFix %%Resend: Filearea %s not found", filearea);
+		    writeLogEntry(htick_log, '8', logmsg);
+	            break;
+	    case 3: sprintf(addline,"Error: File %s not found!\r",filename);
+		    sprintf(logmsg,"FileFix %%Resend: File %s not found", filename);
+		    writeLogEntry(htick_log, '8', logmsg);
+	            break;
+	    case 5: sprintf(addline,"Error: You don't have access for filearea %s!\r",filearea);
+		    sprintf(logmsg,"FileFix %%Resend: Link don't have access for filearea %s", filearea);
+		    writeLogEntry(htick_log, '8', logmsg);
+	            break;
+	    }
+	 } else {
+	    sprintf(addline,"Error: filearea %s not found!\r",filearea);
+	    sprintf(logmsg,"FileFix %%Resend: Filearea %s not found", filearea);
+	    writeLogEntry(htick_log, '8', logmsg);
 	 }
       }
    }
