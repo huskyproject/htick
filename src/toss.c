@@ -558,7 +558,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return(1);
       }
 
-   if (tic.password[0]!=0 && stricmp(tic.password,from_link->ticPwd)!=0)
+   if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
+							  (stricmp(tic.password,from_link->ticPwd)!=0)))
       {
       sprintf(logstr,"Wrong Password %s from %s",
               tic.password,addr2string(&tic.from));
@@ -704,7 +705,9 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         filearea->downlinks[i]->link->name,
                         addr2string(&filearea->downlinks[i]->link->hisAka));
                 writeLogEntry(htick_log,'6',logstr);
-	     } else {
+// dirty hack to forward files:
+// first add to seen-by and after that check it in seen-by? hmm...
+//	     } else {
              memcpy(&tic.from,filearea->useAka,sizeof(s_addr));
              memcpy(&tic.to,&filearea->downlinks[i]->link->hisAka,
                     sizeof(s_addr));
@@ -718,21 +721,26 @@ int processTic(char *ticfile, e_tossSecurity sec)
              strcpy(linkfilepath,filearea->downlinks[i]->link->floFile);
              *(strrchr(linkfilepath,limiter))=0;
 
-	    // separate bundles
-	    if (config->separateBundles) {
+			 // separate bundles
+			 if (config->separateBundles) {
           
-	      if (filearea->downlinks[i]->link->hisAka.point != 0)
-	       sprintf(sepname, "%08x.sep", filearea->downlinks[i]->link->hisAka.point);
-	      else
-	       sprintf(sepname, "%04x%04x.sep", filearea->downlinks[i]->link->hisAka.net, filearea->downlinks[i]->link->hisAka.node);
+				 if (filearea->downlinks[i]->link->hisAka.point != 0)
+					 sprintf(sepname,
+							 "%08x.sep",
+							 filearea->downlinks[i]->link->hisAka.point);
+				 else
+					 sprintf(sepname,
+							 "%04x%04x.sep",
+							 filearea->downlinks[i]->link->hisAka.net,
+							 filearea->downlinks[i]->link->hisAka.node);
 
-	      sepDir = (char*) malloc(strlen(linkfilepath)+1+strlen(sepname)+1+1);
-	      sprintf(sepDir,"%s%c%s%c",linkfilepath,PATH_DELIM,sepname,PATH_DELIM);
-	      strcpy(linkfilepath,sepDir);
+				 sepDir = (char*) malloc(strlen(linkfilepath)+1+strlen(sepname)+1+1);
+				 sprintf(sepDir,"%s%c%s%c",linkfilepath,PATH_DELIM,sepname,PATH_DELIM);
+				 strcpy(linkfilepath,sepDir);
 	      
-              createDirectoryTree(sepDir);
-	      free(sepDir);
-	    }
+				 createDirectoryTree(sepDir);
+				 free(sepDir);
+			 }
 						   
              newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
              writeTic(newticfile,&tic);   

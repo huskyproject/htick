@@ -1,6 +1,11 @@
 htick 0.02
 ----------
 
+Tue Jun 22 01:31:04 NOVST 1999
+max:
+- dirty hack for forward files
+- fixed segfault if no ticPwd
+
 Mon Jun 21 14:09:03 NOVST 1999                                                  
 max:
 + add separate bundles code (for .tic files)
