@@ -1,3 +1,9 @@
+2002-01-02 Wednesday 13:17  ml
+
+	* h/log.h (1.7), src/areafix.c (1.45), src/fcommon.c (1.31),
+	src/htick.c (1.37), src/log.c (1.6), win32/makefile.cyg (1.1):
+	cygwin port
+
 2001-12-12 Wednesday 11:28  ml
 
 	* src/toss.c (1.117): compiling hidden() on win32 [patch by Serguei
