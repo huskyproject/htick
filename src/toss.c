@@ -38,7 +38,9 @@
 
 #include <string.h>
 #include <stdlib.h>
-#include <share.h>
+#ifndef UNIX
+#  include <share.h>
+#endif
 #include <fcntl.h>
 #include <errno.h>
 #include <ctype.h>
