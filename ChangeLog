@@ -1,3 +1,8 @@
+2004-11-05 Friday 14:18  mche
+
+	* htick.vcproj (1.4): make files changed for building with perl
+	5.8.*
+
 2004-11-03 Wednesday 10:56  mche
 
 	* src/toss.c (1.284): chekc for valid addr in seen-bys
