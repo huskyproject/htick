@@ -1125,23 +1125,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
            tic.file, tic.area, addr2string(&tic.from),
            tic.origin.zone,tic.origin.net,tic.origin.node,tic.origin.point);
 
-   /* Security Check */
-   from_link=getLinkFromAddr(*config,tic.from);
-   if (from_link == NULL) {
-      writeLogEntry(htick_log,'9',"Link for Tic From Adress '%s' not found",
-              addr2string(&tic.from));
-      disposeTic(&tic);
-      return(1);
-   }
-
-   if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
-       (stricmp(tic.password,from_link->ticPwd)!=0))) {
-      writeLogEntry(htick_log,'9',"Wrong Password %s from %s",
-              tic.password,addr2string(&tic.from));
-      disposeTic(&tic);
-      return(1);
-   }
-
    if (tic.to.zone!=0) {
       if (to_us(tic.to)) {
          /* Forwarding tic and file to other link? */
@@ -1183,6 +1166,23 @@ int processTic(char *ticfile, e_tossSecurity sec)
          disposeTic(&tic);
          return(4);
       }
+   }
+
+   /* Security Check */
+   from_link=getLinkFromAddr(*config,tic.from);
+   if (from_link == NULL) {
+      writeLogEntry(htick_log,'9',"Link for Tic From Adress '%s' not found",
+              addr2string(&tic.from));
+      disposeTic(&tic);
+      return(1);
+   }
+
+   if (tic.password[0]!=0 && ((from_link->ticPwd==NULL) ||
+       (stricmp(tic.password,from_link->ticPwd)!=0))) {
+      writeLogEntry(htick_log,'9',"Wrong Password %s from %s",
+              tic.password,addr2string(&tic.from));
+      disposeTic(&tic);
+      return(1);
    }
 
    strcpy(ticedfile,ticfile);
