@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <add_descr.h>
+#include <add_desc.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <string.h>

@@ -10,7 +10,7 @@
 #include <log.h>
 #include <crc32.h>
 #include <fidoconf/common.h>
-#include <add_descr.h>
+#include <add_desc.h>
 #include <recode.h>
 #include <version.h>
 #include <smapi/progprot.h>
