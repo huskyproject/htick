@@ -1,3 +1,13 @@
+2002-09-09 Monday 10:44  mche
+
+	* src/report.c (1.16): fix filesize reporting broken by previous
+	patch
+
+2002-09-09 Monday 08:46  mche
+
+	* src/report.c (1.15): postfix coredump on zero-length ticfile
+	(htick announce)
+
 2002-09-07 Saturday 16:21  mche
 
 	* src/report.c (1.14): fix coredump on zero-length ticfile (htick
