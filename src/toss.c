@@ -345,15 +345,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
     
     fclose(tichandle);
 
-    if( (linecut = strrchr(tic->file, '/')) || 
-        (linecut = strrchr(tic->file, '\\'))
-      ) {
-      w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic->file,ticfile);
-      strcpy(tic->file, linecut);
-      w_log( LL_ALERT, "'File' token truncated to: '%s'",tic->file);
-
-    }
-
     if (!tic->anzdesc) {
         tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
         tic->desc[0] = sstrdup("no desc");
@@ -818,6 +809,18 @@ int processTic(char *ticfile, e_tossSecurity sec)
    w_log('6',"Processing Tic-File %s",ticfile);
 
    parseTic(ticfile,&tic);
+
+
+   if ( tic.file && strpbrk(tic.file, "/\\:") )
+   {
+       w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic.file,ticfile);
+       return 1;
+   }
+   if ( tic.replaces && strpbrk(tic.replaces, "/\\:") )
+   {
+       w_log( LL_ALERT, "Directory separator found in 'Replace' token: '%s' of %s TIC file",tic.replaces,ticfile);
+       return 1;
+   }
 
    w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
          tic.file, tic.size, tic.area, aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
