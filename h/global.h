@@ -81,12 +81,6 @@ extern int       cmAfix;
 
 extern char      *flistfile;
 extern char      *dlistfile;
-/*
-extern char      hatchfile[256];
-extern char      hatcharea[256];
-extern char      hatchdesc[256];
-extern char      replaceMask[256];
-*/
 
 s_ticfile*       hatchInfo;
 

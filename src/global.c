@@ -47,18 +47,6 @@ char *print_ch(int len, char ch)
     return tmp;
 }
 
-const int VER_MAJOR   = 1;
-const int VER_MINOR   = 1;
-const int VER_PATCH   = 0;
-
-/* branch is "" for CVS current, "-stable" for the release candiate branch  */
-const char *VER_BRANCH  = "";
-
-/* The service version string is empty for the first release done from a    */
-/* release candidate branch.  If subsequent service releases are necessary, */
-/* single letters are used, like "a", "b", ...                              */
-const char *VER_SERVICE = "";  
-
 
 char      *versionStr=NULL;
 
@@ -72,13 +60,6 @@ int       cmAfix = 0;
 
 char      *flistfile = NULL;
 char      *dlistfile = NULL;
-
-/*
-char      hatchfile[256];
-char      hatcharea[256];
-char      hatchdesc[256];
-char      replaceMask[256];
-*/
 
 s_ticfile*       hatchInfo = NULL;
 

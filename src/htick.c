@@ -362,6 +362,7 @@ void processConfig()
 int main(int argc, char **argv)
 {
    struct _minf m;
+/*
    char *version = NULL;
 
 
@@ -389,6 +390,11 @@ int main(int argc, char **argv)
    if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
    xscatprintf(&versionStr,"HTick %s", version);
    nfree(version);
+
+*/
+   versionStr = GenVersionStr( "HTick", VER_MAJOR, VER_MINOR, VER_PATCH,
+                               VER_BRANCH, cvs_date );
+
 
    if (processCommandLine(argc, argv) == 0) exit(1);
    processConfig();

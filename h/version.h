@@ -31,11 +31,13 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-extern const int   VER_MAJOR;
-extern const int   VER_MINOR;
-extern const int   VER_PATCH;
-extern const char *VER_BRANCH;
-extern const char *VER_SERVICE;
+#include <fidoconf/version.h>
+
+/* basic version number */
+#define VER_MAJOR 1
+#define VER_MINOR 1
+#define VER_PATCH 0
+#define VER_BRANCH BRANCH_CURRENT
 
 extern char      *versionStr;
 
