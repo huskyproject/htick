@@ -190,6 +190,7 @@ int delLinkFromArea(FILE *f, char *fileName, char *str) {
     long curpos, endpos, linelen=0, len;
     char *buff, *sbuff, *ptr, *tmp, *line;
 	
+    fseek(f, curconfpos, SEEK_SET);
     curpos = ftell(f);
     buff = readLine(f);
     buff = trimLine(buff);
