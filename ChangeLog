@@ -2,6 +2,12 @@ htick 0.03
 ----------
 
 ----- cvs ci ------
+Sat Dec 12 22:51:00 1999 
+mrd:
+* fixed bug with removing files from passthrough fileechos
+  holded for busy links
+
+----- cvs ci ------
 Sat Dec 11 19:40:20 1999 
 Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 * added token fileEchoFlavour (flavour for fileecho)
