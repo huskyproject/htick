@@ -421,7 +421,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 	    }
 	    else if (stricmp(token,"to")==0) string2addr(param,&tic->to); 
             else if ((stricmp(token,"Destination")==0) && 
-		     (!ticSourceLink->FileFixFSC87Subset)) 
+		     (ticSourceLink && !ticSourceLink->FileFixFSC87Subset)) 
 	                string2addr(param,&tic->to);
             else if (stricmp(token,"origin")==0) string2addr(param,&tic->origin);
             else if (stricmp(token,"magic")==0);
@@ -445,7 +445,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
             }
             else {
                /*   printf("Unknown Keyword %s in Tic File\n",token); */
-               if (!ticSourceLink->FileFixFSC87Subset) writeLogEntry(htick_log, '7', "Unknown Keyword %s in Tic File",token);
+               if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset) writeLogEntry(htick_log, '7', "Unknown Keyword %s in Tic File",token);
             }
          } /* endif */
          if (config->MaxTicLineLength) nfree(linecut);
