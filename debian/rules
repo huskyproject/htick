@@ -28,6 +28,7 @@ clean:
 	rm -f build-stamp
 	# Add here commands to clean up after the build process.
 	-$(MAKE) distclean
+	cd doc ; $(MAKE) distclean
 	dh_clean
 
 install: build
@@ -40,6 +41,9 @@ install: build
 	cp misc/config debian/htick/etc/husky/config.htick
 	cp misc/fileareas misc/filefix.* debian/htick/etc/husky
 	cp misc/purge_fileecho misc/st_htick.pl debian/htick/usr/share/doc/htick/misc
+	cd doc ; \
+	make all install DESTDIR=$(CURDIR)/debian/htick
+	rm -f $(CURDIR)/debian/htick/usr/share/info/dir*
 
 # Build architecture-independent files here.
 binary-indep: build install

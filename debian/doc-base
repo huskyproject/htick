@@ -1,0 +1,12 @@
+Document: htick
+Title: Debian htick Manual
+Author: The Husky-Team
+Abstract: This manual describes what htick is
+ and all of its keywords.
+Section: mail
+
+Format: HTML
+Index: /usr/share/doc/htick/htick.html
+Files: /usr/share/doc/htick/*.html
+
+  
