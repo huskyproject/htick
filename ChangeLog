@@ -959,9 +959,9 @@
 
 2002-09-25 Wednesday 07:27  mche
 
-	* src/areafix.c (1.91): feature: FileFixEchoLimit patch by <Ã€Ã«Ã¥ÃªÃ±Ã¥Ã© Ã‘Ã³ÃµÃ®Ã²Ã¨Ã­
-	<pscorporation@mail.ru>>
-        
+	* src/areafix.c (1.91): feature: FileFixEchoLimit patch by <Àëåêñåé
+	Ñóõîòèí <pscorporation@mail.ru>>
+
 2002-09-24 Tuesday 13:20  pgul
 
 	* src/: areafix.c (1.90), report.c (1.17): disableTID changed to
