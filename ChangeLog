@@ -1,3 +1,9 @@
+2003-12-04 Thursday 15:33  mche
+
+	* src/areafix.c (1.124): %list, %linked command extension
+	
+	patch by Andrew Ladutsko 2:450/210
+
 2003-12-01 Monday 19:05  mche
 
 	* src/filelist.c (1.46): undo previous patch
