@@ -1,37 +1,22 @@
-HTICK 1.1-current (started 25.06.2002)
+HTICK 1.0-stable (started 25.06.2002)
 
-This file describe changes between htick-1.0-stable and htick-1.1-current
+This file describe changes between htick-0.9 and htick-1.0
 
 1. MAJOR feature improvements:
-   - configurable announces about received files;
-   - purging for file echos with deleting description from files.bbs;
-   - New command line option: "-c config-file" - specify alternate config file
-     (optional);
-   - Change statistic information in log file.
+   - forward requests to uplink;
+   - filelist building.
 
 2. CONFIG changes:
-   - area definition options -manual & -mandatory are different:
-     '-mandatory' prevent unsubscribe, '-manual' disable subscribe;
-   - FileArea parameter '-p <number>' : purge fileecho (files age in days);
-   - AnnounceSpool : directory for temporary announce files;
-   - AnnAreaTag : Name of area when annouce will be placed, begins new
-     announce definition section;
-   - AnnAdrFrom : announce message sender address;
-   - AnnFrom : announce message sender name;
-   - AnnAdrTo : announce message recipient address;
-   - AnnTo : announce message recipient name;
-   - AnnSubj : announce message subject;
-   - AnnInclude : Array of fileecho names|masks that will be announced in
-     this annAreaTag
-   - AnnExclude : Array of fileecho names|masks that won't be announced
-     in this annAreaTag
-   - AnnMessFlags : announce message flags ("k/s", "loc", "hld", ...);
-   - AnnOrigin : origin for announce messages.
+   - FileForwardRequest : 
+   - RemoteFileRobotName (in link definition) : Name of remote file (tic) robot
+     (need for FileForwardRequest)
+   - FileDescName : file with archive description (usually file_id.diz)
+   - FileAreaDefaults : default parameters for autocreate filearea
+   - BBSArea : BBS files directory (for file list building)
+   - FileEchoFlavour (in link definition) : set outbound flavor for fileecho
+     files (Imm, Crash, Direct, Hold, Normal)
 
 3. IMPORTANT bugfixes:
-   - fixed bug with missed files in report;
-   - recode filearea descriptions;
-   - save modification time for files in fileechoes.
 
 
 $Id$
