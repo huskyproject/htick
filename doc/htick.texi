@@ -442,7 +442,7 @@ This statement can be repeated.
 
 @table @asis
 @item <DirToSaveTic>
-where to put TIC for fileecho[s] <FileEchoMask>
+where to put TICs for fileecho[s] <FileEchoMask>
 
 @item <FileOption>
 save files with tics. May be:
@@ -463,7 +463,7 @@ copy files from fileechodir to <DirToSaveTic>
 Options @option{-l} and @option{-c} work only for non-Passthrough fileechos
 
 @item <DaysToKeepTics>
-<DaysToKeepTics> is optional. If defined  tics are saved in <DirToSaveTic> will be kept for
+<DaysToKeepTics> is optional. If it's defined tics saved in <DirToSaveTic> will be kept for
 <DaysToKeepTics> days.
 
 @end table
