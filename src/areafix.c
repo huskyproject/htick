@@ -1127,36 +1127,39 @@ int   autoCreate(char *c_area, char *descr, s_addr* pktOrigAddr, s_addr* dwLink)
         creatingLink->fileBaseDir : config->fileAreaBaseDir;
     
     
-    if (creatingLink->autoFileCreateSubdirs &&
-        strcasecmp(bDir,"passthrough"))
+    if( strcasecmp(bDir,"passthrough") )
     {
         if (creatingLink->autoFileCreateSubdirs)
         {
-            char *cp;
-            for (cp = fileechoFileName; *cp; cp++)
+            if (creatingLink->autoFileCreateSubdirs)
             {
-                if (*cp == '.')
+                char *cp;
+                for (cp = fileechoFileName; *cp; cp++)
                 {
-                    *cp = PATH_DELIM;
+                    if (*cp == '.')
+                    {
+                        *cp = PATH_DELIM;
+                    }
                 }
             }
         }
-    }
-    xscatprintf(&buff,"%s%s",bDir,fileechoFileName);
-    if (_createDirectoryTree(buff))
-    {
-        w_log(LL_ERROR, "cannot make all subdirectories for %s\n",
-            fileechoFileName);
-        nfree(buff);
-        return 1;
-    }
+        xscatprintf(&buff,"%s%s",bDir,fileechoFileName);
+        if (_createDirectoryTree(buff))
+        {
+            w_log(LL_ERROR, "cannot make all subdirectories for %s\n",
+                fileechoFileName);
+            nfree(buff);
+            return 1;
+        }
 #if defined (UNIX)
-    if(config->fileAreaCreatePerms && chmod(buff, config->fileAreaCreatePerms))
-        fprintf(stderr, "Cannot chmod() for newly created filearea: %s\n",
-        strerror(errno));
+        if(config->fileAreaCreatePerms && chmod(buff, config->fileAreaCreatePerms))
+            fprintf(stderr, "Cannot chmod() for newly created filearea: %s\n",
+            strerror(errno));
 #endif
-    nfree(buff);
+        nfree(buff);
+    }
     
+
     fileName = creatingLink->autoFileCreateFile ? creatingLink->autoFileCreateFile : getConfigFileName();
     
     f = fopen(fileName, "a+b");
