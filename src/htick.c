@@ -306,10 +306,13 @@ void processConfig()
    htick_log = openLog(LogFileName, versionStr);  /* if failed: openLog() prints a message to stderr */
    if (htick_log && quiet) htick_log->logEcho = 0;
 
-   if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
-   if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
+   if (config->addrCount == 0)          w_log( LL_CRIT, "At least one addr must be defined");
+   if (config->linkCount == 0)          w_log( LL_CRIT, "At least one link must be specified");
    if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
    if (config->passFileAreaDir == NULL) w_log( LL_CRIT, "You must set PassFileAreaDir in fidoconfig first");
+   if (config->outbound == NULL)        w_log( LL_CRIT, "You must set outbound in fidoconfig first");
+   if (config->tempOutbound == NULL)    w_log( LL_CRIT, "You must set tempOutbound in fidoconfig first");
+
    if (cmAnnounce && config->announceSpool == NULL)
        w_log( LL_CRIT, "You must set AnnounceSpool in fidoconfig first");
    if (config->MaxTicLineLength && config->MaxTicLineLength<80)
@@ -319,14 +322,16 @@ void processConfig()
        config->linkCount == 0 ||
        config->fileAreaBaseDir == NULL ||
        config->passFileAreaDir == NULL ||
+       config->outbound == NULL ||
+       config->tempOutbound == NULL ||
        (cmAnnounce && config->announceSpool == NULL) ||
        (config->MaxTicLineLength && config->MaxTicLineLength<80)) {
-      w_log( LL_CRIT, "Wrong config file, exit.");
-      closeLog();
-      if (config->lockfile != NULL) remove(config->lockfile);
-      disposeConfig(config);
-      exit(1);
-   }
+           w_log( LL_CRIT, "Wrong config file, exit.");
+           closeLog();
+           if (config->lockfile != NULL) remove(config->lockfile);
+           disposeConfig(config);
+           exit(1);
+       }
 
 
    if (config->lockfile) {

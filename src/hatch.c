@@ -517,9 +517,20 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     _createDirectoryTree(linkfilepath);
     /* Don't create TICs for everybody */
     if (!downlink->noTIC) {
-        newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-        if (!writeTic(newticfile,tic))
-            return 0;
+        newticfile = makeUniqueDosFileName(linkfilepath,"tic",config);
+        if (!writeTic(newticfile,tic)) {
+            /* try to toss into config->tempOutbound */
+            w_log( LL_CRIT, "Can't write into: %s",linkfilepath);
+            nfree(newticfile); nfree(linkfilepath);
+            xstrcat(&linkfilepath, config->tempOutbound);
+            newticfile = makeUniqueDosFileName(linkfilepath,"tic",config);
+            if (!writeTic(newticfile,tic)) {
+                w_log( LL_CRIT, "Can't write into: %s",linkfilepath);
+                nfree(newticfile); 
+                return 0;
+            }
+            busy = 1; /* do not touch floFile if it's BSO */
+        }
     }
     else  newticfile = NULL;
     
@@ -567,6 +578,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     nfree(downlink->bsyFile);
     nfree(downlink->floFile);
     nfree(linkfilepath);
+    nfree(newticfile);
     return 1;
 }
 
