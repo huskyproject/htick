@@ -794,8 +794,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
                         fprintf(flohandle,"^%s\n",ticedfile);
                         fprintf(flohandle,"^%s\n",newticfile);
                         fclose(flohandle);
-                        remove(to_link->bsyFile);
-                        nfree(to_link->bsyFile);
+                        if(to_link->bsyFile){
+                          remove(to_link->bsyFile);
+                          nfree(to_link->bsyFile);
+                        }
                         nfree(to_link->floFile);
                      }
                   }
@@ -1107,8 +1109,10 @@ void checkTmpDir(void)
                }
             } /* if filearea */
          } /* if createFlo */
-         remove(link->bsyFile);
-         nfree(link->bsyFile);
+         if( link->bsyFile){
+           remove(link->bsyFile);
+           nfree(link->bsyFile);
+         }
          nfree(link->floFile);
          disposeTic(&tic);
       } /* if ".TIC" */
