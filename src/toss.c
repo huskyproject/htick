@@ -1907,8 +1907,8 @@ void reportNewFiles()
                       xstrcat(&(msg->text),tmp);
                       if (config->originInAnnounce) {
                           xscatprintf(&(msg->text), "%sOrig: %u:%u/%u.%u\r",print_ch(24, ' '),
-                              newFileReport[b]->origin.zone,newFileReport[i]->origin.net,
-                              newFileReport[b]->origin.node,newFileReport[i]->origin.point);
+                              newFileReport[b]->origin.zone,newFileReport[b]->origin.net,
+                              newFileReport[b]->origin.node,newFileReport[b]->origin.point);
                       }
                       if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
                       nfree(tmp);
