@@ -944,58 +944,57 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                   busy = 1;
 
                if (busy) {
-                  w_log( '7', "Save TIC in temporary dir");
-                  /* Create temporary directory */
-                  xstrcat(&linkfilepath,config->busyFileDir);
+                   w_log( '7', "Save TIC in temporary dir");
+                   /* Create temporary directory */
+                   xstrcat(&linkfilepath,config->busyFileDir);
                } else {
-                  if (config->separateBundles) {
-                     xstrcat(&linkfilepath, downlink->floFile);
-                     sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
-                  } else {
-                      // fileBoxes support
-                      if (needUseFileBoxForLink(config,downlink)) {
-                          if (!downlink->fileBox) 
-                              downlink->fileBox = makeFileBoxName (config,downlink);
-                          xstrcat(&linkfilepath, downlink->fileBox);
-                      } else {
-                          xstrcat(&linkfilepath, config->ticOutbound);
-                      }
-                  }
-               }
-               _createDirectoryTree(linkfilepath);
-
-               if (!busy) {
-                   /* Don't create TICs for everybody */
-                   if (!downlink->noTIC) 
-                       newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
-                   else 
-                       newticfile = NULL;
-                  
-                   if (needUseFileBoxForLink(config,downlink)) {
-                       xstrcat(&linkfilepath, tic->file);
-                       if (link_file(newticedfile,linkfilepath ) == 0)
-                       {
-                          if(copy_file(newticedfile,linkfilepath )==0)
-                             w_log('6',"Copied %s to %s",newticedfile,linkfilepath);
-                          else 
-                             w_log('9',"File %s not found or not copyable",newticedfile);
-                       } else {
-                             w_log('6',"Linked %s to %s",newticedfile,linkfilepath);
-                       }
+                   if (config->separateBundles) {
+                       xstrcat(&linkfilepath, downlink->floFile);
+                       sprintf(strrchr(linkfilepath, '.'), ".sep%c", PATH_DELIM);
                    } else {
-                       flohandle=fopen(downlink->floFile,"a");
-                       fprintf(flohandle,"%s\n",newticedfile);
-                       if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
-                       fclose(flohandle);
+                       xstrcat(&linkfilepath, config->ticOutbound);
                    }
-                   
-                   if (newticfile != NULL) writeTic(newticfile,tic);
+               }
 
-                   remove(downlink->bsyFile);
+               // fileBoxes support
+               if (needUseFileBoxForLink(config,downlink)) {
+                   if (!downlink->fileBox) 
+                       downlink->fileBox = makeFileBoxName (config,downlink);
+                   xstrcat(&linkfilepath, downlink->fileBox);
+               }
+
+               _createDirectoryTree(linkfilepath);
+               /* Don't create TICs for everybody */
+               if (!downlink->noTIC) {
+                   newticfile=makeUniqueDosFileName(linkfilepath,"tic",config);
+                   writeTic(newticfile,tic);
+               }
+               else 
+                   newticfile = NULL;
+
+               if (needUseFileBoxForLink(config,downlink)) {
+                   xstrcat(&linkfilepath, tic->file);
+                   if (link_file(newticedfile,linkfilepath ) == 0)
+                   {
+                       if(copy_file(newticedfile,linkfilepath )==0)
+                           w_log('6',"Copied %s to %s",newticedfile,linkfilepath);
+                       else 
+                           w_log('9',"File %s not found or not copyable",newticedfile);
+                   } else {
+                       w_log('6',"Linked %s to %s",newticedfile,linkfilepath);
+                   }
+               } else if (!busy) {
+                   flohandle=fopen(downlink->floFile,"a");
+                   fprintf(flohandle,"%s\n",newticedfile);
+                   if (newticfile != NULL) fprintf(flohandle,"^%s\n",newticfile);
+                   fclose(flohandle);
                    w_log('6',"Forwarding %s for %s",
                        tic->file,
                        aka2str(downlink->hisAka));
                    
+               }
+               if (!busy) {                   
+                   remove(downlink->bsyFile);
                }
                nfree(downlink->bsyFile);
                nfree(downlink->floFile);
