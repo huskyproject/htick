@@ -290,7 +290,7 @@ void processConfig()
       if (config->lockfile != NULL) remove(config->lockfile);
       writeLogEntry(htick_log, '9', "wrong config file");
       writeLogEntry(htick_log, '1', "End");
-      closeLog(htick_log);
+      closeLog();
       disposeConfig(config);
       exit(1);
    }
@@ -333,7 +333,7 @@ int main(int argc, char **argv)
    if (MsgOpenApi(&m) != 0) {
       writeLogEntry(htick_log, '9', "MsgApiOpen Error");
           if (config->lockfile != NULL) remove(config->lockfile);
-      closeLog(htick_log);
+      closeLog();
       disposeConfig(config);
       exit(1);
    } /*endif */
@@ -356,7 +356,7 @@ int main(int argc, char **argv)
 
    if (config->lockfile != NULL) remove(config->lockfile);
    writeLogEntry(htick_log, '1', "End");
-   closeLog(htick_log);
+   closeLog();
    disposeConfig(config);
    return 0;
 }

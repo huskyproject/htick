@@ -1016,7 +1016,7 @@ int createFlo(s_link *link, e_prio prio)
          if (config->lockfile != NULL) remove(config->lockfile);
          writeLogEntry(htick_log, '9', "cannot create *.bsy file");
          writeLogEntry(htick_log, '1', "End");
-         closeLog(htick_log);
+         closeLog();
          disposeConfig(config);
          exit(1);
       }
