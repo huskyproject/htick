@@ -1,3 +1,7 @@
+2002-05-05 Sunday 09:25  pavel.gulchouck
+
+	* src/toss.c (1.148): fileFixKillReports fixed
+
 2002-05-04 Saturday 13:49  mche
 
 	* src/add_desc.c (1.5), src/areafix.c (1.56), src/fcommon.c (1.43),
