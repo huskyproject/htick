@@ -1328,7 +1328,7 @@ void writeMsgToSysop(s_message *msg, char *areaName, char* origin)
 
    xscatprintf(&(msg->text), " \r--- %s\r * Origin: %s (%s)\r",
        (config->tearline) ? config->tearline : "",
-       (config->origin) ? config->origin : config->name,
+       origin ? origin : (config->origin) ? config->origin : config->name,
        aka2str(msg->origAddr));
 
    msg->textLength = strlen(msg->text);
