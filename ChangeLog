@@ -1,3 +1,7 @@
+2003-11-01 Saturday 22:09  i_zkh
+
+	* doc/htick.texi (htick-1_4-stable.3): Minor fix
+
 2003-09-22 Monday 08:05  andr_lukyanov
 
 	* os2/makefile.wco (htick-1_4-stable.2): Fixed OS/2 WatcomC
