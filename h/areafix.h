@@ -44,6 +44,7 @@
 #define RESUME  8
 #define INFO    9
 #define RESEND  10
+#define LINKED  11
 #define ERROR   255
 
 
