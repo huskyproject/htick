@@ -1,3 +1,21 @@
+2002-11-06 Wednesday 14:44  mche
+
+	* win32/makefile.mgw (1.4): corrected makefile
+
+2002-11-06 Wednesday 09:18  stas_degteff
+
+	* doc/htick.texi (1.9): spell check. Thanks to Igor Zakharoff,
+	2:5030/290.36
+
+2002-11-06 Wednesday 08:25  mche
+
+	* src/: areafix.c (1.100), hatch.c (1.71), report.c (1.30), toss.c
+	(1.234): cheking for duplicate definitions of fileareas
+
+2002-11-06 Wednesday 08:14  stas_degteff
+
+	* doc/htick.texi (1.8): Return 'Support' node into top-level menu
+
 2002-11-05 Tuesday 15:45  stas_degteff
 
 	* h/global.h (1.18), src/add_desc.c (1.22), src/areafix.c (1.99),
