@@ -304,7 +304,7 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     FILE *filehandle = NULL;
     char *dizfile = NULL;
     int  j, found;
-    UINT i;
+    UINT i, unpacker;
     signed int cmdexit;
     char cmd[256]="";
     char buffer[256]="";
@@ -328,15 +328,15 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
         w_log( LL_ALERT, "file %s: cannot find unpacker", fileName);
         return 3;
     }
-
+    unpacker = i - 1;
     /*  unpack file_id.diz (config->fileDescName) */
     for( i = 0; i < config->fDescNameCount; i++)
     {
         getcwd( buffer, 256 );
-        fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescNames[i],config->tempInbound);
+        fillCmdStatement(cmd,config->unpack[unpacker].call,fileName,config->fileDescNames[i],config->tempInbound);
         w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
         chdir(config->tempInbound);
-        if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
+        if( fc_stristr(config->unpack[unpacker].call, "zipInternal") )
         {
             cmdexit = 1;
 #ifdef USE_HPT_ZLIB
