@@ -1223,9 +1223,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
 {
    s_ticfile tic;
    size_t j;
-   FILE *flohandle;
+   FILE   *flohandle;
+   DIR    *dir;
+   struct dirent  *file;
 
    char ticedfile[256], linkfilepath[256];
+   char dirname[256], *realfile, *findfile, *pos;
    char *newticfile;
    s_filearea *filearea;
    s_link *from_link, *to_link;
@@ -1233,6 +1236,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    unsigned long crc;
    struct stat stbuf;
    int writeAccess;
+   int fileisfound = 0;
    int rc = 0;
 
 
@@ -1338,13 +1342,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 #endif
 
-   stat(ticedfile,&stbuf);
-   tic.size = stbuf.st_size;
-   if (!tic.size) {
-      writeLogEntry(htick_log,'6',"File %s from filearea %s has zero size",tic.file,tic.area);
-      disposeTic(&tic);
-      return(5);
-   }
 
    filearea=getFileArea(config,tic.area);
 
@@ -1364,10 +1361,81 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if (!filearea->noCRC) {
       crc = filecrc32(ticedfile);
       if (tic.crc != crc) {
-         writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
-         disposeTic(&tic);
-         return(3);
+          strcpy(dirname, ticedfile);
+          pos = strrchr(dirname, PATH_DELIM);
+	  if (pos) {
+	      *pos = 0;
+	      findfile = pos+1;
+	      pos = strrchr(findfile, '.');
+	      if (pos) {
+	          
+	          *(++pos) = 0;
+		  strcat(findfile, "*");
+#ifdef DEBUG_HPT
+                  printf("NoCRC! dirname = %s, findfile = %s\n", dirname, findfile);
+#endif
+		  dir = opendir(dirname);
+		  
+		  if (dir) {
+		      while ((file = readdir(dir)) != NULL) {
+		          if (patimat(file->d_name, findfile)) {
+			      stat(file->d_name,&stbuf);
+			      if (stbuf.st_size == tic.size) {
+			          crc = filecrc32(file->d_name);
+				  if (crc == tic.crc) {
+				      fileisfound = 1;
+				      sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file->d_name);
+				      break;
+				  }
+			      }
+
+			  }
+		      }
+		      closedir(dir);
+		  }
+
+	      }
+	  }
+	  
+	  if (fileisfound) {
+	      realfile = smalloc(strlen(dirname)+1);
+	      strcpy(realfile, dirname);
+	      *(strrchr(dirname, PATH_DELIM)) = 0;
+	      findfile = makeUniqueDosFileName(dirname,"tmp",config);
+	      if (rename(ticedfile, findfile) != 0 ) {
+	          writeLogEntry(htick_log,'9',"Can't file %s rename to %s", ticedfile, findfile);
+		  nfree(findfile);
+		  nfree(realfile);
+                  disposeTic(&tic);
+                  return(3);
+	      }
+	      if (rename(realfile, ticedfile) != 0) {
+	          writeLogEntry(htick_log,'9',"Can't file %s rename to %s", realfile, ticedfile);
+		  nfree(findfile);
+		  nfree(realfile);
+                  disposeTic(&tic);
+                  return(3);
+	      }
+	      if (rename(findfile, realfile) != 0) {
+	          remove(findfile);
+	      }
+	      nfree(findfile);
+	      nfree(realfile);
+	  } else {
+	      writeLogEntry(htick_log,'9',"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
+              disposeTic(&tic);
+              return(3);
+	  }
       }
+   }
+   
+
+   stat(ticedfile,&stbuf);
+   tic.size = stbuf.st_size;
+   if (!tic.size) {
+      writeLogEntry(htick_log,'6',"File %s from filearea %s has zero size",tic.file,tic.area);
+      disposeTic(&tic);
+      return(5);
    }
 
    writeAccess = writeCheck(filearea,&tic.from);
