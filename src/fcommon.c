@@ -56,6 +56,7 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/dirlayer.h>
+#include <fidoconf/adcase.h>
 
 
 #include <smapi/typedefs.h>
@@ -67,6 +68,7 @@
 
 //#include <process.h>
 #include <toss.h>
+#include <add_descr.h>
 
 int createLockFile(char *lockfile) {
         FILE *f;
@@ -383,7 +385,7 @@ int removeFileMask(char *directory, char *mask)
     DIR           *dir;
     struct dirent *file;
     char          *removefile;
-    char          tmpDir[256];
+    char          tmpDir[256], descr_file_name[256];
     unsigned int  numfiles = 0, dirLen;
 
    if (directory == NULL) return(0);
@@ -402,6 +404,8 @@ int removeFileMask(char *directory, char *mask)
       while ((file = readdir(dir)) != NULL) {
          if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
          if (patimat(file->d_name, mask) == 1) {
+
+            //remove file
             removefile = (char *) malloc(dirLen+strlen(file->d_name)+1);
             strcpy(removefile, tmpDir);
             strcat(removefile, file->d_name);
@@ -409,6 +413,12 @@ int removeFileMask(char *directory, char *mask)
             writeLogEntry(htick_log,'6',"Removed file: %s",removefile);
             numfiles++;
             free(removefile);
+
+            //remove description for file
+            strcpy(descr_file_name, tmpDir);
+            strcat(descr_file_name, "files.bbs");
+            adaptcase(descr_file_name);
+            removeDesc(descr_file_name,file->d_name);
          }
       }
       closedir(dir);
