@@ -832,7 +832,7 @@ This statement can only be repeated for different links.
 @item Syntax:
 @code{ForwardFilePriority <number>}
 @item Example:
-@code{ForwardFileRequests 1}
+@code{ForwardFilePriority 1}
 @end table
 
 Priority in uplinks order for filearea subscribing forward-requests
