@@ -33,13 +33,15 @@
 #include <ctype.h>
 #ifndef __IBMC__
 #if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
-#include <unistd.h>
+#  include <unistd.h>
 #endif
 #endif
 #include <sys/types.h>
 #include <signal.h>
 #if ((defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__TURBOC__) || defined(__DJGPP__)) || defined(__MINGW32__)
-#include <sys/stat.h>
+#  include <sys/stat.h>
+#  include <io.h>
+#  include <fcntl.h>
 #endif
 
 #ifdef OS2
@@ -213,29 +215,31 @@ return rc;
 
 void processConfig()
 {
+/*
 #if !defined(__OS2__) && !defined(UNIX)
    time_t   time_cur, locklife = 0;
    struct   stat stat_file;
 #endif
+*/
    char *buff = NULL;
-
+/*
    unsigned long pid;
 
    FILE *f;
-
+*/
    setvar("module", "htick");
    config = readConfig(NULL);
    if (NULL == config) {
       fprintf(stderr, "Config file not found\n");
       exit(1);
    };
-
+/*
    // lock...
    if (config->lockfile!=NULL && fexist(config->lockfile)) {
       f = fopen(config->lockfile, "rt");
       fscanf(f, "%lu\n", &pid);
       fclose(f);
-      /* Checking process PID */
+      // Checking process PID 
 #if defined(__OS2__)
       if (DosKillProcess(DKP_PROCESSTREE, pid) == ERROR_NOT_DESCENDANT) {
 #elif defined(UNIX)
@@ -253,8 +257,38 @@ void processConfig()
       } else {
          remove(config->lockfile);
          createLockFile(config->lockfile);
-      } /* endif */
+      } // endif 
    }
+*/
+   if (config->lockfile) {
+      _lockfile = sstrdup(config->lockfile);
+      if (config->advisoryLock) {
+         if ((lock_fd=open(config->lockfile,O_CREAT|O_RDWR,S_IREAD|S_IWRITE))<0) {
+            fprintf(stderr,"cannot open/create lock file: %s\n",config->lockfile);
+            disposeConfig(config);
+            exit(EX_CANTCREAT);
+         } else {
+            if (write(lock_fd," ", 1)!=1) {
+               fprintf(stderr,"can't write to lock file! exit...\n");
+               disposeConfig(config);
+               exit(EX_IOERR);
+            }
+            if (lock(lock_fd,0,1)<0) {
+               fprintf(stderr,"lock file used by another process! exit...\n");
+               disposeConfig(config);
+               exit(EX_TEMPFAIL);
+            }
+         }
+      } else { // normal locking
+         if ((lock_fd=open(config->lockfile,
+            O_CREAT|O_RDWR|O_EXCL,S_IREAD|S_IWRITE))<0) {
+            fprintf(stderr,"cannot create new lock file: %s\n",config->lockfile);
+            fprintf(stderr,"lock file probably used by another process! exit...\n");
+            disposeConfig(config);
+            exit(EX_CANTCREAT);
+         }
+      }
+   }   
 
    // open Logfile
    htick_log = NULL;
@@ -364,5 +398,11 @@ int main(int argc, char **argv)
    if (config->lockfile != NULL) remove(config->lockfile);
    disposeConfig(config);
    nfree(versionStr);
+
+   if (config->lockfile) {
+      close(lock_fd);
+      remove(config->lockfile);
+   }
+
    return 0;
 }

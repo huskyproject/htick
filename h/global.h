@@ -67,4 +67,8 @@ extern char      announceArea[256];
 extern char      announcefile[256];
 extern char      announcenewfileecho[256];
 
+extern int  lock_fd;
+extern char *_lockfile;
+
+
 #endif

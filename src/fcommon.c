@@ -58,6 +58,7 @@
 #include <fidoconf/dirlayer.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/xstr.h>
+#include <fidoconf/recode.h>
 
 
 #include <smapi/typedefs.h>
@@ -74,6 +75,27 @@
 #include <toss.h>
 #include <add_desc.h>
 
+/*
+void exit_htick(char *logstr, int print) {
+
+    w_log(LL_FUNC,"exit_htick()");
+    w_log(LL_CRIT, logstr);
+    if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
+
+    //writeDupeFiles();
+    disposeConfig(config);
+    doneCharsets();
+    w_log(LL_STOP, "Exit");
+    closeLog();
+    if (_lockfile) {
+       close(lock_fd);
+       remove(_lockfile);
+       nfree(_lockfile);
+    }
+    exit(EX_SOFTWARE);
+}
+
+
 int createLockFile(char *lockfile) {
         FILE *f;
 
@@ -83,21 +105,14 @@ int createLockFile(char *lockfile) {
                    w_log( '9', "createLockFile: cannot create lock file \"%s\"m", lockfile);
                    return 1;
            }
-
         fprintf(f, "%u\n", (unsigned)getpid());
         fclose(f);
         return 0;
 }
-
+*/
 #if defined(__TURBOC__) || defined(__IBMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
-
 #include <io.h>
 #include <fcntl.h>
-
-#if (!defined(S_ISDIR) && !(defined(_MSC_VER) && (_MSC_VER >= 1200)))
-#define S_ISDIR(a) (((a) & S_IFDIR) != 0)
-#endif
-
 #endif
 
 #if defined(__TURBOC__) || defined(__IBMC__) || defined(__WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200))
@@ -261,21 +276,21 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
 
    } else {
 
-           if ((f=fopen(link->bsyFile,"a")) == NULL)
-                   {
-                           if (!quiet) fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
-			   remove(link->bsyFile);
-                           free(link->bsyFile);
-                           link->bsyFile=NULL;
-                           free(link->floFile);
-                           if (config->lockfile != NULL) remove(config->lockfile);
-                           w_log( '9', "cannot create *.bsy file");
-                           w_log( '1', "End");
-                           closeLog(htick_log);
-                           disposeConfig(config);
-                           exit(1);
-                   }
-           fclose(f);
+       if ((f=fopen(link->bsyFile,"a")) == NULL)
+       {
+           if (!quiet) fprintf(stderr,"cannot create *.bsy file for %s\n",addr2string(&link->hisAka));
+           remove(link->bsyFile);
+           free(link->bsyFile);
+           link->bsyFile=NULL;
+           free(link->floFile);
+           if (config->lockfile != NULL) remove(config->lockfile);
+           w_log( '9', "cannot create *.bsy file");
+           w_log( '1', "End");
+           closeLog(htick_log);
+           disposeConfig(config);
+           exit(1);
+       }
+       fclose(f);
    }
 
    return 0;

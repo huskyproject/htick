@@ -97,7 +97,7 @@ int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
  */
 #endif
 
-int    createLockFile(char *lockFile);
+//int    createLockFile(char *lockFile);
 #endif
 
 int removeFileMask(char *directory, char *mask);

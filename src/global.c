@@ -87,3 +87,5 @@ char      announcefile[256];
 int       cmAnnNewFileecho = 0;
 char      announcenewfileecho[256];
 
+int       lock_fd;
+char      *_lockfile=NULL;
