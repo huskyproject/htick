@@ -1,6 +1,5 @@
 HTICK 1.9-current
-
-This file describe changes between htick-1.4-stable and htick-1.9-current
+Changes between htick-1.4-stable and htick-1.9-current
 
 1. MAJOR feature improvements:
 
@@ -8,5 +7,108 @@ This file describe changes between htick-1.4-stable and htick-1.9-current
 
 3. IMPORTANT bugfixes:
 
+
+HTICK 1.4-stable
+Changes between htick-1.0-stable and htick-1.4-stable
+
+1. MAJOR feature improvements:
+   - configurable announces about received files;
+   - purging for file echos with deleting description from files.bbs;
+   - New command line option: "-c config-file" - specify alternate config file
+     (optional);
+   - Change statistics information in log file;
+   - Allow unconditional forward subscribe when forwardFileRequestsFile for
+     link not defined in config;
+   - New command 'ffix!' in addition to 'ffix'. It does the same job as 'ffix'
+     and send subscride/unsubscribe letter to link that was manualy
+     subscribed/unsubscribed by filefix command	like:
+        htick ffix! 2:464/910 -910.TEST
+     This command remove file echo link 2:464/910 from 910.TEST and produce
+     letter to 2:464/910 with body "-910.TEST";
+   - Write documentation at texinfo format.
+
+2. CONFIG changes:
+   - area definition options -manual & -mandatory are different:
+     '-mandatory' prevent unsubscribe, '-manual' disable subscribe;
+   - FileArea parameter '-p <number>' : purge fileecho (files age in days);
+   - AnnounceSpool : directory for temporary announce files;
+   - AnnAreaTag : Name of area when annouce will be placed, begins new
+     announce definition section;
+   - AnnAddrFrom : announce message sender address;
+   - AnnFrom : announce message sender name;
+   - AnnAddrTo : announce message recipient address;
+   - AnnTo : announce message recipient name;
+   - AnnSubj : announce message subject;
+   - AnnInclude : Array of fileecho names|masks that will be announced in
+     this annAreaTag;
+   - AnnExclude : Array of fileecho names|masks that won't be announced
+     in this annAreaTag;
+   - AnnMessFlags : announce message flags ("k/s", "loc", "hld", ...);
+   - AnnOrigin : origin for announce messages;
+   - AnnFileOrigin : show system address that hatch file in announce;
+   - AnnFileRFrom : show system address which file recived from;
+   - AutoFileCreateFlag : create flag when filearea has been autocreated;
+   - FileFixNames : set of names on which filefix will respond;
+   - FileFixEchoLimit: limit fileechoes subscribe number for link;
+   - delNotRecievedTIC renamed to delNotReceivedTIC (spelling fix)
+
+3. IMPORTANT bugfixes:
+   - fix forward subscribe;
+   - fix CR-LF for autocreated "echoarea" lines;
+   - fixed bug with missed files in report;
+   - recode filearea descriptions;
+   - save modification time for files in fileechoes;
+   - set 'Loc' flag on messages from FileFix.
+
+
+
+HTICK 1.0-stable (started 25.06.2002)
+
+This file describe changes between htick-0.9 and htick-1.0
+
+1. MAJOR feature improvements:
+   - amiga style outbound suppurt;
+   - cygwin port;
+   - build htick/win32 with dlls (MS Visual C/C++);
+   - new command line option: -q (quiet mode);
+   - new log messages: 0-9A-D - user-level, E-Z - debug-level;
+   - do filefix	before toss;
+   - fileboxes support;
+   - filefix from command line
+   - use hardlinks if posible (unixes, NT);
+   - Debuan Linux package;
+   - man pages install & uninstall;
+   - statistics generator (perl script);
+   - forward requests to uplink;
+   - '%avail' filefix command;
+   - pause fileechoes only;
+   - filelist building.
+
+2. CONFIG changes:
+   - FileFixFSC87Subset : ignore unknown keywords in tic-file
+   - FileForwardRequest :
+   - RemoteFileRobotName (in link definition) : Name of remote file (tic) robot
+     (need for FileForwardRequest);
+   - FileDescName : file with archive description (usually file_id.diz);
+   - FileAreaDefaults : default parameters for autocreate filearea;
+   - BBSArea : BBS files directory (for file list building);
+   - FileEchoFlavour (in link definition) : set outbound flavor for fileecho
+     files (Imm, Crash, Direct, Hold, Normal);
+   - filearea option '-nodiz' : do not try to get description from
+     <fileDescName>;
+   - syntax of token 'SaveTic' expanded;
+   - new token for link  "LinkFileFaseDir" : Where autocreated file echos
+     will be placed (may be "passthrough");
+   - pause statement syntax expanded;
+
+3. IMPORTANT bugfixes:
+   - don't toss .tic with HIDDEN attribute set (non-unix version)
+   - fixed inbound file searching according to fsc
+   - fix memory fault if charset tables not defined in config;
+   - fix problem with autocreating;
+   - fix hatching from fileechodir: don't delete file;
+   - areadesc set into TIC at 'htick hatch';
+   - set 'Loc' flag on messages from FileFix.
+   - add own seen-by when hatch.
 
 $Id$
