@@ -30,9 +30,19 @@
  * $Id$
  *****************************************************************************/
 
+/* clib */
+#include <string.h>
+#include <stdlib.h>
+#include <fcntl.h>
+#include <errno.h>
+#include <ctype.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
+/* compiler.h */
 #include <smapi/compiler.h>
 
-#ifdef OS2
+#ifdef __OS2__
 #define INCL_DOSFILEMGR /* for hidden() routine */
 #include <os2.h>
 #endif
@@ -41,18 +51,9 @@
 #  include <io.h>
 #endif
 
-#include <string.h>
-#include <stdlib.h>
-
 #ifdef HAS_SHARE_H
 #  include <share.h>
 #endif
-
-#include <fcntl.h>
-#include <errno.h>
-#include <ctype.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #ifdef HAS_UNISTD_H
 #  include <unistd.h>
@@ -66,8 +67,10 @@
 #  include <process.h>
 #endif
 
+/* smapi */
 #include <smapi/progprot.h>
 
+/* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/common.h>
@@ -81,7 +84,7 @@
 #  define _A_HIDDEN A_HIDDEN
 #endif
 
-
+/* htick */
 #include <fcommon.h>
 #include <global.h>
 #include <toss.h>
@@ -259,7 +262,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     UINT16 key;
     hs_addr Aka;
     
-#if defined(UNIX) || defined(__DJGPP__)
+#ifndef HAS_sopen
     tichandle=fopen(ticfile,"r");
 #else
     /* insure that ticfile won't be removed while parsing */
@@ -760,11 +763,10 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
     return(0);
 }
 
-#if !defined(UNIX)
-
+#if !defined(__UNIX__)
 
 /* FIXME: This code is nonportable and should therefore really be part
-          of a porting library like huskylib or fidoconf!!!
+          of a porting library like huskylib or !!!
 */
 
 #if defined(__NT__)
@@ -775,15 +777,15 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
 int hidden (char *filename)
 {
-#if (defined(__TURBOC__) && !defined(OS2)) || defined(__DJGPP__)
+#if (defined(__TURBOC__) && !defined(__OS2__)) || defined(__DJGPP__)
    unsigned fattrs;
    _dos_getfileattr(filename, &fattrs);
    return fattrs & _A_HIDDEN;
-#elif defined (WINNT) || defined(__NT__)
+#elif defined(__NT__)
    unsigned fattrs;
    fattrs = (GetFileAttributes(filename) & 0x2) ? _A_HIDDEN : 0;
    return fattrs & _A_HIDDEN;
-#elif defined (OS2)
+#elif defined (__OS2__)
    FILESTATUS3 fstat3;
    const char *p;
    char *q,*backslashified;
@@ -939,7 +941,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       }
    }
 
-#if !defined(UNIX)
+#if !defined(__UNIX__)
    if(hidden(ticedfile)) {
       w_log('6',"File %s from filearea %s not completely received, wait",tic.file,tic.area);
       disposeTic(&tic);
@@ -1109,7 +1111,7 @@ void processDir(char *directory, e_tossSecurity sec)
          strcpy(dummy, directory);
          strcat(dummy, file->d_name);
 
-#if !defined(UNIX)
+#if !defined(__UNIX__)
          if (!hidden(dummy)) {
 #endif
             rc=processTic(dummy,sec);
@@ -1133,7 +1135,7 @@ void processDir(char *directory, e_tossSecurity sec)
                   remove (dummy);
                   break;
             } /* switch */
-#if !defined(UNIX)
+#if !defined(__UNIX__)
          }
 #endif
          nfree(dummy);

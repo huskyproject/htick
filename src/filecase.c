@@ -34,13 +34,20 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <unistd.h>
+
+/*  compiler.h */
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#  include <unistd.h>
 #endif
 
+/* smapi */
 
+/* fidoconf */
 #include <fidoconf/common.h>
 
+/* htick */
 #include <global.h>
 #include <filecase.h>
 

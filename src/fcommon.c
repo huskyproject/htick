@@ -310,7 +310,7 @@ int link_file(const char *from, const char *to)
    }
    return TRUE;
 
-#elif defined (_UNISTD_H) && !defined(OS2)
+#elif defined (_UNISTD_H) && !defined(__OS2__)
 
    rc = (link(from, to) == 0);
 

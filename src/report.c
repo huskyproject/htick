@@ -441,9 +441,6 @@ void reportNewFiles()
     FILE      *rp;
     ps_anndef RepDef;
     char      *cp=NULL;
-/*#ifndef UNIX
-    char      *dp=NULL;
-#endif*/
 
     for(i = 0; i < config->ADCount; i++)    
     {
@@ -490,27 +487,8 @@ void reportNewFiles()
             {
                 /* if output to file:  \r ==> \r\n */
                 cp=msg->text;
-/*#ifdef UNIX*/
                 while( (cp=strchr(cp, '\r')) )
                   *cp='\n';
-/*#else
-                for( j=0; (cp=strchr(cp, '\r')); j++ );
-                cp=msg->text;
-                dp = smalloc(strlen(msg->text)+1+j);
-                for( dp=cp; *cp; dp++, cp++ )
-                { 
-                    if( *cp=='\r' )
-                    { *(dp++)='\r'; *dp='\n'; }
-                    else *dp = *cp;
-                }
-                *dp='\0';
-                nfree(msg->text);
-                msg->text = dp;
-#endif
-
-                msg->textLength = strlen(msg->text);
-                fwrite(msg->text, 1, msg->textLength, rp);
-*/
                 fprintf(rp, msg->text); /* Automatic translate "\n" to "\015\012" */
                 w_log(LL_FLAG, "Created report file: %s", msg->subjectLine);
                 fclose(rp);

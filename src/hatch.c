@@ -4,7 +4,7 @@
  * Hatch file to fileecho implementation
  *
  * This file is part of HTICK, part of the Husky fidosoft project
- * http://husky.physcip.uni-stuttgart.de
+ * http://husky.sourceforge.net
  *
  * HTICK is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published by the
@@ -29,14 +29,17 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(__TURBOC__) && !(defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <unistd.h>
+/*  compiler.h */
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#  include <unistd.h>
 #endif
 
-
-#include <smapi/compiler.h>
+/* smapi */
 #include <smapi/progprot.h>
 
+/* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/common.h>
@@ -46,6 +49,7 @@
 #include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
 
+/*  htick  */
 #include <filecase.h>
 #include <seenby.h>
 #include <version.h>

@@ -35,12 +35,21 @@
 #include <string.h>
 #include <ctype.h>
 #include <errno.h>
-#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200)) ) && (!defined(__TURBOC__)))
-#include <unistd.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+
+/* compiler.h */
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#include <unistd.h>
 #endif
 
+/* smapi */
+#include <smapi/prog.h>
+#include <smapi/patmat.h>
+
+/* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/xstr.h>
@@ -48,9 +57,7 @@
 #include <fidoconf/arealist.h>
 #include <fidoconf/areatree.h>
 
-#include <smapi/prog.h>
-#include <smapi/patmat.h>
-
+/* htick */
 #include <fcommon.h>
 #include <global.h>
 #include <version.h>
@@ -1120,7 +1127,7 @@ int   autoCreate(char *c_area, char *descr, ps_addr pktOrigAddr, ps_addr dwLink)
             w_log( LL_FUNC, "%s::autoCreate() rc=1", __FILE__ );
             return 1;
         }
-#if defined (UNIX)
+#if defined (__UNIX__)
         if(config->fileAreaCreatePerms && chmod(buff, config->fileAreaCreatePerms))
             w_log(LL_ERR, "Cannot chmod() for newly created filearea directory '%s': %s",
             sstr(buff), strerror(errno));

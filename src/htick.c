@@ -34,38 +34,45 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#ifndef __IBMC__
-#if ((!(defined(_MSC_VER) && (_MSC_VER >= 1200))) && (!defined(__TURBOC__)))
-#  include <unistd.h>
-#endif
-#endif
 #include <sys/types.h>
 #include <signal.h>
 #include <fcntl.h>
 #include <sys/stat.h>
-#if ((defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__TURBOC__) || defined(__DJGPP__)) || defined(__MINGW32__)
+
+#if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
+/* we can't include windows.h for prevent conflicts: send() & other */
+#define CharToOem CharToOemA
+#endif
+
+/*  compiler.h */
+#include <smapi/compiler.h>
+
+#ifdef HAS_UNISTD_H
+#  include <unistd.h>
+#endif
+
+#ifdef HAS_IO_H
 #  include <io.h>
 #endif
 
-#ifdef OS2
+#ifdef __OS2__
 #define INCL_DOSPROCESS
 #define INCL_DOSERRORS
 #include <os2.h>
-#ifndef __OS2__
-#define __OS2__
-#endif
 #endif
 
+/* smapi */
 #include <smapi/msgapi.h>
 #include <smapi/progprot.h>
 
-
+/* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 #include <fidoconf/log.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/xstr.h>
 
+/* htick */
 #include <htick.h>
 #include <global.h>
 #include <cvsdate.h>
@@ -76,11 +83,6 @@
 #include <filelist.h>
 #include <areafix.h>
 #include "report.h"
-
-#if (defined(__EMX__) || defined(__MINGW32__)) && defined(__NT__)
-/* we can't include windows.h for several reasons ... */
-#define CharToOem CharToOemA
-#endif
 
 static char *cfgfile=NULL;
 
@@ -331,36 +333,7 @@ void processConfig()
 int main(int argc, char **argv)
 {
    struct _minf m;
-/*
-   char *version = NULL;
 
-
-   xscatprintf(&version, "%u.%u.%u%s%s", VER_MAJOR, VER_MINOR, VER_PATCH, VER_SERVICE, VER_BRANCH);
-
-#ifdef __linux__
-   xstrcat(&version, "/lnx");
-#elif defined(__FreeBSD__) || defined(__NetBSD__)
-   xstrcat(&version, "/bsd");
-#elif defined(__OS2__) || defined(OS2)
-   xstrcat(&version, "/os2");
-#elif defined(__NT__)
-   xstrcat(&version, "/w32");
-#elif defined(__sun__)
-   xstrcat(&version, "/sun");
-#elif defined(__DJGPP__)
-   xstrcat(&version, "/dpmi");
-#elif defined(MSDOS)
-   xstrcat(&version, "/dos");
-#elif defined(__BEOS__)
-   xstrcat(&version, "/beos");
-#endif
-
-
-   if (strcmp(VER_BRANCH,"-stable")!=0) xscatprintf(&version, " %s", cvs_date);
-   xscatprintf(&versionStr,"HTick %s", version);
-   nfree(version);
-
-*/
    versionStr = GenVersionStr( "HTick", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
 
