@@ -1,3 +1,20 @@
+2003-03-15 Saturday 22:02  d_sergienko
+
+	* h/fcommon.h (1.21), h/global.h (1.23), src/add_desc.c (1.35),
+	src/areafix.c (1.118), src/clean.c (1.17), src/fcommon.c (1.66),
+	src/filelist.c (1.37), src/hatch.c (1.79), src/htick.c (1.95),
+	src/report.c (1.39), src/scan.c (1.30), src/toss.c (1.259): fix
+	compiling
+
+2003-03-15 Saturday 19:36  d_sergienko
+
+	* src/: areafix.c (1.117), htick.c (1.94), scan.c (1.29): fix
+	compiling
+
+2003-03-15 Saturday 13:44  d_sergienko
+
+	* src/htick.c (1.93): use initLogr()
+
 2003-03-14 Friday 14:02  stas_degteff
 
 	* src/toss.c (1.258): Make less strong tick files check
