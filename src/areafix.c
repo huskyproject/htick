@@ -136,59 +136,6 @@ int unsubscribeAreaCheck(s_filearea *area, s_message *msg, char *areaname, s_lin
 	return rc;
 }
 
-
-void addlink(s_link *link, s_filearea *area) {
-    s_arealink *arealink;
-
-    area->downlinks = srealloc(area->downlinks, sizeof(s_arealink*)*(area->downlinkCount+1));
-    area->downlinks[area->downlinkCount] = (s_arealink*)scalloc(1, sizeof(s_arealink));
-    area->downlinks[area->downlinkCount]->link = link;
-	arealink = area->downlinks[area->downlinkCount];
-	
-	if (link->numOptGrp > 0) {
-		// default set export on, import on, mandatory off, manual off
-		arealink->export = 1;
-		arealink->import = 1;
-		arealink->mandatory = 0;
-		arealink->manual = 0;
-		
-		if (grpInArray(area->group,link->optGrp,link->numOptGrp)) {
-			arealink->export = link->export;
-			arealink->import = link->import;
-			arealink->mandatory = link->mandatory;
-			arealink->manual = link->manual;
-		}
-		
-	} else {
-		arealink->export = link->export;
-		arealink->import = link->import;
-		arealink->mandatory = link->mandatory;
-		arealink->manual = link->manual;
-	}
-	if (area->mandatory) arealink->mandatory = 1;
-	if (area->manual) arealink->manual = 1;
-	if (link->level < area->levelread)	arealink->export=0;
-	if (link->level < area->levelwrite) arealink->import=0;
-	// paused link can't receive mail
-	if ((link->Pause & FPAUSE) == FPAUSE) arealink->export = 0;
-
-    area->downlinkCount++;
-}
-
-void removelink(s_link *link, s_filearea *area) {
-	unsigned int i;
-	s_link *links;
-
-	for (i=0; i < area->downlinkCount; i++) {
-           links = area->downlinks[i]->link;
-           if (addrComp(link->hisAka, links->hisAka)==0) break;
-	}
-	
-	free(area->downlinks[i]);
-	area->downlinks[i] = area->downlinks[area->downlinkCount-1];
-	area->downlinkCount--;
-}
-
 char *unlinked(s_message *msg, s_link *link)
 {
     unsigned int i, rc, n;
@@ -594,7 +541,7 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 		    case 1:
             case 3:
                 changeconfig (getConfigFileName(), area, link, 0);
-                addlink(link, area);
+                Addlink(link, NULL, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);
                 break;
@@ -659,7 +606,7 @@ char *unsubscribe(s_link *link, s_message *msg, char *cmd) {
 		}
 		
 		switch (rc) {
-		case 0: removelink(link, area);
+        case 0: RemoveLink(link, NULL, area);
 			changeconfig (getConfigFileName(),  area, link, 1);
 			xscatprintf(&report, "%s Unlinked\r",area->areaName);
 			w_log( '8', "FileFix: %s unlinked from %s",aka2str(link->hisAka),area->areaName);
