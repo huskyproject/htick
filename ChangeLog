@@ -1,3 +1,9 @@
+2003-05-07 Wednesday 17:11  mche
+
+	* src/areafix.c (1.120):  - common areafix function moved from
+	htick & hpt to fidoconfig
+	 - process writeonly/readonly tokens for fileechos
+
 2003-04-28 Monday 14:57  mche
 
 	* HISTORY (1.15), src/htick.c (1.97), src/toss.c (1.266): toss -b  
