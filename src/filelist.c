@@ -33,7 +33,10 @@ void printFileArea(s_filearea area, FILE *f) {
    strcpy(fbbsname,fileareapath);
    strcat(fbbsname,"files.bbs");
    if ( (fbbs = fopen(fbbsname,"r")) == NULL ) return;
-   fprintf(f,"FileArea: %s (%s)\n", area.areaName, area.description);
+   if (area.description!=NULL)
+     fprintf(f,"FileArea: %s (%s)\n", area.areaName, area.description);
+   else
+     fprintf(f,"FileArea: %s\n", area.areaName);
    fprintf(f,"-----------------------------------------------------------------------------\n");
 
    while (!feof(fbbs)) {

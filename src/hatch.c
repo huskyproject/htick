@@ -29,7 +29,7 @@ void hatch()
    int i, busy;
    struct stat stbuf;
    extern s_newfilereport **newFileReport;
-   extern newfilesCount;
+   extern int newfilesCount;
 
    newFileReport = NULL;
    newfilesCount = 0;
