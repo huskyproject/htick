@@ -1,3 +1,12 @@
+2003-02-20 Thursday 12:32  stas_degteff
+
+	* HISTORY (1.13): Add sections	for 1.2-stable & 1.4-stable
+
+2003-02-20 Thursday 07:12  sfpavel
+
+	* HISTORY (1.12), VERSION (1.6), h/version.h (1.6): Update version
+	info
+
 2003-02-17 Monday 12:28  mche
 
 	* src/areafix.c (1.113), src/clean.c (1.15), src/filelist.c (1.35),
