@@ -210,8 +210,14 @@ Defaults are switched off with empty 'fileAreaDefaults'.
 
 23) fileDescName <name>
 
-If no LDESC defined in tic file, use <name> file from archive fill it.
-'unpack' action should be defined for archive and contain $f parameter.
+If no LDESC defined in tic file, use <name> file from archive to fill it
+(usually file_id.diz).
+Note:
+'unpack' action should be defined for archive and contain $f parameter
+($f replaces with file name on unpacking time). Examples:
+Unpack  "/path/to/unrar e -y -ec- -o- -cl $a $p $f" 0 52617221
+Unpack  "\path\pkzipc -ext -dir=none -over=all -nozip -silent $a $p $f" 0 504b0304
+
 
 24) RemoteFileRobotName <name>
 
