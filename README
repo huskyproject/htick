@@ -1,7 +1,6 @@
 The following things are currently not implemented in HTICK:
 ------------------------------------------------------------------------
 
-- purging old files
 - security check of tossgroup
 - dupe checking
 - much, much more :)

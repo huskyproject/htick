@@ -1,3 +1,5 @@
+# $Id$
+#
 # include Husky-Makefile-Config
 ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Paket has one included.
