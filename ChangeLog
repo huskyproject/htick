@@ -1,3 +1,10 @@
+2004-05-09 Sunday 15:49  andrew_ladutsko
+
+	* h/areafix.h (1.16), src/areafix.c (1.126): functions
+	e_readCheck() and e_writeCheck() temporarily moved here from
+	fidoconfig, their functionality after merging areafix and filefix
+	would be carried out by other functions
+
 2004-04-28 Wednesday 04:20  nssoft
 
 	* Makefile (1.23): Fixing compilation with enabled HPTZIP
