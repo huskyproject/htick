@@ -129,3 +129,10 @@ int    createOutboundFileName(s_link *link, e_prio prio, e_type typ);
 
 int    createLockFile(char *lockFile);
 #endif
+
+int removeFileMask(char *directory, char *mask);
+/*DOC
+  Input:  directory is the directory where remove file[s]
+          mask is the file mask for remove file[s]
+  Output: 
+*/

@@ -261,6 +261,7 @@ void processConfig()
       strcpy(config->busyFileDir, config->outbound);
       sprintf(config->busyFileDir + strlen(config->outbound), "busy.htk%c", PATH_DELIM);
    }
+   if (config->ticOutbound == NULL) config->ticOutbound = strdup(config->passFileAreaDir);
 }
 
 int main(int argc, char **argv)

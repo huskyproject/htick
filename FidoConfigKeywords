@@ -1,30 +1,72 @@
 1) FileAreaBaseDir <directory>
 
-Where the directories for all File areas shall be made at autocreate
+Where the directories for all Fileareas shall be made at autocreate.
 Same as MsgBaseDir
 
 2) PassFileAreaDir <directory>
 
-Where shall be put files from Passthrough File areas (and TICs)
+Where shall be put files from Passthrough File areas (and TICs, if
+not define ticOutbound).
 
 3) FileDescPos <number>
 
-Position in files.bbs for description, if description more then 1 line
+Indent long descriptions in FILES.BBS by number characters (not
+counting fileLDescString!).
 Reccomended 13
 
 4) fileLDescString <string>
 
-String before description, if description for file more then 1 line.
+This string is put before long descriptions in FILES.BBS. If it is not
+set, it is set to a single space.
 
 5) FileFixHelp <file>
 
-Help file for FileFix  (Same as AreaFixHelp for AreaFix)
+Help file for FileFix.
+Same as AreaFixHelp for AreaFix
 
 6) FileArea <name> <fileareapath> <uplink> [options] <downlinks>
 
-Same as EchoArea, most options are valid
-new option: noCRC to disable CRC on incoming files
-new option: sendorig to send files from PassFileAreaDir for non passthrough areas
+Same as EchoArea, most options are valid:
+
+    a) -a <address>
+
+    Our address
+    
+    b) -lr <number>
+
+    Min level for recieve files from this filearea
+
+    c) -lw <number>
+
+    Min level for put files to this filearea
+
+    d) -h
+
+    Hide area (non visible in %LIST and in announce)
+
+    e) -manual
+
+    Disallow remote changes (only manual connect/disconnect)
+
+    f) -sendorig
+
+    to send files from PassFileAreaDir for non passthrough areas
+
+    g) -nopause
+
+    %PAUSE has no effect to this filearea
+
+    h) -noCRC
+
+    to disable CRC on incoming files
+
+    i) -g <group>
+
+    Group for this filearea
+
+    j) -d "<string>"
+
+    Description for this filearea
 
 7) ExecOnFile <filearea> <filemask> <command>
   
@@ -54,7 +96,7 @@ Show Origin in announce
 
 11) MaxTicLineLength <number>
 
-Set maximum line length in TIC to <number>
+Set maximum line length in outgoing TICs to number.
 
 12) BusyFileDir <directory>
 
@@ -77,3 +119,20 @@ Add Download counters to files.bbs
 16) DLCDigits <number>
 
 How much digits DLC must be. DLC have [000] form.
+
+17) ticOutbound <path>
+
+TICs are stored here and killed after transmission
+If ticOutbound not define, ticOutbound=PassFileAreaDir
+
+18) filefixKillReports
+
+Set kill/sent flag to filefix reports
+
+19) filefixKillRequests
+
+Kill filefix request after procession
+
+20) bbsarea <name> <bbsareapath>
+
+For "htick filelist"

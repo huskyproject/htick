@@ -369,3 +369,38 @@ int createOutboundFileName(s_link *link, e_prio prio, e_type typ)
    return 0;
 }
 
+int removeFileMask(char *directory, char *mask)
+{
+    DIR           *dir;
+    struct dirent *file;
+    char          *removefile;
+    char          tmpDir[256];
+    unsigned int  numfiles = 0, dirLen;
+
+   dirLen = strlen(directory);
+   if (directory[dirLen-1] == PATH_DELIM) {
+      strcpy(tmpDir, directory);
+   } else {
+      strcpy(tmpDir, directory);
+      tmpDir[dirLen] = PATH_DELIM;
+      tmpDir[dirLen+1] = '\0';
+      dirLen++;
+   }
+
+   dir = opendir(tmpDir);
+   if (dir != NULL) {
+      while ((file = readdir(dir)) != NULL) {
+         if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
+         if (patimat(file->d_name, mask) != 1) {
+            removefile = (char *) malloc(dirLen+strlen(file->d_name)+1);
+            strcpy(removefile, tmpDir);
+            strcat(removefile, file->d_name);
+            remove(removefile);
+            numfiles++;
+            free(removefile);
+         }
+      }
+      closedir(dir);
+   }
+   return(numfiles);
+}

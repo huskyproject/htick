@@ -3,21 +3,30 @@ htick 0.9
 (released on Mon May 22 14:58:56 CEST 2000)
 
 ----- cvs ci ------
-Sun May 28 17:35:00 SAMST 2000
+Fri Jun 02 10:48:00 SAMST 2000
 Georgi:
-* change some code toss and hatch
+* now outgoing tics stores in ticOutbound directory
+  if ticOutbound not define, then in passFileAreaDir
+* fixed bug in clean - if separateBundles and busy
+* now htick can remove file[s], if field replace is filemask
   Warning! Non tested
-* in hatch now work replace and ExecOnFile
-* fixed bug - if noTIC and busy
 
 ----- cvs ci ------
-Sun May 28 17:35:00 IZH 2000
+Thu Jun 01 15:00:00 SAMST 2000
+Georgi:
+* change some code in toss and hatch
+  Warning! Non tested
+* in hatch now work replace and ExecOnFile
+* fixed bug - if noTIC and link is busy
+
+----- cvs ci ------
+Sun May 28 17:35:00 SAMST 2000
 Georgi (patch from Lev Serebryakov, 2:5030/661):
 * htick now creates DLC, if addDLC is set and DLCDigits is between 1 and 20.
 * htick now process case of file names according to config
   (ConvertShortNames, ConvertLongNames tokens)
 
------ cvs ci ------	
+----- cvs ci ------
 Mon May 22 14:52:27 CEST 2000
 mtt:
 * changed version number to 0.9
@@ -84,7 +93,7 @@ max (patch from Serguei Revtov):
 * change legacy SUN & Win makefiles to compile with new includes, simplifying
 
 ----- cvs ci ------
-Wed Mar 01 09:10:00 IZH 2000
+Wed Mar 01 09:10:00 SAMST 2000
 Georgi:
 * now working filearea option nopause
 
@@ -94,7 +103,7 @@ max (patch from Vladimir Borozenets, 2:5005/49):
 * cosmetical changes in areafix
 
 ----- cvs ci ------
-Wed Feb 23 15:00:00 IZH 2000
+Wed Feb 23 15:00:00 SAMST 2000
 Georgi:
 * added new token MaxTicLineLength
 
@@ -114,12 +123,12 @@ max:
 * compiling without warnings under win32
 
 ----- cvs ci ------
-Sat Feb 12 19:40:00 IZH 2000
+Sat Feb 12 19:40:00 SAMST 2000
 Georgi:
 * added new token originInAnnounce
 
 ----- cvs ci ------
-Sat Feb 12 16:45:00 IZH 2000
+Sat Feb 12 16:45:00 SAMST 2000
 Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 * added new keyword:
   SaveTic <FileEchoMask> <DirToSaveTic>
@@ -144,7 +153,7 @@ max:
 * adopted my changes in fidoconfig for import, export, mandatory & groups
 
 ----- cvs ci ------
-Sat Jan 29 18:17:00 2000
+Sat Jan 29 18:17:00 SAMST 2000
 Georgi:
 * if FileAreaBaseDir is "Passthrough", then autocreated filearea is Passthrough
 * "htick hatch": added support filemask for replace field in TIC
@@ -155,24 +164,24 @@ sms:
 * changed groups from chars to strings
 
 ----- cvs ci ------
-Sun Jan 23 13:52:00 2000
+Sun Jan 23 13:52:00 SAMST 2000
 Georgi:
 * fixed bug in function removeDesc
 * change code in filelist generator
 
 ----- cvs ci ------
-Sun Jan 23 04:30:00 2000
+Sun Jan 23 04:30:00 SAMST 2000
 Georgi:
 * change code in function removeDesc
 
 ----- cvs ci ------
-Sat Jan 22 22:28:00 2000
+Sat Jan 22 22:28:00 SAMST 2000
 Georgi:
 * fixed bug in patch from Nestyurkin Nikolay
 * added support hatching in Passthrough filearea
 
 ----- cvs ci ------
-Sat Jan 22 15:38:40 2000
+Sat Jan 22 15:38:40 SAMST 2000
 Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 * added support tokens FileDescPos and FileLDescString
 Georgi:
@@ -190,7 +199,7 @@ Mon Jan  3 21:21:59 NOVT 2000
 * manual -> mandatory
 
 ----- cvs ci ------
-Sat Dec 18 19:26:50 1999 
+Sat Dec 18 19:26:50 SAMST 1999 
 Georgi (patch from Alex Semenyaka, 2:461/640):
 * fixed bug in AreaFix (%HELP)
 
@@ -201,7 +210,7 @@ mrd:
   holded for busy links
 
 ----- cvs ci ------
-Sat Dec 11 19:40:20 1999 
+Sat Dec 11 19:40:20 SAMST 1999 
 Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 * added token fileEchoFlavour (flavour for fileecho)
   Warning, please put this token in config, if you use htick!
@@ -209,7 +218,7 @@ Georgi (patch from Nestyurkin Nikolay, 2:5020/3600):
 ----- cvs ci ------
 mtt:
 * remove strLower from htick, because its in fidoconfig
-	
+
 ----- cvs ci ------
 Tue Nov 30 22:13:00 1999
 sms:
@@ -221,8 +230,8 @@ htick 0.02
 ----------
 
 ----- cvs ci ------
-Sun Nov 07 15:30:00 1999
-georgi:
+Sun Nov 07 15:30:00 SAMST 1999
+Georgi:
 + Added support fowrardPkts for TIC
 
 ----- cvs ci ------
@@ -231,7 +240,7 @@ sms:
 - reorganized Makefiles, please read README.Makefiles in the husky-common
   package!
 
------ cvs ci ------	
+----- cvs ci ------
 Wed Oct 13 09:27:01 CEST 1999 
 mtt:
 - fixed typo
@@ -242,11 +251,12 @@ max:
 * win32 porting
 
 ----- cvs ci ------
-Thu Aug 05 13:40:05 1999
+Thu Aug 05 13:40:05 SAMST 1999
 Georgi:
 * bugfix in %resend
 
-Sat Jul 31 00:44:05 1999
+----- cvs ci ------
+Sat Jul 31 00:44:05 SAMST 1999
 Georgi:
 * Added "-lw <level>" and "-lr <level>" in filearea options
 
@@ -255,50 +265,50 @@ Sun Jul 25 21:17:54 NOVST 1999
 max:
 * small bugfix (if no passFileAreaDir in config -> core dump)
 
-Sun Jul 25 21:11:45 1999
+Sun Jul 25 21:11:45 SAMST 1999
 Georgi:
 * change in "htick filelist"
 
-Sat Jul 24 10:01:25 1999
+Sat Jul 24 10:01:25 SAMST 1999
 Georgi:
 * security check for %resend
 * bugfix if in TIC file write in lowercase
 
-Thu Jul 22 11:39:46 1999
+Thu Jul 22 11:39:46 SAMST 1999
 Georgi:
 * bugfix in move from .htk dir
 
-Tue Jul 20 14:32:20 1999
+Tue Jul 20 14:32:20 SAMST 1999
 Georgi:
 + FileFix now support %resend
 + Added "htick send"
 
-Tue Jul 20 01:15:25 1999
+Tue Jul 20 01:15:25 SAMST 1999
 Georgi:
 * small bugfix in "htick filelist"
 
-Sun Jul 18 22:41:05 1999
+Sun Jul 18 22:41:05 SAMST 1999
 Georgi:
 + support Passthrough fileareas
 
-Thu Jul 16  20:57:45
+Thu Jul 16 20:57:45 SAMST 1999
 Georgi:
 * FileFix now support mask
 * post announce about new files in ReportTo or announceArea (from command string)
 * bugfix if not define -r and/or -w in filearea option
 
-Wed Jul 15  19:23:54
+Wed Jul 15 19:23:54 SAMST 1999
 Georgi:
 * bugfix in toss
 * small change FileFix
 
-Wed Jul 14  20:48:50
+Wed Jul 14 20:48:50 SAMST 1999
 Georgi:
 * bugfix if link is busy
 * small change FileFix
 * small bugfix in write file in files.bbs
 
-Sun Jul 11  12:27:35
+Sun Jul 11 12:27:35 SAMST 1999
 Georgi:
 * small bugfix with recoding in posting announce and FileFix
 * posting about new files in echoarea ("htick <toss | hatch> [announce <area>"])
@@ -310,7 +320,7 @@ max:
 * small bugfix in recode.c
 
 ----- cvs ci ------
-Thu Jul  1  15:30:55
+Thu Jul 01 15:30:55 SAMST 1999
 Georgi:
 * Fixed bug with seenby
 
@@ -326,7 +336,7 @@ Fedor:
 + Added posting about autocreating filearea in netmail or echoarea (ReportTo)
 + Added posting about new files in netmail or echoarea (ReportTo)
 
-Wed Jun 23  14:52:45
+Wed Jun 23 14:52:45 SAMST 1999
 Georgi Fofanov (georgi@inem.uni.udm.ru):
 * Many changes for "htick toss"
 + Added "htick hatch"
@@ -351,7 +361,7 @@ Fedor:
 Tue May 11 19:13:26 CEST 1999 
 mtt:
 + applied patch by Oleg to compile htick under os/2 with pgcc/emx
-	
+
 Thu Apr 29, 1999
 Gabriel Plutzar:
  + Downlinks who get files are now added to the Seen By List
@@ -360,7 +370,7 @@ Sat Apr 24
 By Alex Erzin, checked in by Gabriel
  + files.bbs files supported
  + seenbys added
-	
+
 htick 0.01
 (released on Wed Apr 21 18:44:22 CEST 1999)
 ----------
@@ -386,5 +396,5 @@ Th 18.03.1999
   with the new fidoconfig version
 
 
----	
+---     
 First Release, there will be many bugs in it
