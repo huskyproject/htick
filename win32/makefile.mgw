@@ -28,9 +28,7 @@ OBJS    = htick.o    \
           seenby.o   \
           hatch.o    \
           filelist.o \
-          filecase.o \
-          report.o   \
-          clean.o    \
+          filecase.o
 
 all: $(TARGET)
 
