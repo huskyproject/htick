@@ -1,3 +1,11 @@
+2002-05-10 Friday 17:32  pavel.gulchouck
+
+	* src/toss.c (1.152): bugfix
+
+2002-05-10 Friday 14:38  pavel.gulchouck
+
+	* src/htick.c (1.55): added SetFileApisToOEM() call
+
 2002-05-07 Tuesday 15:28  mche
 
 	* src/: add_desc.c (1.6), areafix.c (1.58): strncasesearch changed
