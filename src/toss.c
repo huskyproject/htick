@@ -35,7 +35,9 @@
 #include <os2.h>
 #endif
 
-#include <io.h>
+#if ((defined(_MSC_VER) && (_MSC_VER >= 1200)) || defined(__TURBOC__) || defined(__DJGPP__)) || defined(__MINGW32__)
+#  include <io.h>
+#endif
 #include <string.h>
 #include <stdlib.h>
 #ifndef UNIX
