@@ -48,6 +48,10 @@
 #define getcwd  _getcwd
 #endif
 
+#if defined (UNIX)
+#include <unistd.h>
+#endif
+
 int add_description (char *descr_file_name, char *file_name, char **description, unsigned int count_desc)
 {
     FILE *descr_file;
