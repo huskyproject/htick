@@ -345,8 +345,8 @@ char *available(s_link *link) {
 	if ((uplink->forwardFileRequests && uplink->forwardFileRequestFile) &&
 	    ((uplink->LinkGrp == NULL) || (found != 0))) {
 	    if ((f=fopen(uplink->forwardFileRequestFile,"r")) == NULL) {
-		w_log(LL_AREAFIX, "Filefix: cannot open forwardRequestFile \"%s\": %s",
-		      uplink->forwardRequestFile, strerror(errno));
+		w_log(LL_AREAFIX, "Filefix: cannot open forwardFileRequestFile \"%s\": %s",
+		      uplink->forwardFileRequestFile, strerror(errno));
 		return report;
 	    }
 
@@ -474,8 +474,8 @@ int forwardRequestToLink( char *areatag,  char *descr,
     
     if (uplink->msg == NULL) {
         msg = makeMessage(uplink->ourAka, &(uplink->hisAka), config->sysop, 
-            uplink->RemoteRobotName ? uplink->RemoteRobotName : "filefix",
-            uplink->areaFixPwd ? uplink->areaFixPwd : "\x00", 1,
+            uplink->RemoteFileRobotName ? uplink->RemoteFileRobotName : "filefix",
+            uplink->fileFixPwd ? uplink->fileFixPwd : "\x00", 1,
             config->filefixKillReports);
         msg->text = createKludges(config->disableTID,NULL, 
             uplink->ourAka, &(uplink->hisAka),
@@ -489,10 +489,10 @@ int forwardRequestToLink( char *areatag,  char *descr,
             if (config->createFwdNonPass == 0) uplink->fileBaseDir = pass;
             // create from own address
             if (isOurAka(config,dwlink->hisAka)) {
-                uplink->msgBaseDir = base;
+                uplink->fileBaseDir = base;
             }
             autoCreate(areatag, descr, &(uplink->hisAka), &(dwlink->hisAka));
-            uplink->msgBaseDir = base;
+            uplink->fileBaseDir = base;
         }
         xstrscat(&msg->text, "+", areatag, "\r", NULL);
     } else  {
@@ -920,10 +920,10 @@ void sendFilefixMessages()
         link = &(config->links[i]);
         linkmsg = link->msg;
         
-        xscatprintf(&(linkmsg->text), " \r--- %s areafix\r", versionStr);
+        xscatprintf(&(linkmsg->text), " \r--- %s Filefix\r", versionStr);
         linkmsg->textLength = strlen(linkmsg->text);
         
-        w_log('8', "areafix: write netmail msg for %s", aka2str(link->hisAka));
+        w_log(LL_AREAFIX, "Filefix: write netmail msg for %s", aka2str(link->hisAka));
         
         writeNetmail(linkmsg, config->robotsArea);
 
