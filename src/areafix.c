@@ -61,6 +61,7 @@
 
 unsigned char RetFix;
 
+int limitCheck(s_link *link, s_message *msg);
 
 char *errorRQ(char *line)
 {
