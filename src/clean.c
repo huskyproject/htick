@@ -200,9 +200,9 @@ void purgeFileEchos()
 
 void Purge(void)
 {
-    w_log( LL_INFO, "Start clean (purging files in passthrough dir)...");
+    w_log( LL_INFO, "Start clean (purging files in passthrough dir) ...");
     cleanPassthroughDir();
-    w_log(LL_STOP,  "End   Cleaning Passthrough Dir...");
+    w_log(LL_STOP,  "End   Cleaning Passthrough Dir");
 
     purgeFileEchos();
 }

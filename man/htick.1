@@ -1,4 +1,4 @@
-.TH HTICK 1 "Husky Tick v0.09a" "04 April 2001" "Husky - Portable Fido Software"
+.TH HTICK 1 "Husky Tick v1.1.0" "09 July 2002" "Husky - Portable Fido Software"
 .SH NAME
 htick \- Husky File-Ticker
 .SH SYNOPSIS
@@ -38,14 +38,15 @@ Scanning Netmail area for mails to filefix.
 .B hatch <file> <area> [<description>]
 Hatch File <file> in in Area <area> with optional description.
 .br
-.B filelist <file>
+.B filelist <file> [<dirlist>]
 Generate filelist which includes all files in Filebase.
+<dirlist> - list of paths to files from filelist.
 .br
 .B send <file> <filearea> <address>
 Send file from filearea to address.
 .br
 .B clean
-Clean passthrough dir.
+Clean passthrough dir and old files in fileechos.
 .SS "Optional Commands"
 .B announce <area>
 Announce new files in area (toss and hatch).

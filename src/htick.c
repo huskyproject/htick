@@ -112,7 +112,7 @@ int processCommandLine(int argc, char **argv)
             "                         <dirlist> - list of paths to files from filelist\n"
             " send <file> <filearea> <address>\n"
             "                         Send file from filearea to address\n"
-            " clean                   Clean passthrough dir\n"
+            " clean                   Clean passthrough dir and old files in fileechos\n"
             " ffix [<addr> command]   Process filefix\n"
             " announce                Announce new files\n"
             "\n"
