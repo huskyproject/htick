@@ -1086,10 +1086,11 @@ void checkTmpDir(s_link link)
       }
 
       while ((file = readdir(dir)) != NULL) {
+         if (strlen(file->d_name) != 12) continue;
          ticfile = (char *) malloc(strlen(tmpdir)+strlen(file->d_name)+1);
          strcpy(ticfile, tmpdir);
          strcat(ticfile, file->d_name);
-         if (patimat(file->d_name, "*.TIC") == 1) {
+         if (stricmp(file->d_name+8, ".TIC") == 0) {
             memset(&tic,0,sizeof(tic));
             parseTic(ticfile,&tic);
             filearea=getFileArea(config,tic.area);
