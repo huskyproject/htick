@@ -1,3 +1,8 @@
+2003-04-16 Wednesday 06:35  andr_lukyanov
+
+	* os2/: makefile.emo, makefile.emx, makefile.wco
+	(htick-1_4-stable.[1,1,1]): Fixed OS/2 compilation
+
 2003-03-07 Friday 13:30  stas_degteff
 
 	* src/toss.c (htick-1_4-stable.3): Fix DJGPP build
