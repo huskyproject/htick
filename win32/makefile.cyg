@@ -28,7 +28,6 @@ htick: $(OBJS)
 
 clean:
 	-rm -f *.o
-	-rm *~
 	-rm core
 	-rm htick
 

@@ -26,4 +26,3 @@ clean:
 
 distclean: clean
 	DEL htick.exe
-	
