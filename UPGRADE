@@ -1,4 +1,4 @@
-This document desribe how to upgrade from HTICK 1.0 to HTICK 1.4.
+This document describe how to upgrade from HTICK 1.0 to HTICK 1.4.
 
 1. ReportTo token doesn't use for file announces now. See sample config
    file and documentation for new tokens:
@@ -19,3 +19,5 @@ This document desribe how to upgrade from HTICK 1.0 to HTICK 1.4.
    - AnnOrigin : origin for announce messages;
    - AnnFileOrigin : show system address that hatch file in announce;
    - AnnFileRFrom : show system address which file recived from.
+
+2. For announce new files run 'htick announce' or 'htick toss announce'.
