@@ -1,65 +1,86 @@
 # $Id$
+#
 # Microsoft Visual C++ Makefile for build dinamic program(s)
-# with Internal ZIP (Zlib) support
 # No support for the Husky build environment.
 #
 # Tested on MS Visual C 6.0
 #
+include ../makefile.inc
 
-HPTZIP=0
+USE_HPTZIP=0
 
-!if $(HPTZIP) == 1
+!if $(USE_HPTZIP) == 1
 HPTZIPL = ..\..\hptzip\make\hptzip.lib
 HPTZIPI = -I..\..\hptzip
 HPTZIPD = -DUSE_HPTZIP
 !endif
 
-CC=     cl
-CFLAGS= -nologo -MD -Zp1
-CINCL	= -I..\h -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI)
-CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL $(HPTZIPD)
+## programs ##
 
-# uncomment one of these lines if you want to enable hardlinking on NTFS 4.0, 5.0
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
+CC	= cl
+AR	= lib
+LINK	= link
+RANLIB	=
+RM	= del
 
-COPT=   -O2
-TLIB=   lib -nologo
+## file suffixes ##
+_C	= .c
+_OBJ	= .obj
+_LIB	= .lib
+_EXE	= .exe
+_DLL	= .dll
+_EXP	= .exp
+_ILK	= .ilk
+_PDB	= .pdb
 
+## program options ##
+CFLAGS=-nologo -MD -Zp1 -Ob2 -c
+CINCL= -I$(H_DIR) -I..\..\fidoconf -I..\..\smapi -I..\..\huskylib $(HPTZIPI)
+LFLAGS=
+EXENAMEFLAG=-Fe
+
+CDEFS =-D__NT__ -D_CONSOLE -D_MAKE_DLL $(HPTZIPD)
+
+# Uncomment one of these lines if you want to enable hardlinking
+# on NTFS 4.0 or 5.0
+#CDEFS	= $(CDEFS) -D_WIN32_WINNT=0x0400
+#CDEFS	= $(CDEFS) -D_WIN32_WINNT=0x0500
+
+# List of HUSKY libraries required to build binary file(s)
 LIBS	= ..\..\huskylib\make\huskymvc.lib \
-	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\fconfmvc.lib \
-	  $(HPTZIPL) \
-	  USER32.LIB msvcrt.lib Kernel32.lib /link /opt:nowin98
+	  ..\..\smapi\make\smapimvc.lib ..\..\fidoconf\make\fconfmvc.lib \
+	  (HPTZIPL) \
+	  USER32.LIB msvcrt.lib Kernel32.lib \
+	  /link /nodefaultlib /opt:nowin98
 
-HTICKL=	htickmvc.lib
+default: all
+programs: $(PROGRAMS)
+all: programs
 
-OBJS    = global.obj \
-          toss.obj \
-          fcommon.obj \
-          scan.obj \
-          areafix.obj \
-          add_desc.obj \
-          seenby.obj \
-          hatch.obj \
-          filelist.obj\
-          filecase.obj\
-          report.obj\
-          clean.obj
+{$(_SRC_DIR)}.c$(_OBJ):
+	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $<
 
-{..\src}.c.obj:
-	$(CC) $(CFLAGS) $(CINCL) $(CDEFS) $(COPT) -c $<
 
-all: $(HTICKL) htick.exe
+$(PROGRAMS): $(OBJS)
+	$(CC) $(LFLAGS) $(EXENAMEFLAG)$@ $** $(LIBS)
 
-$(HTICKL): $(OBJS)
-	$(TLIB) /out:$@ $(OBJS)
+man:
 
-htick.exe:
-        $(CC) $(CFLAGS) $(CINCL) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(LIBS) $(HTICKL)
+doc: man
+	man2html$(_EXE) <..\$(LIBNAME).1 >$(LIBNAME).html
 
 clean:
-	-del *.obj
-	-del *.lib
+	-$(RM) $(RMOPT) *$(_OBJ)
 
 distclean: clean
-	-del *.exe
+	-$(RM) $(RMOPT) $(PROGRAMS)
+	-$(RM) $(RMOPT) $(LIBNAME).html
+
+install: programs doc
+	$(INSTALL) $(IBOPT) $(PROGRAMS) $(BINDIR)
+	$(INSTALL) $(IBOPT) ..\$(LIBNAME).1 $(DOCDIR)
+	$(INSTALL) $(IBOPT) $(LIBNAME).html $(DOCDIR)
+
+uninstall:
+	-$(RM) $(RMOPT) $(BINDIR)\$(PROGRAMS)
+	-$(RM) $(RMOPT) $(DOCDIR)\$(LIBNAME).html
