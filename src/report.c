@@ -346,10 +346,8 @@ void reportNewFiles()
 {
     UINT      fileCountTotal = 0;
     UINT32    fileSizeTotal = 0;
-
     UINT      i,j,ii;
     s_message *msg = NULL;
-    char      *tmp = NULL;
     FILE      *echotosslog;
     ps_anndef RepDef;
     
