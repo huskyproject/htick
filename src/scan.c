@@ -139,11 +139,10 @@ void scanNMArea(s_area *afixarea)
    unsigned long   highMsg, i, j;
    XMSG            xmsg;
    s_addr          dest;
-   // s_addr  orig;
    int             for_us;
-   // int from_us;
    s_message       filefixmsg;
 
+   memset (&filefixmsg,'\0',sizeof(s_message));
    netmail = MsgOpenArea((unsigned char *) afixarea->fileName, MSGAREA_NORMAL, (word)afixarea->msgbType);
    if (netmail != NULL) {
 
