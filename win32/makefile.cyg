@@ -3,10 +3,10 @@
 
 # Uncomment this to compile info for gdb and display more compiler warnings:
 # usually uncommented in current branch.
-DEBUG	= -g -pedantic
+# DEBUG	= -g -pedantic
 
 # Uncomment this to strip all simbols from binaries to reduce file sizes
-#STRIP	= -s
+STRIP	= -s
 
 # Uncomment one of these lines if you want to enable hardlinking
 # on NTFS 4.0 or 5.0
