@@ -1,0 +1,21 @@
+This document desribe how to upgrade from HTICK 1.0 to HTICK 1.4.
+
+1. ReportTo token doesn't use for file announces now. See sample config
+   file and documentation for new tokens:
+
+   - AnnounceSpool : directory for temporary announce files;
+   - AnnAreaTag : Name of area when annouce will be placed, begins new
+     announce definition section;
+   - AnnAddrFrom : announce message sender address;
+   - AnnFrom : announce message sender name;
+   - AnnAddrTo : announce message recipient address;
+   - AnnTo : announce message recipient name;
+   - AnnSubj : announce message subject;
+   - AnnInclude : Array of fileecho names|masks that will be announced in
+     this annAreaTag;
+   - AnnExclude : Array of fileecho names|masks that won't be announced
+     in this annAreaTag;
+   - AnnMessFlags : announce message flags ("k/s", "loc", "hld", ...);
+   - AnnOrigin : origin for announce messages;
+   - AnnFileOrigin : show system address that hatch file in announce;
+   - AnnFileRFrom : show system address which file recived from.
