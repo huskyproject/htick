@@ -44,6 +44,7 @@
 #include "toss.h"
 #include "htick.h"
 #include "global.h"
+#include "fcommon.h"
 
 
 static tree* fileTree = NULL;

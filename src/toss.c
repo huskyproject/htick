@@ -60,13 +60,6 @@
 #include <process.h>
 #endif
 
-#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
-#include <process.h>
-#define P_WAIT		_P_WAIT
-#define chdir   _chdir
-#define getcwd  _getcwd
-#endif
-
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/adcase.h>
 #include <fidoconf/common.h>
@@ -299,120 +292,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
   return(1);
 }
 
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-void *mk_lst(char *a) {
-    char *p=a, *q=a, **list=NULL, end=0, num=0;
-
-    while (*p && !end) {
-	while (*q && !isspace(*q)) q++;
-	if (*q=='\0') end=1;
-	*q ='\0';
-	list = (char **) realloc(list, ++num*sizeof(char*));
-	list[num-1]=(char*)p;
-	if (!end) {
-	    p=q+1;
-	    while(isspace(*p)) p++;
-	}
-	q=p;
-    }
-    list = (char **) realloc(list, (++num)*sizeof(char*));
-    list[num-1]=NULL;
-
-    return list;
-}
-#endif
-
-int parseFileDesc(char *fileName,s_ticfile *tic)
-{
-   FILE *filehandle, *dizhandle = NULL;
-   char *line, *dizfile = NULL;
-   int  j, found;
-   unsigned int  i;
-   signed int cmdexit;
-   char cmd[256];
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-    const char * const *list;
-#endif
-
-    // find what unpacker to use
-    for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
-	filehandle = fopen(fileName, "rb");
-	if (filehandle == NULL) return 2;
-	// is offset is negative we look at the end
-	fseek(filehandle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
-	if (ferror(filehandle)) { fclose(filehandle); continue; };
-	for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
-	    if ((getc(filehandle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j])
-		found = 0;
-	}
-	fclose(filehandle);
-    }
-
-    // unpack file_id.diz (config->fileDescName)
-    if (found) {
-    char buffer[256]="";
-    getcwd( buffer, 256 );
-	fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
-	w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
-    chdir(config->tempInbound);
-    if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
-    {
-        cmdexit = 1;
-#ifdef USE_HPT_ZLIB
-        cmdexit = UnPackWithZlib(fileName, config->tempInbound);
-#endif
-    }
-    else
-    {
-#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
-        list = mk_lst(cmd);
-        cmdexit = spawnvp(P_WAIT, cmd, list);
-        free((char **)list);
-        if (cmdexit != 0) {
-            w_log( LL_ERROR, "exec failed: %s, return code: %d", strerror(errno), cmdexit);
-            chdir(buffer);
-            return 3;
-        }
-#else
-        if ((cmdexit = system(cmd)) != 0) {
-            w_log( LL_ERROR, "exec failed, code %d", cmdexit);
-            chdir(buffer);
-            return 3;
-        }
-#endif
-    }
-    chdir(buffer);
-   
-    } else {
-        w_log( LL_ERROR, "file %s: cannot find unpacker", fileName);
-        return 3;
-    };
-   xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescName);
-   if ((dizhandle=fopen(dizfile,"r")) == NULL) {
-      w_log(LL_ERROR,"File %s not found or not moveable",dizfile);
-      nfree(dizfile);
-      return 3;
-   };
-
-   for (i=0;i<(unsigned int)tic->anzldesc;i++)
-      nfree(tic->ldesc[i]);
-   tic->anzldesc=0;
-
-   while ((line = readLine(dizhandle)) != NULL) {
-      tic->ldesc=
-         srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
-      tic->ldesc[tic->anzldesc]=sstrdup(line);
-      tic->anzldesc++;
-      nfree(line);
-   } /* endwhile */
-
-  fclose(dizhandle);
-  remove(dizfile);
-
-  nfree(dizfile);
-
-  return(1);
-}
 
 int readCheck(s_filearea *echo, s_link *link)
 {
@@ -636,8 +515,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
        w_log('6',"Put %s to %s",filename,newticedfile);
    }
 
-   if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz)
-         parseFileDesc(newticedfile, tic);
+   if (tic->anzldesc==0 && config->fileDescName && !filearea->nodiz && isToss)
+         GetDescFormDizFile(newticedfile, tic);
 
    if (!filearea->pass) {
       strcpy(descr_file_name, filearea->pathName);

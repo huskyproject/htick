@@ -28,81 +28,326 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include <fidoconf/fidoconf.h>
+#include <fidoconf/adcase.h>
+#include <fidoconf/common.h>
+#include <fidoconf/dirlayer.h>
+#include <fidoconf/xstr.h>
+#include <fidoconf/afixcmd.h>
+#include <fidoconf/recode.h>
+#include <fidoconf/crc.h>
+
+#include <smapi/progprot.h>
+#include <smapi/compiler.h>
+
+#include <filecase.h>
+#include <seenby.h>
+#include <version.h>
+#include <add_desc.h>
 #include <hatch.h>
 #include <global.h>
 #include <fcommon.h>
 #include <toss.h>
-#include <fidoconf/log.h>
-#include <fidoconf/crc.h>
-#include <fidoconf/common.h>
-#include <add_desc.h>
-#include <fidoconf/recode.h>
-#include <version.h>
-#include <smapi/progprot.h>
-#include <fidoconf/adcase.h>
-#include <fidoconf/xstr.h>
-#include <filecase.h>
-#include <seenby.h>
 
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
+#define getcwd  _getcwd
+#endif
+
+
+
+typedef enum _descrMacro {BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;
+
+int getDescOptions(char *desc, char **filename)
+{
+    byte descOPT = 0;
+
+    if (stricmp(desc,"@@BBS") == 0)
+        descOPT = BBSONELINE;
+    else if (stricmp(desc,"@@DIZ") == 0)
+        descOPT = DIZONELINE;
+    else if (stricmp(desc,"@BBS") == 0)
+        descOPT = BBSMLTLINE;
+    else if (stricmp(desc,"@DIZ") == 0)
+        descOPT = DIZMLTLINE;
+    else if (desc[0] == '@')
+    {
+        char *basename = desc;
+        basename++; 
+        if(*basename == '@') 
+            basename++; 
+        if(fexist(basename))
+        {
+            descOPT = (desc-basename == 1)? FILMLTLINE : FILONELINE;
+            *filename = sstrdup(basename);
+        }
+    }
+    return descOPT;       
+}
+
+void expandDescMacros(s_ticfile *tic, char *hatchedFile)
+{
+    char *descr_file_name = NULL;
+    char *basename        = NULL;
+    char *ldFileName      = NULL;
+    char *sdFileName      = NULL;
+    char ctmp;
+    int  SdescOPT  = 0;
+    int  LdescOPT = 0;
+    s_ticfile tmptic;
+    char **tmpArray = NULL;
+    UINT i;
+
+    if(tic->anzdesc > 0)
+    {
+        SdescOPT  = getDescOptions(tic->desc[0],&sdFileName);
+        if( SdescOPT > 0 )
+        {
+            nfree(tic->desc[0]);
+            tic->desc[0] = sstrdup("-- description missing --");
+        }
+    }
+    if(tic->anzldesc > 0)
+    {
+        LdescOPT = getDescOptions(tic->ldesc[0],&ldFileName);
+        if( LdescOPT > 0 )
+        {
+            nfree(tic->ldesc[0]);
+            nfree(tic->ldesc);
+            tic->anzldesc = 0;
+        }
+    }
+
+    if(!SdescOPT && !LdescOPT)
+        return;
+
+    memset(&tmptic,0,sizeof(s_ticfile));    
+
+    if(SdescOPT == BBSONELINE || LdescOPT == BBSONELINE || SdescOPT == BBSMLTLINE || LdescOPT == BBSMLTLINE)
+    {
+        if (strrchr(tic->file,PATH_DELIM))
+        {
+            basename = strrchr(tic->file,PATH_DELIM);
+            ctmp = *basename;
+            *basename  = '\0';
+            xscatprintf(&descr_file_name, "%s%c%s", tic->file,PATH_DELIM,"files.bbs");    
+            *basename  = ctmp;    
+        } else {
+            xstrcat(&descr_file_name, "files.bbs");    
+        }
+        adaptcase(descr_file_name);
+        if( GetDescFormBbsFile(descr_file_name, tic->file, tic) == 0)
+        {
+            if      ( LdescOPT == BBSONELINE ) 
+            {
+                tic->anzldesc = 1;
+                tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
+                tic->ldesc[0] = sstrdup(tic->desc[0]);
+                LdescOPT = 0;
+            }
+            else if ( LdescOPT == BBSMLTLINE ) 
+            {
+                tic->anzldesc = tic->anzdesc;
+                tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
+                for( i = 0; i < tic->anzdesc; i++)
+                {
+                    tic->ldesc[i]=sstrdup(tic->desc[i]);
+                }
+                LdescOPT = 0;
+            }
+            if      ( SdescOPT == BBSONELINE ) 
+            {
+                for( i = 1; i < tic->anzdesc; i++)
+                {
+                    nfree(tic->desc[i]);
+                }
+                tic->anzdesc = 1;
+                SdescOPT = 0;
+            } else {
+                SdescOPT = 0;
+            }
+        }
+    }
+
+    if(!SdescOPT && !LdescOPT)
+        return;
+
+    if(SdescOPT == DIZONELINE || LdescOPT == DIZONELINE || SdescOPT == DIZMLTLINE || LdescOPT == DIZMLTLINE)
+    {
+        if ( GetDescFormDizFile(hatchedFile, &tmptic) == 1 )
+        {
+            if(SdescOPT == DIZMLTLINE || LdescOPT == DIZMLTLINE)
+            {
+                tmpArray = scalloc(sizeof(char*),tmptic.anzldesc);                
+                for( i = 0; i < tmptic.anzldesc; i++)
+                {
+                    tmpArray[i]=sstrdup(tmptic.ldesc[i]);
+                }
+            }
+            if      ( LdescOPT == DIZONELINE ) 
+            {
+                tic->anzldesc = 1;
+                tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
+                tic->ldesc[0] = sstrdup(tmptic.ldesc[0]);
+            }
+            else if ( LdescOPT == DIZMLTLINE ) 
+            {
+                tic->anzldesc = tmptic.anzldesc;
+                tic->ldesc = tmpArray;
+            }
+            if      ( SdescOPT == DIZONELINE ) 
+            {
+                nfree(tic->desc[0]);
+                tic->desc[0] = sstrdup(tmptic.ldesc[0]);
+            }
+            else if ( SdescOPT == DIZMLTLINE ) 
+            {
+                tic->anzdesc = tmptic.anzldesc;
+                tic->desc = tmpArray;
+            }
+            disposeTic(&tmptic);
+            memset(&tmptic,0,sizeof(s_ticfile));    
+        }
+    }
+
+    if( SdescOPT == FILONELINE || SdescOPT == FILMLTLINE )
+    {
+        if ( GetDescFormFile(sdFileName, &tmptic) == 1 )
+        {
+            if(SdescOPT == FILMLTLINE || LdescOPT == FILMLTLINE )
+            {
+                tmpArray = scalloc(sizeof(char*),tmptic.anzldesc);                
+                for( i = 0; i < tmptic.anzldesc; i++)
+                {
+                    tmpArray[i]=sstrdup(tmptic.ldesc[i]);
+                }
+            }
+            if      ( SdescOPT == FILONELINE ) 
+            {
+                nfree(tic->desc[0]);
+                tic->desc[0] = sstrdup(tmptic.ldesc[0]);
+            }
+            else if ( SdescOPT == FILMLTLINE ) 
+            {
+                tic->anzdesc = tmptic.anzldesc;
+                tic->desc = tmpArray;
+            }
+        }
+    }
+    if( LdescOPT == FILONELINE || LdescOPT ==FILMLTLINE )
+    {
+        if( sdFileName && ldFileName && stricmp(sdFileName,ldFileName) == 0 )
+        {
+            if      ( LdescOPT == FILONELINE ) 
+            {
+                tic->anzldesc = 1;
+                tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
+                tic->ldesc[0] = sstrdup(tmptic.ldesc[0]);
+            }
+            else if ( SdescOPT == FILMLTLINE ) 
+            {
+                tic->anzldesc = tmptic.anzldesc;
+                tic->ldesc = tmpArray;
+            }
+        } else {
+            disposeTic(&tmptic);
+            memset(&tmptic,0,sizeof(s_ticfile));    
+            if ( GetDescFormFile(ldFileName, &tmptic) == 1 )
+            {
+                if      ( LdescOPT == FILMLTLINE )
+                {
+                    tic->anzldesc = tmptic.anzldesc;
+                    tic->ldesc    = scalloc(sizeof(char*),tmptic.anzldesc);                
+                    for( i = 0; i < tmptic.anzldesc; i++)
+                    {
+                        tic->ldesc[i]=sstrdup(tmptic.ldesc[i]);
+                    }
+                }
+                else if ( LdescOPT == FILONELINE ) 
+                {
+                    tic->anzldesc = 1;
+                    tic->ldesc = scalloc(sizeof(*tic->ldesc),tic->anzldesc);
+                    tic->ldesc[0] = sstrdup(tmptic.ldesc[0]);
+                }
+            }
+        }
+    }
+
+    if (config->outtab != NULL)
+    {
+        for( i = 0; i < tic->anzdesc; i++)
+        {
+            recodeToTransportCharset(tic->desc[i]);
+        }
+        for( i = 0; i < tic->anzldesc; i++)
+        {
+            recodeToTransportCharset(tic->ldesc[i]);
+        }
+    }
+    
+    disposeTic(&tmptic);
+}
 
 void hatch()
 {
-    s_ticfile tic;
     s_filearea *filearea;
     struct stat stbuf;
+    char *hatchedFile = NULL;
+    char buffer[256]="";
     
-   w_log( LL_INFO, "Start file hatch...");
+    w_log( LL_INFO, "Start file hatch...");
     
-    memset(&tic,0,sizeof(tic));
+
+    hatchedFile = sstrdup(hatchInfo->file);
     
     // Exist file?
-    adaptcase(hatchfile);
-    if (!fexist(hatchfile)) {
-        w_log(LL_ALERT,"File %s, not found",hatchfile);
-        disposeTic(&tic);
+    adaptcase(hatchedFile);
+    if (!fexist(hatchedFile)) {
+        w_log(LL_ALERT,"File %s, not found",hatchedFile);
         return;
     }
-    
-    tic.file = sstrdup(GetFilenameFromPathname(hatchfile));
-    
-    MakeProperCase(tic.file);
-    
-    tic.area = sstrdup(hatcharea);
-    filearea=getFileArea(config,tic.area);
-    
-    if (config->outtab != NULL) recodeToTransportCharset(hatchdesc);
-    tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(&tic.desc));
-    tic.desc[tic.anzdesc]=sstrdup(hatchdesc);
-    tic.anzdesc++;
-    if (hatchReplace) tic.replaces = sstrdup(replaceMask);
-    /*
-    if (filearea==NULL) {
-    autoCreate(tic.area,tic.from,tic.areadesc);
-    filearea=getFileArea(config,tic.area);
+
+    xstrcpy(&hatchInfo->file, GetFilenameFromPathname(hatchedFile));
+
+    if(stricmp(hatchedFile,hatchInfo->file) == 0) //hatch from current dir
+    {
+        int len=0;
+        getcwd( buffer, 256 );
+        len = strlen(buffer);
+        if( buffer[len-1] == PATH_DELIM)
+        {
+            Strip_Trailing(buffer, PATH_DELIM);
+        }
+        nfree(hatchedFile);
+        xscatprintf(&hatchedFile, "%s%c%s", buffer, (char) PATH_DELIM,hatchInfo->file);
     }
-    */
+
+    MakeProperCase(hatchInfo->file);
+    
+    filearea=getFileArea(config,hatchInfo->area);
+    
     if (filearea == NULL) {
-        w_log('9',"Cannot open or create File Area %s",tic.area);
-        if (!quiet) fprintf(stderr,"Cannot open or create File Area %s !",tic.area);
-        disposeTic(&tic);
+        w_log('9',"Cannot open or create File Area %s",hatchInfo->area);
         return;
     } 
     
-    stat(hatchfile,&stbuf);
-    tic.size = stbuf.st_size;
-    
-    tic.origin = tic.from = *filearea->useAka;
+    expandDescMacros(hatchInfo,hatchedFile);
 
-    seenbyAdd(&tic.seenby,&tic.anzseenby,filearea->useAka);
+    stat(hatchedFile,&stbuf);
+    hatchInfo->size = stbuf.st_size;
+    
+    hatchInfo->origin = hatchInfo->from = *filearea->useAka;
+    
+    seenbyAdd(&hatchInfo->seenby,&hatchInfo->anzseenby,filearea->useAka);
     
     if(filearea->description)
-    tic.areadesc = sstrdup(filearea->description);
+        hatchInfo->areadesc = sstrdup(filearea->description);
     // Adding crc
-    tic.crc = filecrc32(hatchfile);
+    hatchInfo->crc = filecrc32(hatchedFile);
     
-    sendToLinks(0, filearea, &tic, hatchfile);
-   
-    disposeTic(&tic);
+    sendToLinks(0, filearea, hatchInfo, hatchedFile);
+    
+    nfree(hatchedFile);
 }
 
 int send(char *filename, char *area, char *addr)
@@ -192,7 +437,7 @@ int send(char *filename, char *area, char *addr)
     xstrscat(&descr_file_name, filearea->pathName,"files.bbs",NULL);
     adaptcase(descr_file_name);
     
-    getDesc(descr_file_name, tic.file, &tic);
+    GetDescFormBbsFile(descr_file_name, tic.file, &tic);
     
     // Adding path
     time(&acttime);
@@ -206,14 +451,8 @@ int send(char *filename, char *area, char *addr)
     tic.anzpath++;
     
     // Adding Downlink to Seen-By
-    /*
-    tic.seenby=srealloc(tic.seenby,(tic.anzseenby+1)*sizeof(s_addr));
-    memcpy(&tic.seenby[tic.anzseenby], &link->hisAka, sizeof(s_addr));
-    tic.anzseenby++;
-    */
     seenbyAdd(&tic.seenby,&tic.anzseenby,&link->hisAka);
     // Forward file to
-
     PutFileOnLink(sendfile, &tic, link);
 
     disposeTic(&tic);

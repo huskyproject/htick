@@ -64,7 +64,6 @@ char      *versionStr=NULL;
 int       cmToss = 0;
 int       cmScan = 0;
 int       cmHatch = 0;
-int       hatchReplace = 0;
 int       cmSend = 0;
 int       cmFlist = 0;
 int       cmClean = 0;
@@ -73,10 +72,15 @@ int       cmAfix = 0;
 char      *flistfile = NULL;
 char      *dlistfile = NULL;
 
+/*
 char      hatchfile[256];
 char      hatcharea[256];
 char      hatchdesc[256];
 char      replaceMask[256];
+*/
+
+s_ticfile*       hatchInfo = NULL;
+
 
 char      sendfile[256];
 char      sendarea[256];

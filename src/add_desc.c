@@ -34,6 +34,18 @@
 #include <toss.h>
 #include <filecase.h>
 
+#if defined(__WATCOMC__) || defined(__TURBOC__) || defined(__DJGPP__)
+#include <dos.h>
+#include <process.h>
+#endif
+
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <process.h>
+#define P_WAIT		_P_WAIT
+#define chdir   _chdir
+#define getcwd  _getcwd
+#endif
+
 int add_description (char *descr_file_name, char *file_name, char **description, unsigned int count_desc)
 {
     FILE *descr_file;
@@ -200,40 +212,32 @@ int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
     return 0;
 }
 
-int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
+int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
 {
-    FILE *f1;
-    char hlp[1024] = "", tmp[1024] = "", *token = NULL;
+    FILE *filehandle;
+    char *line = NULL, *tmp = NULL, *token = NULL;
+
     int flag = 0, rc = 1;
     
-    f1 = fopen (descr_file_name, "r");
-    if (f1 == NULL) return 1;
+    filehandle = fopen (descr_file_name, "r+b");
+    if (filehandle == NULL) return 1;
     
-    while (!feof(f1)) {
-        fgets(hlp,sizeof(hlp),f1);
+    while ((line = readLine(filehandle)) != NULL) {
         
-        if (hlp[0]==0 || hlp[0]==10 || hlp[0]==13)
-            continue;
-        
-        if (hlp[strlen(hlp)-1]=='\r')
-            hlp[strlen(hlp)-1]=0;
-        
-        if (hlp[strlen(hlp)-1]=='\n')
-            hlp[strlen(hlp)-1]=0;
-        
-        if (flag && (*hlp == '\t' || *hlp == ' ' || *hlp == '>')) {
-            token=stripLeadingChars(hlp, " >");
+        if (flag && (*line == '\t' || *line == ' ' || *line == '>')) {
+            token=stripLeadingChars(line, " >");
             if (*token == '>') token++;
             tic->desc=
                 srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
             tic->desc[tic->anzdesc]=sstrdup(token);
             tic->anzdesc++;
+            nfree(line);
             continue;
         }
         else
             flag = 0;
         
-        strcpy(tmp,hlp);
+        tmp = sstrdup(line);
         token = strtok(tmp, " \t\0");
         
         if (token==NULL)
@@ -242,6 +246,7 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
         if (stricmp(token,file_name) == 0) {
             token=stripLeadingChars(strtok(NULL, "\0"), " ");
             if (token != NULL) {
+                UINT i;
                 if(config->addDLC && config->DLCDigits > 0 && config->DLCDigits < 10 && token[0] == '[') {
                     char *p = token;
                     while(']' != *p)p++;
@@ -249,6 +254,9 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
                     while(' ' == *p)p++;
                     strcpy(token,p);
                 }
+                for( i = 0; i < tic->anzdesc; i++)
+                    nfree(tic->desc[i]);
+                tic->anzdesc = 0;
                 tic->desc=
                     srealloc(tic->desc,(tic->anzdesc+1)*sizeof(*tic->desc));
                 tic->desc[tic->anzdesc]=sstrdup(token);
@@ -257,11 +265,141 @@ int getDesc (char *descr_file_name, char *file_name, s_ticfile *tic)
             flag = 1;
             rc = 0;
         }
-        hlp[0] = '\0';
+        nfree(line);
+        nfree(tmp);
     }
     
-    fclose (f1);
+    fclose (filehandle);
     w_log(LL_FILE, "getDesc OK for file: %s",file_name);
     return rc;
+}
+
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
+void *mk_lst(char *a) {
+    char *p=a, *q=a, **list=NULL, end=0, num=0;
+
+    while (*p && !end) {
+	while (*q && !isspace(*q)) q++;
+	if (*q=='\0') end=1;
+	*q ='\0';
+	list = (char **) realloc(list, ++num*sizeof(char*));
+	list[num-1]=(char*)p;
+	if (!end) {
+	    p=q+1;
+	    while(isspace(*p)) p++;
+	}
+	q=p;
+    }
+    list = (char **) realloc(list, (++num)*sizeof(char*));
+    list[num-1]=NULL;
+
+    return list;
+}
+#endif
+
+
+int GetDescFormFile (char *fileName, s_ticfile *tic)
+{
+    FILE *filehandle = NULL;
+    UINT i;
+    char *line = NULL;
+
+    if ((filehandle=fopen(fileName,"r")) == NULL) {
+        w_log(LL_ERROR,"File %s not found",fileName);
+        return 3;
+    };
+    
+    for ( i = 0;i < tic->anzldesc;i++)
+        nfree(tic->ldesc[i]);
+    tic->anzldesc=0;
+    
+    while ((line = readLine(filehandle)) != NULL) {
+        tic->ldesc=
+            srealloc(tic->ldesc,(tic->anzldesc+1)*sizeof(*tic->ldesc));
+        tic->ldesc[tic->anzldesc]=sstrdup(line);
+        tic->anzldesc++;
+        nfree(line);
+    } /* endwhile */
+    fclose(filehandle);
+    return 1;
+}
+
+int GetDescFormDizFile (char *fileName, s_ticfile *tic)
+{
+    FILE *filehandle = NULL;
+    char *dizfile = NULL;
+    int  j, found;
+    UINT i;
+    signed int cmdexit;
+    char cmd[256];
+
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
+    const char * const *list;
+#endif
+    
+    // find what unpacker to use
+    for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
+        filehandle = fopen(fileName, "rb");
+        if (filehandle == NULL) return 2;
+        // is offset is negative we look at the end
+        fseek(filehandle, config->unpack[i].offset, config->unpack[i].offset >= 0 ? SEEK_SET : SEEK_END);
+        if (ferror(filehandle)) { fclose(filehandle); continue; };
+        for (found = 1, j = 0; j < config->unpack[i].codeSize; j++) {
+            if ((getc(filehandle) & config->unpack[i].mask[j]) != config->unpack[i].matchCode[j])
+                found = 0;
+        }
+        fclose(filehandle);
+    }
+    
+    // unpack file_id.diz (config->fileDescName)
+    if (found) {
+        char buffer[256]="";
+        getcwd( buffer, 256 );
+        fillCmdStatement(cmd,config->unpack[i-1].call,fileName,config->fileDescName,config->tempInbound);
+        w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
+        chdir(config->tempInbound);
+        if( fc_stristr(config->unpack[i-1].call, "zipInternal") )
+        {
+            cmdexit = 1;
+#ifdef USE_HPT_ZLIB
+            cmdexit = UnPackWithZlib(fileName, config->tempInbound);
+#endif
+        }
+        else
+        {
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
+            list = mk_lst(cmd);
+            cmdexit = spawnvp(P_WAIT, cmd, list);
+            free((char **)list);
+            if (cmdexit != 0) {
+                w_log( LL_ERROR, "exec failed: %s, return code: %d", strerror(errno), cmdexit);
+                chdir(buffer);
+                return 3;
+            }
+#else
+            if ((cmdexit = system(cmd)) != 0) {
+                w_log( LL_ERROR, "exec failed, code %d", cmdexit);
+                chdir(buffer);
+                return 3;
+            }
+#endif
+        }
+        chdir(buffer);
+
+    } else {
+        w_log( LL_ERROR, "file %s: cannot find unpacker", fileName);
+        return 3;
+    }
+    xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescName);
+    
+    found = GetDescFormFile (dizfile, tic);
+
+    if( found == 1 )
+    {
+        remove(dizfile);
+    }
+    nfree(dizfile);
+    
+    return found;
 }
 

@@ -34,6 +34,31 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/log.h>
 
+struct ticfiletype {
+                char *file;         // Name of the file affected by Tic
+                char *area;         // Name of File Area
+                char *areadesc;     // Description of File Area
+                char **desc;        // Short Description of file
+                unsigned int anzdesc;        // Number of Desc Lines
+                char *replaces;     // Replaces File
+                int size;           // Size of file
+                unsigned long crc;  // CRC of File
+                unsigned long date; // Date
+                s_addr from;        // From Addr
+                s_addr to;          // To Addr
+                s_addr origin;      // Origin
+                char *password;     // Password
+                char **ldesc;       // Array of Pointer to Strings with ldescs
+                unsigned int anzldesc;       // Number of Ldesc Lines
+                s_addr *seenby;     // Array of Pointer to Seenbys
+                unsigned int anzseenby;      // Number of seenbys
+                char **path;        // Array of Pointer to Strings with Path
+                unsigned int anzpath;        // Numer of Path lines
+                };
+
+typedef struct ticfiletype s_ticfile;
+
+
 extern s_log     *htick_log;
 extern s_fidoconfig *config;
 extern unsigned char quiet;	/* Quiet mode */
@@ -47,7 +72,6 @@ char *print_ch(int len, char ch);
 extern int       cmToss;
 extern int       cmScan;
 extern int       cmHatch;
-extern int       hatchReplace;
 extern int       cmSend;
 extern int       cmFlist;
 extern int       cmAnnounce;
@@ -58,10 +82,15 @@ extern int       cmAfix;
 
 extern char      *flistfile;
 extern char      *dlistfile;
+/*
 extern char      hatchfile[256];
 extern char      hatcharea[256];
 extern char      hatchdesc[256];
 extern char      replaceMask[256];
+*/
+
+s_ticfile*       hatchInfo;
+
 extern char      sendfile[256];
 extern char      sendarea[256];
 extern char      sendaddr[256];

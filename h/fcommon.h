@@ -33,39 +33,8 @@
 
 #include <fidoconf/typesize.h>
 #include <stdio.h>
-
 #include <fidoconf/fidoconf.h>
 
-struct ticfiletype {
-                char *file;         // Name of the file affected by Tic
-                char *area;         // Name of File Area
-                char *areadesc;     // Description of File Area
-                char **desc;        // Short Description of file
-                unsigned int anzdesc;        // Number of Desc Lines
-                char *replaces;     // Replaces File
-                int size;           // Size of file
-                unsigned long crc;  // CRC of File
-                unsigned long date; // Date
-                s_addr from;        // From Addr
-                s_addr to;          // To Addr
-                s_addr origin;      // Origin
-                char *password;     // Password
-                char **ldesc;       // Array of Pointer to Strings with ldescs
-                unsigned int anzldesc;       // Number of Ldesc Lines
-                s_addr *seenby;     // Array of Pointer to Seenbys
-                unsigned int anzseenby;      // Number of seenbys
-                char **path;        // Array of Pointer to Strings with Path
-                unsigned int anzpath;        // Numer of Path lines
-                };
-
-typedef struct ticfiletype s_ticfile;
- 
-
-// moved to fidoconfig
-//enum prio {CRASH, HOLD, NORMAL, DIRECT, IMMEDIATE};
-//enum type {PKT, REQUEST, FLOFILE}; moved to fidoconfig
-//typedef enum prio e_prio;
-//typedef enum type e_type;
 
 /* common functions */
 

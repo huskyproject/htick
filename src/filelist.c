@@ -215,7 +215,7 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
             flag = 1;
         }
         memset(&tic,0,sizeof(tic));
-        if (getDesc(fbbsname, file->d_name, &tic) == 1) {
+        if (GetDescFormBbsFile(fbbsname, file->d_name, &tic) == 1) {
             tic.desc=srealloc(tic.desc,(tic.anzdesc+1)*sizeof(*tic.desc));
             tic.desc[tic.anzdesc]=sstrdup("Description not avaliable");
             tic.anzdesc = 1;

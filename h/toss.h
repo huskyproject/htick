@@ -30,7 +30,7 @@
 
 #ifndef TOSS_H
 #define TOSS_H
-#include "fcommon.h"
+#include "global.h"
 
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;

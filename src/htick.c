@@ -88,11 +88,82 @@ int __stdcall SetFileApisToOEM(void);
 
 static char *cfgfile=NULL;
 
+int processHatchParams(int i, int argc, char **argv)
+{
+
+    char *basename, *extdelim;
+
+    if (argc-i < 2) {
+        fprintf(stderr, "Insufficient number of arguments\n");
+        return 0;
+    }
+
+    cmHatch   = 1;
+    hatchInfo = scalloc(sizeof(s_ticfile),1);
+    basename  = (argv[i]!=NULL) ? argv[i++] : "";
+    hatchInfo->file    = sstrdup( basename );
+    hatchInfo->anzdesc = 1;
+    hatchInfo->desc    = srealloc(hatchInfo->desc,(hatchInfo->anzdesc)*sizeof(&hatchInfo->desc));
+    hatchInfo->desc[0] = sstrdup("-- description missing --");
+
+    // Check filename for 8.3, warn if not
+    basename = strrchr(hatchInfo->file, PATH_DELIM);
+    if (basename==NULL) basename = hatchInfo->file; else basename++;
+    if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
+    
+    if (extdelim - basename > 8 || strlen(extdelim) > 4) {
+        if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
+    }
+    basename = (argv[i]!=NULL) ? argv[i++] : "";
+    hatchInfo->area = sstrdup( basename );
+
+    if( argc-i == 0)
+    {
+        return 1;
+    }
+    if (stricmp(argv[i], "replace") == 0) {
+        if ( (i < argc-1) && (stricmp(argv[i+1], "desc") != 0)) {
+            i++;
+            hatchInfo->replaces = sstrdup(argv[i]);
+        } else {
+            basename  = strrchr(hatchInfo->file,PATH_DELIM)   ? 
+                strrchr(hatchInfo->file,PATH_DELIM)+1 : 
+            hatchInfo->file;
+            
+            hatchInfo->replaces = sstrdup( basename );
+        }
+        i++;
+    }
+    if( argc-i < 2 && (stricmp(argv[i], "desc") != 0))
+    {
+        return 1;
+    }
+    i++;
+    nfree(hatchInfo->desc[0]);
+    hatchInfo->desc[0] = sstrdup( argv[i] );
+#ifdef __NT__
+    CharToOem(hatchInfo->desc[0], hatchInfo->desc[0]);
+#endif
+    i++;
+    if( argc-i != 0)
+    {
+        hatchInfo->anzldesc = 1;
+        hatchInfo->ldesc    = srealloc(hatchInfo->ldesc,(hatchInfo->anzldesc)*sizeof(&hatchInfo->ldesc));
+        hatchInfo->ldesc[0] = sstrdup( argv[i] );
+        
+#ifdef __NT__
+        CharToOem(hatchInfo->ldesc[0], hatchInfo->ldesc[0]);
+#endif
+        
+    }
+    return 1;
+}
+
 int processCommandLine(int argc, char **argv)
 {
     int i = 0;
     int rc = 1;
-    char *basename, *extdelim;
+    
 
     if (argc == 1) {
         printf(
@@ -106,8 +177,8 @@ int processCommandLine(int argc, char **argv)
             " [annfile <file>]        Announce new files in text file (toss and hatch)\n"
             " [annfecho <file>]       Announce new fileecho in text file\n"
             " scan                    Scanning Netmail area for mails to filefix\n"
-            " hatch <file> <area> [<description>]\n"
-            " [replace [<filemask>]]  Hatch file into Area, using Description for file,\n"
+            " hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]\n"
+            "                         Hatch file into Area, using Description for file,\n"
             "                         if exist \"replace\", then fill replace field in TIC;\n"
             "                         if not exist <filemask>, then put <file> in field\n"
             " filelist <file> [<dirlist>]\n"
@@ -141,31 +212,8 @@ int processCommandLine(int argc, char **argv)
             cmScan = 1;
             continue;
         } else if (stricmp(argv[i], "hatch") == 0) {
-            if (argc-i < 3) {
-                fprintf(stderr, "Insufficient number of arguments\n");
-                return(0);
-            }
-            cmHatch = 1;
-            i++;
-            strcpy(hatchfile, (argv[i]!=NULL)?argv[i++]:"");
-            // Check filename for 8.3, warn if not
-            basename = strrchr(hatchfile, PATH_DELIM);
-            if (basename==NULL) basename = hatchfile; else basename++;
-            if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
-
-            if (extdelim - basename > 8 || strlen(extdelim) > 4) {
-                if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
-            }
-            strcpy(hatcharea, (argv[i]!=NULL)?argv[i++]:"");
-            if (i < argc) {
-                strcpy(hatchdesc, argv[i]);
-#ifdef __NT__
-                CharToOem(hatchdesc, hatchdesc);
-#endif
-            }
-            else
-                strcpy(hatchdesc, "-- description missing --");
-            continue;
+            processHatchParams(i+1, argc, argv);
+            break;
         } else if (stricmp(argv[i], "ffix") == 0) {
             if (i < argc-1) {
                 i++;
@@ -183,15 +231,6 @@ int processCommandLine(int argc, char **argv)
             strcpy(sendfile, (argv[i]!=NULL)?argv[i++]:"");
             strcpy(sendarea, (argv[i]!=NULL)?argv[i++]:"");
             strcpy(sendaddr, (argv[i]!=NULL)?argv[i]:"");
-            continue;
-        } else if (stricmp(argv[i], "replace") == 0) {
-            hatchReplace = 1;
-            if (i < argc-1) {
-                i++;
-                strcpy(replaceMask, argv[i]);
-            } else strcpy(replaceMask, (strrchr(hatchfile,PATH_DELIM)) ?
-                strrchr(hatchfile,PATH_DELIM)+1 :
-            hatchfile);
             continue;
         } else if (stricmp(argv[i], "filelist") == 0) {
             cmFlist = 1;
@@ -386,7 +425,11 @@ int main(int argc, char **argv)
    nfree(afixCmd);
    nfree(flistfile);
    nfree(dlistfile);
-
+   if(hatchInfo)
+   {
+       disposeTic(hatchInfo);
+       nfree(hatchInfo);
+   }
    // deinit SMAPI
    MsgCloseApi();
 
