@@ -1,3 +1,7 @@
+2005-02-19 Saturday 15:33  val_khokhlov
+
+	* src/toss.c (1.287): fix a bug with autoCreate() call
+
 2005-02-12 Saturday 13:38  val_khokhlov
 
 	* htick.vcproj (1.5): Visual C project update (by Victor Poyarkov)
