@@ -90,6 +90,12 @@
 #include <process.h>
 #endif
 
+#if (defined(_MSC_VER) && (_MSC_VER >= 1200))
+#include <process.h>
+#define P_WAIT		_P_WAIT
+#endif
+
+
 s_newfilereport **newFileReport = NULL;
 unsigned newfilesCount = 0;
 
@@ -346,7 +352,7 @@ char *hpt_stristr(char *str, char *find)
     return ((char *)str);
 }
 
-#ifdef __WATCOMC__
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
 void *mk_lst(char *a) {
     char *p=a, *q=a, **list=NULL, end=0, num=0;
 
@@ -377,7 +383,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
    unsigned int  i;
    signed int cmdexit;
    char cmd[256];
-#ifdef __WATCOMC__
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
     const char * const *list;
 #endif
 
@@ -408,7 +414,7 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
         }
         else
         {
-#ifdef __WATCOMC__
+#if ( (defined __WATCOMC__) || (defined(_MSC_VER) && (_MSC_VER >= 1200)) )
             list = mk_lst(cmd);
             cmdexit = spawnvp(P_WAIT, cmd, list);
             free((char **)list);
