@@ -130,7 +130,7 @@ int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
     /*  rc == '\x0003' no access import */
     /*  rc == '\x0004' not linked */
 
-    unsigned int i, rc = 0;
+    unsigned int i=0, rc = 0;
     /* check for OurAka */
     if(!isOurAka(config,link->hisAka))
     {
