@@ -1468,7 +1468,7 @@ void cleanPassthroughDir(void)
             } /* while */
             closedir(dir);
          }
-         if (busy) remove(config->links[i].bsyFile);
+         if (!busy) remove(config->links[i].bsyFile);
          nfree(config->links[i].bsyFile);
          nfree(config->links[i].floFile);
       }
