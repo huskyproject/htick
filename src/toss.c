@@ -95,49 +95,25 @@
 char *versionStr;
 
 /* tic keywords calculated crc */
-#if defined (__sun__)
 
-#define CRC_CREATED      0x11DB
-#define CRC_FILE         0x51DF
-#define CRC_AREADESC     0x8ECA
-#define CRC_DESC         0xEC78
-#define CRC_AREA         0x825A
-#define CRC_CRC          0x5487
-#define CRC_REPLACES     0xCD3A
-#define CRC_ORIGIN       0x1162
-#define CRC_FROM         0xE6D5
-#define CRC_TO           0x7B50
-#define CRC_PATH         0x5411
-#define CRC_SEENBY       0x2D6
-#define CRC_PW           0x24AD
-#define CRC_SIZE         0xEB29
-#define CRC_DATE         0x2ABF
-#define CRC_DESTINATION  0xA5BF
-#define CRC_MAGIC        0x7861
-#define CRC_LDESC        0xB0B4
-
-#else
-
-#define CRC_CREATED     0x4EC6
-#define CRC_FILE        0x1A66
-#define CRC_AREADESC    0xB621
-#define CRC_DESC        0xECBD
-#define CRC_AREA        0x825A
-#define CRC_CRC         0x5487
-#define CRC_REPLACES    0xCF01
-#define CRC_ORIGIN      0xFCDC
-#define CRC_FROM        0x1293
-#define CRC_TO          0x7B50
-#define CRC_PATH        0x5411
-#define CRC_SEENBY      0xC3D4
-#define CRC_PW          0x24AD
-#define CRC_SIZE        0x5593
-#define CRC_DATE        0xD4BD
-#define CRC_DESTINATION 0xA9D1
-#define CRC_MAGIC       0xD858
-#define CRC_LDESC       0x5394
-
-#endif
+#define CRC_CREATED      0xACDA; /*0x4EC6*/
+#define CRC_FILE         0x9AF9; /*0x1A66*/
+#define CRC_AREADESC     0xD824; /*0xB621*/
+#define CRC_DESC         0x717B; /*0xECBD*/
+#define CRC_AREA         0x825A; /*0x825A*/
+#define CRC_CRC          0x5487; /*0x5487*/
+#define CRC_REPLACES     0xCE24; /*0xCF01*/
+#define CRC_ORIGIN       0xE52A; /*0xFCDC*/
+#define CRC_FROM         0xFD30; /*0x1293*/
+#define CRC_TO           0x7B50; /*0x7B50*/
+#define CRC_PATH         0x5411; /*0x5411*/
+#define CRC_SEENBY       0xF84C; /*0xC3D4*/
+#define CRC_PW           0x24AD; /*0x24AD*/
+#define CRC_SIZE         0x94CE; /*0x5593*/
+#define CRC_DATE         0x54EA; /*0xD4BD*/
+#define CRC_DESTINATION  0x6F36; /*0xA9D1*/
+#define CRC_MAGIC        0x7FF4; /*0xD858*/
+#define CRC_LDESC        0xEB38; /*0x5394*/
 
 
 void writeNetmail(s_message *msg, char *areaName)
@@ -379,16 +355,16 @@ int parseTic(char *ticfile,s_ticfile *tic)
         tichandle = fdopen(fh,"r");
     }
 #endif
-    
+
     if(!tichandle){
         w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
         return 0;
     }
-    
+
     while ((line = readLine(tichandle)) != NULL) {
         line = trimLine(line);
-        
-        if (*line==0 || *line==10 || *line==13 || *line==';' || *line=='#') 
+
+        if (*line==0 || *line==10 || *line==13 || *line==';' || *line=='#')
             continue;
 
         if (config->MaxTicLineLength) {
@@ -401,7 +377,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         if (token) {
             key = strcrc16(strUpper(token), 0);
             /* calculate crc16 of tic                                   */
-            /* w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);*/
+            w_log('1', "#define CRC_%-12s 0x%X;",strUpper(token),key);
             param=stripLeadingChars(strtok(NULL, "\0"), "\t");
             if(!param)
             {
@@ -472,7 +448,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         if (config->MaxTicLineLength) nfree(linecut);
         nfree(line);
     } /* endwhile */
-    
+
     fclose(tichandle);
 
     if (!tic->anzdesc) {
@@ -542,7 +518,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     char *comm;
     char *p;
     unsigned int minLinkCount;
-    
+
     if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
     else minLinkCount = 1;             /*  only downlink */
 
@@ -551,21 +527,21 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         w_log(LL_ERROR,"File %s not found",filename);
         return TIC_NotRecvd;
     }
-    
+
     if (filearea->msgbType != MSGTYPE_PASSTHROUGH)
         strcpy(fileareapath,filearea->fileName);
     else
         strcpy(fileareapath,config->passFileAreaDir);
     p = strrchr(fileareapath,PATH_DELIM);
     if(p) strLower(p+1);
-    
+
     _createDirectoryTree(fileareapath);
-    
+
     if (isToss == 1 && tic->replaces!=NULL && filearea->msgbType != MSGTYPE_PASSTHROUGH && !filearea->noreplace) {
         /* Delete old file[s] */
         int num_files;
         char *repl;
-        
+
         repl = strrchr(tic->replaces,PATH_DELIM);
         if (repl==NULL) repl = tic->replaces;
         else repl++;
@@ -574,20 +550,20 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             w_log(LL_DEL,"Removed %d file[s]. Filemask: %s",num_files,repl);
         }
     }
-    
-    
+
+
     strcpy(newticedfile,fileareapath);
     strcat(newticedfile,MakeProperCase(tic->file));
-    
+
     if(filearea->msgbType != MSGTYPE_PASSTHROUGH && filearea->noreplace && fexist(newticedfile)) {
         w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
         return(3);
     }
-    
+
     if (isToss == 1) {
         if (!filearea->sendorig) {
             /* overwrite existing file if not same */
-            if (move_file(filename,newticedfile,1)!=0) { 
+            if (move_file(filename,newticedfile,1)!=0) {
                 w_log( LL_ERROR,"File %s not moveable to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
@@ -596,7 +572,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             }
         } else {
             /* overwrite existing file if not same */
-            if (copy_file(filename,newticedfile,1)!=0) { 
+            if (copy_file(filename,newticedfile,1)!=0) {
                 w_log( LL_ERROR,"File %s not moveable to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
@@ -606,7 +582,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
             /* overwrite existing file if not same */
-            if (move_file(filename,newticedfile,1)!=0) { 
+            if (move_file(filename,newticedfile,1)!=0) {
                 w_log( LL_ERROR, "File %s not moveable to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
@@ -616,7 +592,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         }
     } else if (strcasecmp(filename,newticedfile) != 0) {
             /* overwrite existing file if not same */
-        if (copy_file(filename,newticedfile,1)!=0) { 
+        if (copy_file(filename,newticedfile,1)!=0) {
             w_log( LL_ERROR, "File %s not moveable to %s: %s",
                 filename, newticedfile, strerror(errno) );
             return TIC_NotOpen;
@@ -626,7 +602,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         if (filearea->sendorig) {
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
-			if (copy_file(filename,newticedfile,1)!=0) { 
+			if (copy_file(filename,newticedfile,1)!=0) {
 				w_log( LL_ERROR, "File %s not moveable to %s: %s",
 					filename, newticedfile, strerror(errno) );
 				return TIC_NotOpen;
@@ -635,14 +611,14 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
 			}
         }
     }
-    
+
     if (tic->anzldesc==0 && config->fDescNameCount && !filearea->nodiz && isToss)
         GetDescFormDizFile(newticedfile, tic);
-    
-    
+
+
     if (config->announceSpool) doSaveTic4Report(tic);
-    
-    
+
+
     if (filearea->msgbType != MSGTYPE_PASSTHROUGH) {
         strcpy(descr_file_name, filearea->fileName);
         strcat(descr_file_name, config->fileDescription);
@@ -653,22 +629,22 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         else
             add_description (descr_file_name, tic->file, tic->desc, tic->anzdesc);
     }
-    
+
     if (filearea->downlinkCount>=minLinkCount) {
         /* Adding path & seenbys */
         time(&acttime);
         strcpy(timestr,asctime(gmtime(&acttime)));
         timestr[strlen(timestr)-1]=0;
         if (timestr[8]==' ') timestr[8]='0';
-        
-        
+
+
         tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
         tic->path[tic->anzpath] = NULL;
         xscatprintf(&tic->path[tic->anzpath],"%s %lu %s UTC %s",
             aka2str(*filearea->useAka), (unsigned long) time(NULL), timestr,versionStr);
         tic->anzpath++;
     }
-    
+
     if (isToss == 1) {
         /*  Save seenby structure */
         old_seenby = smalloc(tic->anzseenby*sizeof(hs_addr));
@@ -680,7 +656,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         memset(&old_from,0,sizeof(hs_addr));
         memset(&old_to,0,sizeof(hs_addr));
     }
-    
+
     for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
         if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
@@ -703,7 +679,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         seenbyAdd(&tic->seenby, &tic->anzseenby, &tic->to);
 
     seenbySort(tic->seenby,tic->anzseenby);
-    
+
     /* Checking to whom I shall forward */
     for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
@@ -712,7 +688,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
              addrComp(tic->origin,downlink->hisAka) !=0)
         {
             /* Forward file to */
-            
+
             readAccess = e_readCheck(config, filearea, downlink);
             switch (readAccess) {
             case 0: break;
@@ -737,7 +713,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                     aka2str(downlink->hisAka));
                 break;
             }
-            
+
             if (readAccess == 0) {
                 if (isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0)
                 {
@@ -772,7 +748,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             nfree(comm);
         }
     }
-    
+
     if (isToss == 1) nfree(old_seenby);
     return(0);
 }
@@ -1100,8 +1076,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
-   
-   if(rc == 0)   
+
+   if(rc == 0)
        doSaveTic(ticfile,&tic,filearea);
 
    disposeTic(&tic);
@@ -1129,7 +1105,7 @@ void processDir(char *directory, e_tossSecurity sec)
          ( (cmToss == 2) && ( (patimat(file, "*.BAD") == 1) ||
                               (patimat(file, "*.SEC") == 1) ||
                               (patimat(file, "*.ACS") == 1) ||
-                              (patimat(file, "*.NTU") == 1) 
+                              (patimat(file, "*.NTU") == 1)
                             )
                             )
                             )
@@ -1183,12 +1159,12 @@ void checkTmpDir(void)
     s_area *filearea=NULL;
     FILE *flohandle=NULL;
     int error = 0;
-    
+
     w_log('6',"Checking tmp dir");
     strcpy(tmpdir, config->busyFileDir);
     dir = husky_opendir(tmpdir);
     if (dir == NULL) return;
-    
+
     while ((file = husky_readdir(dir)) != NULL) {
         if (strlen(file) != 12) continue;
         /* if (!file->d_size) continue; */
@@ -1233,7 +1209,7 @@ void checkTmpDir(void)
                         if (!link->noTIC)
                             fprintf(flohandle,"^%s\n",newticfile);
                         fclose(flohandle);
-                        
+
                         w_log('6',"Forwarding save file %s for %s",
                             tic.file, aka2str(link->hisAka));
                     }
