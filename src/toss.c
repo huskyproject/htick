@@ -124,7 +124,7 @@ void changeFileSuffix(char *fileName, char *newSuffix) {
 
 int to_us(const s_addr destAddr)
 {
-   int i = 0;
+   unsigned int i = 0;
 
    while (i < config->addrCount)
      if (addrComp(destAddr, config->addr[i++]) == 0)
@@ -174,7 +174,7 @@ XMSG createXMSG(s_message *msg)
         struct tm *date;
         time_t    currentTime;
         union stamp_combo dosdate;
-        int i,remapit;
+        unsigned int i,remapit;
         char *subject;
 
         if (msg->netMail == 1) {
@@ -550,7 +550,8 @@ int parseFileDesc(char *fileName,s_ticfile *tic)
 {
    FILE *filehandle, *dizhandle;
    char *line, *dizfile;
-   int  i, j, found;
+   int  j, found;
+   unsigned int  i;
    signed int cmdexit;
    char cmd[256];
 #ifdef __WATCOMC__
@@ -866,7 +867,7 @@ int readCheck(s_filearea *echo, s_link *link)
    rc == '\x0005' pause
    */
 
-  int i;
+  unsigned int i;
 
   for (i=0; i<echo->downlinkCount; i++)
   {
@@ -911,7 +912,7 @@ int writeCheck(s_filearea *echo, s_addr *aka)
    rc == '\x0004' not linked
    */
 
-  int i;
+  unsigned int i;
 
   s_link *link;
 
@@ -1028,7 +1029,7 @@ int createFlo(s_link *link, e_prio prio)
 void doSaveTic(char *ticfile,s_ticfile *tic)
 {
    char filename[256];
-   int i;
+   unsigned int i;
    s_savetic *savetic;
 
    for (i = 0; i< config->saveTicCount; i++)
@@ -2091,7 +2092,7 @@ char *formDesc(char **desc, int count)
 
 void freeFReport(s_newfilereport *report)
 {
-   int i;
+   unsigned int i;
    nfree(report->fileName);
    for (i = 0; i < report->filedescCount; i++) {
       nfree(report->fileDesc[i]);
@@ -2099,9 +2100,36 @@ void freeFReport(s_newfilereport *report)
    nfree(report->fileDesc);
 }
 
+static int compare_filereport(const void *a, const void *b)
+{
+   const s_newfilereport* r1 = *(s_newfilereport**)a;
+   const s_newfilereport* r2 = *(s_newfilereport**)b;
+
+   if( ( r1->useAka->zone  > r2->useAka->zone ) &&
+      ( r1->useAka->net   > r2->useAka->net   ) &&
+      ( r1->useAka->node  > r2->useAka->node  ) &&
+      ( r1->useAka->point > r2->useAka->point )     )
+      return 1;
+   else if( ( r1->useAka->zone  < r2->useAka->zone  ) &&
+      ( r1->useAka->net   < r2->useAka->net   ) &&
+      ( r1->useAka->node  < r2->useAka->node  ) &&
+      ( r1->useAka->point < r2->useAka->point )    )
+      return -1;
+   else if( stricmp( r1->areaName, r2->areaName ) > 0)
+      return 1;
+   else if( stricmp( r1->areaName, r2->areaName ) < 0)
+      return -1;
+   else if( stricmp( r1->fileName, r2->fileName ) > 0)
+      return 1;
+   else if( stricmp( r1->fileName, r2->fileName ) < 0)
+      return -1;
+   return 0;
+}
+
 void reportNewFiles()
 {
-   int       b, c, i, fileCount;
+   int       b,  fileCount;
+   unsigned  i, c;
    UINT32    fileSize;
    s_message *msg;
    char      buff[256], *tmp;
@@ -2113,6 +2141,9 @@ void reportNewFiles()
    else if (config->ReportTo != NULL && (!cmAnnFile)) annArea = config->ReportTo;
         else return;
 
+   // sort newFileReport
+   qsort( (void*)newFileReport, newfilesCount, sizeof(s_newfilereport*), 
+       compare_filereport); 
    /* post report about new files to annArea */
    for (c = 0; c < config->addrCount && newfilesCount != 0; c++) {
       msg = NULL;
