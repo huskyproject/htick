@@ -24,6 +24,7 @@
  *****************************************************************************/
 
 #include <stdlib.h>
+#include <string.h>
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>    
 #include <fcommon.h>   
