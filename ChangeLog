@@ -1,3 +1,11 @@
+2002-06-16 Sunday 13:04  mche
+
+	* src/areafix.c (1.70): "no access" reporting
+
+2002-06-16 Sunday 08:27  mche
+
+	* h/: pkt.h (1.7), strsep.h (1.2): no message
+
 2002-06-14 Friday 12:37  mche
 
 	* src/: areafix.c (1.69), toss.c (1.188): fix hatching from
