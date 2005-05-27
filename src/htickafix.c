@@ -369,7 +369,7 @@ int processFileFix(s_message *msg)
         nfree(msg->text);
         msg->text = textBuff;
 
-    	textBuff = sstrdup(msg->text);
+    	textBuff = tmp = sstrdup(msg->text);
 		token = strseparate (&textBuff, "\n\r");
 
 		while(token != NULL) {
@@ -414,7 +414,7 @@ int processFileFix(s_message *msg)
 			}
 			token = strseparate (&textBuff, "\n\r");
 		}
-        nfree(textBuff);
+        nfree(tmp);
 		
 	} else {
 		
