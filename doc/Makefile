@@ -48,6 +48,12 @@ htick.dvi: htick.texi
 htick.info: htick.texi
 	makeinfo --no-split htick.texi
 
+htick.txt: htick.texi
+	export LC_ALL=C; makeinfo --no-split htick.texi >htick.txt
+
+htickrus.txt: htick.texi
+	export LC_ALL=C; makeinfo --no-split htick.rus.texi >htickrus.txt
+
 clean:
 	-$(RM) $(RMOPT) htick.aux
 	-$(RM) $(RMOPT) htick.cp
