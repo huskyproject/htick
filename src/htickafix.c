@@ -329,7 +329,12 @@ int processFileFix(s_message *msg)
 	/*  find link */
 	link=getLinkFromAddr(config, msg->origAddr);
 
-	w_log(LL_AREAFIX, "FileFix: request from %s", aka2str(link->hisAka));
+	if (link)
+	{
+		w_log(LL_AREAFIX, "FileFix: request from %s", aka2str(link->hisAka));
+	} else {
+		w_log(LL_ERR, "FileFix: No such link in config: %s!", aka2str(msg->origAddr));
+	}
 	
 	/*  this is for me? */
 	if (link!=NULL)	notforme=addrComp(msg->destAddr, *link->ourAka);
@@ -446,7 +451,7 @@ int processFileFix(s_message *msg)
 		
 	
 		RetMsg(msg, link, report, "security violation");
-		free(report);
+		/* free(report); */ 
 		
 		w_log( '8', "FileFix: security violation from %s", aka2str(link->hisAka));
 		
