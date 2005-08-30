@@ -1087,7 +1087,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                       while ((file = readdir(dir)) != NULL) {
                           if (patimat(file->d_name, findfile)) {
                               stat(file->d_name,&stbuf);
-                              if (stbuf.st_size == tic.size) {
+                              if (tic.size && (stbuf.st_size == tic.size)) {
                                   crc = filecrc32(file->d_name);
                                   if (crc == tic.crc) {
                                       fileisfound = 1;
