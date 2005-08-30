@@ -401,6 +401,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
             case CRC_CRC:       tic->crc = strtoul(param,NULL,16);
                 break;
             case CRC_SIZE:      tic->size = tic->size=atoi(param);
+                                if(!tic->size)
+                                   w_log(LL_ERR, "Wrong TIC \"%s\": size is \"%s\"!", ticfile, param);
                 break;
             case CRC_DATE:      tic->date=atoi(param);
                 break;
@@ -998,7 +1000,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                       while ((file = husky_readdir(dir)) != NULL) {
                           if (patimat(file, findfile)) {
                               stat(file,&stbuf);
-                              if (stbuf.st_size == tic.size) {
+                              if ((tic.size==0)||(stbuf.st_size == tic.size)) {
                                   crc = filecrc32(file);
                                   if (crc == tic.crc) {
                                       fileisfound = 1;
