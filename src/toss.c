@@ -406,6 +406,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
             case CRC_CRC:       tic->crc = strtoul(param,NULL,16);
                 break;
             case CRC_SIZE:      tic->size = tic->size=atoi(param);
+                                if(!tic->size)
+                                   w_log(LL_ERR, "Wrong TIC \"%s\": size is \"%s\"!", ticfile, param);
                 break;
             case CRC_DATE:      tic->date=atoi(param);
                 break;
@@ -456,6 +458,9 @@ int parseTic(char *ticfile,s_ticfile *tic)
     } /* endwhile */
 
     fclose(tichandle);
+
+    if (!tic->size)
+        w_log(LL_ALERT, "TIC \"%s\" without file size!", ticfile);
 
     if (!tic->anzdesc) {
         tic->desc = srealloc(tic->desc,sizeof(*tic->desc));
@@ -1087,7 +1092,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
                       while ((file = readdir(dir)) != NULL) {
                           if (patimat(file->d_name, findfile)) {
                               stat(file->d_name,&stbuf);
-                              if (tic.size && (stbuf.st_size == tic.size)) {
+                              if ((tic.size==0) || (stbuf.st_size == tic.size)) {
                                   crc = filecrc32(file->d_name);
                                   if (crc == tic.crc) {
                                       fileisfound = 1;
