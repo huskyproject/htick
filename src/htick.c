@@ -108,7 +108,7 @@ int processHatchParams(int i, int argc, char **argv)
     basename = strrchr(hatchInfo->file, PATH_DELIM);
     if (basename==NULL) basename = hatchInfo->file; else basename++;
     if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
-    
+
     if (extdelim - basename > 8 || strlen(extdelim) > 4) {
         if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
     }
@@ -124,10 +124,10 @@ int processHatchParams(int i, int argc, char **argv)
             i++;
             hatchInfo->replaces = sstrdup(argv[i]);
         } else {
-            basename  = strrchr(hatchInfo->file,PATH_DELIM)   ? 
-                strrchr(hatchInfo->file,PATH_DELIM)+1 : 
+            basename  = strrchr(hatchInfo->file,PATH_DELIM)   ?
+                strrchr(hatchInfo->file,PATH_DELIM)+1 :
             hatchInfo->file;
-            
+
             hatchInfo->replaces = sstrdup( basename );
         }
         i++;
@@ -148,11 +148,11 @@ int processHatchParams(int i, int argc, char **argv)
         hatchInfo->anzldesc = 1;
         hatchInfo->ldesc    = srealloc(hatchInfo->ldesc,(hatchInfo->anzldesc)*sizeof(&hatchInfo->ldesc));
         hatchInfo->ldesc[0] = sstrdup( argv[i] );
-        
+
 #ifdef __NT__
         CharToOem(hatchInfo->ldesc[0], hatchInfo->ldesc[0]);
 #endif
-        
+
     }
     return 1;
 }
@@ -189,9 +189,9 @@ int processCommandLine(int argc, char **argv)
 {
     int i = 0;
     int rc = 1;
-    
 
-    if (argc == 1) { 
+
+    if (argc == 1) {
        start_help();
        return 0;
     }
@@ -298,6 +298,9 @@ void processConfig()
    htick_log = openLog(LogFileName, versionStr, config);  /* if failed: openLog() prints a message to stderr */
    if (htick_log && quiet) htick_log->logEcho = 0;
 
+   if (!sstrlen(config->inbound) && !sstrlen(config->localInbound) && !sstrlen(config->protInbound))
+          w_log( LL_CRIT, "You must set inbound, protInbound or localInbound in fidoconfig first");
+   if (!sstrlen(config->outbound)) w_log( LL_CRIT, "You must set outbound in fidoconfig first");
    if (config->addrCount == 0) w_log( LL_CRIT, "At least one addr must be defined");
    if (config->linkCount == 0) w_log( LL_CRIT, "At least one link must be specified");
    if (config->fileAreaBaseDir == NULL) w_log( LL_CRIT, "You must set FileAreaBaseDir in fidoconfig first");
@@ -331,13 +334,13 @@ void processConfig()
    }
 
    w_log( LL_START, "Start");
-   
+
    nfree(buff);
 
    if (config->busyFileDir == NULL) {
-      config->busyFileDir = (char*) smalloc(strlen(config->outbound) + 10);
+      config->busyFileDir = (char*) smalloc(sstrlen(config->outbound) + 10);
       strcpy(config->busyFileDir, config->outbound);
-      sprintf(config->busyFileDir + strlen(config->outbound), "busy.htk%c", PATH_DELIM);
+      sprintf(config->busyFileDir + sstrlen(config->outbound), "busy.htk%c", PATH_DELIM);
    }
    if (config->ticOutbound == NULL) config->ticOutbound = sstrdup(config->passFileAreaDir);
 }
