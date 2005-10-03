@@ -79,6 +79,8 @@
 #include <fidoconf/afixcmd.h>
 #include <fidoconf/recode.h>
 #include <fidoconf/crc.h>
+#include <fidoconf/log.h>
+
 
 #if defined(A_HIDDEN) && !defined(_A_HIDDEN)
 #  define _A_HIDDEN A_HIDDEN
@@ -761,7 +763,8 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
         memcpy(&old_to,&tic->to,sizeof(hs_addr));
     }
 
-    for (i=0;i<filearea->downlinkCount;i++) {
+    if ( tic->anzseenby > 0 ) {
+      for (i=0;i<filearea->downlinkCount;i++) {
         s_link* downlink = filearea->downlinks[i]->link;
         if ( (seenbyComp (tic->seenby, tic->anzseenby,downlink->hisAka) ) &&
             (readCheck(filearea, downlink) == 0)
@@ -776,11 +779,14 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
             */
             seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
         }
-    }
+      }
+    }else w_log( LL_WARN, "Seen-By list is empty in TIC file for %s (wrong TIC)!", tic->file?tic->file:"" );
 
     /* (dmitry) FixMe: Put correct AKA here if To: missing in tic */
     if(isOurAka(config, tic->to) && seenbyComp(tic->seenby, tic->anzseenby, tic->to))
         seenbyAdd(&tic->seenby, &tic->anzseenby, &tic->to);
+    else
+        seenbyAdd(&tic->seenby, &tic->anzseenby, filearea->useAka);
 
     seenbySort(tic->seenby,tic->anzseenby);
 
