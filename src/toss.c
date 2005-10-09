@@ -71,7 +71,7 @@
 /* fidoconf */
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
-#include <fidoconf/log.h>
+#include <huskylib/log.h>
 #include <huskylib/dirlayer.h>
 #include <huskylib/xstr.h>
 #include <fidoconf/afixcmd.h>
