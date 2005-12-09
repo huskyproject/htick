@@ -198,6 +198,14 @@ int processCommandLine(int argc, char **argv)
 
     while (i < argc-1) {
         i++;
+        if ( !strcmp(argv[i], "-h") ) {
+            start_help();
+            return 0;
+        }
+        if ( !strcmp(argv[i], "-v") ) {
+            printf("%s",versionStr);
+            return 0;
+        }
         if ( !strcmp(argv[i], "-q") ) {
             quiet=1;
             continue;
