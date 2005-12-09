@@ -105,7 +105,7 @@ int processHatchParams(int i, int argc, char **argv)
     basename = strrchr(hatchInfo->file, PATH_DELIM);
     if (basename==NULL) basename = hatchInfo->file; else basename++;
     if( (extdelim = strchr(basename, '.')) == NULL) extdelim = basename+strlen(basename);
-    
+
     if (extdelim - basename > 8 || strlen(extdelim) > 4) {
         if (!quiet) fprintf(stderr, "Warning: hatching file with non-8.3 name!\n");
     }
@@ -121,10 +121,10 @@ int processHatchParams(int i, int argc, char **argv)
             i++;
             hatchInfo->replaces = sstrdup(argv[i]);
         } else {
-            basename  = strrchr(hatchInfo->file,PATH_DELIM)   ? 
-                strrchr(hatchInfo->file,PATH_DELIM)+1 : 
+            basename  = strrchr(hatchInfo->file,PATH_DELIM)   ?
+                strrchr(hatchInfo->file,PATH_DELIM)+1 :
             hatchInfo->file;
-            
+
             hatchInfo->replaces = sstrdup( basename );
         }
         i++;
@@ -145,11 +145,11 @@ int processHatchParams(int i, int argc, char **argv)
         hatchInfo->anzldesc = 1;
         hatchInfo->ldesc    = srealloc(hatchInfo->ldesc,(hatchInfo->anzldesc)*sizeof(&hatchInfo->ldesc));
         hatchInfo->ldesc[0] = sstrdup( argv[i] );
-        
+
 #ifdef __NT__
         CharToOem(hatchInfo->ldesc[0], hatchInfo->ldesc[0]);
 #endif
-        
+
     }
     return 1;
 }
@@ -187,15 +187,23 @@ int processCommandLine(int argc, char **argv)
 {
     int i = 0;
     int rc = 1;
-    
 
-    if (argc == 1) { 
+
+    if (argc == 1) {
        start_help();
        return 0;
     }
 
     while (i < argc-1) {
         i++;
+        if ( !strcmp(argv[i], "-h") ) {
+            start_help();
+            return 0;
+        }
+        if ( !strcmp(argv[i], "-v") ) {
+            printf("%s",versionStr);
+            return 0;
+        }
         if ( !strcmp(argv[i], "-q") ) {
             quiet=1;
             continue;
