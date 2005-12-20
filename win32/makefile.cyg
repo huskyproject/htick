@@ -17,7 +17,7 @@ include ../makefile.inc
 CINCL	= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix
 
 # libraries need to build binary file
-LIBS	= ../../fidoconf/make/$(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
+LIBS	= ../../areafix/make/$(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
 	  ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
 	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
 	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
