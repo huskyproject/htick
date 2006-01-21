@@ -407,7 +407,12 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 break;
             case CRC_DATE:      tic->date=atoi(param);
                 break;
-            case CRC_REPLACES:  tic->replaces = sstrdup(param);
+            case CRC_REPLACES:
+                if( *param == '*' )
+                {
+                  w_log(LL_TIC, "TIC %s: Illegal value: 'REPLACES %s', ignored", ticfile, param);
+                  break;
+                }
                 break;
             case CRC_PW:        tic->password = sstrdup(param);
                 break;
