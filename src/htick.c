@@ -166,6 +166,7 @@ void start_help(void) {
             " clean                  Clean passthrough dir and old files in fileechos\n"
             " ffix [<addr> command]  Process filefix\n"
             " announce               Announce new files\n"
+            " relink <pattern> <addr> Refresh matching pattern fileareas subscription\n"
             " send <file> <filearea> <address> Send file from filearea to address\n"
             " hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]\n"
             "                        Hatch file into Area, using Description for file,\n"
