@@ -72,6 +72,9 @@
 #include <huskylib/recode.h>
 #include <huskylib/xstr.h>
 
+/* areafix library */
+#include <areafix/areafix.h>
+
 /* htick */
 #include <htick.h>
 #include <global.h>
@@ -82,6 +85,10 @@
 #include <filelist.h>
 #include <htickafix.h>
 #include "report.h"
+
+hs_addr relinkFromAddr;
+hs_addr relinkToAddr;
+char *relinkPattern;
 
 int processHatchParams(int i, int argc, char **argv)
 {
@@ -167,6 +174,8 @@ void start_help(void) {
             " ffix [<addr> command]  Process filefix\n"
             " announce               Announce new files\n"
             " relink <pattern> <addr> Refresh matching pattern fileareas subscription\n"
+            " resubscribe <pattern> <fromaddr> <toaddr> - move subscription of \n"
+            "                        areas matching pattern from one link to another\n"
             " send <file> <filearea> <address> Send file from filearea to address\n"
             " hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]\n"
             "                        Hatch file into Area, using Description for file,\n"
@@ -253,6 +262,31 @@ int processCommandLine(int argc, char **argv)
             cmNotifyLink = 1;
             cmAfix = 1;
             continue;
+         } else if (stricmp(argv[i], "relink") == 0) {
+            if (i < argc-1) {
+              i++;
+              xstrcat(&relinkPattern, argv[i]);
+              if (i < argc-1) {
+                i++;
+                string2addr(argv[i], &relinkFromAddr);
+                cmRelink = 1;
+              } else printf("address missing after \"%s\"!\n", argv[i]);
+            } else printf("pattern missing after \"%s\"!\n", argv[i]);
+            continue;
+        } else if (stricmp(argv[i], "resubscribe") == 0) {
+            if (i < argc-1) {
+              i++;
+              xstrcat(&relinkPattern, argv[i]);
+              if (i < argc-1) {
+                i++;
+                string2addr(argv[i], &relinkFromAddr);
+                if (i < argc-1) {
+                  i++;
+                  string2addr(argv[i], &relinkToAddr);
+                  cmRelink = 2;
+                } else printf("address missing after \"%s\"!\n", argv[i]);
+              } else printf("address missing after \"%s\"!\n", argv[i]);
+            } else printf("pattern missing after \"%s\"!\n", argv[i]);
         } else if (stricmp(argv[i], "send") == 0) {
             cmSend = 1;
             i++;
@@ -406,6 +440,9 @@ int main(int argc, char **argv)
    if (cmClean) Purge();
    if (cmAfix && config->netMailAreas)  ffix(afixAddr, afixCmd);
    if (cmAnnounce && config->announceSpool != NULL)  report();
+   if (cmRelink == 1) relink(0, relinkPattern, relinkFromAddr, relinkToAddr);
+   else if (cmRelink == 2) relink(1, relinkPattern, relinkFromAddr, relinkToAddr);
+   nfree(relinkPattern);
    nfree(afixCmd);
    nfree(flistfile);
    nfree(dlistfile);

@@ -10,7 +10,7 @@
  *
  * Vienna, Austria, Europe
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -79,6 +79,7 @@ extern int       cmAnnNewFileecho;
 extern int       cmClean;
 extern int       cmAfix;
 extern int       cmNotifyLink;
+extern int       cmRelink;
 
 extern char      *flistfile;
 extern char      *dlistfile;
