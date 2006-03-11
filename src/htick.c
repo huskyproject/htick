@@ -169,6 +169,8 @@ void start_help(void) {
             " ffix [<addr> command]  Process filefix\n"
             " announce               Announce new files\n"
             " send <file> <filearea> <address> Send file from filearea to address\n"
+              );
+        printf(
             " hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]\n"
             "                        Hatch file into Area, using Description for file,\n"
             "                        if exist \"replace\", then fill replace field in TIC;\n"
@@ -176,6 +178,8 @@ void start_help(void) {
             "                        desc's parameters may be:\n"
             "                           @BBS to load from Files.Bbs\n"
             "                           @DIZ to load from the contained File_Id.Diz\n"
+              );
+        printf(
             "                           @<file> to load from <file>\n"
             "                           @@BBS to use first line from Files.Bbs\n"
             "                           @@DIZ to use 1st line from the contained File_Id.Diz\n"
