@@ -718,7 +718,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                     aka2str(downlink->hisAka));
                 break;
             case 4:
-                w_log(LL_FROUTE,"Link %s not subscribe to File Area %s",
+                w_log(LL_FROUTE,"Link %s not subscribed to File Area %s",
                     aka2str(old_from), tic->area);
                 break;
             case 3:
