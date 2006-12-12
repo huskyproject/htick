@@ -461,6 +461,12 @@ int changeconfig(char *fileName, s_area *area, s_link *link, int action) {
     case 1:
         DelLinkFromString(cfgline, link->hisAka);
         break;
+    case 2:
+        xstrscat(&cfgline, " ", aka2str(link->hisAka), " -r", NULL);
+        break;
+    case 3:
+        xstrscat(&cfgline, " ", aka2str(link->hisAka), " -w", NULL);
+        break;
     default: break;
     }
     InsertCfgLine(fileName, cfgline, strbeg, strend);
@@ -597,7 +603,8 @@ char *subscribe(s_link *link, s_message *msg, char *cmd) {
 			w_log( LL_AREAFIX, "FileFix: %s already linked to %s", aka2str(link->hisAka), area->areaName);
     			break;
 		    case 1:
-                changeconfig (cfgFile?cfgFile:getConfigFileName(), area, link, 0);
+                changeconfig (cfgFile?cfgFile:getConfigFileName(), area, link,
+		area->def_ro ? 2 : area->def_wo ? 3 : 0);
                 Addlink(config, link, area);
                 xscatprintf(&report, "%s Added\r",area->areaName);
                 w_log( LL_AREAFIX, "FileFix: %s subscribed to %s",aka2str(link->hisAka),area->areaName);

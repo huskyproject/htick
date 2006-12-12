@@ -1123,6 +1123,12 @@ Send files from PassFileAreaDir for non passthrough areas.
 Send files from FileArea directory for non passthrough areas
 if fileareadefaults set to @code{-sendorig}.
 
+@item -r
+Default read-only: set link read-only at subscribing.
+
+@item -w
+Default write-only: set link write-only at subscribing.
+
 @end table
 
 @node Announce System, AnnounceSpool, FileArea, Configuration Reference
