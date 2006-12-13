@@ -29,8 +29,9 @@ OBJS3	= htick$(_OBJ) report$(_OBJ) scan$(_OBJ) seenby$(_OBJ) toss$(_OBJ)
 OBJS	= $(OBJS1) $(OBJS2) $(OBJS3)
 
 # Header files
-HEADERS	= add_desc.h areafix.h cvsdate.h fcommon.h filecase.h filelist.h \
-	  global.h hatch.h htick.h report.h scan.h seenby.h toss.h version.h
+HEADERS	= add_desc.h cvsdate.h fcommon.h filecase.h filelist.h global.h \
+	  hatch.h htick.h htickafix.h report.h scan.h seenby.h toss.h version.h
+#areafix.h 
 
 # Sources directory
 _SRC_DIR= ../src/
