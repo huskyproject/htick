@@ -516,6 +516,9 @@ void afReportAutoCreate(char *c_area, char *descr, hs_addr pktOrigAddr, ps_addr 
     s_message *msg;
     FILE *echotosslog;
 
+    unused(descr);
+    unused(forwardAddr);
+
     /* report about new filearea */
     if (config->ReportTo && !cmAnnNewFileecho && (area = getFileArea(c_area)) != NULL) {
         if (getNetMailArea(config, config->ReportTo) != NULL) {
