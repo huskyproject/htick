@@ -1,19 +1,43 @@
 # Microsoft Visual C++ Makefile
+#
+# You may make all the 3 versions of htick
+# (without hardlinking, with hardlinking on NTFS 4.0
+# and with hardlinking on NTFS 5.0) by running
+#   nmake -f makefile.mvcdll clean
+#   nmake -f makefile.mvcdll
+#   nmake -f makefile.mvcdll clean
+#   nmake -f makefile.mvcdll _WIN32_WINNT=0x0400
+#   nmake -f makefile.mvcdll clean
+#   nmake -f makefile.mvcdll _WIN32_WINNT=0x0500
+#
+# Don't forget to make clean before building another version of program!
+# Microsoft Visual C++ Makefile
 
 CC=     cl
-CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h
-CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL
+CFLAGS= -nologo -MD -I..\.. -I..\h
+CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL -D_CRT_SECURE_NO_DEPRECATE
 
-# uncomment one of this line if you want to anable hardlinking on NTFS 4.0, 5.0
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
-# CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
+!ifdef _WIN32_WINNT
+!if $(_WIN32_WINNT)==0x0400
+CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0400
+HTICK= htick_nt4.exe
+HTICKL= htickmvc_nt4.lib
+!elseif $(_WIN32_WINNT)>=0x0500
+CDEFS=  $(CDEFS) -D_WIN32_WINNT=0x0500
+HTICK= htick_w2k.exe
+HTICKL= htickmvc_w2k.lib
+!endif
+
+!else 
+HTICK= htick.exe
+HTICKL= htickmvc.lib
+!endif
 
 COPT=   -O2
 TLIB=   lib -nologo
 
 FCONFL=	..\..\fidoconf\fconfmvc.lib
 SMAPIL=	..\..\smapi\smapimvc.lib
-HTICKL=	htickmvc.lib
 
 OBJS    = global.obj \
           toss.obj \
@@ -31,12 +55,12 @@ OBJS    = global.obj \
 {..\src}.c.obj:
 	$(CC) $(CFLAGS) $(CDEFS) $(COPT) -c $<
 
-all: $(HTICKL) htick.exe
+all: $(HTICKL) $(HTICK)
 
 $(HTICKL): $(OBJS)
 	$(TLIB) /out:$@ $(OBJS)
 
-htick.exe:
+$(HTICK):
         $(CC) $(CFLAGS) $(COPT) $(CDEFS) -Fe$@ ..\src\htick.c $(FCONFL) $(SMAPIL) $(HTICKL) USER32.LIB msvcrt.lib Kernel32.lib /link /opt:nowin98
 
 clean:
