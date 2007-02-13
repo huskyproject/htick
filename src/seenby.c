@@ -45,14 +45,19 @@ int seenbyComp ( hs_addr *seenby, int anzseenby, hs_addr Aka)
 
 int seenbyAdd ( hs_addr **seenby, UINT *anzseenby, ps_addr Aka)
 {
-    ps_addr tmp = *seenby;
+  ps_addr tmp = *seenby;
     
+  if( seenbyComp(*seenby,(int)(*anzseenby),*Aka) )/* If Aka don't presents in seen-by list */
+  {                             /* then store Aka into list */
     tmp = srealloc( tmp, (*anzseenby+1)*sizeof(hs_addr) );
     memcpy(&tmp[*anzseenby],Aka,sizeof(hs_addr));
     (*anzseenby)++;
     *seenby = tmp;
-    
+
     return 1;
+  }
+  else
+    return 0;
 }
 
 static int cmp_Addr(const void *a, const void *b)
