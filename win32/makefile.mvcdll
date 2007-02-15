@@ -14,7 +14,7 @@
 # Microsoft Visual C++ Makefile
 
 CC=     cl
-CFLAGS= -nologo -MD -I..\.. -I..\h
+CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h
 CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL -D_CRT_SECURE_NO_DEPRECATE
 
 !ifdef _WIN32_WINNT
