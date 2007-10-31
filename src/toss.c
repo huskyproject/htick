@@ -208,7 +208,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
         fprintf(tichandle,"Desc %s\r\n",tic->desc[i]);
 
     for (i=0;i<tic->anzldesc;i++) {
-        while ((p=strchr(tic->ldesc[i], 26))) *p=' ';
+        while ((p=strchr(tic->ldesc[i], 26)) != NULL) *p=' ';
         fprintf(tichandle,"LDesc %s\r\n",tic->ldesc[i]);
     }
 
@@ -416,16 +416,16 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 break;
             case CRC_PW:        tic->password = sstrdup(param);
                 break;
-            case CRC_FROM:      string2addr(param,&tic->from);
+            case CRC_FROM:      parseFtnAddrZS(param,&tic->from);
                 ticSourceLink = getLinkFromAddr(config, tic->from);
                 break;
-            case CRC_ORIGIN:    string2addr(param,&tic->origin);
+            case CRC_ORIGIN:    parseFtnAddrZS(param,&tic->origin);
                 break;
-            case CRC_TO:        string2addr(param,&tic->to);
+            case CRC_TO:        parseFtnAddrZS(param,&tic->to);
                 break;
             case CRC_DESTINATION:
                 if(ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
-                    string2addr(param,&tic->to);
+                    parseFtnAddrZS(param,&tic->to);
                 break;
             case CRC_DESC:
                 tic->desc=
@@ -440,7 +440,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 tic->anzldesc++;
                 break;
             case CRC_SEENBY:
-                if (string2addr(param,&Aka)) {
+                if (parseFtnAddrZS(param,&Aka)) {
                     seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
                 }
                 break;
