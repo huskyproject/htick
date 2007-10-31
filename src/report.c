@@ -494,7 +494,7 @@ void reportNewFiles()
             {
                 /* if output to file:  \r ==> \r\n */
                 cp=msg->text;
-                while( (cp=strchr(cp, '\r')) )
+                while( (cp=strchr(cp, '\r')) != NULL )
                   *cp='\n';
                 fprintf(rp, msg->text); /* Automatic translate "\n" to "\015\012" */
                 w_log(LL_FLAG, "Created report file: %s", msg->subjectLine);
