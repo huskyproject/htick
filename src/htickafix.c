@@ -73,98 +73,100 @@
 #include <add_desc.h>
 extern char      *versionStr;
 
-int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
+#define AREA_ACCESS_OK        0
+#define AREA_ACCESS_NOGROUP   1
+#define AREA_ACCESS_NOLEVEL   2
+#define AREA_ACCESS_NOEXPORT  3
+#define AREA_ACCESS_NOIMPORT  3
+#define AREA_ACCESS_NOTLINKED 4
 
-    /*  rc == '\x0000' access o'k */
-    /*  rc == '\x0001' no access group */
-    /*  rc == '\x0002' no access level */
-    /*  rc == '\x0003' no access export */
-    /*  rc == '\x0004' not linked */
-
-    unsigned i, rc = 0;
-    unsigned Pause = echo->areaType;
-    /* check for OurAka */
-    if(!isOurAka(config,link->hisAka))
-    {
-        for (i=0; i<echo->downlinkCount; i++) {
-            if (link == echo->downlinks[i]->link) break;
-        }
-        if (i == echo->downlinkCount) return 4;
-    } else if ( echo->msgbType  == MSGTYPE_PASSTHROUGH ) {
-        return 4;
+int checkAccessAndOptGrps(s_area *echo, s_link *link, int imp_exp)
+{
+   if (echo->group) {
+        /* check group access */
+        if (!grpInArray(echo->group, config->PublicGroup, config->numPublicGroup) &&
+            !grpInArray(echo->group, link->AccessGrp, link->numAccessGrp))
+                return AREA_ACCESS_NOGROUP;
+        /* check import/export restriction */
+        if (imp_exp == 0 &&
+            (link->numOptGrp == 0 || grpInArray(echo->group, link->optGrp, link->numOptGrp)))
+                return AREA_ACCESS_NOEXPORT;
     }
+    else
+    {
+        /* No access group restriction is applied for areas without group
+         * (virtually no-group is always part of PublicGroup) */
+
+        /* check import/export restriction */
+        /* No import/export restriction is applied for areas without group
+         * if OptGrp isn't empty (in contrast to PublicGroup, 
+         * virtually optGrp doesn't contain no-group) */
+        if (imp_exp == 0 &&
+            link->numOptGrp == 0)
+                return AREA_ACCESS_NOEXPORT;
+    }
+return AREA_ACCESS_OK;
+}
+
+int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link) 
+{
+    unsigned i, rc = AREA_ACCESS_OK;
+    unsigned Pause = echo->areaType;
+
+    for (i = 0; 
+         i < echo->downlinkCount && link != echo->downlinks[i]->link;
+         i++);
+    /* Link is not subscribed => no export ever */
+    if (i == echo->downlinkCount) return AREA_ACCESS_NOTLINKED;
+
     /*  pause */
     if (((link->Pause & Pause) == Pause) && echo->noPause==0) return 3;
 
-    if (echo->group) {
-		if (link->numAccessGrp) {
-			if (config->numPublicGroup) {
-				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
-					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
-					rc = 1;
-			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) rc = 1;
-		} else if (config->numPublicGroup) {
-			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) rc = 1;
-		} else if (link->numOptGrp==0) return 1;
-		
-		if (link->numOptGrp) {
-			if (grpInArray(echo->group,link->optGrp,link->numOptGrp)) {
-				if (link->export==0) return 3; else rc = 0;
-			}
-		}
-	}
-	
-    if (echo->levelread > link->level) return 2;
+    /* check access based on group access and optGrp+export */
+    rc = checkAccessAndOptGrps(echo, link, link->export);
+    if(rc != AREA_ACCESS_OK) return rc;
+
+    /* check access level */
+    if (echo->levelread > link->level) 
+        return AREA_ACCESS_NOLEVEL;
+
     /* check for 'access export' for arealink set up by WriteOnly keyword */
-    if (echo->downlinks[i]->export==0) return 3;
+    if (echo->downlinks[i]->export==0) 
+        return AREA_ACCESS_NOEXPORT;
 
     return rc;
 }
 
-int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link) {
+int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link) 
+{
+    unsigned int i=0, rc = AREA_ACCESS_OK;
 
-    /*  rc == '\x0000' access o'k */
-    /*  rc == '\x0001' no access group */
-    /*  rc == '\x0002' no access level */
-    /*  rc == '\x0003' no access import */
-    /*  rc == '\x0004' not linked */
-
-    unsigned int i=0, rc = 0;
-    /* check for OurAka */
-    if(!isOurAka(config,link->hisAka))
-    {
-        for (i=0; i<echo->downlinkCount; i++) {
-            if (link == echo->downlinks[i]->link) break;
-        }
-        if (i == echo->downlinkCount) return 4;
-    } else if ( echo->msgbType  == MSGTYPE_PASSTHROUGH ) {
-        return 4;
-    } else if (echo->downlinkCount == 0) {
+    if (echo->downlinkCount == 0 &&
+        isOurAka(config,link->hisAka)) {
         /* always OK for nolinks (need for hpucode's tics) */      
+        /* FIXME: Is it really safe and only way? */
         return 0;
     }
 
-    if (echo->group) {
-		if (link->numAccessGrp) {
-			if (config->numPublicGroup) {
-				if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp) &&
-					!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup))
-					rc = 1;
-			} else if (!grpInArray(echo->group,link->AccessGrp,link->numAccessGrp)) rc = 1;
-		} else if (config->numPublicGroup) {
-			if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) rc = 1;
-		} else if (link->numOptGrp==0) return 1;
+    for (i = 0; 
+         i < echo->downlinkCount && link != echo->downlinks[i]->link;
+         i++);
+    /* Link is not subscribed => refuse to import */
+    /* OurAka is a special case for access check of ourselves */
+    if (i == echo->downlinkCount && !isOurAka(config,link->hisAka)) 
+        return AREA_ACCESS_NOTLINKED;
 
-		if (link->numOptGrp) {
-			if (grpInArray(echo->group,link->optGrp,link->numOptGrp)) {
-				if (link->import==0) return 3; else rc = 0;
-			}
-		}
-    }
-	
-    if (echo->levelwrite > link->level) return 2;
+    /* check access based on group access and optGrp+import */
+    rc = checkAccessAndOptGrps(echo, link, link->import);
+    if(rc != AREA_ACCESS_OK) return rc;
+    
+    /* check access level */
+    if (echo->levelwrite > link->level) 
+        return AREA_ACCESS_NOLEVEL;
+
     /* check for 'access import' for arealink set up by ReadOnly keyword */
-    if (echo->downlinks[i]->import==0) return 3;
+    if (i < echo->downlinkCount && echo->downlinks[i]->import==0) 
+        return AREA_ACCESS_NOIMPORT;
 
     return rc;
 }
