@@ -56,17 +56,8 @@ void convertMsgHeader(XMSG xmsg, s_message *msg)
    /*  convert header */
    msg->attributes  = xmsg.attr;
 
-   msg->origAddr.zone  = xmsg.orig.zone;
-   msg->origAddr.net   = xmsg.orig.net;
-   msg->origAddr.node  = xmsg.orig.node;
-   msg->origAddr.point = xmsg.orig.point;
-   msg->origAddr.domain =  NULL;
-
-   msg->destAddr.zone  = xmsg.dest.zone;
-   msg->destAddr.net   = xmsg.dest.net;
-   msg->destAddr.node  = xmsg.dest.node;
-   msg->destAddr.point = xmsg.dest.point;
-   msg->destAddr.domain = NULL;
+   msg->origAddr  = xmsg.orig;
+   msg->destAddr  = xmsg.dest;
 
    strcpy((char *)msg->datetime, (char *) xmsg.__ftsc_date);
    xstrcat(&(msg->subjectLine), (char *) xmsg.subj);
@@ -149,7 +140,7 @@ void scanNMArea(s_area *afixarea)
          if (msg == NULL) continue;
 
          MsgReadMsg(msg, &xmsg, 0, 0, NULL, 0, NULL);
-         cvtAddr(xmsg.dest, &dest);
+         dest = xmsg.dest;
          for_us = 0;
          for (j=0; j < config->addrCount; j++)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
