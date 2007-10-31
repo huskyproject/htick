@@ -245,7 +245,7 @@ int processCommandLine(int argc, char **argv)
         } else if (stricmp(argv[i], "ffix") == 0) {
             if (i < argc-1) {
                 i++;
-                string2addr(argv[i], &afixAddr);
+                parseFtnAddrZS(argv[i], &afixAddr);
                 if (i < argc-1) {
                     i++;
                     xstrcat(&afixCmd,argv[i]);
@@ -256,7 +256,7 @@ int processCommandLine(int argc, char **argv)
         } else if (stricmp(argv[i], "ffix!") == 0) {
             if (i < argc-1) {
                 i++;
-                string2addr(argv[i], &afixAddr);
+                parseFtnAddrZS(argv[i], &afixAddr);
                 if (i < argc-1) {
                     i++;
                     xstrcat(&afixCmd,argv[i]);
@@ -271,7 +271,7 @@ int processCommandLine(int argc, char **argv)
               xstrcat(&relinkPattern, argv[i]);
               if (i < argc-1) {
                 i++;
-                string2addr(argv[i], &relinkFromAddr);
+                parseFtnAddrZS(argv[i], &relinkFromAddr);
                 cmRelink = 1;
               } else printf("address missing after \"%s\"!\n", argv[i]);
             } else printf("pattern missing after \"%s\"!\n", argv[i]);
@@ -282,10 +282,10 @@ int processCommandLine(int argc, char **argv)
               xstrcat(&relinkPattern, argv[i]);
               if (i < argc-1) {
                 i++;
-                string2addr(argv[i], &relinkFromAddr);
+                parseFtnAddrZS(argv[i], &relinkFromAddr);
                 if (i < argc-1) {
                   i++;
-                  string2addr(argv[i], &relinkToAddr);
+                  parseFtnAddrZS(argv[i], &relinkToAddr);
                   cmRelink = 2;
                 } else printf("address missing after \"%s\"!\n", argv[i]);
               } else printf("address missing after \"%s\"!\n", argv[i]);
