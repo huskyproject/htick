@@ -86,7 +86,7 @@ int DescTreeCompareEntries(char *p_e1, char *p_e2)
 int ParseBBSFile(const char* fbbsname)
 {
     FILE *filehandle;
-    unsigned char *line = NULL, *tmp = NULL, *token = NULL, *p =NULL;
+    char *line = NULL, *tmp = NULL, *token = NULL, *p =NULL;
     int flag = 0, rc = 1;
     FileDescEntry *fdesc = NULL;
 
