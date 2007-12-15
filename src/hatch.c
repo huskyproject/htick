@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 /*  compiler.h */
 #include <huskylib/compiler.h>
@@ -295,23 +296,28 @@ recode:
     disposeTic(&tmptic);
 }
 
-void hatch()
+int hatch()
 {
     s_area *filearea;
     struct stat stbuf;
     char *hatchedFile = NULL;
     char buffer[256]="";
-    
+
     w_log( LL_INFO, "Start file hatch...");
-    
 
     hatchedFile = sstrdup(hatchInfo->file);
-    
+
     /*  Exist file? */
     adaptcase(hatchedFile);
-    if (!fexist(hatchedFile)) {
-        w_log(LL_ALERT,"File %s, not found",hatchedFile);
-        return;
+    {
+      FILE *f = fopen(hatchedFile,"rb");
+      if (f)
+        fclose(f);
+      else
+      {
+        w_log( LL_ALERT, "File %s: %s", hatchedFile, strerror(errno) );
+        return HATCH_ERROR_FILE;
+      }
     }
 
     xstrcpy(&hatchInfo->file, GetFilenameFromPathname(hatchedFile));
@@ -335,7 +341,7 @@ void hatch()
     
     if (filearea == NULL) {
         w_log('9',"Cannot open or create File Area %s",hatchInfo->area);
-        return;
+        return HATCH_NOT_FILEAREA;
     } 
     
     expandDescMacros(hatchInfo,hatchedFile);
@@ -355,8 +361,9 @@ void hatch()
     if ( sendToLinks(0, filearea, hatchInfo, hatchedFile) == 0 ) {
        doSaveTic(NULL,hatchInfo,filearea);
     }
-    
+
     nfree(hatchedFile);
+    return HATCH_OK;
 }
 
 int send(char *filename, char *area, char *addr)
