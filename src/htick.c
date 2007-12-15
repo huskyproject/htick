@@ -360,6 +360,7 @@ void processConfig()
 int main(int argc, char **argv)
 {
    struct _minf m;
+   int rc=0;
 
    versionStr = GenVersionStr( "HTick", VER_MAJOR, VER_MINOR, VER_PATCH,
                                VER_BRANCH, cvs_date );
@@ -390,7 +391,7 @@ int main(int argc, char **argv)
 
    if (cmScan)  scan();
    if (cmToss)  toss();
-   if (cmHatch) hatch();
+   if (cmHatch) rc = hatch();
    if (cmSend)  send(sendfile, sendarea, sendaddr);
    if (cmFlist) filelist();
    if (cmClean) Purge();
@@ -416,6 +417,5 @@ int main(int argc, char **argv)
    disposeConfig(config);
    nfree(versionStr);
 
-
-   return 0;
+   return rc;
 }

@@ -3,8 +3,8 @@
 
 #include "global.h"
 
-void hatch(void);
-int  send(char *filename, char *area, char *addr);
+int hatch(void);
+int send(char *filename, char *area, char *addr);
 int PutFileOnLink(char *filename, s_ticfile *tic, s_link* downlink);
 
 #endif

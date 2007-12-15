@@ -15,7 +15,8 @@ Changes between htick-1.0-stable and htick-1.4-stable
         htick ffix! 2:464/910 -910.TEST
      This command remove file echo link 2:464/910 from 910.TEST and produce
      letter to 2:464/910 with body "-910.TEST";
-   - Write documentation at texinfo format.
+   - Write documentation at texinfo format;
+   - Return non-zero exit code if hatching unsussessful.
 
 2. CONFIG changes:
    - area definition options -manual & -mandatory are different:

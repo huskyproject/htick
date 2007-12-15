@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 /*  compiler.h */
 #include <smapi/compiler.h>
@@ -296,23 +297,36 @@ recode:
     disposeTic(&tmptic);
 }
 
-void hatch()
+int hatch()
+/* 0 - OK */
+/* 1 - File not found or not readable */
+/* 2 - filearea not found */
 {
     s_filearea *filearea;
     struct stat stbuf;
     char *hatchedFile = NULL;
     char buffer[256]="";
-    
+
     w_log( LL_INFO, "Start file hatch...");
-    
 
     hatchedFile = sstrdup(hatchInfo->file);
-    
+
     /*  Exist file? */
     adaptcase(hatchedFile);
-    if (!fexist(hatchedFile)) {
+    if (!fexist(hatchedFile))
+    {
         w_log(LL_ALERT,"File %s, not found",hatchedFile);
-        return;
+        return 1;
+    }
+    else
+    { FILE *f = fopen(hatchedFile,"r");
+      if (!f)
+      {
+        w_log( LL_ALERT, "File %s error: %s", hatchedFile, strerror(errno) );
+        return 1;
+      }
+      else
+        fclose(f);
     }
 
     xstrcpy(&hatchInfo->file, GetFilenameFromPathname(hatchedFile));
@@ -331,33 +345,34 @@ void hatch()
     }
 
     MakeProperCase(hatchInfo->file);
-    
+
     filearea=getFileArea(hatchInfo->area);
-    
+
     if (filearea == NULL) {
         w_log('9',"Cannot open or create File Area %s",hatchInfo->area);
-        return;
-    } 
-    
+        return 2;
+    }
+
     expandDescMacros(hatchInfo,hatchedFile);
 
     stat(hatchedFile,&stbuf);
     hatchInfo->size = stbuf.st_size;
-    
+
     hatchInfo->origin = hatchInfo->from = *filearea->useAka;
-    
+
     seenbyAdd(&hatchInfo->seenby,&hatchInfo->anzseenby,filearea->useAka);
-    
+
     if(filearea->description)
         hatchInfo->areadesc = sstrdup(filearea->description);
     /*  Adding crc */
     hatchInfo->crc = filecrc32(hatchedFile);
-    
+
     if ( sendToLinks(0, filearea, hatchInfo, hatchedFile) == 0 ) {
        doSaveTic(hatchedFile,hatchInfo,filearea);
     }
-    
+
     nfree(hatchedFile);
+    return 0;
 }
 
 int send(char *filename, char *area, char *addr)
@@ -492,7 +507,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     nfree(tic->password);
     if (downlink->ticPwd!=NULL)
         tic->password = sstrdup(downlink->ticPwd);
-    
+
     if(createOutboundFileNameAka(downlink,downlink->fileEchoFlavour,FLOFILE,aka)==1)
         busy = 1;
     
@@ -508,7 +523,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
             xstrcat(&linkfilepath, config->ticOutbound);
         }
     }
-    
+
     /*  fileBoxes support */
     if (needUseFileBoxForLinkAka(config,downlink,aka)) {
         nfree(linkfilepath);
@@ -516,7 +531,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
             downlink->fileBox = makeFileBoxNameAka (config,downlink,aka);
         xstrcat(&linkfilepath, downlink->fileBox);
     }
-    
+
     _createDirectoryTree(linkfilepath);
     /* Don't create TICs for everybody */
     if (!downlink->noTIC) {
@@ -525,7 +540,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
             return 0;
     }
     else  newticfile = NULL;
-    
+
     if (needUseFileBoxForLinkAka(config,downlink,aka)) {
         xstrcat(&linkfilepath, tic->file);
         if (link_file(newticedfile,linkfilepath ) == 0)
@@ -554,7 +569,7 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
 
         str_hisAka = aka2str5d(downlink->hisAka);
         str_Aka = aka2str5d(*aka);
-        
+
         if (newticfile != NULL) 
             w_log(LL_LINK,"Forwarding %s with tic %s for %s via %s", tic->file,
                   GetFilenameFromPathname(newticfile),
