@@ -71,6 +71,7 @@
 #include <huskylib/log.h>
 #include <huskylib/recode.h>
 #include <huskylib/xstr.h>
+#include <huskylib/ftnaddr.h>
 
 /* areafix library */
 #include <areafix/areafix.h>
