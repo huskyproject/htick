@@ -115,7 +115,7 @@ void cleanPassthroughDir(void)
             aka = &(config->links[i]->hisAka);
             do
             {
-              if (createOutboundFileNameAka(config->links[i], normal, FLOFILE, aka) == 0)  {
+              if (createOutboundFileNameAka(config->links[i], flNormal, FLOFILE, aka) == 0)  {
                   strcpy(tmpdir, config->links[i]->floFile);
                   sprintf(strrchr(tmpdir, '.'), ".sep");
                   if (direxist(tmpdir)) {
