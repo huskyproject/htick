@@ -14,7 +14,7 @@
 # Microsoft Visual C++ Makefile
 
 CC=     cl
-CFLAGS= -nologo -MD -Zp1 -I..\.. -I..\h
+CFLAGS= -nologo -MD -I..\.. -I..\h
 CDEFS=  -D__NT__ -DNT -DWINNT -D_CONSOLE -D_MAKE_DLL -D_CRT_SECURE_NO_DEPRECATE
 
 !ifdef _WIN32_WINNT
@@ -28,7 +28,7 @@ HTICK= htick_w2k.exe
 HTICKL= htickmvc_w2k.lib
 !endif
 
-!else 
+!else
 HTICK= htick.exe
 HTICKL= htickmvc.lib
 !endif
