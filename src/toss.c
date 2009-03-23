@@ -141,10 +141,10 @@ void writeNetmail(s_message *msg, char *areaName)
 
       if (msgHandle != NULL) {
          if ((!config->recodeMsgBase) && (config->outtab != NULL)) {
-             recodeToTransportCharset((CHAR*)msg->subjectLine);
-             recodeToTransportCharset((CHAR*)msg->fromUserName);
-             recodeToTransportCharset((CHAR*)msg->toUserName);
-             recodeToTransportCharset((CHAR*)msg->text);
+             recodeToTransportCharset((char*)msg->subjectLine);
+             recodeToTransportCharset((char*)msg->fromUserName);
+             recodeToTransportCharset((char*)msg->toUserName);
+             recodeToTransportCharset((char*)msg->text);
          }
 
           msgHeader = createXMSG(config,msg,NULL,MSGLOCAL,NULL);

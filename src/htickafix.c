@@ -390,7 +390,7 @@ int processFileFix(s_message *msg)
 					RetMsg(msg, link, preport, "Filefix reply: help request");
 					break;
 				case ADD: case DEL:
-					//if (report == NULL) report = textHead();
+					/*if (report == NULL) report = textHead();*/
 					report = areaStatus(report, preport);
 					break;
 				case UNLINKED:
