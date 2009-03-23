@@ -69,21 +69,21 @@ distclean: clean
 install: info html dvi
 	@echo .
 ifdef INFODIR
-	-$(MKDIR) $(MKDIROPT) $(INFODIR)
-	$(INSTALL) $(IMOPT) htick.info $(INFODIR)
-	-install-info --info-dir=$(INFODIR)  $(INFODIR)$(DIRSEP)htick.info
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(INFODIR)
+	$(INSTALL) $(IMOPT) htick.info $(DESTDIR)$(INFODIR)
+	-install-info --info-dir=$(DESTDIR)$(INFODIR)  $(DESTDIR)$(INFODIR)$(DIRSEP)htick.info
 endif
 ifdef HTMLDIR
-	-$(MKDIR) $(MKDIROPT) $(HTMLDIR)
-	$(INSTALL) $(IMOPT) htick*html $(HTMLDIR)
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(HTMLDIR)
+	$(INSTALL) $(IMOPT) htick*html $(DESTDIR)$(HTMLDIR)
 endif
 ifdef DVIDIR
-	-$(MKDIR) $(MKDIROPT) $(DVIDIR)
-	$(INSTALL) $(IMOPT) htick.dvi $(DVIDIR)
+	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(DVIDIR)
+	$(INSTALL) $(IMOPT) htick.dvi $(DESTDIR)$(DVIDIR)
 endif
 
 uninstall:
-	-install-info --remove --info-dir=$(INFODIR) $(INFODIR)$(DIRSEP)htick.info
-	-$(RM) $(RMOPT) $(INFODIR)$(DIRSEP)htick.info
-	-$(RM) $(RMOPT) $(HTMLDIR)$(DIRSEP)htick*html
-	-$(RM) $(RMOPT) $(DVIDIR)$(DIRSEP)htick.dvi
+	-install-info --remove --info-dir=$(DESTDIR)$(INFODIR) $(DESTDIR)$(INFODIR)$(DIRSEP)htick.info
+	-$(RM) $(RMOPT) $(DESTDIR)$(INFODIR)$(DIRSEP)htick.info
+	-$(RM) $(RMOPT) $(DESTDIR)$(HTMLDIR)$(DIRSEP)htick*html
+	-$(RM) $(RMOPT) $(DESTDIR)$(DVIDIR)$(DIRSEP)htick.dvi
