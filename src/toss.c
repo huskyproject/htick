@@ -440,6 +440,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 tic->anzldesc++;
                 break;
             case CRC_SEENBY:
+				memset(&Aka, 0, sizeof(Aka));
                 if (parseFtnAddrZS(param,&Aka)) {
                     seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
                 }
