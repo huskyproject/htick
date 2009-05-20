@@ -988,8 +988,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return TIC_NotOpen;
    }
-   /* Check CRC Value and reject faulty files depending on noCRC flag */
-   if (!filearea->noCRC) {
+   /* Check CRC Value and reject faulty files depending on noCRC flag, if crc is specified in TIC file */
+   if (!filearea->noCRC && tic.crc) {
       crc = filecrc32(ticedfile);
       if (tic.crc != crc) {
           strcpy(dirname, ticedfile);
