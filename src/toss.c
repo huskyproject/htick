@@ -338,6 +338,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     hs_addr Aka;
 
     memset(tic,'\0',sizeof(s_ticfile));
+    memset(&Aka, 0, sizeof(Aka));
 
 #ifndef HAS_sopen
     tichandle=fopen(ticfile,"r");
@@ -440,7 +441,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 tic->anzldesc++;
                 break;
             case CRC_SEENBY:
-				memset(&Aka, 0, sizeof(Aka));
                 if (parseFtnAddrZS(param,&Aka)) {
                     seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
                 }
