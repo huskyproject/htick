@@ -844,7 +844,6 @@ int processTic(char *ticfile, e_tossSecurity sec)
    s_area *filearea;
    s_link *from_link, *to_link;
    int busy;
-   unsigned long crc;
    struct stat stbuf;
    int writeAccess;
    int fileisfound = 0;
@@ -990,6 +989,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
    }
    /* Check CRC Value and reject faulty files depending on noCRC flag, if crc is specified in TIC file */
    if (!filearea->noCRC && tic.crc) {
+      unsigned long crc;
+
       crc = filecrc32(ticedfile);
       if (tic.crc != crc) {
           strcpy(dirname, ticedfile);
