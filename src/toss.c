@@ -441,6 +441,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 tic->anzldesc++;
                 break;
             case CRC_SEENBY:
+                memset(&Aka, 0, sizeof(Aka));
                 if (parseFtnAddrZS(param,&Aka)) {
                     seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
                 }
@@ -987,8 +988,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return TIC_NotOpen;
    }
-   /* Check CRC Value and reject faulty files depending on noCRC flag, if crc is specified in TIC file */
-   if (!filearea->noCRC && tic.crc) {
+   /* Check CRC Value and reject faulty files depending on noCRC flag */
+   if (!filearea->noCRC) {
       unsigned long crc;
 
       crc = filecrc32(ticedfile);
