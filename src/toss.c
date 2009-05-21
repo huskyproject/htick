@@ -338,7 +338,6 @@ int parseTic(char *ticfile,s_ticfile *tic)
     hs_addr Aka;
 
     memset(tic,'\0',sizeof(s_ticfile));
-    memset(&Aka, 0, sizeof(Aka));
 
 #ifndef HAS_sopen
     tichandle=fopen(ticfile,"r");
@@ -401,6 +400,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
             case CRC_AREA:      tic->area = sstrdup(param);
                 break;
             case CRC_CRC:       tic->crc = strtoul(param,NULL,16);
+                                tic->crc_is_present = 1;
                 break;
             case CRC_SIZE:      tic->size = tic->size=atoi(param);
                                 if(!tic->size)
@@ -989,7 +989,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return TIC_NotOpen;
    }
    /* Check CRC Value and reject faulty files depending on noCRC flag */
-   if (!filearea->noCRC) {
+   if (!filearea->noCRC && tic.crc_is_present) {
       unsigned long crc;
 
       crc = filecrc32(ticedfile);

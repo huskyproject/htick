@@ -43,6 +43,7 @@ struct ticfiletype {
                 char *replaces;     /*  Replaces File */
                 int size;           /*  Size of file */
                 unsigned long crc;  /*  CRC of File */
+				int crc_is_present; /*  If CRC is present in file, for tic w/o CRC */
                 unsigned long date; /*  Date */
                 hs_addr from;        /*  From Addr */
                 hs_addr to;          /*  To Addr */
