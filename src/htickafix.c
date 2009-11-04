@@ -360,25 +360,13 @@ int processFileFix(s_message *msg)
         } else security=2;
     } else security=1;
 
-	if (!security) {
-        /*  remove kluges */
-        char *tmp = msg->text;
-        token = strseparate (&tmp,"\n\r");
+    remove_kludges(msg);
 
-        while(token != NULL) {
-            if( !strcmp(token,"---") || !strncmp(token,"--- ",4) )
-                /*  stop on tearline ("---" or "--- text") */
-                break;
-            if( token[0] != '\001' )
-                xstrscat(&textBuff,token,"\r",NULL);
-            token = strseparate (&tmp,"\n\r");
-        }
-        nfree(msg->text);
-        msg->text = textBuff;
+	if (!security) {
+        char *tmp;
 
     	textBuff = tmp = sstrdup(msg->text);
 		token = strseparate (&textBuff, "\n\r");
-
 		while(token != NULL) {
 			preport = filefix_processcmd( link, msg,  stripLeadingChars(token, " \t"), filefix_tellcmd (token) );
 			if (preport != NULL) {
