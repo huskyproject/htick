@@ -349,7 +349,7 @@ int processFileFix(s_message *msg)
 	}
 
 
-	/*  security ckeck. link,araefixing & password. */
+	/*  security check: link, filefix enabled & password. */
     if (link != NULL) {
         if (link->filefix.on) {
             if (link->filefix.pwd) {
