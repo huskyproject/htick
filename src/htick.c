@@ -164,7 +164,7 @@ void start_help(void) {
             "Options: -q              Quiet mode (display only urgent messages to console)\n"
             "         -c config-file  Specify alternate config file\n"
             "Commands:\n"
-            " toss [annfecho <file>] Do tossing. [Announce new fileecho in text file]\n"
+            " toss [annfecho <file>] Do tossing. [Announce new fileechos in text file]\n"
             " clean                  Clean passthrough dir and old files in fileechos\n"
             " ffix [<addr> command]  Process filefix\n"
             " announce               Announce new files\n"
@@ -172,9 +172,9 @@ void start_help(void) {
               );
         printf(
             " hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]\n"
-            "                        Hatch file into Area, using Description for file,\n"
-            "                        if exist \"replace\", then fill replace field in TIC;\n"
-            "                        if not exist <filemask>, then put <file> in field\n"
+            "                        Hatch file into Area using Description for file,\n"
+            "                        if \"replace\" exists then fill replace field in TIC;\n"
+            "                        if <filemask> does not exist then put <file> in field\n"
             "                        desc's parameters may be:\n"
             "                           @BBS to load from Files.Bbs\n"
             "                           @DIZ to load from the contained File_Id.Diz\n"
