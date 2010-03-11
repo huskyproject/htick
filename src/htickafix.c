@@ -123,7 +123,7 @@ int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link)
     if (((link->Pause & Pause) == Pause) && echo->noPause==0) return 3;
 
     /* check access based on group access and optGrp+export */
-    rc = checkAccessAndOptGrps(echo, link, link->export);
+    rc = checkAccessAndOptGrps(echo, link, link->aexport);
     if(rc != AREA_ACCESS_OK) return rc;
 
     /* check access level */
@@ -131,7 +131,7 @@ int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link)
         return AREA_ACCESS_NOLEVEL;
 
     /* check for 'access export' for arealink set up by WriteOnly keyword */
-    if (echo->downlinks[i]->export==0) 
+    if (echo->downlinks[i]->aexport==0) 
         return AREA_ACCESS_NOEXPORT;
 
     return rc;
