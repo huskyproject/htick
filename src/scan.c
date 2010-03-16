@@ -146,7 +146,7 @@ void scanNMArea(s_area *afixarea)
             if (addrComp(dest, config->addr[j])==0) {for_us = 1; break;}
                 
          /*  if for filefix - process it */
-         if (fc_stristr(robot->names,(char*)xmsg.to) &&
+         if (findInStrArray(robot->names, (char*)xmsg.to) >= 0 &&
               for_us && (xmsg.attr & MSGREAD) != MSGREAD)
             {
                 convertMsgHeader(xmsg, &filefixmsg);
