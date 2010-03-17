@@ -873,7 +873,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    s_filearea *filearea;
    s_link *from_link, *to_link;
    int busy;
-   unsigned long crc;
+   unsigned long crc = 0;
    struct stat stbuf;
    int writeAccess;
    int fileisfound = 0;
@@ -1016,9 +1016,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
       return TIC_NotOpen;
    }
    /* Check CRC Value and reject faulty files depending on noCRC flag */
-   if (!filearea->noCRC) {
-      crc = filecrc32(ticedfile);
-      if (tic.crc != crc) {
+   if (!filearea->noCRC && tic.crc) {
+      stat(ticedfile,&stbuf);
+      if (stbuf.st_size && ((tic.size==0) || (stbuf.st_size == tic.size))) { /* CRC of empty file is zero */
+          crc = filecrc32(ticedfile);
+      }
+      if ((tic.crc != crc) || (stbuf.st_size != tic.size)) {
           strcpy(dirname, ticedfile);
           pos = strrchr(dirname, PATH_DELIM);
           if (pos) {
@@ -1079,20 +1082,34 @@ int processTic(char *ticfile, e_tossSecurity sec)
               nfree(findfile);
               nfree(realfile);
           } else {
-              w_log(LL_ERROR,"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
-              disposeTic(&tic);
-              return TIC_WrongTIC;
+              if (stbuf.st_size) { /* Empty file skipped later */ 
+                  w_log(LL_ERROR,"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
+                  disposeTic(&tic);
+/*
+                  return TIC_WrongTIC;
+*/
+                  return TIC_NotRecvd;
+              }
           }
       }
    }
 
 
    stat(ticedfile,&stbuf);
-   tic.size = stbuf.st_size;
-   if (!tic.size) {
-      w_log('6',"File %s from filearea %s has zero size",tic.file,tic.area);
+   if (!stbuf.st_size) {
+      w_log('6',"File %s from filearea %s has zero size, skipped.",tic.file,tic.area);
       disposeTic(&tic);
       return TIC_NotRecvd;
+   }
+   if(tic.size) {
+       if (stbuf.st_size != tic.size) {
+           w_log('6',"File %s from filearea %s has incorrect size - in tic:%lu, real:%lu",
+                     tic.file, tic.area, tic.size, stbuf.st_size);
+           disposeTic(&tic);
+           return TIC_NotRecvd;
+       }
+   } else {
+       tic.size = stbuf.st_size;
    }
 
    writeAccess = writeCheck(filearea,&tic.from);
