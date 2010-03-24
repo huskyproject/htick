@@ -447,7 +447,9 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 break;
             case CRC_SEENBY:
                 memset(&Aka, 0, sizeof(Aka));
-                if (parseFtnAddrZS(param,&Aka)) {
+                if (parseFtnAddrZS(param,&Aka) & FTNADDR_ERROR) {
+                    w_log(LL_TIC, "TIC %s: Illegal value: 'Seenby %s', ignored", ticfile, param);
+                } else {
                     seenbyAdd ( &tic->seenby, &tic->anzseenby, &Aka);
                 }
                 break;
