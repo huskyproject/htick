@@ -1202,7 +1202,7 @@ void checkTmpDir(void)
         strcat(ticfile, file);
         if (stricmp(file+8, ".TIC") == 0) {
             memset(&tic,0,sizeof(tic));
-            if(!parseTic(ticfile,&tic)) continue;
+            if( parseTic(ticfile,&tic)!=1 ) continue;
             if( checkTic(ticfile,&tic) ) continue;
             link = getLinkFromAddr(config, tic.to);
             if(!link) continue;
