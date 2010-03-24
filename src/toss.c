@@ -291,7 +291,7 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
   if(!tic->to.zone && !tic->to.net && !tic->to.node){
     w_log(LL_SECURITY,"'To' address not presents in TIC %s", ticfilename);
   }else if(!tic->to.zone || !tic->to.net){
-    w_log(LL_ERR,"'To' address is illegal in TIC %s", ticfilename);
+    w_log(LL_ERR,"'To' address (%s) is illegal in TIC %s", aka2str(tic->to), ticfilename);
     nRet++;
   }
 
@@ -327,7 +327,7 @@ int checkTic(const char *ticfilename,const s_ticfile *tic)
 }
 
 /* Read tic-file and store values into 2nd parameter.
- * Return 1 if success and 0 if error
+ * Return 1 if success, 2 if bad data in tic, and 0 if file error
  */
 int parseTic(char *ticfile,s_ticfile *tic)
 {
@@ -336,6 +336,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     s_link *ticSourceLink=NULL;
     UINT16 key;
     hs_addr Aka;
+    int rc=1;
 
     memset(tic,'\0',sizeof(s_ticfile));
 
@@ -422,7 +423,11 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 break;
             case CRC_ORIGIN:    parseFtnAddrZS(param,&tic->origin);
                 break;
-            case CRC_TO:        parseFtnAddrZS(param,&tic->to);
+            case CRC_TO:
+                parseFtnAddrZS(param,&tic->to);
+                if(!tic->to.zone || !tic->to.net){
+                  w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfilename);
+                rc=2;
                 break;
             case CRC_DESTINATION:
                 if(ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
@@ -455,6 +460,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
             default:
                 if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
                     w_log( '7', "Unknown Keyword %s in Tic File",token);
+                rc=2;
             } /* switch */
         } /* endif */
         if (config->MaxTicLineLength) nfree(linecut);
@@ -469,7 +475,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
         tic->anzdesc = 1;
     }
 
-    return 1;
+    return rc;
 }
 
 
@@ -583,7 +589,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         if (!filearea->sendorig) {
             /* overwrite existing file if not same */
             if (move_file(filename,newticedfile,1)!=0) {
-                w_log( LL_ERROR,"File %s not moveable to %s: %s",
+                w_log( LL_ERROR,"Can't copy file %s to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
             } else {
@@ -592,7 +598,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         } else {
             /* overwrite existing file if not same */
             if (copy_file(filename,newticedfile,1)!=0) {
-                w_log( LL_ERROR,"File %s not moveable to %s: %s",
+                w_log( LL_ERROR,"Can't copy file %s to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
             } else {
@@ -602,7 +608,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             strcat(newticedfile,MakeProperCase(tic->file));
             /* overwrite existing file if not same */
             if (move_file(filename,newticedfile,1)!=0) {
-                w_log( LL_ERROR, "File %s not moveable to %s: %s",
+                w_log( LL_ERROR, "Can't move file %s  to %s: %s",
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
             } else {
@@ -612,7 +618,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     } else if (strcasecmp(filename,newticedfile) != 0) {
             /* overwrite existing file if not same */
         if (copy_file(filename,newticedfile,1)!=0) {
-            w_log( LL_ERROR, "File %s not moveable to %s: %s",
+            w_log( LL_ERROR, "Can't copy file %s to %s: %s",
                 filename, newticedfile, strerror(errno) );
             return TIC_NotOpen;
         } else {
@@ -622,7 +628,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
 			if (copy_file(filename,newticedfile,1)!=0) {
-				w_log( LL_ERROR, "File %s not moveable to %s: %s",
+				w_log( LL_ERROR, "Can't copy file %s to %s: %s",
 					filename, newticedfile, strerror(errno) );
 				return TIC_NotOpen;
 			} else {
@@ -634,9 +640,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     if (tic->anzldesc==0 && config->fDescNameCount && !filearea->nodiz && isToss)
         GetDescFormDizFile(newticedfile, tic);
 
-
     if (config->announceSpool) doSaveTic4Report(tic);
-
 
     if (filearea->msgbType != MSGTYPE_PASSTHROUGH) {
         strcpy(descr_file_name, filearea->fileName);
@@ -853,9 +857,10 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    w_log('6',"Processing Tic-File %s",ticfile);
 
-   if(!parseTic(ticfile,&tic))
+   if( rc=parseTic(ticfile,&tic) )
      return TIC_NotOpen;
-
+   if( rc==2 ) return TIC_WrongTIC;
+   rc = 0;
    if( checkTic(ticfile,&tic) ) return TIC_WrongTIC;
 
    if ( tic.file && strpbrk(tic.file, "/\\:") )
