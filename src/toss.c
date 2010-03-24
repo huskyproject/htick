@@ -426,7 +426,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
             case CRC_TO:
                 parseFtnAddrZS(param,&tic->to);
                 if(!tic->to.zone || !tic->to.net){
-                  w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfilename);
+                  w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfile);
+                }
                 rc=2;
                 break;
             case CRC_DESTINATION:
