@@ -857,8 +857,8 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    w_log('6',"Processing Tic-File %s",ticfile);
 
-   if( rc=parseTic(ticfile,&tic) )
-     return TIC_NotOpen;
+   rc=parseTic(ticfile,&tic);
+   if( rc==0 ) return TIC_NotOpen;
    if( rc==2 ) return TIC_WrongTIC;
    rc = 0;
    if( checkTic(ticfile,&tic) ) return TIC_WrongTIC;
