@@ -4,6 +4,7 @@ Changes between htick-1.4-stable and htick-1.9-current
 1. MAJOR feature improvements:
   - command line switch "-b" for toss. Force tossing bad tics.
   - add yourself in transit tics in seen-bys if missing
+  - strong checking "to" address in received TIC
 
 2. CONFIG changes:
 
