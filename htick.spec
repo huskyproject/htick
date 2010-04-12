@@ -2,7 +2,7 @@
 %define reltype C
 # may be one of: C (current), R (release), S (stable)
 
-Name: hpt
+Name: htick
 Version: 1.9.%{reldate}%{reltype}
 Release: 1
 Group: Applications/FTN
