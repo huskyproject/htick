@@ -61,6 +61,7 @@ distclean: clean
 	-$(RM) $(RMOPT) *.log
 
 install: htick$(EXE)
+	$(MKDIR) $(DESTDIR)$(BINDIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(DESTDIR)$(BINDIR)
 	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(DESTDIR)$(MAN1DIR)
 	$(ECHO) To install documentation: change directory to doc and run make install
