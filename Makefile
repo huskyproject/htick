@@ -2,7 +2,7 @@
 #
 # include Husky-Makefile-Config
 ifeq ($(DEBIAN), 1)
-# Every Debian-Source-Paket has one included.
+# Every Debian-Source-Package has one included.
 include /usr/share/husky/huskymak.cfg
 else ifdef RPM_BUILD_ROOT
 # RPM build requires all files to be in one branch directory
@@ -61,10 +61,10 @@ distclean: clean
 	-$(RM) $(RMOPT) *.log
 
 install: htick$(EXE)
-	$(MKDIR) $(DESTDIR)$(BINDIR) $(DESTDIR)$(MAN1DIR)
+	$(MKDIR) $(MKDIROPT) $(DESTDIR)$(BINDIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(DESTDIR)$(BINDIR)
 	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(DESTDIR)$(MAN1DIR)
-	$(ECHO) To install documentation: change directory to doc and run make install
+	$(ECHO) To install documentation run `make install` in doc/ directory
 
 uninstall:
 	$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)htick$(EXE)
