@@ -427,8 +427,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 parseFtnAddrZS(param,&tic->to);
                 if(!tic->to.zone || !tic->to.net){
                   w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfile);
+                  rc=2;
                 }
-                rc=2;
                 break;
             case CRC_DESTINATION:
                 if(ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
@@ -461,9 +461,10 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 tic->anzpath++;
                 break;
             default:
-                if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset)
+                if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset){
                     w_log( '7', "Unknown Keyword %s in Tic File",token);
-                rc=2;
+                    rc=2;
+		}
             } /* switch */
         } /* endif */
         if (config->MaxTicLineLength) nfree(linecut);
