@@ -64,7 +64,7 @@ install: htick$(EXE)
 	$(MKDIR) $(MKDIROPT) $(DESTDIR)$(BINDIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(DESTDIR)$(BINDIR)
 	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(DESTDIR)$(MAN1DIR)
-	$(ECHO) To install documentation run `make install` in doc/ directory
+	$(ECHO) 'To install documentation run `make install` in doc/ directory'
 
 uninstall:
 	$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)htick$(EXE)
