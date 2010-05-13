@@ -9,10 +9,11 @@ include ../../huskymak.cfg
 include ../makefile.inc
 
 # includes directories
-CINCL	= -I$(H_DIR) -I../../huskylib -I../../smapi -I../../fidoconf
+CINCL	= -I$(H_DIR) -I../../fidoconf -I../../smapi/ -I../../huskylib/ -I../../areafix/
 
 # libraries need to build binary file
-LIBS	= ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
+LIBS	= ../../areafix/make/$(LIBPREFIX)areafix$(LIBSUFFIX)$(_LIB) \
+	  ../../fidoconf/make/$(LIBPREFIX)fidoconfig$(LIBSUFFIX)$(_LIB) \
 	  ../../smapi/make/$(LIBPREFIX)smapi$(LIBSUFFIX)$(_LIB) \
 	  ../../huskylib/make/$(LIBPREFIX)husky$(LIBSUFFIX)$(_LIB)
 
@@ -33,4 +34,4 @@ programs: $(PROGRAMS)
 
 $(PROGRAMS): $(OBJS)
 	@echo Create $(PROGRAMS)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
