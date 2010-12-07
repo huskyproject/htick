@@ -36,5 +36,4 @@ programs: $(PROGRAMS)
 
 $(PROGRAMS): $(OBJS)
 	@echo Create $(PROGRAMS)
-	@$(CC) $(STRIP) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
-	@strip$(_EXE) $@
+	@$(CC) $(CFLAGS) $(CDEFS) $(CINCL) $(EXENAMEFLAG) $@ $^ $(LIBS)
