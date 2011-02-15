@@ -882,10 +882,11 @@ int hidden (char *filename)
 #endif
 
 /*
- * Return: o if success, positive integer if error in TIC or file,
- * negative integer if illegal call.
+ * Return: 0 if success (look TIC_OK in htick/h/toss.h),
+ * positive integer if error in TIC or file (see htick/h/toss.h),
+ * negative integer if illegal call (look TIC_UnknownError in htick/h/toss.h).
  */
-int processTic(char *ticfile, e_tossSecurity sec)
+enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 {
    s_ticfile tic;
    size_t j;
@@ -910,7 +911,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    if( (ticfile == NULL) ){
      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: processTic(%s,sec). This is bug in program. Please report to developers.",
            __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"");
-     return 0;
+     return TIC_UnknownError;
    }
 
    rc=parseTic(ticfile,&tic);
@@ -1162,14 +1163,15 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    rc = sendToLinks(1, filearea, &tic, ticedfile);
 
-   if(rc == 0)
+   if(rc == TIC_OK) /* TIC_OK = 0 in htick/h/toss.h */
        doSaveTic(ticfile,&tic,filearea);
 
    disposeTic(&tic);
    return(rc);
 }
 
-
+/* Toss TIC-files in the specified directory
+ */
 void processDir(char *directory, e_tossSecurity sec)
 {
    husky_DIR      *dir;
