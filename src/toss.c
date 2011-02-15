@@ -491,7 +491,7 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
                 break;
             default:
                 if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset){
-                    w_log( '7', "Unknown Keyword %s in Tic File",token);
+                  w_log( LL_WARNING, "Unknown Keyword %s in Tic File",token );
                     rc=parseTic_bad;
                 }
             } /* switch */
