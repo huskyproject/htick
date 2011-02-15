@@ -5,12 +5,11 @@ OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
-  CFLAGS  = -c -I../h -I../.. -Wall -ggdb -O2 -DUNIX
-  LFLAGS  = -L../../smapi -L../../fidoconf
+  CFLAGS  = -c -I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -Wall -ggdb -O2 -DUNIX
 else
-  CFLAGS  = -c -I../h -I../.. -Wall -O3 -s -DUNIX
-  LFLAGS  = -L../../smapi -L../../fidoconf
+  CFLAGS  = -c -I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -Wall -O3 -s -DUNIX
 endif
+LFLAGS  = -L../../huskylib -L../../smapi -L../../fidoconf
 
 all: $(OBJS) \
      htick
