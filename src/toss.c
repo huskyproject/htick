@@ -347,24 +347,25 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
   }
 
   return nRet;
-}
+} /* checkTic */
 
-/* Read tic-file and store values into 2nd parameter.
+
+/* Read TIC file and store values into 2nd parameter.
  * Return 1 if success, 2 if bad data in tic, and 0 if file error
  */
-int parseTic(char *ticfile,s_ticfile *tic)
+enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
     char *line, *token, *param, *linecut = "", *emptyline = "";
     s_link *ticSourceLink=NULL;
     UINT16 key;
     hs_addr Aka;
-    int rc=1;
+    int rc=parseTic_success;
 
     if( (ticfile == NULL) || (tic == NULL) ){
       w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: parseTic(%s%s%s,%s). This is bug in program. Please report to developers.",
             __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"", tic?"tic":"NULL");
-      return 0;
+      return parseTic_error;
     }
     memset(tic,'\0',sizeof(s_ticfile));
 
@@ -381,7 +382,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 #endif
         if( fh<0 ){
             w_log(LL_ERROR, "Can't open '%s': %s (sopen())", ticfile, strerror(errno));
-            return 0;
+            return parseTic_error;
         }
         tichandle = fdopen(fh,"r");
     }
@@ -389,7 +390,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
 
     if(!tichandle){
         w_log(LL_ERROR, "Can't open '%s': %s", ticfile, strerror(errno));
-        return 0;
+        return parseTic_error;
     }
 
     while ((line = readLine(tichandle)) != NULL) {
@@ -455,7 +456,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
                 parseFtnAddrZS(param,&tic->to);
                 if(!tic->to.zone || !tic->to.net){
                   w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfile);
-                  rc=2;
+                  rc=parseTic_bad;
                 }
                 break;
             case CRC_DESTINATION:
@@ -491,8 +492,8 @@ int parseTic(char *ticfile,s_ticfile *tic)
             default:
                 if (ticSourceLink && !ticSourceLink->FileFixFSC87Subset){
                     w_log( '7', "Unknown Keyword %s in Tic File",token);
-                    rc=2;
-		}
+                    rc=parseTic_bad;
+                }
             } /* switch */
         } /* endif */
         if (config->MaxTicLineLength) nfree(linecut);

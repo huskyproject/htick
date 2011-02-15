@@ -47,17 +47,25 @@ enum TIC_state {
                   TIC_NotRecvd,  /* No action, wait file */
                   TIC_IOError    /* No action */
 };
+typedef enum TIC_state e_TIC_state;
+
+enum parseTic_result {
+  parseTic_error   = 0,
+  parseTic_success = 1,
+  parseTic_bad     = 2
+};
+typedef enum parseTic_result e_parseTic_result;
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
 void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea);
 void disposeTic(s_ticfile *tic);
-int writeTic(char *ticfile,s_ticfile *tic);
+int  writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
 void processTmpDir(void);
 void toss(void);
 void writeNetmail(s_message *msg, char *areaName);
 int  sendToLinks(int isToss, s_area *filearea, s_ticfile *tic, const char *filename);
-int  parseTic(char *ticfile,s_ticfile *tic);
 
+e_parseTic_result parseTic(char *ticfile,s_ticfile *tic);
 
 #endif
