@@ -916,8 +916,8 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    }
 
    switch( parseTic(ticfile,&tic) ) {
-   case 0: return TIC_NotOpen;
-   case 2: return TIC_WrongTIC;
+     case parseTic_error: return TIC_NotOpen;
+     case parseTic_bad: return TIC_WrongTIC;
    }
 
    {
@@ -1273,7 +1273,7 @@ void checkTmpDir(void)
         strcat(ticfile, file);
         if (stricmp(file+8, ".TIC") == 0) {
             memset(&tic,0,sizeof(tic));
-            if( parseTic(ticfile,&tic)!=1 ) continue;
+            if( parseTic(ticfile,&tic)!=parseTic_success ) continue;
             if( checkTic(ticfile,&tic) ) continue;
             link = getLinkFromAddr(config, tic.to);
             if(!link) continue;

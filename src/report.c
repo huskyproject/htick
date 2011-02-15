@@ -140,14 +140,14 @@ void getReportInfo()
     UINT i = 0;
 
     dir = husky_opendir(config->announceSpool);
-    
+
     while ((file = husky_readdir(dir)) != NULL) {
         if (patimat(file, "*.TIC") == 0)
             continue;
         xstrscat(&fname,config->announceSpool,file,NULL);
         w_log(LL_DEBUG, "Parsing Report file %s",file);
 
-        if( parseTic( fname, &tmptic ) && tmptic.area && tmptic.file )
+        if( (parseTic( fname, &tmptic ) != parseTic_error) && tmptic.area && tmptic.file )
         {
             Report = srealloc( Report, (rCount+1)*sizeof(s_ticfile) );
             memset(&(Report[rCount]),0,sizeof(s_ticfile)); 

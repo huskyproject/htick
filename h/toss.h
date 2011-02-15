@@ -52,7 +52,7 @@ typedef enum TIC_state e_TIC_state;
 enum parseTic_result {
   parseTic_error   = 0,
   parseTic_success = 1,
-  parseTic_bad     = 2
+  parseTic_bad     = 2  /* bad data in TIC (may be invalid TIC) */
 };
 typedef enum parseTic_result e_parseTic_result;
 
