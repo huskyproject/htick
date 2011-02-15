@@ -919,8 +919,11 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    case 2: return TIC_WrongTIC;
    }
 
-   rc = 0;
-   if( checkTic(ticfile,&tic) ) return TIC_WrongTIC;
+   {
+     int r = checkTic(ticfile,&tic);
+     if( r > 0 ) return TIC_WrongTIC;
+     if( r < 0 ) return TIC_UnknownError;
+   }
 
    if ( tic.file && strpbrk(tic.file, "/\\:") )
    {
@@ -1123,7 +1126,6 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
           }
       }
    }
-
 
    stat(ticedfile,&stbuf);
    tic.size = stbuf.st_size;
