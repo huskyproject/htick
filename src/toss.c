@@ -128,8 +128,14 @@ void writeNetmail(s_message *msg, char *areaName)
    XMSG   msgHeader;
    s_area *nmarea;
 
+   if( (msg == NULL) || (areaName == NULL) ){
+     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeNetmail(%s,%s%s%s). This is bug in program. Please report to developers.",
+           __LINE__, msg?"msg":"NULL", areaName?"\"":"", areaName?areaName:"NULL", areaName?"\"":"");
+     return;
+   }
+
    if (!config->netMailAreas) {
-     w_log(LL_CRIT, "Netmailarea not defined, message dropped!");
+     w_log(LL_CRIT, "Netmailareas not defined, message dropped! Please check config.");
      return;
    }
    if ((nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
@@ -169,6 +175,9 @@ void writeNetmail(s_message *msg, char *areaName)
    } /* endif */
 }
 
+/*
+ * Return 0 if error, 1 if success
+ */
 int writeTic(char *ticfile,s_ticfile *tic)
 {
     FILE *tichandle;
@@ -176,17 +185,16 @@ int writeTic(char *ticfile,s_ticfile *tic)
     char *p;
     s_area *filearea = NULL;
 
-    if (ticfile) {
-        tichandle=fopen(ticfile,"wb");
-        if (!tichandle) {
-            w_log(LL_ERROR, "Unable to open TIC file %s: %s!!!\n", ticfile, strerror(errno));
-            return 0;
-        }
-    } else {
-        w_log(LL_ERROR, "ticfile is NULL, internal error!\n");
-        return 0;
+    if( (ticfile == NULL) || (tic == NULL) ){
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeTic(%s%s%s,%s). This is bug in program. Please report to developers.",
+            __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"", tic?"tic":"NULL");
+      return 0;
     }
-
+    tichandle=fopen(ticfile,"wb");
+    if (!tichandle) {
+      w_log(LL_ERROR, "Unable to open TIC file \"%s\": %s!!!\n", ticfile, strerror(errno));
+      return 0;
+    }
 
     fprintf(tichandle,"Created by HTick, written by Gabriel Plutzar\r\n");
     fprintf(tichandle,"File %s\r\n",tic->file);
@@ -240,10 +248,17 @@ int writeTic(char *ticfile,s_ticfile *tic)
     return 1;
 }
 
+/* Free memory allocated in structure s_ticfile *tic
+ */
 void disposeTic(s_ticfile *tic)
 {
    unsigned int i;
 
+   if( (tic == NULL) ){
+     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: disposeTic(NULL). This is bug in program. Please report to developers.",
+           __LINE__);
+     return;
+   }
    nfree(tic->seenby);
    nfree(tic->file);
    nfree(tic->area);
@@ -265,62 +280,70 @@ void disposeTic(s_ticfile *tic)
 }
 
 /* Check TIC file validity
+ * Return: 0 if TIC valid,
+ *         negative integer if error found in parameters of function,
+ *         positive integer if information in TIC is bad.
  */
 int checkTic(const char *ticfilename,const s_ticfile *tic)
 {
   int nRet=0;
 
+  if( (ticfilename == NULL) || (tic == NULL) ){
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: checkTic(%s%s%s,%s). This is bug in program. Please report to developers.",
+          __LINE__, ticfilename?"\"":"", ticfilename?ticfilename:"NULL", ticfilename?"\"":"", tic?"tic":"NULL");
+    return -1;
+  }
   if(!tic->file){
-    w_log(LL_ERR,"File name not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_ERR,"File name not presents in TIC \"%s\", required by FSC-87", ticfilename);
     nRet++;
   }
 
   if(!tic->area){
-    w_log(LL_ERR,"Filearea name not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_ERR,"Filearea name not presents in TIC \"%s\", required by FSC-87", ticfilename);
     nRet++;
   }
 
   if(!tic->crc){
-    w_log(LL_SECURITY,"CRC not presents in TIC %s", ticfilename);
+    w_log(LL_SECURITY,"CRC not presents in TIC \"%s\"", ticfilename);
   }
 
   if(!tic->size){
-    w_log(LL_ALERT,"File size not presents in TIC %s, FSC-87 speak: \"SHOULD be required\"", ticfilename);
+    w_log(LL_ALERT,"File size not presents in TIC \"%s\", FSC-87 speak: \"SHOULD be required\"", ticfilename);
   }
 
   if(!tic->to.zone && !tic->to.net && !tic->to.node){
-    w_log(LL_SECURITY,"'To' address not presents in TIC %s", ticfilename);
+    w_log(LL_SECURITY,"'To' address not presents in TIC \"%s\"", ticfilename);
   }else if(!tic->to.zone || !tic->to.net){
-    w_log(LL_ERR,"'To' address (%s) is illegal in TIC %s", aka2str(tic->to), ticfilename);
+    w_log(LL_ERR,"'To' address (%s) is illegal in TIC \"%s\"", aka2str(tic->to), ticfilename);
     nRet++;
   }
 
   if(!tic->from.zone && !tic->from.net && !tic->from.node){
-    w_log(LL_ERR,"'From' address not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_ERR,"'From' address not presents in TIC \"%s\", required by FSC-87", ticfilename);
     nRet++;
   }else if(!tic->from.zone || !tic->from.net){
-    w_log(LL_ERR,"'From' address is illegal in TIC %s", ticfilename);
+    w_log(LL_ERR,"'From' address is illegal in TIC \"%s\"", ticfilename);
     nRet++;
   }
 
   if(!tic->origin.zone && !tic->origin.net && !tic->origin.node){
-    w_log(LL_ERR,"Originating address not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_ERR,"Originating address not presents in TIC \"%s\", required by FSC-87", ticfilename);
     /* nRet++; */
   }else if(!tic->origin.zone || !tic->origin.node){
-    w_log(LL_ERR,"Originating address is illegal in TIC %s", ticfilename);
+    w_log(LL_ERR,"Originating address is illegal in TIC \"%s\"", ticfilename);
     /* nRet++; */
   }
 
   if(!tic->path){
-    w_log(LL_ALERT,"PATH line(s) not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_ALERT,"PATH line(s) not presents in TIC \"%s\", required by FSC-87", ticfilename);
   }
 
   if(!tic->seenby){
-    w_log(LL_ALERT,"SEENBY line(s) not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_ALERT,"SEENBY line(s) not presents in TIC \"%s\", required by FSC-87", ticfilename);
   }
 
   if(!tic->password){  /* Mandatory field (FSC-87) */
-    w_log(LL_SECURITY,"PW not presents in TIC %s, required by FSC-87", ticfilename);
+    w_log(LL_SECURITY,"PW not presents in TIC \"%s\", required by FSC-87", ticfilename);
   }
 
   return nRet;
@@ -338,6 +361,11 @@ int parseTic(char *ticfile,s_ticfile *tic)
     hs_addr Aka;
     int rc=1;
 
+    if( (ticfile == NULL) || (tic == NULL) ){
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: parseTic(%s%s%s,%s). This is bug in program. Please report to developers.",
+            __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"", tic?"tic":"NULL");
+      return 0;
+    }
     memset(tic,'\0',sizeof(s_ticfile));
 
 #ifndef HAS_sopen
@@ -488,6 +516,12 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
     unsigned int i;
     s_savetic *savetic;
 
+    if( (tic == NULL) || (filearea == NULL) ){
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: doSaveTic(%s%s%s,%s,%s). This is bug in program. Please report to developers.",
+            __LINE__, ticfile?"\"":"", ticfile?ticfile:"", ticfile?"\"":"", tic?"tic":"NULL", filearea?"filearea":"NULL");
+      return;
+    }
+
     for (i = 0; i< config->saveTicCount; i++)
     {
         savetic = &(config->saveTic[i]);
@@ -528,6 +562,9 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
     return;
 }
 
+/*
+ * Return: 0 if success, positive integer if error, negative integer if illegal call
+ */
 int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                 const char *filename)
                 /*
@@ -547,6 +584,13 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     char *comm;
     char *p;
     unsigned int minLinkCount;
+
+    if( (filearea == NULL) || (tic == NULL) || (filename == NULL) ){
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: sendToLinks(%i,%s,%s,%s%s%s). This is bug in program. Please report to developers.",
+            __LINE__, isToss, filearea?"filearea":"NULL", tic?"tic":"NULL",
+            filename?"\"":"", filename?filename:"NULL", filename?"\"":"");
+      return -1;
+    }
 
     if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
     else minLinkCount = 1;             /*  only downlink */
@@ -579,7 +623,6 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             w_log(LL_DEL,"Removed %d file[s]. Filemask: %s",num_files,repl);
         }
     }
-
 
     strcpy(newticedfile,fileareapath);
     strcat(newticedfile,MakeProperCase(tic->file));
@@ -838,7 +881,10 @@ int hidden (char *filename)
 }
 #endif
 
-
+/*
+ * Return: o if success, positive integer if error in TIC or file,
+ * negative integer if illegal call.
+ */
 int processTic(char *ticfile, e_tossSecurity sec)
 {
    s_ticfile tic;
@@ -860,6 +906,12 @@ int processTic(char *ticfile, e_tossSecurity sec)
    char *tic_origin;
 
    w_log('6',"Processing Tic-File %s",ticfile);
+
+   if( (ticfile == NULL) ){
+     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: processTic(%s,sec). This is bug in program. Please report to developers.",
+           __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"");
+     return 0;
+   }
 
    rc=parseTic(ticfile,&tic);
    if( rc==0 ) return TIC_NotOpen;
@@ -1117,6 +1169,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
    return(rc);
 }
 
+
 void processDir(char *directory, e_tossSecurity sec)
 {
    husky_DIR      *dir;
@@ -1124,7 +1177,11 @@ void processDir(char *directory, e_tossSecurity sec)
    char           *dummy = NULL;
    int            rc;
 
-   if (directory == NULL) return;
+   if( (directory == NULL) ){
+     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: processDir(%s%s%s,sec). This is bug in program. Please report to developers.",
+           __LINE__, directory?"\"":"", directory?directory:"NULL", directory?"\"":"");
+     return;
+   }
 
    dir = husky_opendir(directory);
    if (dir == NULL) return;
@@ -1260,7 +1317,9 @@ void checkTmpDir(void)
     husky_closedir(dir);
 }
 
-
+/*
+ * Return: o if error, 1 of success
+ */
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
 {
     char *ctrlBuff, *textStart, *textWithoutArea;
@@ -1270,6 +1329,12 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     XMSG  xmsg;
     char /**slash,*/ *p, *q, *tiny;
     int rc = 0;
+
+    if( (echo == NULL) || (msg == NULL) ){
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: putMsgInArea(%s,%s,%i,%u). This is bug in program. Please report to developers.",
+            __LINE__, echo?"echo":"NULL", msg?"msg":"NULL", strip, (unsigned)forceattr);
+      return 0;
+    }
 
     if (echo->msgbType==MSGTYPE_PASSTHROUGH) {
         w_log(LL_ERROR, "Can't put message to passthrough area %s!", echo->areaName);
@@ -1349,9 +1414,18 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     return rc;
 }
 
+/*
+ * Return: o if error, 1 of success
+ */
 int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
 {
     char *tmp = NULL, *line = NULL, *textBuff=NULL, *areaName=NULL, *reason = NULL;
+
+    if( (msg == NULL) ){
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: putMsgInBadArea(NULL,pktOrigAddr). This is bug in program. Please report to developers.",
+            __LINE__);
+      return 0;
+    }
 
     /*  get real name area */
     line = strchr(msg->text, '\r');
@@ -1367,7 +1441,7 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
 	if (*(line+1) == '\x01') tmp = line+1;
 	else { tmp = line+1; *line = 0; break; }
     }
-	
+
     xstrscat(&textBuff, msg->text, "\rFROM: ", aka2str(pktOrigAddr), "\rREASON: ", reason, "\r", NULL);
 
     if (areaName) xscatprintf(&textBuff, "AREANAME: %s\r\r", areaName);
@@ -1385,6 +1459,12 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin)
 {
    s_area       *echo;
+
+   if( (msg == NULL) ){
+     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeMsgToSysop(NULL,...). This is bug in program. Please report to developers.",
+           __LINE__);
+     return;
+   }
 
    xscatprintf(&(msg->text), " \r--- %s\r * Origin: %s (%s)\r",
        (config->tearline) ? config->tearline : "",
