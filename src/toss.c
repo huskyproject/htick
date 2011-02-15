@@ -1109,6 +1109,10 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
               if (rename(realfile, ticedfile) != 0) {
                   w_log(LL_ERROR, "Can't rename file \"%s\" to \"%s\": %s", realfile, ticedfile,
                         strerror(errno));
+                  if (rename(findfile,ticedfile) != 0 ) {
+                       w_log(LL_ERROR, "Can't rename a file back from temporary \"%s\" to \"%s\": %s",
+                             ticedfile, findfile, strerror(errno));
+                  }
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
