@@ -589,7 +589,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
       w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: sendToLinks(%i,%s,%s,%s%s%s). This is bug in program. Please report to developers.",
             __LINE__, isToss, filearea?"filearea":"NULL", tic?"tic":"NULL",
             filename?"\"":"", filename?filename:"NULL", filename?"\"":"");
-      return -1;
+      return TIC_UnknownError;
     }
 
     if (isToss == 1) minLinkCount = 2; /*  uplink and downlink */
@@ -629,7 +629,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
 
     if(filearea->msgbType != MSGTYPE_PASSTHROUGH && filearea->noreplace && fexist(newticedfile)) {
         w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it",tic->file,tic->area);
-        return(3);
+        return(TIC_NotOpen);
     }
 
     if (isToss == 1) {
@@ -824,8 +824,8 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
     }
 
     if (isToss == 1) nfree(old_seenby);
-    return(0);
-}
+    return(TIC_OK);
+} /* sendToLinks */
 
 #if !defined(__UNIX__)
 
@@ -914,9 +914,11 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
      return TIC_UnknownError;
    }
 
-   rc=parseTic(ticfile,&tic);
-   if( rc==0 ) return TIC_NotOpen;
-   if( rc==2 ) return TIC_WrongTIC;
+   switch( parseTic(ticfile,&tic) ) {
+   case 0: return TIC_NotOpen;
+   case 2: return TIC_WrongTIC;
+   }
+
    rc = 0;
    if( checkTic(ticfile,&tic) ) return TIC_WrongTIC;
 
@@ -1214,6 +1216,8 @@ void processDir(char *directory, e_tossSecurity sec)
                    changeFileSuffix(dummy, "sec", 1);
                    break;
                case TIC_NotOpen:   /* could not open file */
+               case TIC_CantRename:
+               case TIC_IOError:
                    changeFileSuffix(dummy, "acs", 1);
                    break;
                case TIC_WrongTIC:  /* not/wrong pkt */
@@ -1224,8 +1228,10 @@ void processDir(char *directory, e_tossSecurity sec)
                    break;
                case TIC_NotRecvd:  /* file not recieved */
                    break;
-               default:            /* OK */
+               case TIC_OK:        /* OK */
                    remove (dummy);
+                   break;
+               default:            /* Unknown, do nothing */
                    break;
                 } /* switch */
             } else if (rc == TIC_OK) {

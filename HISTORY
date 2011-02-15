@@ -2,14 +2,24 @@ HTICK 1.9-current
 Changes between htick-1.4-stable and htick-1.9-current
 
 1. MAJOR feature improvements:
-  - command line switch "-b" for toss. Force tossing bad tics.
-  - add yourself in transit tics in seen-bys if missing
-  - strong checking "to" address in received TIC
+  - command line switch "-b" for toss. Force tossing bad tics;
+  - add yourself in transit tics in seen-bys if missing;
+  - strong check for address of recipient in received TIC;
+  - don't remove but rename .tic to .asc in cases:
+    * file can't be replaced in filearea directory,
+    * file exist in filearea directory and file replacing is not allowed
+      in TIC,
+    * file can't be renamed/moved/copied,
+    * IO error.
 
 2. CONFIG changes:
+  - all link-related tokens changed to new way;
+  - all filefix-related "global" tokens may be used after (below)
+    config command "robot filefix".
 
 3. IMPORTANT bugfixes:
- - fix filename case conversion under win32.
+  - fix filename case conversion under win32.
+
 
 
 HTICK 1.4-stable
@@ -18,8 +28,8 @@ Changes between htick-1.0-stable and htick-1.4-stable
 1. MAJOR feature improvements:
    - configurable announces about received files;
    - purging for file echos with deleting description from files.bbs;
-   - New command line option: "-c config-file" - specify alternate config file
-     (optional);
+   - New command line option: "-c config-file" - specify alternate config
+     file (optional);
    - Change statistics information in log file;
    - Allow unconditional forward subscribe when forwardFileRequestsFile for
      link not defined in config;
