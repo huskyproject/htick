@@ -13,6 +13,7 @@ Changes between htick-1.4-stable and htick-1.9-current
     * IO error;
   - don't use TIC with wrong data in temp outbound & etc. directories - this
     feature should prevent sending wrong TIC from another program of node;
+  - the levels of many log messages changed;
 
 2. CONFIG changes:
   - all link-related tokens changed to new way;

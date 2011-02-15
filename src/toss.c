@@ -641,7 +641,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
             } else {
-                w_log('6',"Moved %s to %s",filename,newticedfile);
+                w_log(LL_CREAT,"Moved %s to %s",filename,newticedfile);
             }
         } else {
             /* overwrite existing file if not same */
@@ -650,7 +650,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
             } else {
-                w_log('6',"Put %s to %s",filename,newticedfile);
+                w_log(LL_CREAT,"Put %s to %s",filename,newticedfile);
             }
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
@@ -660,7 +660,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                     filename, newticedfile, strerror(errno) );
                 return TIC_NotOpen;
             } else {
-                w_log('6',"Moved %s to %s",filename,newticedfile);
+                w_log(LL_CREAT,"Moved %s to %s",filename,newticedfile);
             }
         }
     } else if (strcasecmp(filename,newticedfile) != 0) {
@@ -670,7 +670,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
                 filename, newticedfile, strerror(errno) );
             return TIC_NotOpen;
         } else {
-            w_log('6',"Put %s to %s",filename,newticedfile);
+            w_log(LL_CREAT,"Put %s to %s",filename,newticedfile);
         }
         if (filearea->sendorig) {
             strcpy(newticedfile,config->passFileAreaDir);
@@ -680,7 +680,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
 					filename, newticedfile, strerror(errno) );
 				return TIC_NotOpen;
 			} else {
-				w_log('6',"Put %s to %s",filename,newticedfile);
+				w_log(LL_CREAT,"Put %s to %s",filename,newticedfile);
 			}
         }
     }
@@ -907,7 +907,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    int rc = 0;
    char *tic_origin;
 
-   w_log('6',"Processing Tic-File %s",ticfile);
+   w_log(LL_TIC,"Processing Tic-File %s",ticfile);
 
    if( (ticfile == NULL) ){
      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: processTic(%s,sec). This is bug in program. Please report to developers.",
@@ -928,16 +928,16 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
    if ( tic.file && strpbrk(tic.file, "/\\:") )
    {
-       w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic.file,ticfile);
+       w_log( LL_SECURITY, "Directory separator found in 'File' token: '%s' of %s TIC file",tic.file,ticfile);
        return TIC_Security;
    }
    if ( tic.replaces && strpbrk(tic.replaces, "/\\:") )
    {
-       w_log( LL_ALERT, "Directory separator found in 'Replace' token: '%s' of %s TIC file",tic.replaces,ticfile);
+       w_log( LL_SECURITY, "Directory separator found in 'Replace' token: '%s' of %s TIC file",tic.replaces,ticfile);
        return TIC_Security;
    }
 
-   w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
+   w_log(LL_TIC,"File: %s size: %ld area: %s from: %s orig: %s",
          tic.file, tic.size, tic.area, aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
    nfree(tic_origin);
 
@@ -980,7 +980,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
             }
          }
          /* not to us and no forward */
-         w_log(LL_ERROR,"Tic File adressed to %s, not to us", aka2str(tic.to));
+         w_log(LL_SECURITY,"Tic File adressed to %s, not to us", aka2str(tic.to));
          disposeTic(&tic);
          return TIC_NotForUs;
       }
@@ -989,15 +989,14 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    /* Security Check */
    from_link=getLinkFromAddr(config,tic.from);
    if (from_link == NULL) {
-      w_log(LL_ERROR,"Link for Tic From Adress '%s' not found",
-              aka2str(tic.from));
+      w_log(LL_SECURITY,"Tic from unknown link \"%s\".", aka2str(tic.from));
       disposeTic(&tic);
       return TIC_Security;
    }
 
    if (tic.password && ((from_link->ticPwd==NULL) ||
        (stricmp(tic.password,from_link->ticPwd)!=0))) {
-      w_log(LL_ERROR,"Wrong Password %s from %s",
+      w_log(LL_SECURITY,"Wrong Password \"%s\" from \"%s\"",
               tic.password,aka2str(tic.from));
       disposeTic(&tic);
       return TIC_Security;
@@ -1013,11 +1012,11 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    /* Receive file? */
    if (!fexist(ticedfile)) {
       if (from_link->delNotReceivedTIC) {
-         w_log('6',"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
+         w_log(LL_TIC,"File %s from filearea %s not received, remove his TIC",tic.file,tic.area);
          disposeTic(&tic);
          return TIC_OK;
       } else {
-         w_log('6',"File %s from filearea %s not received, wait",tic.file,tic.area);
+         w_log(LL_TIC,"File %s from filearea %s not received, wait",tic.file,tic.area);
          disposeTic(&tic);
          return TIC_NotRecvd;
       }
@@ -1025,7 +1024,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
 #if !defined(__UNIX__)
    if(hidden(ticedfile)) {
-      w_log('6',"File %s from filearea %s not completely received, wait",tic.file,tic.area);
+      w_log(LL_TIC,"File %s from filearea %s not completely received, wait",tic.file,tic.area);
       disposeTic(&tic);
       return TIC_NotRecvd;
    }
@@ -1033,14 +1032,14 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
    filearea=getFileArea(tic.area);
 
-   w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
+   w_log(LL_DEBUGU, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
    if (filearea==NULL && from_link->filefix.autoCreate) {
        char *descr = NULL;
        if(tic.areadesc)           descr = sstrdup(tic.areadesc);
        if(config->intab && descr) recodeToInternalCharset(descr);
        autoCreate(tic.area, descr, tic.from, NULL);
        filearea=getFileArea(tic.area);
-       w_log(LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
+       w_log(LL_DEBUGU, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__, filearea? "" : "not");
        nfree(descr);
    }
 
@@ -1061,6 +1060,8 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
       crc = filecrc32(ticedfile);
       if (tic.crc != crc) {
+          w_log(LL_TIC, "CRC32 of file '%s' differs with TIC. I try to find "
+                        "file with another suffix", ticedfile);
           strcpy(dirname, ticedfile);
           pos = strrchr(dirname, PATH_DELIM);
           if (pos) {
@@ -1071,9 +1072,6 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
                   *(++pos) = 0;
                   strcat(findfile, "*");
-#ifdef DEBUG_HPT
-                  printf("NoCRC! dirname = %s, findfile = %s\n", dirname, findfile);
-#endif
                   dir = husky_opendir(dirname);
 
                   if (dir) {
@@ -1102,14 +1100,15 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
               *(strrchr(dirname, PATH_DELIM)) = 0;
               findfile = makeUniqueDosFileName(dirname,"tmp",config);
               if (rename(ticedfile, findfile) != 0 ) {
-                  w_log(LL_CRIT, "Can't rename file %s to %s: %s", ticedfile, findfile, strerror(errno));
+                  w_log(LL_ERROR, "Can't rename file \"%s\" to temporary \"%s\": %s", ticedfile, findfile, strerror(errno));
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
                   return TIC_NotRecvd;
               }
               if (rename(realfile, ticedfile) != 0) {
-                  w_log(LL_CRIT, "Can't rename file %s to %s: %s", realfile, ticedfile, strerror(errno));
+                  w_log(LL_ERROR, "Can't rename file \"%s\" to \"%s\": %s", realfile, ticedfile,
+                        strerror(errno));
                   nfree(findfile);
                   nfree(realfile);
                   disposeTic(&tic);
@@ -1144,22 +1143,22 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    switch (writeAccess) {
    case 0: break;
    case 4:
-      w_log(LL_ERROR,"Link %s not subscribed to File Area %s",
+      w_log(LL_SECURITY,"Link %s not subscribed to File Area %s",
               aka2str(tic.from), tic.area);
       disposeTic(&tic);
       return TIC_WrongTIC;
    case 3:
-      w_log(LL_ERROR,"Not import from link %s",
+      w_log(LL_SECURITY,"Not import from link %s",
               aka2str(from_link->hisAka));
       disposeTic(&tic);
       return TIC_WrongTIC;
    case 2:
-      w_log(LL_ERROR,"Link %s no access level",
+      w_log(LL_SECURITY,"Link %s no access level",
       aka2str(from_link->hisAka));
       disposeTic(&tic);
       return TIC_WrongTIC;
    case 1:
-      w_log(LL_ERROR,"Link %s no access group",
+      w_log(LL_SECURITY,"Link %s no access group",
       aka2str(from_link->hisAka));
       disposeTic(&tic);
       return TIC_WrongTIC;
@@ -1260,7 +1259,7 @@ void checkTmpDir(void)
     FILE *flohandle=NULL;
     int error = 0;
 
-    w_log('6',"Checking tmp dir");
+    w_log(LL_TIC,"Checking tmp dir");
     strcpy(tmpdir, config->busyFileDir);
     dir = husky_opendir(tmpdir);
     if (dir == NULL) return;
@@ -1310,7 +1309,7 @@ void checkTmpDir(void)
                             fprintf(flohandle,"^%s\n",newticfile);
                         fclose(flohandle);
 
-                        w_log('6',"Forwarding save file %s for %s",
+                        w_log(LL_TIC,"Forwarding save file \"%s\" for %s",
                             tic.file, aka2str(link->hisAka));
                     }
                 } /* if filearea */

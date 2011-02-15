@@ -44,7 +44,7 @@ enum TIC_state {
                   TIC_WrongTIC,  /* Action: rename .tic to .bad */
                   TIC_CantRename,/* Action: rename .tic to .asc - may be changed! */
                   TIC_NotForUs,  /* Action: rename .tic to .ntu */
-                  TIC_NotRecvd,  /* No action, wait file */
+                  TIC_NotRecvd,  /* Action determined by configuration: wait file or remove .tic */
                   TIC_IOError    /* No action */
 };
 typedef enum TIC_state e_TIC_state;
