@@ -409,7 +409,7 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
         if (token) {
             key = strcrc16(strUpper(token), 0);
             /* calculate crc16 of tic                                   */
-            w_log(LL_DEBUG, "#define CRC_%-12s 0x%X;",strUpper(token),key);
+            w_log(LL_DEBUGz, "#define CRC_%-12s 0x%X;",strUpper(token),key);
             param=stripLeadingChars(strtok(NULL, "\0"), "\t");
             if(!param)
             {
