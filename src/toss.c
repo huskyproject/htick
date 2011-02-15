@@ -284,7 +284,7 @@ void disposeTic(s_ticfile *tic)
  *         negative integer if error found in parameters of function,
  *         positive integer if information in TIC is bad.
  */
-int checkTic(const char *ticfilename,const s_ticfile *tic)
+static int checkTic(const char *ticfilename,const s_ticfile *tic)
 {
   int nRet=0;
 
@@ -508,7 +508,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     }
 
     return rc;
-}
+} /* parseTic */
 
 
 void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
