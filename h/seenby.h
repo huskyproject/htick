@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifndef _SEENBY_H_
 #define _SEENBY_H_
 

@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifndef _FILELIST_H
 #define _FILELIST_H
 

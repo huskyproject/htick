@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifndef _ADD_DESCR_H_
 #define _ADD_DESCR_H_
 

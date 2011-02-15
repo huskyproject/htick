@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifndef _HATCH_H
 #define _HATCH_H
 

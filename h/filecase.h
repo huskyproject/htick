@@ -1,3 +1,4 @@
+/* $Id$ */
 #ifndef _FILECASE_H
 #define _FILECASE_H
 
