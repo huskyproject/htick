@@ -37,15 +37,15 @@ enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
 typedef enum tossSecurity e_tossSecurity;
 
 enum TIC_state {
-                  TIC_UnknownError = -1,
-                  TIC_OK = 0,
-                  TIC_security,  /* Action: rename .tic to .sec */
+                  TIC_UnknownError = -1, /* No action */
+                  TIC_OK = 0,    /* Action: remove processed TIC */
+                  TIC_Security,  /* Action: rename .tic to .sec */
                   TIC_NotOpen,   /* Action: rename .tic to .asc - may be changed! */
                   TIC_WrongTIC,  /* Action: rename .tic to .bad */
                   TIC_CantRename,/* Action: rename .tic to .asc - may be changed! */
                   TIC_NotForUs,  /* Action: rename .tic to .ntu */
                   TIC_NotRecvd,  /* No action, wait file */
-                  TIC_IOError
+                  TIC_IOError    /* No action */
 };
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);

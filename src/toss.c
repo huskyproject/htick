@@ -925,12 +925,12 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    if ( tic.file && strpbrk(tic.file, "/\\:") )
    {
        w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",tic.file,ticfile);
-       return TIC_security;
+       return TIC_Security;
    }
    if ( tic.replaces && strpbrk(tic.replaces, "/\\:") )
    {
        w_log( LL_ALERT, "Directory separator found in 'Replace' token: '%s' of %s TIC file",tic.replaces,ticfile);
-       return TIC_security;
+       return TIC_Security;
    }
 
    w_log('6',"File: %s size: %ld area: %s from: %s orig: %s",
@@ -988,7 +988,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       w_log(LL_ERROR,"Link for Tic From Adress '%s' not found",
               aka2str(tic.from));
       disposeTic(&tic);
-      return TIC_security;
+      return TIC_Security;
    }
 
    if (tic.password && ((from_link->ticPwd==NULL) ||
@@ -996,7 +996,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       w_log(LL_ERROR,"Wrong Password %s from %s",
               tic.password,aka2str(tic.from));
       disposeTic(&tic);
-      return TIC_security;
+      return TIC_Security;
    }
 
    strcpy(ticedfile,ticfile);
@@ -1026,7 +1026,6 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       return TIC_NotRecvd;
    }
 #endif
-
 
    filearea=getFileArea(tic.area);
 
@@ -1212,7 +1211,7 @@ void processDir(char *directory, e_tossSecurity sec)
             rc=processTic(dummy,sec);
             if (cmToss == 1) {
                 switch (rc) {
-               case TIC_security:  /* pktpwd problem */
+               case TIC_Security:  /* pktpwd problem */
                    changeFileSuffix(dummy, "sec", 1);
                    break;
                case TIC_NotOpen:   /* could not open file */
