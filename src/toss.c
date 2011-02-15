@@ -1124,9 +1124,10 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
               nfree(findfile);
               nfree(realfile);
           } else {
-              w_log(LL_ERROR,"Wrong CRC for file %s - in tic:%08lx, need:%08lx",tic.file,tic.crc,crc);
+              w_log(LL_TIC,"Wrong CRC for file \"%s\", skip this file (in tic:%08lx, need:%08lx)",
+                    tic.file,tic.crc,crc);
               disposeTic(&tic);
-              return TIC_WrongTIC;
+              return TIC_NotRecvd;
           }
       }
    }

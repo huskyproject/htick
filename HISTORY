@@ -14,6 +14,8 @@ Changes between htick-1.4-stable and htick-1.9-current
   - don't use TIC with wrong data in temp outbound & etc. directories - this
     feature should prevent sending wrong TIC from another program of node;
   - the levels of many log messages changed;
+  - simple ignore file with mistaken CRC32 and wait another file (aforetime
+    renaming to .bad);
 
 2. CONFIG changes:
   - all link-related tokens changed to new way;
