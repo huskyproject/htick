@@ -1,7 +1,9 @@
 CC      = gcc
 DEBUG   = 0
 
-OBJS    = htick.o global.o toss.o fcommon.o scan.o areafix.o add_desc.o seenby.o hatch.o filelist.o filecase.o report.o clean.o
+OBJS    = add_desc.o clean.o fcommon.o filecase.o filelist.o global.o hatch.o htickafix.o \
+          report.o scan.o seenby.o toss.o htick.o
+
 SRC_DIR = ../src/
 
 ifeq ($(DEBUG), 1)
@@ -9,7 +11,7 @@ ifeq ($(DEBUG), 1)
 else
   CFLAGS  = -c -I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -Wall -O3 -s -DUNIX
 endif
-LFLAGS  = -L../../huskylib -L../../smapi -L../../fidoconf
+LFLAGS  = -L../../huskylib/make -L../../smapi/make -L../../fidoconf/make -L../../areafix/make
 
 all: $(OBJS) \
      htick
