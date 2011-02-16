@@ -1079,6 +1079,9 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       disposeTic(&tic);
       return TIC_NotOpen;
    }
+
+   stbuf.st_mode = 0; /* to indicate empty structure (mode can't be zero in POSIX) */
+
    /* Check CRC Value and reject faulty files depending on noCRC flag */
    if (!filearea->noCRC && tic.crc_is_present) {
       unsigned long crc;
@@ -1102,9 +1105,14 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
                   if (dir) {
                       while ((file = husky_readdir(dir)) != NULL) {
                           if (patimat(file, findfile)) {
-                              stat(file,&stbuf);
+                            if (stat(file,&stbuf)) {
+                              w_log(LL_ERR, "Can't check size of file \"%s\": %s. Skip this file.",
+                                    file, strerror(errno));
+                              stbuf.st_mode = 0;
+                            }
+                            else {
                               if (!stbuf.st_size && !tic.size) { /* file empty AND size from TIC is 0 */
-                                fileisfound = 1;           /* CRC32 of an empty file is equal to zero */
+                                  fileisfound = 1;           /* CRC32 of an empty file is equal to zero */
                                   sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file);
                                   break;
                               }
@@ -1117,7 +1125,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
                                       break;
                                   }
                               }
-
+                            }
                           }
                       }
                       husky_closedir(dir);
@@ -1163,7 +1171,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       }
    }
 
-   stat(ticedfile,&stbuf);
+   if (!stbuf.st_mode) stat(ticedfile,&stbuf); /* Read the size of a file if function stat() has not been called earlier */
    tic.size = stbuf.st_size; /* FIXME: may be wrong result for big file */
 
    /* do toss zero-length files */
