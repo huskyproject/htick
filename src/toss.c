@@ -1277,7 +1277,6 @@ void checkTmpDir(void)
     char tmpdir[256], newticedfile[256], newticfile[256];
     husky_DIR      *dir=NULL;
     char           *file=NULL;
-    char           *ticfile=NULL;
     s_link         *link=NULL;
     s_ticfile      tic;
     s_area *filearea=NULL;
@@ -1290,12 +1289,14 @@ void checkTmpDir(void)
     if (dir == NULL) return;
 
     while ((file = husky_readdir(dir)) != NULL) {
-        if (strlen(file) != 12) continue;  /* Check only ticket files: 8 characters followinf ".tic" */
-        /* if (!file->d_size) continue; */
-        ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file)+1);
-        strcpy(ticfile, tmpdir);
-        strcat(ticfile, file);
+        int file_length = strlen(file);
+        if (file_length != 12) continue;  /* Check only ticket files: 8 characters followinf ".tic" */
         if (stricmp(file+8, ".TIC") == 0) {
+            char *ticfile = (char *) smalloc(strlen(tmpdir)+file_length+1);
+            if (!ticfile) continue;
+            strcpy(ticfile, tmpdir);
+            strcat(ticfile, file);
+
             memset(&tic,0,sizeof(tic));
             if( parseTic(ticfile,&tic)!=parseTic_success ) continue;
             if( checkTic(ticfile,&tic) ) continue;
@@ -1345,8 +1346,8 @@ void checkTmpDir(void)
             }
             nfree(link->floFile);
             disposeTic(&tic);
+            nfree(ticfile);
         } /* if ".TIC" */
-        nfree(ticfile);
     } /* while */
     husky_closedir(dir);
 }
