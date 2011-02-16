@@ -62,10 +62,17 @@ void disposeTic(s_ticfile *tic);
 int  writeTic(char *ticfile,s_ticfile *tic);
 void checkTmpDir(void);
 void processTmpDir(void);
+
+/* Process TIC-files in all inbounds */
 void toss(void);
+
 void writeNetmail(s_message *msg, char *areaName);
 int  sendToLinks(int isToss, s_area *filearea, s_ticfile *tic, const char *filename);
 
+/* Read TIC file and store values into 2nd parameter.
+ * Return 1 if success, 2 if bad data in tic, and 0 if file or parameter error.
+ * Clean 2nd parameter before processing if not error.
+ */
 e_parseTic_result parseTic(char *ticfile,s_ticfile *tic);
 
 #endif

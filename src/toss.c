@@ -350,8 +350,9 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
 } /* checkTic */
 
 
-/* Read TIC file and store values into 2nd parameter (clean it first)
- * Return 1 if success, 2 if bad data in tic, and 0 if file error
+/* Read TIC file and store values into 2nd parameter.
+ * Return 1 if success, 2 if bad data in tic, and 0 if file or parameter error.
+ * Clean 2nd parameter before processing if not error.
  */
 enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
 {

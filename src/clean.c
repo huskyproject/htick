@@ -80,11 +80,14 @@ void addFileToTree(char* dir, char *filename)
 
     if (patimat(filename, "*.TIC") == 1) {
         char  *ticfile = NULL;
+        e_parseTic_result ticres;
         xstrscat(&ticfile,dir,filename,NULL);
-        if( (parseTic(ticfile,&tic) == parseTic_success) && (tic.file) ) {
+        ticres = parseTic(ticfile,&tic);
+        if( (ticres == parseTic_success) && (tic.file) ) {
             tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
-            disposeTic(&tic);
         }
+        if( ticres != parseTic_error )
+            disposeTic(&tic);
         nfree(ticfile);
     }
 }
