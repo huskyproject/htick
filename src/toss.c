@@ -940,7 +940,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
    w_log(LL_TIC,"Processing Tic-File %s",ticfile);
 
-   if( (ticfile == NULL) ){
+   if( (ticfile == NULL) ) {
      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: processTic(%s,sec). This is bug in program. Please report to developers.",
            __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"");
      return TIC_UnknownError;
@@ -1038,7 +1038,8 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       return TIC_Security;
    }
 
-   /* Extract file name (strip path) */
+   /* Extract directory name from ticket pathname (strip file name), construct full name of file,
+    * adopt full pathname into real disk file, update file name in ticket */
    strcpy(ticedfile,ticfile);
    *(strrchr(ticedfile,PATH_DELIM)+1)=0;
    j = strlen(ticedfile);
@@ -1092,16 +1093,20 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       return TIC_NotOpen;
    }
 
-   stbuf.st_mode = 0; /* to indicate empty structure (mode can't be zero in POSIX) */
+   if (stat(ticedfile,&stbuf)) {
+     w_log(LL_ERR, "Can't check size of file \"%s\": %s. Skip this file.", ticedfile, strerror(errno));
+     stbuf.st_size = tic.size;
+   }
 
    /* Check CRC Value and reject faulty files depending on noCRC flag */
    if (!filearea->noCRC && tic.crc_is_present) {
       unsigned long crc;
 
       crc = filecrc32(ticedfile);
-      if (tic.crc != crc) {
-          w_log(LL_TIC, "CRC32 of file '%s' differs with TIC. I try to find "
-                        "file with another suffix", ticedfile);
+      if ( (tic.crc != crc) || (tic.size != stbuf.st_size) ) {
+          w_log(LL_TIC, "%s of file '%s' differs with TIC. I try to find "
+                        "file with another suffix",
+                        (tic.size != stbuf.st_size)?"Size":"CRC32", ticedfile);
           strcpy(dirname, ticedfile);
           pos = strrchr(dirname, PATH_DELIM);
           if (pos) {
@@ -1120,7 +1125,8 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
                             if (stat(file,&stbuf)) {
                               w_log(LL_ERR, "Can't check size of file \"%s\": %s. Skip this file.",
                                     file, strerror(errno));
-                              stbuf.st_mode = 0;
+                              stbuf.st_mode = 0; /* to indicate empty structure (mode can't be zero in POSIX) */
+                              stbuf.st_size = 0;
                             }
                             else {
                               if (!stbuf.st_size && !tic.size) { /* file empty AND size from TIC is 0 */
@@ -1181,6 +1187,12 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
               return TIC_NotRecvd;
           }
       }
+   } else { /* Search of a file in the size */
+     if (stbuf.st_size == tic.size) {
+       fileisfound = 1;
+     } else {
+
+     }
    }
 
    if (!stbuf.st_mode) stat(ticedfile,&stbuf); /* Read the size of a file if function stat() has not been called earlier */
