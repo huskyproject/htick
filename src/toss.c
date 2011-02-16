@@ -228,7 +228,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
         fprintf(tichandle,"To %s\r\n",aka2str(tic->to));
     if (tic->origin.zone!=0)
         fprintf(tichandle,"Origin %s\r\n",aka2str(tic->origin));
-    if (tic->size!=0)
+    if (tic->size>=0)
         fprintf(tichandle,"Size %u\r\n",tic->size);
     if (tic->date!=0)
         fprintf(tichandle,"Date %lu\r\n",tic->date);
@@ -307,7 +307,7 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
     w_log(LL_SECURITY,"CRC not presents in TIC \"%s\"", ticfilename);
   }
 
-  if(!tic->size){
+  if(tic->size<0){
     w_log(LL_ALERT,"File size not presents in TIC \"%s\", FSC-87 speak: \"SHOULD be required\"", ticfilename);
   }
 
@@ -350,7 +350,7 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
 } /* checkTic */
 
 
-/* Read TIC file and store values into 2nd parameter.
+/* Read TIC file and store values into 2nd parameter (clean it first)
  * Return 1 if success, 2 if bad data in tic, and 0 if file error
  */
 enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
@@ -368,6 +368,7 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
       return parseTic_error;
     }
     memset(tic,'\0',sizeof(s_ticfile));
+    tic->size = -1; /* For check existing a token "size" in TIC file */
 
 #ifndef HAS_sopen
     tichandle=fopen(ticfile,"r");
@@ -413,10 +414,20 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
             param=stripLeadingChars(strtok(NULL, "\0"), "\t");
             if(!param)
             {
-                if( (key == CRC_DESC) || (key == CRC_LDESC) )
+                switch (key)
+                {
+                  case CRC_DESC:
+                  case CRC_LDESC:
                     param = emptyline;
-                else
+                    break;
+                  case CRC_SIZE:
+                    w_log(LL_ERR, "Wrong TIC \"%s\": \"Size\" without value!", ticfile);
+                    tic->size = 0;
+                    rc=parseTic_bad;
+                    break;
+                  default:
                     continue;
+                }
             }
             switch (key)
             {
@@ -432,9 +443,18 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
             case CRC_CRC:       tic->crc = strtoul(param,NULL,16);
                                 tic->crc_is_present = 1;
                 break;
-            case CRC_SIZE:      tic->size = tic->size=atoi(param);
-                                if(!tic->size)
-                                   w_log(LL_ERR, "Wrong TIC \"%s\": size is \"%s\"!", ticfile, param);
+            case CRC_SIZE:      if (param[0] == '-') {
+                                  w_log(LL_ERR, "Wrong TIC \"%s\": negative size (\"%s\")!", ticfile, param);
+                                  rc=parseTic_bad;
+                                } else {
+                                  tic->size = tic->size=atoi(param);
+                                  if( (!tic->size) && (!strcmp(param,"0")) ) {
+                                    w_log(LL_ERR, "Wrong TIC \"%s\": value of size is \"%s\"! "
+                                                  "(May be pozitive integer or one zero",
+                                                  ticfile, param);
+                                    rc=parseTic_bad;
+                                  }
+                                }
                 break;
             case CRC_DATE:      tic->date=atoi(param);
                 break;
@@ -1133,15 +1153,12 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    }
 
    stat(ticedfile,&stbuf);
-   tic.size = stbuf.st_size;
+   tic.size = stbuf.st_size; /* FIXME: may be wrong result for big file */
 
-   /* do toss zero-length files
+   /* do toss zero-length files */
    if (!tic.size) {
-      w_log('6',"File %s from filearea %s has zero size",tic.file,tic.area);
-      disposeTic(&tic);
-      return TIC_NotRecvd;
+      w_log(LL_WARNING,"File \"%s\" from filearea %s has zero size",tic.file,tic.area);
    }
-   */
 
    writeAccess = e_writeCheck(config,filearea,getLinkFromAddr(config,tic.from));
 
@@ -1176,7 +1193,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
 
    disposeTic(&tic);
    return(rc);
-}
+} /* processTic */
 
 /* Toss TIC-files in the specified directory
  */

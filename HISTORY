@@ -4,7 +4,7 @@ Changes between htick-1.4-stable and htick-1.9-current
 1. MAJOR feature improvements:
   - command line switch "-b" for toss. Force tossing bad tics;
   - add yourself in transit tics in seen-bys if missing;
-  - strong check for address of recipient in received TIC;
+  - strong check fields in ticket file (*.TIC);
   - don't remove but rename .tic to .asc in cases:
     * file can't be replaced in filearea directory,
     * file exist in filearea directory and file replacing is not allowed
