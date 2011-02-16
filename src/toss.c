@@ -232,7 +232,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
         fprintf(tichandle,"Size %u\r\n",tic->size);
     if (tic->date!=0)
         fprintf(tichandle,"Date %lu\r\n",tic->date);
-    if (tic->crc!=0)
+    if (tic->crc_is_present || tic->crc)  /* FIXME: Look all code to check up simultaneous change of a tic.crc and a tic.tic->crc */
         fprintf(tichandle,"Crc %08lX\r\n",tic->crc);
 
     for (i=0;i<tic->anzpath;i++)
