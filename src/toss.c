@@ -311,6 +311,16 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
     w_log(LL_ALERT,"There is no file size in TIC %s, FSC-87 says: \"SHOULD be required\"", ticfilename);
   }
 
+  if( (!tic->crc) && (tic->size>0) ){
+    w_log(LL_ERR,"There is size not zero but CRC32 equal zero in TIC %s, it is impossible and this ticket file is wrong.", ticfilename);
+    nRet++;
+  }
+
+  if( (!tic->size) && (tic->crc_is_present) ){
+    w_log(LL_ERR,"There is size equal zero but CRC32 is not zero in TIC %s, it is impossible and this ticket file is wrong.", ticfilename);
+    nRet++;
+  }
+
   if(!tic->to.zone && !tic->to.net && !tic->to.node){
     w_log(LL_SECURITY,"'To' address not presents in TIC \"%s\"", ticfilename);
   }else if(!tic->to.zone || !tic->to.net){
