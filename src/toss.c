@@ -980,7 +980,8 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       if (!isOurAka(config,tic.to)) {
          /* Forwarding tic and file to other link? */
          to_link=getLinkFromAddr(config,tic.to);
-         if ( (to_link != NULL) && (to_link->forwardPkts != fOff) ) {
+         if ( (to_link != NULL) && (to_link->forwardPkts != fOff) ) { /*FIXME: should use (new) forwardTICs!*/
+         /* Send the ticket and a file to the address in line "To" of ticket. ("Transit TICs routing") */
             if ( (to_link->forwardPkts==fSecure) && (sec != secProtInbound) && (sec != secLocalInbound) );
             else { /* Forwarding */
                 busy = 0;
@@ -1037,6 +1038,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       return TIC_Security;
    }
 
+   /* Extract file name (strip path) */
    strcpy(ticedfile,ticfile);
    *(strrchr(ticedfile,PATH_DELIM)+1)=0;
    j = strlen(ticedfile);
