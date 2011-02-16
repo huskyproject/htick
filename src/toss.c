@@ -946,6 +946,12 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
      return TIC_UnknownError;
    }
 
+   if( (j=strlen(ticfile)) > sizeof(ticedfile) ) {
+     w_log(LL_ERROR, "File name too long: %u. Htick limit is %u characters.", j, sizeof(ticedfile));
+     w_log(LL_TIC, "Ticket file \"%s\" skiped", ticfile);
+     return TIC_UnknownError;
+   }
+
    switch( parseTic(ticfile,&tic) ) {
      case parseTic_error: return TIC_NotOpen;
      case parseTic_bad: return TIC_WrongTIC;
