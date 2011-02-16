@@ -308,7 +308,7 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
   }
 
   if(tic->size<0){
-    w_log(LL_ALERT,"File size not presents in TIC \"%s\", FSC-87 speak: \"SHOULD be required\"", ticfilename);
+    w_log(LL_ALERT,"There is no file size in TIC %s, FSC-87 says: \"SHOULD be required\"", ticfilename);
   }
 
   if(!tic->to.zone && !tic->to.net && !tic->to.node){
@@ -958,7 +958,11 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
        return TIC_Security;
    }
 
-   w_log(LL_TIC,"File: %s size: %ld area: %s from: %s orig: %s",
+   if(tic.size<0)
+     w_log(LL_TIC,"File \"%s\": size: not specified, area: %s, from: %s, orig: %s",
+           tic.file, tic.area, aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
+   else
+     w_log(LL_TIC,"File \"%s\": size: %ld, area: %s, from: %s, orig: %s",
          tic.file, tic.size, tic.area, aka2str(tic.from), tic_origin=aka2str5d(tic.origin));
    nfree(tic_origin);
 
