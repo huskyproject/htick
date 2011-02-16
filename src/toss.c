@@ -155,7 +155,10 @@ void writeNetmail(s_message *msg, char *areaName)
 
           msgHeader = createXMSG(config,msg,NULL,MSGLOCAL,NULL);
          /* Create CtrlBuf for SMAPI */
-         ctrlBuf = (char *) CopyToControlBuf((UCHAR *) msg->text, (UCHAR **) &bodyStart, &len);
+          { byte * bb; /* Prevent GCC warning "dereferencing type-punned pointer will break strict-aliasing rules" */
+           ctrlBuf = (char *) CopyToControlBuf(msg->text, &bb, &len);
+           bodyStart = bb;
+         }
 
          /* write message */
          MsgWriteMsg(msgHandle, 0, &msgHeader, (UCHAR *) bodyStart, len, len, strlen(ctrlBuf)+1, (UCHAR *) ctrlBuf);
@@ -1471,10 +1474,10 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
                 }
             }
 
-        
-            ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
-                                                (UCHAR **) &textStart,
-                                                &textLength);
+            { byte * bb; /* Prevent GCC warning "dereferencing type-punned pointer will break strict-aliasing rules" */
+              ctrlBuff = (char *) CopyToControlBuf(textWithoutArea, &bb, &textLength);
+              textStart = bb;
+            }
             /*  textStart is a pointer to the first non-kludge line */
             xmsg = createXMSG(config,msg, NULL, forceattr,NULL);
 
