@@ -1103,7 +1103,13 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
                       while ((file = husky_readdir(dir)) != NULL) {
                           if (patimat(file, findfile)) {
                               stat(file,&stbuf);
-                              if ((tic.size==0)||(stbuf.st_size == tic.size)) {
+                              if (!stbuf.st_size && !tic.size) { /* file empty AND size from TIC is 0 */
+                                fileisfound = 1;           /* CRC32 of an empty file is equal to zero */
+                                  sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file);
+                                  break;
+                              }
+                              else if ((tic.size<0)||(stbuf.st_size == tic.size)) {
+                              /* size not specified in TIC OR size from TIC eq filesize */
                                   crc = filecrc32(file);
                                   if (crc == tic.crc) {
                                       fileisfound = 1;
