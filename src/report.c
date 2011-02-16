@@ -63,7 +63,8 @@ UINT rCount = 0;
 s_FAreaRepInfo*   aList = NULL;
 UINT aCount = 0;
 
-
+/* Save cut-down ticket file into special directory for future reports
+ */
 void doSaveTic4Report(s_ticfile *tic)
 {
     FILE *tichandle;
@@ -75,14 +76,14 @@ void doSaveTic4Report(s_ticfile *tic)
     rpTicName = makeUniqueDosFileName(config->announceSpool,"tic",config);
 
     tichandle = fopen(rpTicName,"wb");
-    
+
     if(tichandle == NULL){
         w_log(LL_CRIT, "Can't create file %s for file %s",rpTicName,tic->file);
         return;
     } else {
         w_log(LL_CREAT, "Report file %s created for file %s",rpTicName,tic->file);
     }
-    
+
     fprintf(tichandle,"File %s\r\n",tic->file);
     fprintf(tichandle,"Area %s\r\n",tic->area);
 
@@ -109,9 +110,9 @@ void doSaveTic4Report(s_ticfile *tic)
         fprintf(tichandle,"From %s\r\n",aka2str(tic->from));
     if (tic->size!=0)
         fprintf(tichandle,"Size %u\r\n",tic->size);
-    
+
     fclose(tichandle);
-}
+} /* doSaveTic4Report() */
 
 static int cmp_reportEntry(const void *a, const void *b)
 {
@@ -127,10 +128,10 @@ static int cmp_reportEntry(const void *a, const void *b)
    else if( stricmp( r1->file, r2->file ) < 0)
       return -1;
    return 0;
-}
+} /* cmp_reportEntry() */
 
 
-void getReportInfo()
+static void getReportInfo()
 {
     husky_DIR     *dir;
     char          *file;
@@ -176,9 +177,9 @@ void getReportInfo()
     husky_closedir(dir);
     w_log(LL_DEBUG, "Sorting report information. Number of entries: %d",rCount);
     qsort( (void*)Report, rCount, sizeof(s_ticfile), cmp_reportEntry ); 
-}
+} /* getReportInfo() */
 
-void buildAccessList()
+static void buildAccessList()
 {
     UINT i = 0;
     s_area *currFArea = NULL;    
@@ -199,9 +200,9 @@ void buildAccessList()
         aList[aCount-1].fCount++;
         aList[aCount-1].fSize += Report[i].size; 
     }
-}
+}/* buildAccessList() */
 
-void parseRepMessAttr()
+static void parseRepMessAttr()
 {
     UINT i;
     long attr;
@@ -222,12 +223,12 @@ void parseRepMessAttr()
             flag = strtok(NULL, " \t");
         }
     }
-}
+} /* parseRepMessAttr() */
 
 /* report generation */
 
 
-char *formDescStr(char *desc)
+static char *formDescStr(char *desc)
 {
    char *keepDesc, *newDesc, *tmp, *ch, *buff=NULL;
 
@@ -265,13 +266,13 @@ char *formDescStr(char *desc)
    nfree(keepDesc);
 
    return newDesc;
-}
+} /* formDescStr() */
 
-char *formDesc(char **desc, int count)
+static char *formDesc(char **desc, int count)
 {
     char *buff=NULL, *tmp;
     int i;
-    
+
     for (i = 0; i < count; i++ ) {
         tmp = formDescStr(desc[i]);
         if (i == 0) {
@@ -282,9 +283,9 @@ char *formDesc(char **desc, int count)
         nfree(tmp);
     }
     return buff;
-}
+} /* formDesc() */
 
-void freeReportInfo()
+static void freeReportInfo()
 {
     unsigned i = 0;
 
@@ -301,9 +302,9 @@ void freeReportInfo()
     }
     nfree(Report);
     nfree(aList);
-}
+} /* freeReportInfo() */
 
-void MakeDefaultRepDef()
+static void MakeDefaultRepDef()
 {
     char* annArea;
 
@@ -318,9 +319,9 @@ void MakeDefaultRepDef()
         config->ADCount = 1;
         config->AnnDefs[0].annAreaTag = sstrdup(annArea);
     }
-}
+} /* MakeDefaultRepDef() */
 
-s_message* MakeReportMessage(ps_anndef pRepDef)
+static s_message* MakeReportMessage(ps_anndef pRepDef)
 {
     s_message *msg = NULL;
     enum{ dstfile=-1, dstechomail=0, dstnetmail=1
@@ -332,7 +333,7 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         reportDst = dstnetmail;
     else if (getNetMailArea(config, pRepDef->annAreaTag) != NULL) 
         reportDst = dstnetmail;
-    
+
     if( reportDst > dstfile ) /* dstechomail or dstnetmail */
     {
         s_area * AreaToPost = getArea(config,pRepDef->annAreaTag);
@@ -350,9 +351,9 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
             pRepDef->annsubj    ? pRepDef->annsubj    : "New Files", 
             (int)reportDst,
             robot->reportsAttr);
-        
+
         msg->attributes = pRepDef->attributes;
-        
+
         msg->text = createKludges(config,
             reportDst ? NULL : pRepDef->annAreaTag,  /* reportDst!=dstechomail ? */
             pRepDef->annaddrfrom,
@@ -368,9 +369,9 @@ s_message* MakeReportMessage(ps_anndef pRepDef)
         xstrcat(&(msg->subjectLine), pRepDef->annAreaTag+1);
     }
     return msg;
-}
+} /* MakeReportMessage() */
 
-void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
+static void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
 {
     char *tmp = NULL;
     static BigSize bs;
@@ -388,7 +389,7 @@ void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
         tic->file,  
         PrintBigSize(&bs)
         );
-    
+
     if (tic->anzldesc > 0) {
         tmp = formDesc(tic->ldesc, tic->anzldesc); 
     } else { 
@@ -404,9 +405,9 @@ void ReportOneFile(s_message* msg, ps_anndef pRepDef, s_ticfile* tic)
     }
     if (tmp == NULL || tmp[0] == 0) xstrcat(&(msg->text),"\r");
     nfree(tmp);
-}
+} /* ReportOneFile() */
 
-int IsAreaMatched(char* areaname, ps_anndef pRepDef)
+static int IsAreaMatched(char* areaname, ps_anndef pRepDef)
 {
     int nRet = 0;
     UINT i   = 0;
@@ -434,9 +435,9 @@ int IsAreaMatched(char* areaname, ps_anndef pRepDef)
         }
     }
     return nRet;
-}
+} /* IsAreaMatched() */
 
-void reportNewFiles()
+static void reportNewFiles()
 {
     UINT      fileCountTotal = 0;
     BigSize   fileSizeTotal,bs;
@@ -458,14 +459,14 @@ void reportNewFiles()
                 continue;
             }
             if(!msg) msg = MakeReportMessage(RepDef);
-            
+
             xscatprintf(&(msg->text), "\r>Area : %s",strUpper(aList[j].farea->areaName));
             if(aList[j].farea->description)
             {
                xscatprintf(&(msg->text), " : %s", aList[j].farea->description);
             }
             xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
-            
+
             for(ii = aList[j].begin; ii < aList[j].begin+aList[j].fCount; ii++)
             {
                 ReportOneFile(msg, RepDef, &(Report[ii]));
@@ -478,11 +479,11 @@ void reportNewFiles()
             IncBigSize(&fileSizeTotal, aList[j].fSize);
         }
         if(!msg) continue;
-        
+
         xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
         xscatprintf(&(msg->text), ">Total %s bytes in %u file(s)\r\r",
             PrintBigSize(&fileSizeTotal), fileCountTotal);
-        
+
         if(msg->netMail > 1)
         {
             if (NULL == (rp = fopen(msg->subjectLine,"wt")))
@@ -514,8 +515,10 @@ void reportNewFiles()
         freeMsgBuffers(msg);
         nfree(msg);
     }
-}
+} /* reportNewFiles() */
 
+/* Make thick report
+ */
 void report()
 {
     w_log( LL_INFO, "Start report generating...");
@@ -529,4 +532,4 @@ void report()
         freeReportInfo();
     }
     w_log( LL_INFO, "End report generating");
-}
+} /* report() */
