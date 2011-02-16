@@ -303,8 +303,8 @@ static int checkTic(const char *ticfilename,const s_ticfile *tic)
     nRet++;
   }
 
-  if(!tic->crc){
-    w_log(LL_SECURITY,"CRC not presents in TIC \"%s\"", ticfilename);
+  if(!tic->crc_is_present){
+    w_log(LL_SECURITY,"CRC not presents in TIC \"%s\", required by FSC-87", ticfilename);
   }
 
   if(tic->size<0){
