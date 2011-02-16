@@ -31,6 +31,16 @@
  * $Id$
  */
 
+/* Functions call tree.
+
+  Purge()
+  +--- cleanPassthroughDir() +--- addFileToTree()
+  |
+  +--- purgeFileEchos()
+  |
+  +--- purgeOldTics()
+ */
+
 #include <stdlib.h>
 #include <string.h>
 #include <sys/types.h>
@@ -71,7 +81,6 @@ void addFileToTree(char* dir, char *filename)
     if (patimat(filename, "*.TIC") == 1) {
         char  *ticfile = NULL;
         xstrscat(&ticfile,dir,filename,NULL);
-        memset(&tic,0,sizeof(tic));
         if( (parseTic(ticfile,&tic) == parseTic_success) && (tic.file) ) {
             tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
         }
@@ -155,7 +164,7 @@ void cleanPassthroughDir(void)
         while ((filename = husky_readdir(dir)) != NULL) {
             if (patimat(filename, "*.TIC") != 1) {
                 xstrscat(&ticfile,config->passFileAreaDir,filename,NULL);
-        
+
                 if (direxist(ticfile)) { /*  do not touch dirs */
                     nfree(ticfile);
                     continue;
