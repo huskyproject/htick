@@ -83,8 +83,8 @@ void addFileToTree(char* dir, char *filename)
         xstrscat(&ticfile,dir,filename,NULL);
         if( (parseTic(ticfile,&tic) == parseTic_success) && (tic.file) ) {
             tree_add(&fileTree, htick_compareEntries, sstrdup(tic.file), htick_deleteEntry);
+            disposeTic(&tic);
         }
-        disposeTic(&tic);
         nfree(ticfile);
     }
 }
