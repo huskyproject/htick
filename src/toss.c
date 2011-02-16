@@ -1113,7 +1113,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
       unsigned long crc;
 
       crc = filecrc32(ticedfile);
-      if ( (tic.crc != crc) || (tic.size != stbuf.st_size) ) {
+      if ( (tic.size>=0 && (tic.size != stbuf.st_size)) || (tic.crc != crc) ) {
           w_log(LL_TIC, "%s of file '%s' differs with TIC. I try to find "
                         "file with another suffix",
                         (tic.size != stbuf.st_size)?"Size":"CRC32", ticedfile);
