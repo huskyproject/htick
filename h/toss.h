@@ -57,16 +57,30 @@ enum parseTic_result {
 typedef enum parseTic_result e_parseTic_result;
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
+void writeNetmail(s_message *msg, char *areaName);
+
+/* Save ticket file into filearea-specific directory
+ */
 void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea);
+
+/* Free memory allocated in elements of structure */
 void disposeTic(s_ticfile *tic);
+
+/* Write (create) TIC-file
+ * Return 0 if error, 1 if success
+ */
 int  writeTic(char *ticfile,s_ticfile *tic);
+
+/* Scan directory with postponed files
+ */
 void checkTmpDir(void);
-void processTmpDir(void);
 
 /* Process TIC-files in all inbounds */
 void toss(void);
 
-void writeNetmail(s_message *msg, char *areaName);
+/* Send a file "filename" to all subscribers of fileecho.
+ * Return: 0 if success, positive integer if error, negative integer if illegal call
+ */
 int  sendToLinks(int isToss, s_area *filearea, s_ticfile *tic, const char *filename);
 
 /* Read TIC file and store values into 2nd parameter.

@@ -175,7 +175,7 @@ void writeNetmail(s_message *msg, char *areaName)
    } /* endif */
 }
 
-/*
+/* Write (create) TIC-file
  * Return 0 if error, 1 if success
  */
 int writeTic(char *ticfile,s_ticfile *tic)
@@ -246,7 +246,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
 
     fclose(tichandle);
     return 1;
-}
+} /* writeTic() */
 
 /* Free memory allocated in structure s_ticfile *tic
  */
@@ -277,12 +277,12 @@ void disposeTic(s_ticfile *tic)
    for (i=0;i<tic->anzldesc;i++)
       nfree(tic->ldesc[i]);
    nfree(tic->ldesc);
-}
+} /* disposeTic() */
 
 /* Check TIC file validity
  * Return: 0 if TIC valid,
  *         negative integer if error found in parameters of function,
- *         positive integer if information in TIC is bad.
+ *         positive integer if information in TIC is bad (value is number of errors)
  */
 static int checkTic(const char *ticfilename,const s_ticfile *tic)
 {
@@ -532,7 +532,8 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
     return rc;
 } /* parseTic */
 
-
+/* Save ticket file into filearea-specific directory
+ */
 void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
 {
     unsigned int i;
@@ -553,14 +554,14 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
 
             if (ticfile)      {
                 ticFname = GetFilenameFromPathname(ticfile);
-                w_log(LL_FILENAME,"Saving Tic-File %s to %s", ticFname, savetic->pathName);
+                w_log(LL_FILENAME,"Saving Tic-File \"%s\" to \"%s\"", ticFname, savetic->pathName);
                 xscatprintf(&filename,"%s%s", savetic->pathName,ticFname);
                 if (copy_file(ticfile,filename,1)!=0) { /* overwrite existing file if not same */
-                    w_log(LL_ERROR,"File %s not found or not moveable",ticfile);
+                    w_log(LL_ERROR,"File \"%s\" not found or not moveable",ticfile);
                 }
             } else {
                 filename = makeUniqueDosFileName(savetic->pathName,"tic",config);
-                w_log(LL_FILENAME,"Saving Tic-File %s to %s", GetFilenameFromPathname(filename), savetic->pathName);
+                w_log(LL_FILENAME,"Saving Tic-File \"%s\" to \"%s\"", GetFilenameFromPathname(filename), savetic->pathName);
                 writeTic(filename,tic);
             }
             nfree(filename);
@@ -582,9 +583,9 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_area *filearea)
 
     };
     return;
-}
+} /* doSaveTic */
 
-/*
+/* Send a file "filename" to all subscribers of fileecho.
  * Return: 0 if success, positive integer if error, negative integer if illegal call
  */
 int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
@@ -619,7 +620,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
 
     if( !fexist(filename) ) {
         /* origin file does not exist */
-        w_log(LL_ERROR,"File %s not found",filename);
+        w_log(LL_ERROR,"File \"%s\" not found, nothing to send for links",filename);
         return TIC_NotRecvd;
     }
 
@@ -696,13 +697,13 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         if (filearea->sendorig) {
             strcpy(newticedfile,config->passFileAreaDir);
             strcat(newticedfile,MakeProperCase(tic->file));
-			if (copy_file(filename,newticedfile,1)!=0) {
-				w_log( LL_ERROR, "Can't copy file %s to %s: %s",
-					filename, newticedfile, strerror(errno) );
-				return TIC_NotOpen;
-			} else {
-				w_log(LL_CREAT,"Put %s to %s",filename,newticedfile);
-			}
+            if (copy_file(filename,newticedfile,1)!=0) {
+                w_log( LL_ERROR, "Can't copy file \"%s\" to \"%s\": %s",
+                                 filename, newticedfile, strerror(errno) );
+                return TIC_NotOpen;
+            } else {
+                w_log(LL_CREAT,"Put \"%s\" to \"%s\"",filename,newticedfile);
+            }
         }
     }
 
@@ -728,7 +729,6 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
         strcpy(timestr,asctime(gmtime(&acttime)));
         timestr[strlen(timestr)-1]=0;
         if (timestr[8]==' ') timestr[8]='0';
-
 
         tic->path=srealloc(tic->path,(tic->anzpath+1)*sizeof(*tic->path));
         tic->path[tic->anzpath] = NULL;
@@ -766,7 +766,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             seenbyAdd(&tic->seenby,&tic->anzseenby,&downlink->hisAka);
         }
       }
-    }else w_log( LL_WARN, "Seen-By list is empty in TIC file for %s (wrong TIC)!", tic->file?tic->file:"" );
+    }else w_log( LL_WARN, "Seen-By list is empty in TIC file for \"%s\" (wrong TIC)!", tic->file?tic->file:"" );
 
     /* (dmitry) FixMe: Put correct AKA here if To: missing in tic */
     if(isOurAka(config, tic->to) && seenbyComp(tic->seenby, tic->anzseenby, tic->to))
@@ -837,7 +837,7 @@ int sendToLinks(int isToss, s_area *filearea, s_ticfile *tic,
             sprintf(comm,"%s %s%s",config->execonfile[z].command,
                 (filearea->msgbType != MSGTYPE_PASSTHROUGH ? filearea->fileName : config->passFileAreaDir),
                 tic->file);
-            w_log( LL_EXEC, "Executing %s", comm);
+            w_log( LL_EXEC, "Executing \"%s\"", comm);
             if ((cmdexit = system(comm)) != 0) {
                 w_log( LL_ERROR, "Exec failed, code %d", cmdexit);
             }
@@ -1268,8 +1268,10 @@ void processDir(char *directory, e_tossSecurity sec)
       } /* if */
    } /* while */
    husky_closedir(dir);
-}
+} /* processDir() */
 
+/* Scan directory with postponed files
+ */
 void checkTmpDir(void)
 {
     char tmpdir[256], newticedfile[256], newticfile[256];
@@ -1288,7 +1290,7 @@ void checkTmpDir(void)
     if (dir == NULL) return;
 
     while ((file = husky_readdir(dir)) != NULL) {
-        if (strlen(file) != 12) continue;
+        if (strlen(file) != 12) continue;  /* Check only ticket files: 8 characters followinf ".tic" */
         /* if (!file->d_size) continue; */
         ticfile = (char *) smalloc(strlen(tmpdir)+strlen(file)+1);
         strcpy(ticfile, tmpdir);
@@ -1363,7 +1365,8 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     int rc = 0;
 
     if( (echo == NULL) || (msg == NULL) ){
-      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: putMsgInArea(%s,%s,%i,%u). This is bug in program. Please report to developers.",
+      w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: putMsgInArea(%s,%s,%i,%u). "
+            "This is bug in program. Please report to developers.",
             __LINE__, echo?"echo":"NULL", msg?"msg":"NULL", strip, (unsigned)forceattr);
       return 0;
     }
@@ -1374,72 +1377,71 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     }
 
     if (!msg->netMail) {
-	msg->destAddr.zone  = echo->useAka->zone;
-	msg->destAddr.net   = echo->useAka->net;
-	msg->destAddr.node  = echo->useAka->node;
-	msg->destAddr.point = echo->useAka->point;
+        msg->destAddr.zone  = echo->useAka->zone;
+        msg->destAddr.net   = echo->useAka->net;
+        msg->destAddr.node  = echo->useAka->node;
+        msg->destAddr.point = echo->useAka->point;
     }
 
-	harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC,
-			(word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
+        harea = MsgOpenArea((UCHAR *) echo->fileName, MSGAREA_CRIFNEC,
+                        (word)(echo->msgbType | (msg->netMail ? 0 : MSGTYPE_ECHO)));
     if (harea!= NULL) {
-	    hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
-	if (hmsg != NULL) {
+            hmsg = MsgOpenMsg(harea, MOPEN_CREATE, 0);
+        if (hmsg != NULL) {
 
+            textWithoutArea = msg->text;
 
-	    textWithoutArea = msg->text;
+            if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
+                /*  jump over AREA:xxxxx\r */
+                while (*(textWithoutArea) != '\r') textWithoutArea++;
+                textWithoutArea++;
+                textLength -= (size_t) (textWithoutArea - msg->text);
+            }
 
-	    if ((strip==1) && (strncmp(msg->text, "AREA:", 5) == 0)) {
-		/*  jump over AREA:xxxxx\r */
-		while (*(textWithoutArea) != '\r') textWithoutArea++;
-		textWithoutArea++;
-		textLength -= (size_t) (textWithoutArea - msg->text);
-	    }
+            if (echo->killSB) {
+                tiny = strrstr(textWithoutArea, " * Origin:");
+                if (tiny == NULL) tiny = textWithoutArea;
+                if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+                    p[1]='\0';
+                    textLength = (size_t) (p - textWithoutArea + 1);
+                }
+            } else if (echo->tinySB) {
+                tiny = strrstr(textWithoutArea, " * Origin:");
+                if (tiny == NULL) tiny = textWithoutArea;
+                if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
+                    p++;
+                    if (NULL != (q = strstr(p,"\001PATH: "))) {
+                        /*  memmove(p,q,strlen(q)+1); */
+                        memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
+                        textLength -= (size_t) (q - p);
+                    } else {
+                        p[0]='\0';
+                        textLength = (size_t) (p - textWithoutArea);
+                    }
+                }
+            }
 
-	    if (echo->killSB) {
-		tiny = strrstr(textWithoutArea, " * Origin:");
-		if (tiny == NULL) tiny = textWithoutArea;
-		if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
-		    p[1]='\0';
-		    textLength = (size_t) (p - textWithoutArea + 1);
-		}
-	    } else if (echo->tinySB) {
-		tiny = strrstr(textWithoutArea, " * Origin:");
-		if (tiny == NULL) tiny = textWithoutArea;
-		if (NULL != (p = strstr(tiny, "\rSEEN-BY: "))) {
-		    p++;
-		    if (NULL != (q = strstr(p,"\001PATH: "))) {
-			/*  memmove(p,q,strlen(q)+1); */
-			memmove(p,q,textLength-(size_t)(q-textWithoutArea)+1);
-			textLength -= (size_t) (q - p);
-		    } else {
-			p[0]='\0';
-			textLength = (size_t) (p - textWithoutArea);
-		    }
-		}
-	    }
+        
+            ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
+                                                (UCHAR **) &textStart,
+                                                &textLength);
+            /*  textStart is a pointer to the first non-kludge line */
+            xmsg = createXMSG(config,msg, NULL, forceattr,NULL);
 
-	
-	    ctrlBuff = (char *) CopyToControlBuf((UCHAR *) textWithoutArea,
-						 (UCHAR **) &textStart,
-						 &textLength);
-	    /*  textStart is a pointer to the first non-kludge line */
-	    xmsg = createXMSG(config,msg, NULL, forceattr,NULL);
+            if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
+                            textLength, (dword) textLength,
+                            (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0)
+                w_log(LL_ERROR, "Could not write msg in %s!", echo->fileName);
+            else rc = 1; /*  normal exit */
 
-	    if (MsgWriteMsg(hmsg, 0, &xmsg, (byte *) textStart, (dword)
-			    textLength, (dword) textLength,
-			    (dword)strlen(ctrlBuff), (byte*)ctrlBuff)!=0)
-		w_log(LL_ERROR, "Could not write msg in %s!", echo->fileName);
-	    else rc = 1; /*  normal exit */
+            if (MsgCloseMsg(hmsg)!=0) {
+                w_log(LL_ERROR, "Could not close msg in %s!", echo->fileName);
+                rc = 0;
+            }
+            nfree(ctrlBuff);
 
-	    if (MsgCloseMsg(hmsg)!=0) {
-		w_log(LL_ERROR, "Could not close msg in %s!", echo->fileName);
-		rc = 0;
-	    }
-	    nfree(ctrlBuff);
-
-	} else w_log(LL_ERROR, "Could not create new msg in %s!", echo->fileName);
-	/* endif */
+        } else w_log(LL_ERROR, "Could not create new msg in %s!", echo->fileName);
+        /* endif */
     MsgCloseArea(harea);
     } else w_log(LL_ERROR, "Could not open/create EchoArea %s!", echo->fileName);
     /* endif */

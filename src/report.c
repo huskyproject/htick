@@ -63,16 +63,15 @@ UINT rCount = 0;
 s_FAreaRepInfo*   aList = NULL;
 UINT aCount = 0;
 
-/* char* Tics4del[]; */
 
 void doSaveTic4Report(s_ticfile *tic)
 {
     FILE *tichandle;
     unsigned int i;
-    
+
     char *rpTicName = NULL;
     char *desc_line = NULL;
-    
+
     rpTicName = makeUniqueDosFileName(config->announceSpool,"tic",config);
 
     tichandle = fopen(rpTicName,"wb");
