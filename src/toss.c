@@ -399,12 +399,16 @@ int parseTic( char *ticfile, s_ticfile * tic )
           return 0;
         }
       }
+        w_log( LL_DEBUGT, "CRC stored: %8X", tic->crc );
         break;
       case CRC_SIZE:
         tic->size = atoi( param );
         if( !tic->size && strcmp( param, "0" ) )
+        {
           w_log( LL_WARN, "Wrong TIC \"%s\": \"SIZE %s\" ignored!", ticfile, param );
-        tic->size = -1;
+          tic->size = -1;
+        }
+        w_log( LL_DEBUGT, "SIZE stored: %i", tic->size );
         break;
       case CRC_DATE:
         tic->date = atoi( param );
