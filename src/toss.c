@@ -117,7 +117,8 @@ char *versionStr;
 #define CRC_MAGIC        0x7FF4 /*0xD858*/
 #define CRC_LDESC        0xEB38 /*0x5394*/
 
-
+/* Write netmail message into areaname or first netmail area (if areaname is NULL pointer)
+ */
 void writeNetmail(s_message *msg, char *areaName)
 {
    HAREA  netmail;
@@ -128,9 +129,8 @@ void writeNetmail(s_message *msg, char *areaName)
    XMSG   msgHeader;
    s_area *nmarea;
 
-   if( (msg == NULL) || (areaName == NULL) ){
-     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeNetmail(%s,%s%s%s). This is bug in program. Please report to developers.",
-           __LINE__, msg?"msg":"NULL", areaName?"\"":"", areaName?areaName:"NULL", areaName?"\"":"");
+   if( (msg == NULL) ){
+     w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeNetmail(NULL,areaname). This is bug in program. Please report to developers.", __LINE__);
      return;
    }
 
@@ -138,7 +138,7 @@ void writeNetmail(s_message *msg, char *areaName)
      w_log(LL_CRIT, "Netmailareas not defined, message dropped! Please check config.");
      return;
    }
-   if ((nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
+   if (!areaName || (nmarea=getNetMailArea(config, areaName))==NULL) nmarea = &(config->netMailAreas[0]);
 
    netmail = MsgOpenArea((UCHAR *) nmarea->fileName, MSGAREA_CRIFNEC, (word)nmarea->msgbType);
 
@@ -1554,6 +1554,11 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
     return 0;
 }
 
+/* Append tearline and origin lines into message text and create message into
+ * specified area.
+ * If areaName is NULL pointer or not exist: netmail will placed into first
+ * netmail area, echomail will placed into badarea.
+ */
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin)
 {
    s_area       *echo;
