@@ -56,7 +56,13 @@ enum parseTic_result {
 };
 typedef enum parseTic_result e_parseTic_result;
 
+/* Append tearline and origin lines into message text and create message into
+ * specified area.
+ * If areaName is NULL pointer or not exist: netmail will placed into first
+ * netmail area, echomail will placed into badarea.
+ */
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin);
+/* Write netmail message into areaname or first netmail area (if areaname is NULL pointer) */
 void writeNetmail(s_message *msg, char *areaName);
 
 /* Save ticket file into filearea-specific directory
