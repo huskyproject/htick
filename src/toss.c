@@ -117,6 +117,14 @@
 #define CRC_DESTINATION  0x6F36
 #define CRC_MAGIC        0x7FF4
 #define CRC_LDESC        0xEB38
+#define CRC_FILENAME        0x565D
+#define CRC_RELEASE         0x82EF
+#define CRC_AUTHOR          0x7556
+#define CRC_SOURCE          0x73CB
+#define CRC_APP             0x7ED7
+#define CRC_VIA             0x03DF
+#define CRC_PGP             0x9060
+#define CRC_RECEIPTREQUEST  0xE912
 
 /* processTic(), sendToLinks() results */
 #define TIC_OK         0
@@ -243,7 +251,7 @@ int writeTic( char *ticfile, s_ticfile * tic )
     fprintf( tichandle, "To %s\r\n", aka2str( tic->to ) );
   if( tic->origin.zone != 0 )
     fprintf( tichandle, "Origin %s\r\n", aka2str( tic->origin ) );
-  if( tic->size != 0 )
+  if( tic->size >= 0 )
     fprintf( tichandle, "Size %u\r\n", tic->size );
   if( tic->date != 0 )
     fprintf( tichandle, "Date %lu\r\n", tic->date );
@@ -354,15 +362,41 @@ int parseTic( char *ticfile, s_ticfile * tic )
       param = stripLeadingChars( strtok( NULL, "\0" ), "\t" );
       if( !param )
       {
-        if( key == CRC_DESC || key == CRC_LDESC )
-          param = emptyline;
-        else if( key == CRC_SIZE )
+        switch ( key )
         {
-          w_log( LL_ERR, "Wrong TIC \"%s\": \"Size\" without value!", ticfile );
-          tic->size = -1;
-        }
-        else
+        case CRC_DESC:
+        case CRC_LDESC:
+          param = emptyline;
+          break;
+        case CRC_CREATED:
+        case CRC_PATH:
+        case CRC_FILE:
+        case CRC_AREA:
+        case CRC_CRC:
+        case CRC_ORIGIN:
+        case CRC_TO:
+        case CRC_FROM:
+        case CRC_SEENBY:
+        case CRC_SIZE:
+        case CRC_DATE:
+          w_log( LL_ERR, "Wrong TIC \"%s\": \"%s\" without value, line skipped!", ticfile, line );
           continue;
+        case CRC_AREADESC:
+        case CRC_REPLACES:
+        case CRC_PW:
+        case CRC_MAGIC:
+          /* All below tokens is specified in FSC-0087.001 but not recognized in htick: */
+          case CRC_FILENAME:
+          case CRC_RELEASE:
+          case CRC_AUTHOR:
+          case CRC_SOURCE:
+          case CRC_APP:
+          case CRC_VIA:
+          case CRC_PGP:
+          case CRC_RECEIPTREQUEST:
+        default:
+          continue;
+        }
       }
       switch ( key )
       {
@@ -373,8 +407,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
         if( strpbrk( param, "\\/" ) )
         {
           w_log( LL_ERR,
-                 "Wrong TIC \"%s\", security violated: \"file\" is contain path (\"%s\")!",
-                 ticfile, param );
+                 "Wrong TIC \"%s\", security violated: \"FILE %s\" contain path!", ticfile, param );
           return 0;
         }
         else
@@ -466,7 +499,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
         break;
       default:
         if( ticSourceLink && !ticSourceLink->FileFixFSC87Subset )
-          w_log( '7', "Unknown Keyword \"%s\" in Tic File", token );
+          w_log( '7', "Unknown Keyword \"%s\" (CRC16=%4X) in Tic File", token, key );
       }                         /* switch */
     }                           /* endif */
     if( config->MaxTicLineLength )
@@ -475,7 +508,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
   }                             /* endwhile */
 
   fclose( tichandle );
-  if( !tic->size )
+  if( tic->size < 0 )
     w_log( LL_ALERT, "TIC \"%s\" without file size!", ticfile );
   if( !tic->anzdesc )
   {
@@ -1164,7 +1197,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
   if( !filearea->noCRC && tic.crc )
   {
     stat( ticedfile, &stbuf );
-    if( stbuf.st_size && ( ( tic.size == 0 ) || ( stbuf.st_size == tic.size ) ) )
+    if( stbuf.st_size && ( ( tic.size < 0 ) || ( stbuf.st_size == tic.size ) ) )
     {                           /* CRC of empty file is zero */
       crc = filecrc32( ticedfile );
     }
@@ -1258,13 +1291,15 @@ int processTic( char *ticfile, e_tossSecurity sec )
 
 
   stat( ticedfile, &stbuf );
+/*
   if( !stbuf.st_size )
   {
     w_log( '6', "File %s from filearea %s has zero size, skipped.", tic.file, tic.area );
     disposeTic( &tic );
     return TIC_NotRecvd;
   }
-  if( tic.size )
+*/
+  if( tic.size >= 0 )
   {
     if( stbuf.st_size != tic.size )
     {
