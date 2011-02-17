@@ -335,6 +335,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
     if( *line == 0 || *line == 10 || *line == 13 || *line == ';' || *line == '#' )
       continue;
 
+    w_log( LL_DEBUGT, "TIC line: \"%s\"", line );
     if( config->MaxTicLineLength )
     {
       linecut = ( char * )smalloc( config->MaxTicLineLength + 1 );
