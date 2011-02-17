@@ -1117,13 +1117,13 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
           w_log(LL_TIC, "%s of file '%s' differs with TIC. I try to find "
                         "file with another suffix",
                         (tic.size != stbuf.st_size)?"Size":"CRC32", ticedfile);
-          strcpy(dirname, ticedfile);
+          strncpy(dirname, ticedfile, sizeof(dirname));
           pos = strrchr(dirname, PATH_DELIM);
-          if (pos) {
+          if (pos && (pos-dirname+4<sizeof(dirname))) {
               *pos = 0;
               findfile = pos+1;
               pos = strrchr(findfile, '.');
-              if (pos) {
+              if (pos && (pos-dirname+2<sizeof(dirname))) {
 
                   *(++pos) = 0;
                   strcat(findfile, "*");
@@ -1140,17 +1140,28 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
                             }
                             else {
                               if (!stbuf.st_size && !tic.size) { /* file empty AND size from TIC is 0 */
-                                  fileisfound = 1;           /* CRC32 of an empty file is equal to zero */
-                                  sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file);
-                                  break;
+                                                           /* CRC32 of an empty file is equal to zero */
+                                  if( strlen(dirname)+strlen(file)+1>=sizeof(dirname) ) {
+                                    w_log(LL_ERR, "Path too long (max %i bytes): \"%s%c%s\"",
+                                          sizeof(dirname), dirname, PATH_DELIM, file);
+                                  } else {
+                                    fileisfound = 1;
+                                    sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file);
+                                    break;
+                                  }
                               }
                               else if ((tic.size<0)||(stbuf.st_size == tic.size)) {
                               /* size not specified in TIC OR size from TIC eq filesize */
                                   crc = filecrc32(file);
                                   if (crc == tic.crc) {
+                                    if( strlen(dirname)+strlen(file)+1>=sizeof(dirname) ) {
+                                      w_log(LL_ERR, "Path too long (max %i bytes): \"%s%c%s\"",
+                                            sizeof(dirname), dirname, PATH_DELIM, file);
+                                    } else {
                                       fileisfound = 1;
                                       sprintf(dirname+strlen(dirname), "%c%s", PATH_DELIM, file);
                                       break;
+                                    }
                                   }
                               }
                             }
@@ -1196,7 +1207,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
               disposeTic(&tic);
               return TIC_NotRecvd;
           }
-      }
+      } else fileisfound = 1;
    } else { /* Search of a file in the size */
      if (stbuf.st_size == tic.size) {
        fileisfound = 1;
