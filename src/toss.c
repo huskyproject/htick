@@ -370,7 +370,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
       case CRC_MAGIC:
         break;
       case CRC_FILE:
-        if( strpbrk( tic->file, "\\/" ) )
+        if( strpbrk( param, "\\/" ) )
         {
           w_log( LL_ERR,
                  "Wrong TIC \"%s\", security violated: \"file\" is contain path (\"%s\")!",
@@ -415,7 +415,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
           w_log( '7', "TIC %s: Illegal value: 'REPLACES %s', ignored", ticfile, param );
           break;
         }
-        else if( strpbrk( tic->file, "\\/" ) )
+        else if( strpbrk( param, "\\/" ) )
         {
           w_log( LL_ERR,
                  "Wrong TIC \"%s\", security violated: \"REPLACES %s\" is contain path!",
