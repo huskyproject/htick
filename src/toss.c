@@ -1165,7 +1165,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
     {                           /* CRC of empty file is zero */
       crc = filecrc32( ticedfile );
     }
-    if( ( tic.crc != crc ) || ( stbuf.st_size != tic.size ) )
+    if( ( tic.crc != crc ) || ( tic.size && ( stbuf.st_size != tic.size ) ) )
     {
       strcpy( dirname, ticedfile );
       pos = strrchr( dirname, PATH_DELIM );
