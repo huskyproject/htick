@@ -967,16 +967,13 @@ int processTic( char *ticfile, e_tossSecurity sec )
 {
   s_ticfile tic;
   size_t j;
-  FILE *flohandle;
   DIR *dir;
   struct dirent *file;
 
-  char ticedfile[256], linkfilepath[256];
+  char ticedfile[256];
   char dirname[256], *realfile, *findfile, *pos;
-  char *newticfile;
   s_filearea *filearea;
-  s_link *from_link, *to_link;
-  int busy;
+  s_link *from_link;
   unsigned long crc = 0;
   struct stat stbuf;
   int writeAccess;
@@ -1011,8 +1008,18 @@ int processTic( char *ticfile, e_tossSecurity sec )
   {
     if( !isOurAka( config, tic.to ) )
     {
+#if 0
+      char *newticfile;
+      FILE *flohandle;
+      int busy;
+      char linkfilepath[256];
+      s_link *to_link;
+
       /* Forwarding tic and file to other link? */
       to_link = getLinkFromAddr( config, tic.to );
+      /* Forward files not documented yet and this feature is big hole in security.
+       * AND MORE: current implementation (by geogi at 1999) don't work in mulitask enviroment
+       */
       if( ( to_link != NULL ) && ( to_link->forwardPkts != fOff ) )
       {
         if( ( to_link->forwardPkts == fSecure ) && ( sec != secProtInbound )
@@ -1055,6 +1062,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
           return TIC_OK;
         }
       }
+#endif
       /* not to us and no forward */
       w_log( LL_ERROR, "Tic File adressed to %s, not to us", aka2str( tic.to ) );
       disposeTic( &tic );
