@@ -1106,6 +1106,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
    if (stat(ticedfile,&stbuf)) {
      w_log(LL_ERR, "Can't check size of file \"%s\": %s. Skip this file.", ticedfile, strerror(errno));
      stbuf.st_size = tic.size;
+     return TIC_NotOpen;
    }
 
    /* Check CRC Value and reject faulty files depending on noCRC flag */
