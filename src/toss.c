@@ -170,7 +170,7 @@ void writeNetmail(s_message *msg, char *areaName)
 /*     printf("%u\n", msgapierr); */
       w_log( LL_ERROR, "Could not open netmailarea %s", areaName);
    } /* endif */
-}
+} /* writeNetmail() */
 
 int writeTic(char *ticfile,s_ticfile *tic)
 {
@@ -240,7 +240,7 @@ int writeTic(char *ticfile,s_ticfile *tic)
 
     fclose(tichandle);
     return 1;
-}
+} /* writeTic() */
 
 void disposeTic(s_ticfile *tic)
 {
@@ -264,7 +264,7 @@ void disposeTic(s_ticfile *tic)
    for (i=0;i<tic->anzldesc;i++)
       nfree(tic->ldesc[i]);
    nfree(tic->ldesc);
-}
+} /* disposeTic() */
 
 /* Read tic-file and store values into 2nd parameter.
  * Return 1 if success and 0 if error
@@ -411,7 +411,7 @@ int parseTic(char *ticfile,s_ticfile *tic)
     }
 
     return 1;
-}
+} /* parseTic() */
 
 
 int readCheck(s_filearea *echo, s_link *link)
@@ -458,7 +458,7 @@ int readCheck(s_filearea *echo, s_link *link)
   }
 
   return 0;
-}
+} /* readCheck() */
 
 int writeCheck(s_filearea *echo, ps_addr aka)
 {
@@ -508,7 +508,7 @@ int writeCheck(s_filearea *echo, ps_addr aka)
   }
 
   return 0;
-}
+} /* writeCheck() */
 
 void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
 {
@@ -546,7 +546,7 @@ void doSaveTic(char *ticfile,s_ticfile *tic, s_filearea *filearea)
     };
     nfree(filename);
     return;
-}
+} /* doSaveTic() */
 
 int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
                 const char *filename)
@@ -802,7 +802,7 @@ int sendToLinks(int isToss, s_filearea *filearea, s_ticfile *tic,
 
     if (isToss == 1) nfree(old_seenby);
     return(0);
-}
+} /* sendToLinks() */
 
 #if !defined(__UNIX__)
 
@@ -855,7 +855,7 @@ int hidden (char *filename)
 #error "Don't know how to check for hidden files on this platform"
    return 0; /* well, we can't check if we don't know about the host */
 #endif
-}
+} /* hidden() */
 #endif
 
 
@@ -1145,7 +1145,7 @@ int processTic(char *ticfile, e_tossSecurity sec)
 
    disposeTic(&tic);
    return(rc);
-}
+} /* processTic() */
 
 void processDir(char *directory, e_tossSecurity sec)
 {
@@ -1200,7 +1200,7 @@ void processDir(char *directory, e_tossSecurity sec)
       } /* if */
    } /* while */
    closedir(dir);
-}
+} /* processDir() */
 
 void checkTmpDir(void)
 {
@@ -1278,7 +1278,7 @@ void checkTmpDir(void)
         nfree(ticfile);
     } /* while */
     closedir(dir);
-}
+} /* checkTmpDir() */
 
 
 int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
@@ -1367,7 +1367,7 @@ int putMsgInArea(s_area *echo, s_message *msg, int strip, dword forceattr)
     } else w_log(LL_ERROR, "Could not open/create EchoArea %s!", echo->fileName);
     /* endif */
     return rc;
-}
+} /* putMsgInArea() */
 
 int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
 {
@@ -1400,7 +1400,7 @@ int putMsgInBadArea(s_message *msg, hs_addr pktOrigAddr)
         return 1;
     }
     return 0;
-}
+} /* putMsgInBadArea() */
 
 void writeMsgToSysop(s_message *msg, char *areaName, char* origin)
 {
@@ -1423,7 +1423,7 @@ void writeMsgToSysop(s_message *msg, char *areaName, char* origin)
           putMsgInBadArea(msg, msg->origAddr);
       }
    }
-}
+} /* writeMsgToSysop() */
 
 void toss()
 {
@@ -1434,4 +1434,4 @@ void toss()
    processDir(config->protInbound, secProtInbound);
    processDir(config->inbound, secInbound);
 
-}
+} /* toss() */
