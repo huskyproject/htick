@@ -90,7 +90,7 @@ int getDescOptions( char *desc, char **filename )
     }
   }
   return descOPT;
-} /* getDescOptions(() */
+}                               /* getDescOptions(() */
 
 void expandDescMacros( s_ticfile * tic, char *hatchedFile )
 {
@@ -305,7 +305,7 @@ recode:
   }
 
   disposeTic( &tmptic );
-} /* expandDescMacros() */
+}                               /* expandDescMacros() */
 
 int hatch(  )
 /* 0 - OK */
@@ -388,7 +388,7 @@ int hatch(  )
 
   nfree( hatchedFile );
   return 0;
-} /* hatch() */
+}                               /* hatch() */
 
 int send( char *filename, char *area, char *addr )
 /* 0 - OK */
@@ -517,7 +517,7 @@ int send( char *filename, char *area, char *addr )
   nfree( tmpfile );
   nfree( descr_file_name );
   return rc;
-} /* send() */
+}                               /* send() */
 
 
 int PutFileOnLink( char *newticedfile, s_ticfile * tic, s_link * downlink )
@@ -636,4 +636,4 @@ int PutFileOnLink( char *newticedfile, s_ticfile * tic, s_link * downlink )
   nfree( downlink->floFile );
   nfree( linkfilepath );
   return 1;
-} /* PutFileOnLink() */
+}                               /* PutFileOnLink() */
