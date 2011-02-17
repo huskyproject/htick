@@ -42,19 +42,19 @@
 #include <smapi/compiler.h>
 
 #ifdef HAS_UNISTD_H
-#  include <unistd.h>
+# include <unistd.h>
 #endif
 
 #ifdef HAS_DIRECT_H
-#  include <direct.h>
+# include <direct.h>
 #endif
 
 #ifdef HAS_PROCESS_H
-#  include <process.h>
+# include <process.h>
 #endif
 
 #ifdef HAS_DIR_H
-#  include <dir.h>
+# include <dir.h>
 #endif
 
 /*
@@ -78,243 +78,237 @@
 #include <add_desc.h>
 
 #ifndef FALSE
-#define FALSE 0
+# define FALSE 0
 #endif
 #ifndef TRUE
-#define TRUE 1
+# define TRUE 1
 #endif
 
-void exit_htick(char *logstr, int print) {
-
-    w_log(LL_FUNC,"exit_htick()");
-    w_log(LL_CRIT, logstr);
-    if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
-
-    doneCharsets();
-    w_log(LL_STOP, "Exit");
-    closeLog();
-    if (config->lockfile) {
-       FreelockFile(config->lockfile ,lock_fd);
-    }
-    disposeConfig(config);
-    exit(EX_SOFTWARE);
-}
-
-int fileNameAlreadyUsed(char *pktName, char *packName) {
-   unsigned int i;
-
-   for (i=0; i < config->linkCount; i++) {
-      if ((config->links[i].pktFile != NULL) && (pktName != NULL))
-         if ((stricmp(pktName, config->links[i].pktFile)==0)) return 1;
-      if ((config->links[i].packFile != NULL) && (packName != NULL))
-         if ((stricmp(packName, config->links[i].packFile)==0)) return 1;
-   }
-
-   return 0;
-}
-
-int createOutboundFileNameAka(s_link *link, e_flavour prio, e_pollType typ, hs_addr *aka)
+void exit_htick( char *logstr, int print )
 {
-   int nRet = NCreateOutboundFileNameAka(config,link,prio,typ,aka);
-   if(nRet == -1) 
-      exit_htick("cannot create *.bsy file!",0);
-   return nRet;
+
+  w_log( LL_FUNC, "exit_htick()" );
+  w_log( LL_CRIT, logstr );
+  if( !config->logEchoToScreen && print )
+    fprintf( stderr, "%s\n", logstr );
+
+  doneCharsets(  );
+  w_log( LL_STOP, "Exit" );
+  closeLog(  );
+  if( config->lockfile )
+  {
+    FreelockFile( config->lockfile, lock_fd );
+  }
+  disposeConfig( config );
+  exit( EX_SOFTWARE );
 }
 
-int createOutboundFileName(s_link *link, e_flavour prio, e_pollType typ)
+int fileNameAlreadyUsed( char *pktName, char *packName )
 {
-  return createOutboundFileNameAka(link, prio, typ, &(link->hisAka));
+  unsigned int i;
+
+  for( i = 0; i < config->linkCount; i++ )
+  {
+    if( ( config->links[i].pktFile != NULL ) && ( pktName != NULL ) )
+      if( ( stricmp( pktName, config->links[i].pktFile ) == 0 ) )
+        return 1;
+    if( ( config->links[i].packFile != NULL ) && ( packName != NULL ) )
+      if( ( stricmp( packName, config->links[i].packFile ) == 0 ) )
+        return 1;
+  }
+
+  return 0;
 }
 
-int removeFileMask(char *directory, char *mask)
+int createOutboundFileNameAka( s_link * link, e_flavour prio, e_pollType typ, hs_addr * aka )
 {
-    DIR           *dir;
-    struct dirent *file;
-    char          *removefile = NULL;
-    char          *descr_file_name = NULL;
-    unsigned int  numfiles = 0;
+  int nRet = NCreateOutboundFileNameAka( config, link, prio, typ, aka );
 
-   if (directory == NULL) return(0);
+  if( nRet == -1 )
+    exit_htick( "cannot create *.bsy file!", 0 );
+  return nRet;
+}
 
-   dir = opendir(directory);
-   if (dir != NULL) {
-      while ((file = readdir(dir)) != NULL) {
-         if (stricmp(file->d_name,".")==0 || stricmp(file->d_name,"..")==0) continue;
-         if (patimat(file->d_name, mask) == 1) {
+int createOutboundFileName( s_link * link, e_flavour prio, e_pollType typ )
+{
+  return createOutboundFileNameAka( link, prio, typ, &( link->hisAka ) );
+}
 
-            /* remove file */
-            xstrscat(&removefile, directory, file->d_name, NULL);
-            if(removefile) remove(removefile);
-            w_log('6',"Removed file: %s",removefile);
-            numfiles++;
-            nfree(removefile);
+int removeFileMask( char *directory, char *mask )
+{
+  DIR *dir;
+  struct dirent *file;
+  char *removefile = NULL;
+  char *descr_file_name = NULL;
+  unsigned int numfiles = 0;
 
-            /* remove description for file */
-            xstrscat(&descr_file_name,directory, "files.bbs",NULL);
-            adaptcase(descr_file_name);
-            removeDesc(descr_file_name,file->d_name);
-            nfree(descr_file_name);
-         }
+  if( directory == NULL )
+    return ( 0 );
+
+  dir = opendir( directory );
+  if( dir != NULL )
+  {
+    while( ( file = readdir( dir ) ) != NULL )
+    {
+      if( stricmp( file->d_name, "." ) == 0 || stricmp( file->d_name, ".." ) == 0 )
+        continue;
+      if( patimat( file->d_name, mask ) == 1 )
+      {
+
+        /* remove file */
+        xstrscat( &removefile, directory, file->d_name, NULL );
+        if( removefile )
+          remove( removefile );
+        w_log( '6', "Removed file: %s", removefile );
+        numfiles++;
+        nfree( removefile );
+
+        /* remove description for file */
+        xstrscat( &descr_file_name, directory, "files.bbs", NULL );
+        adaptcase( descr_file_name );
+        removeDesc( descr_file_name, file->d_name );
+        nfree( descr_file_name );
       }
-      closedir(dir);
-   }
-   return(numfiles);
+    }
+    closedir( dir );
+  }
+  return ( numfiles );
 }
 
 #ifdef _WIN32_WINNT
-#define _WINUSER_
-#define _WINUSER_H
-#	ifdef __MINGW32__
-#		define CreateHardLink CreateHardLinkA
-#	endif
+# define _WINUSER_
+# define _WINUSER_H
+# 	ifdef __MINGW32__
+# 		define CreateHardLink CreateHardLinkA
+# 	endif
 #endif
 
-int link_file(const char *from, const char *to)
+int link_file( const char *from, const char *to )
 {
-   int rc = FALSE;
+  int rc = FALSE;
 
 #if _WIN32_WINNT == 0x0400
-   
-   WCHAR  FileLink[ MAX_PATH + 1 ];
-   WCHAR  wto[ MAX_PATH + 1 ];
-   LPWSTR FilePart;
 
-   HANDLE hFileSource;
+  WCHAR FileLink[MAX_PATH + 1];
+  WCHAR wto[MAX_PATH + 1];
+  LPWSTR FilePart;
 
-   WIN32_STREAM_ID StreamId;
-   DWORD dwBytesWritten;
-   LPVOID lpContext;
-   DWORD cbPathLen;
-   DWORD StreamHeaderSize;
+  HANDLE hFileSource;
 
-   BOOL bSuccess;
+  WIN32_STREAM_ID StreamId;
+  DWORD dwBytesWritten;
+  LPVOID lpContext;
+  DWORD cbPathLen;
+  DWORD StreamHeaderSize;
+
+  BOOL bSuccess;
 #endif
 
-   /* Test parameters: prevent read from NULL[]  */
-   if (!from || !to) {
-     if(!from) w_log(LL_ERR, __FILE__ "::link_file(): source file name is NULL");
-     if(!to)   w_log(LL_ERR, __FILE__ "::link_file(): destination file name is NULL");
-     return FALSE;
-   }
+  /* Test parameters: prevent read from NULL[]  */
+  if( !from || !to )
+  {
+    if( !from )
+      w_log( LL_ERR, __FILE__ "::link_file(): source file name is NULL" );
+    if( !to )
+      w_log( LL_ERR, __FILE__ "::link_file(): destination file name is NULL" );
+    return FALSE;
+  }
 
 #if   _WIN32_WINNT >= 0x0500
 
-   rc = CreateHardLink(to, from, NULL);
+  rc = CreateHardLink( to, from, NULL );
 
 #elif _WIN32_WINNT == 0x0400
-   
-   /*   */
-   /*  open existing file that we link to */
-   /*   */
-   hFileSource = CreateFile(
-                           from,
-                           FILE_WRITE_ATTRIBUTES,
-                           FILE_SHARE_READ | FILE_SHARE_WRITE
-                           | FILE_SHARE_DELETE,
-                           NULL, /*  sa */
-                           OPEN_EXISTING,
-                           0,
-                           NULL
-                           );
 
-   if (hFileSource == INVALID_HANDLE_VALUE)
-   {
-      return rc;
-   }
+  /*   */
+  /*  open existing file that we link to */
+  /*   */
+  hFileSource = CreateFile( from, FILE_WRITE_ATTRIBUTES, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL,  /*  sa */
+                            OPEN_EXISTING, 0, NULL );
 
-   /*   */
-   /*  validate and sanitize supplied link path and use the result */
-   /*  the full path MUST be Unicode for BackupWrite */
-   /*   */
-   MultiByteToWideChar( CP_ACP, 0, to,
-       strlen(to)+1, wto,   
-       sizeof(wto)/sizeof(wto[0]) );
-   
-   cbPathLen = GetFullPathNameW( wto, MAX_PATH, FileLink, &FilePart);
+  if( hFileSource == INVALID_HANDLE_VALUE )
+  {
+    return rc;
+  }
 
-   if (cbPathLen == 0)
-   {
-      return rc;
-   }
+  /*   */
+  /*  validate and sanitize supplied link path and use the result */
+  /*  the full path MUST be Unicode for BackupWrite */
+  /*   */
+  MultiByteToWideChar( CP_ACP, 0, to, strlen( to ) + 1, wto, sizeof( wto ) / sizeof( wto[0] ) );
 
-   cbPathLen = (cbPathLen + 1) * sizeof(WCHAR); /*  adjust for byte count */
+  cbPathLen = GetFullPathNameW( wto, MAX_PATH, FileLink, &FilePart );
 
-   /*   */
-   /*  it might also be a good idea to verify the existence of the link, */
-   /*  (and possibly bail), as the file specified in FileLink will be */
-   /*  overwritten if it already exists */
-   /*   */
+  if( cbPathLen == 0 )
+  {
+    return rc;
+  }
 
-   /*   */
-   /*  prepare and write the WIN32_STREAM_ID out */
-   /*   */
-   lpContext = NULL;
+  cbPathLen = ( cbPathLen + 1 ) * sizeof( WCHAR );      /*  adjust for byte count */
 
-   StreamId.dwStreamId = BACKUP_LINK;
-   StreamId.dwStreamAttributes = 0;
-   StreamId.dwStreamNameSize = 0;
-   StreamId.Size.HighPart = 0;
-   StreamId.Size.LowPart = cbPathLen;
+  /*   */
+  /*  it might also be a good idea to verify the existence of the link, */
+  /*  (and possibly bail), as the file specified in FileLink will be */
+  /*  overwritten if it already exists */
+  /*   */
 
-   /*   */
-   /*  compute length of variable size WIN32_STREAM_ID */
-   /*   */
-   StreamHeaderSize = (LPBYTE)&StreamId.cStreamName - (LPBYTE)&
-                      StreamId+ StreamId.dwStreamNameSize ;
+  /*   */
+  /*  prepare and write the WIN32_STREAM_ID out */
+  /*   */
+  lpContext = NULL;
 
-   bSuccess = BackupWrite(
-                         hFileSource,
-                         (LPBYTE)&StreamId,  /*  buffer to write */
-                         StreamHeaderSize,   /*  number of bytes to write */
-                         &dwBytesWritten,
-                         FALSE,              /*  don't abort yet */
-                         FALSE,              /*  don't process security */
-                         &lpContext
-                         );
+  StreamId.dwStreamId = BACKUP_LINK;
+  StreamId.dwStreamAttributes = 0;
+  StreamId.dwStreamNameSize = 0;
+  StreamId.Size.HighPart = 0;
+  StreamId.Size.LowPart = cbPathLen;
 
-   if (bSuccess)
-   {
+  /*   */
+  /*  compute length of variable size WIN32_STREAM_ID */
+  /*   */
+  StreamHeaderSize = ( LPBYTE ) & StreamId.cStreamName - ( LPBYTE ) &
+      StreamId + StreamId.dwStreamNameSize;
 
-      /*   */
-      /*  write out the buffer containing the path */
-      /*   */
-      bSuccess = BackupWrite(
-                            hFileSource,
-                            (LPBYTE)FileLink,   /*  buffer to write */
-                            cbPathLen,          /*  number of bytes to write */
-                            &dwBytesWritten,
-                            FALSE,              /*  don't abort yet */
-                            FALSE,              /*  don't process security */
-                            &lpContext
-                            );
+  bSuccess = BackupWrite( hFileSource, ( LPBYTE ) & StreamId,   /*  buffer to write */
+                          StreamHeaderSize,     /*  number of bytes to write */
+                          &dwBytesWritten, FALSE,       /*  don't abort yet */
+                          FALSE,        /*  don't process security */
+                          &lpContext );
 
-      /*   */
-      /*  free context */
-      /*   */
-      BackupWrite(
-                 hFileSource,
-                 NULL,               /*  buffer to write */
-                 0,                  /*  number of bytes to write */
-                 &dwBytesWritten,
-                 TRUE,               /*  abort */
-                 FALSE,              /*  don't process security */
-                 &lpContext
-                 );
-   }
+  if( bSuccess )
+  {
 
-   CloseHandle( hFileSource );
+    /*   */
+    /*  write out the buffer containing the path */
+    /*   */
+    bSuccess = BackupWrite( hFileSource, ( LPBYTE ) FileLink,   /*  buffer to write */
+                            cbPathLen,  /*  number of bytes to write */
+                            &dwBytesWritten, FALSE,     /*  don't abort yet */
+                            FALSE,      /*  don't process security */
+                            &lpContext );
 
-   if (!bSuccess)
-   {
-      return rc;
-   }
-   return TRUE;
+    /*   */
+    /*  free context */
+    /*   */
+    BackupWrite( hFileSource, NULL,     /*  buffer to write */
+                 0,             /*  number of bytes to write */
+                 &dwBytesWritten, TRUE, /*  abort */
+                 FALSE,         /*  don't process security */
+                 &lpContext );
+  }
+
+  CloseHandle( hFileSource );
+
+  if( !bSuccess )
+  {
+    return rc;
+  }
+  return TRUE;
 
 #elif defined (_UNISTD_H) && !defined(__OS2__)
 
-   rc = (link(from, to) == 0);
+  rc = ( link( from, to ) == 0 );
 
 #endif
-   return rc;
+  return rc;
 }
-

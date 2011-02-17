@@ -39,7 +39,7 @@
 #include <smapi/compiler.h>
 
 #ifdef HAS_UNISTD_H
-#  include <unistd.h>
+# include <unistd.h>
 #endif
 
 /* smapi */
@@ -51,65 +51,76 @@
 #include <global.h>
 #include <filecase.h>
 
-static int dosallowin83(int c)
+static int dosallowin83( int c )
 {
-	static char dos_allow[] = "!@#$%^&()~`'-_{}.";
-	
-	if((c >= 'a' && c <= 'z') ||
-		(c >= 'A' && c <= 'Z') ||
-		(c >= '0' && c <= '9') ||
-		strchr(dos_allow,c)) return 1;
-	return 0;
+  static char dos_allow[] = "!@#$%^&()~`'-_{}.";
+
+  if( ( c >= 'a' && c <= 'z' ) ||
+      ( c >= 'A' && c <= 'Z' ) || ( c >= '0' && c <= '9' ) || strchr( dos_allow, c ) )
+    return 1;
+  return 0;
 }
 
 
-int isDOSLikeName(char *name)
+int isDOSLikeName( char *name )
 {
-   int nl,el,ec,uc,lc,f;
-   char *p = name;
+  int nl, el, ec, uc, lc, f;
+  char *p = name;
 
-   nl=el=ec=uc=lc=0;
-   f=1;
-   while (*p) {
-      if(!dosallowin83(*p)) {
-         f=0;
-         break;
-      }
-      if('.'==*p)
-         ec++;
-      else {
-         if (!ec) nl++;
-         else el++;
-         if(isalpha(*p))
-         {
-           if(isupper(*p)) uc++;
-           else lc++;
-       }
-      }
-      p++;
+  nl = el = ec = uc = lc = 0;
+  f = 1;
+  while( *p )
+  {
+    if( !dosallowin83( *p ) )
+    {
+      f = 0;
+      break;
     }
-    return (f && ec < 2 && el < 4 && nl < 9 && (!lc || !uc));
+    if( '.' == *p )
+      ec++;
+    else
+    {
+      if( !ec )
+        nl++;
+      else
+        el++;
+      if( isalpha( *p ) )
+      {
+        if( isupper( *p ) )
+          uc++;
+        else
+          lc++;
+      }
+    }
+    p++;
+  }
+  return ( f && ec < 2 && el < 4 && nl < 9 && ( !lc || !uc ) );
 }
 
-char *MakeProperCase(char *name)
+char *MakeProperCase( char *name )
 {
-	if(isDOSLikeName(name)) {
-		switch(config->convertShortNames) {
-		case cUpper:
-			return strUpper(name);
-		case cLower:
-			return strLower(name);
-		default:
-			return name;
-		}
-	} else {
-		switch(config->convertLongNames) {
-		case cUpper:
-			return strUpper(name);
-		case cLower:
-			return strLower(name);
-		default:
-			return name;
-		}
-	}
+  if( isDOSLikeName( name ) )
+  {
+    switch ( config->convertShortNames )
+    {
+    case cUpper:
+      return strUpper( name );
+    case cLower:
+      return strLower( name );
+    default:
+      return name;
+    }
+  }
+  else
+  {
+    switch ( config->convertLongNames )
+    {
+    case cUpper:
+      return strUpper( name );
+    case cLower:
+      return strLower( name );
+    default:
+      return name;
+    }
+  }
 }
