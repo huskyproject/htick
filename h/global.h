@@ -41,7 +41,7 @@ struct ticfiletype {
                 char **desc;        /*  Short Description of file */
                 unsigned int anzdesc;        /*  Number of Desc Lines */
                 char *replaces;     /*  Replaces File */
-                int size;           /*  Size of file */
+                int size;           /*  Size of file, negative value = field not present in TIC */
                 unsigned long crc;  /*  CRC of File */
                 unsigned long date; /*  Date */
                 hs_addr from;        /*  From Addr */
