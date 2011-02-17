@@ -1212,7 +1212,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
      if (stbuf.st_size == tic.size) {
        fileisfound = 1;
      } else {
-
+       /* FIXME: Place here search of a file in his size (in same inbound as a ticket) */
      }
    }
 
