@@ -120,7 +120,7 @@ int add_description( char *descr_file_name, char *file_name, char **description,
   fclose( descr_file );
   nfree( namefile );
   return 0;
-}
+} /* add_description() */
 
 int removeDesc( char *descr_file_name, char *file_name )
 {
@@ -187,7 +187,7 @@ int removeDesc( char *descr_file_name, char *file_name )
   move_file( descr_file_name_tmp, descr_file_name, 1 ); /* overwrite old file */
   nfree( descr_file_name_tmp );
   return 0;
-}
+} /* removeDesc() */
 
 int announceNewFileecho( char *announcenewfileecho, char *c_area, char *hisaddr )
 {
@@ -211,7 +211,7 @@ int announceNewFileecho( char *announcenewfileecho, char *c_area, char *hisaddr 
   fprintf( ann_file, "Created  %-52s %s\n", c_area, hisaddr );
   fclose( ann_file );
   return 0;
-}
+} /* announceNewFileecho() */
 
 int GetDescFormBbsFile( char *descr_file_name, char *file_name, s_ticfile * tic )
 {
@@ -303,7 +303,7 @@ int GetDescFormBbsFile( char *descr_file_name, char *file_name, s_ticfile * tic 
   fclose( filehandle );
   w_log( LL_FILE, "getDesc OK for file: %s", file_name );
   return rc;
-}
+} /* GetDescFormBbsFile() */
 
 
 int GetDescFormFile( char *fileName, s_ticfile * tic )
@@ -331,7 +331,7 @@ int GetDescFormFile( char *fileName, s_ticfile * tic )
   }                             /* endwhile */
   fclose( filehandle );
   return 1;
-}
+} /* GetDescFormFile() */
 
 int GetDescFormDizFile( char *fileName, s_ticfile * tic )
 {
@@ -410,4 +410,4 @@ int GetDescFormDizFile( char *fileName, s_ticfile * tic )
     nfree( dizfile );
   }
   return found;
-}
+} /* GetDescFormDizFile() */
