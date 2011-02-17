@@ -1173,8 +1173,7 @@ enum TIC_state processTic(char *ticfile, e_tossSecurity sec)
           }
 
           if (fileisfound) {
-              realfile = smalloc(strlen(dirname)+1);
-              strcpy(realfile, dirname);
+              realfile = sstrdup(dirname);
               *(strrchr(dirname, PATH_DELIM)) = 0;
               findfile = makeUniqueDosFileName(dirname,"tmp",config);
               if (rename(ticedfile, findfile) != 0 ) {
