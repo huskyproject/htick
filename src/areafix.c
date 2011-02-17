@@ -1262,7 +1262,7 @@ void ffix( hs_addr addr, char *cmd )
                             link->RemoteRobotName : "Filefix",
                             link->fileFixPwd ?
                             link->fileFixPwd : "", 1, config->areafixReportsAttr );
-      tmpmsg->text = cmd;
+      tmpmsg->text = strdup(cmd);
       processFileFix( tmpmsg );
       tmpmsg->text = NULL;
       freeMsgBuffers( tmpmsg );
