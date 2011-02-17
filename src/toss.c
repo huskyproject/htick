@@ -436,7 +436,7 @@ enum parseTic_result parseTic(char *ticfile,s_ticfile *tic)
                     break;
                   case CRC_SIZE:
                     w_log(LL_ERR, "Wrong TIC \"%s\": \"Size\" without value!", ticfile);
-                    tic->size = 0;
+                    tic->size = -1;
                     rc=parseTic_bad;
                     break;
                   default:
