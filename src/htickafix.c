@@ -478,7 +478,7 @@ void ffix(hs_addr addr, char *cmd)
 				 link->filefix.name ? link->filefix.name : "Filefix",
 				 link->filefix.pwd ? link->filefix.pwd : "", 1,
                  af_robot->reportsAttr);
-	    tmpmsg->text = cmd;
+	    tmpmsg->text = strdup(cmd);
         processFileFix(tmpmsg);
 	    tmpmsg->text=NULL;
 	    freeMsgBuffers(tmpmsg);
