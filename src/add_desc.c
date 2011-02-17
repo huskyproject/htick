@@ -99,7 +99,7 @@ int add_description( char *descr_file_name, char *file_name, char **description,
   {
     desc_line = sstrdup( description[i] );
     if( config->intab != NULL )
-      recodeToInternalCharset( desc_line );
+      recodeToInternalCharset( ( CHAR * ) desc_line );
     if( descOnNewLine == 0 )
     {
       fprintf( descr_file, " %s\n", desc_line );

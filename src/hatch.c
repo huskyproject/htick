@@ -296,11 +296,11 @@ recode:
   {
     for( i = 0; i < tic->anzdesc; i++ )
     {
-      recodeToTransportCharset( tic->desc[i] );
+      recodeToTransportCharset( ( CHAR * ) ( tic->desc[i] ) );
     }
     for( i = 0; i < tic->anzldesc; i++ )
     {
-      recodeToTransportCharset( tic->ldesc[i] );
+      recodeToTransportCharset( ( CHAR * ) ( tic->ldesc[i] ) );
     }
   }
 

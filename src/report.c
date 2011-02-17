@@ -96,7 +96,7 @@ void doSaveTic4Report( s_ticfile * tic )
     {
       desc_line = sstrdup( tic->ldesc[i] );
       if( config->intab != NULL )
-        recodeToInternalCharset( desc_line );
+        recodeToInternalCharset( ( CHAR * ) desc_line );
       fprintf( tichandle, "LDesc %s\r\n", desc_line );
       nfree( desc_line );
     }
@@ -107,7 +107,7 @@ void doSaveTic4Report( s_ticfile * tic )
     {
       desc_line = sstrdup( tic->desc[i] );
       if( config->intab != NULL )
-        recodeToInternalCharset( desc_line );
+        recodeToInternalCharset( ( CHAR * ) desc_line );
       fprintf( tichandle, "Desc %s\r\n", desc_line );
       nfree( desc_line );
     }

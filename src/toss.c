@@ -157,7 +157,12 @@ void writeNetmail( s_message * msg, char *areaName )
     {
       msgHeader = createXMSG( config, msg, NULL, MSGLOCAL, NULL );
       /* Create CtrlBuf for SMAPI */
-      ctrlBuf = ( char * )CopyToControlBuf( ( UCHAR * ) msg->text, ( UCHAR ** ) & bodyStart, &len );
+      {
+        byte *bb;
+
+        ctrlBuf = ( char * )CopyToControlBuf( ( byte * ) msg->text, &bb, &len );
+        bodyStart = ( char * )bb;
+      }
       /* write message */
       MsgWriteMsg( msgHandle, 0, &msgHeader, ( UCHAR * ) bodyStart, len, len, strlen( ctrlBuf ) + 1,
                    ( UCHAR * ) ctrlBuf );
@@ -214,7 +219,7 @@ int writeTic( char *ticfile, s_ticfile * tic )
     tic->areadesc = sstrdup( filearea->description );
     if( config->outtab )
     {
-      recodeToTransportCharset( tic->areadesc );
+      recodeToTransportCharset( ( CHAR * ) tic->areadesc );
     }
   }
   if( tic->areadesc )
@@ -1119,7 +1124,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
     if( tic.areadesc )
       descr = sstrdup( tic.areadesc );
     if( config->intab && descr )
-      recodeToInternalCharset( descr );
+      recodeToInternalCharset( ( CHAR * ) descr );
     autoCreate( tic.area, descr, &( tic.from ), NULL );
     filearea = getFileArea( tic.area );
     w_log( LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__,
@@ -1533,9 +1538,12 @@ int putMsgInArea( s_area * echo, s_message * msg, int strip, dword forceattr )
         }
       }
 
+      {
+        byte *bb;
 
-      ctrlBuff = ( char * )CopyToControlBuf( ( UCHAR * ) textWithoutArea,
-                                             ( UCHAR ** ) & textStart, &textLength );
+        ctrlBuff = ( char * )CopyToControlBuf( ( byte * ) textWithoutArea, &bb, &textLength );
+        textStart = ( char * )bb;
+      }
       /*  textStart is a pointer to the first non-kludge line */
       xmsg = createXMSG( config, msg, NULL, forceattr, NULL );
 
