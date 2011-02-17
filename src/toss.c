@@ -299,6 +299,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
   hs_addr Aka;
 
   memset( tic, '\0', sizeof( s_ticfile ) );
+  tic->size = -1;
 
 #ifndef HAS_sopen
   tichandle = fopen( ticfile, "r" );
@@ -354,6 +355,11 @@ int parseTic( char *ticfile, s_ticfile * tic )
       {
         if( key == CRC_DESC || key == CRC_LDESC )
           param = emptyline;
+        else if( key == CRC_SIZE )
+        {
+          w_log( LL_ERR, "Wrong TIC \"%s\": \"Size\" without value!", ticfile );
+          tic->size = -1;
+        }
         else
           continue;
       }
@@ -363,7 +369,17 @@ int parseTic( char *ticfile, s_ticfile * tic )
       case CRC_MAGIC:
         break;
       case CRC_FILE:
-        tic->file = sstrdup( param );
+        if( strpbrk( tic->file, "\\/" ) )
+        {
+          w_log( LL_ERR,
+                 "Wrong TIC \"%s\", security violated: \"file\" is contain path (\"%s\")!",
+                 ticfile, param );
+          return 0;
+        }
+        else
+        {
+          tic->file = sstrdup( param );
+        }
         break;
       case CRC_AREADESC:
         tic->areadesc = sstrdup( param );
@@ -372,12 +388,22 @@ int parseTic( char *ticfile, s_ticfile * tic )
         tic->area = sstrdup( param );
         break;
       case CRC_CRC:
-        tic->crc = strtoul( param, NULL, 16 );
+      {
+        char *p = NULL;
+
+        tic->crc = strtoul( param, &p, 16 );
+        if( p && *p )
+        {
+          w_log( LL_ERR, "Wrong TIC \"%s\": CRC value is \"%s\"!", ticfile, param );
+          return 0;
+        }
+      }
         break;
       case CRC_SIZE:
-        tic->size = tic->size = atoi( param );
-        if( !tic->size )
-          w_log( LL_ERR, "Wrong TIC \"%s\": size is \"%s\"!", ticfile, param );
+        tic->size = atoi( param );
+        if( !tic->size && strcmp( param, "0" ) )
+          w_log( LL_WARN, "Wrong TIC \"%s\": \"SIZE %s\" ignored!", ticfile, param );
+        tic->size = -1;
         break;
       case CRC_DATE:
         tic->date = atoi( param );
@@ -387,6 +413,13 @@ int parseTic( char *ticfile, s_ticfile * tic )
         {
           w_log( '7', "TIC %s: Illegal value: 'REPLACES %s', ignored", ticfile, param );
           break;
+        }
+        else if( strpbrk( tic->file, "\\/" ) )
+        {
+          w_log( LL_ERR,
+                 "Wrong TIC \"%s\", security violated: \"REPLACES %s\" is contain path!",
+                 ticfile, param );
+          return 0;
         }
         tic->replaces = sstrdup( param );
         break;
@@ -428,7 +461,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
         break;
       default:
         if( ticSourceLink && !ticSourceLink->FileFixFSC87Subset )
-          w_log( '7', "Unknown Keyword %s in Tic File", token );
+          w_log( '7', "Unknown Keyword \"%s\" in Tic File", token );
       }                         /* switch */
     }                           /* endif */
     if( config->MaxTicLineLength )
@@ -437,10 +470,8 @@ int parseTic( char *ticfile, s_ticfile * tic )
   }                             /* endwhile */
 
   fclose( tichandle );
-
   if( !tic->size )
     w_log( LL_ALERT, "TIC \"%s\" without file size!", ticfile );
-
   if( !tic->anzdesc )
   {
     tic->desc = srealloc( tic->desc, sizeof( *tic->desc ) );
@@ -473,11 +504,9 @@ int readCheck( s_filearea * echo, s_link * link )
 
   if( i == echo->downlinkCount )
     return 4;
-
   /* pause */
   if( ( link->Pause & FPAUSE ) == FPAUSE && !echo->noPause )
     return 5;
-
 /* Do not check for groupaccess here, use groups only (!) for Filefix */
 /*  if (strcmp(echo->group,"0")) {
       if (link->numAccessGrp) {
@@ -490,10 +519,8 @@ int readCheck( s_filearea * echo, s_link * link )
           if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
       } else return 1;
   }*/
-
   if( echo->levelread > link->level )
     return 2;
-
   if( i < echo->downlinkCount )
   {
     if( echo->downlinks[i]->export == 0 )
@@ -514,16 +541,13 @@ int writeCheck( s_filearea * echo, ps_addr aka )
    */
 
   unsigned int i;
-
   s_link *link;
 
   if( !addrComp( *aka, *echo->useAka ) )
     return 0;
-
   link = getLinkForFileArea( config, aka2str( *aka ), echo );
   if( link == NULL )
     return 4;
-
   for( i = 0; i < echo->downlinkCount; i++ )
   {
     if( link == echo->downlinks[i]->link )
@@ -531,7 +555,6 @@ int writeCheck( s_filearea * echo, ps_addr aka )
   }
   if( i == echo->downlinkCount )
     return 4;
-
 /* Do not check for groupaccess here, use groups only (!) for Filefix */
 /*  if (strcmp(echo->group,"0")) {
       if (link->numAccessGrp) {
@@ -546,10 +569,8 @@ int writeCheck( s_filearea * echo, ps_addr aka )
             if (!grpInArray(echo->group,config->PublicGroup,config->numPublicGroup)) return 1;
          } else return 1;
    }*/
-
   if( echo->levelwrite > link->level )
     return 2;
-
   if( i < echo->downlinkCount )
   {
     if( link->import == 0 )
@@ -594,17 +615,16 @@ void doSaveTic( char *ticfile, s_ticfile * tic, s_filearea * filearea )
       }
       break;
     };
-
   };
   nfree( filename );
   return;
 }                               /* doSaveTic() */
 
 int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char *filename )
-                /*
-                 * isToss == 1 - tossing
-                 * isToss == 0 - hatching
-                 */
+      /*
+       * isToss == 1 - tossing
+       * isToss == 0 - hatching
+       */
 {
   unsigned int i, z;
   char descr_file_name[256], newticedfile[256], fileareapath[256];
@@ -623,7 +643,6 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
     minLinkCount = 2;           /*  uplink and downlink */
   else
     minLinkCount = 1;           /*  only downlink */
-
   if( !fexist( filename ) )
   {
     /* origin file does not exist */
@@ -638,9 +657,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
   p = strrchr( fileareapath, PATH_DELIM );
   if( p )
     strLower( p + 1 );
-
   _createDirectoryTree( fileareapath );
-
   if( isToss == 1 && tic->replaces != NULL && !filearea->pass && !filearea->noreplace )
   {
     /* Delete old file[s] */
@@ -662,11 +679,10 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
 
   strcpy( newticedfile, fileareapath );
   strcat( newticedfile, MakeProperCase( tic->file ) );
-
   if( !filearea->pass && filearea->noreplace && fexist( newticedfile ) )
   {
-    w_log( LL_ERROR, "File %s already exist in filearea %s. Can't replace it", tic->file,
-           tic->area );
+    w_log( LL_ERROR, "File %s already exist in filearea %s. Can't replace it",
+           tic->file, tic->area );
     return ( 3 );
   }
 
@@ -746,12 +762,8 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
 
   if( tic->anzldesc == 0 && config->fDescNameCount && !filearea->nodiz && isToss )
     GetDescFormDizFile( newticedfile, tic );
-
-
   if( config->announceSpool )
     doSaveTic4Report( tic );
-
-
   if( !filearea->pass )
   {
     strcpy( descr_file_name, filearea->pathName );
@@ -772,8 +784,6 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
     timestr[strlen( timestr ) - 1] = 0;
     if( timestr[8] == ' ' )
       timestr[8] = '0';
-
-
     tic->path = srealloc( tic->path, ( tic->anzpath + 1 ) * sizeof( *tic->path ) );
     tic->path[tic->anzpath] = NULL;
     xscatprintf( &tic->path[tic->anzpath], "%s %lu %s UTC %s",
@@ -814,15 +824,12 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
   else
     w_log( LL_WARN, "Seen-By list is empty in TIC file for %s (wrong TIC)!",
            tic->file ? tic->file : "" );
-
   /* (dmitry) FixMe: Put correct AKA here if To: missing in tic */
   if( isOurAka( config, tic->to ) && seenbyComp( tic->seenby, tic->anzseenby, tic->to ) )
     seenbyAdd( &tic->seenby, &tic->anzseenby, &tic->to );
   else
     seenbyAdd( &tic->seenby, &tic->anzseenby, filearea->useAka );
-
   seenbySort( tic->seenby, tic->anzseenby );
-
   /* Checking to whom I shall forward */
   for( i = 0; i < filearea->downlinkCount; i++ )
   {
@@ -939,7 +946,6 @@ int hidden( char *filename )
    * the OS/2 C libraries support this, but the OS/2 API itself does not
    * support this, and as we are calling an OS/2 API here we must first
    * transform slashes into backslashes */
-
   backslashified = ( char * )smalloc( strlen( filename ) + 1 );
   for( p = filename, q = backslashified; *p; q++, p++ )
   {
@@ -949,11 +955,8 @@ int hidden( char *filename )
       *q = *p;
   }
   *q = '\0';
-
   DosQueryPathInfo( ( PSZ ) backslashified, 1, &fstat3, sizeof( fstat3 ) );
-
   free( backslashified );
-
   return fstat3.attrFile & FILE_HIDDEN;
 # else
 #  error "Don't know how to check for hidden files on this platform"
@@ -969,7 +972,6 @@ int processTic( char *ticfile, e_tossSecurity sec )
   size_t j;
   DIR *dir;
   struct dirent *file;
-
   char ticedfile[256];
   char dirname[256], *realfile, *findfile, *pos;
   s_filearea *filearea;
@@ -982,28 +984,26 @@ int processTic( char *ticfile, e_tossSecurity sec )
   char *tic_origin;
 
   w_log( '6', "Processing Tic-File %s", ticfile );
-
   if( !parseTic( ticfile, &tic ) )
     return TIC_NotOpen;
-
   if( tic.file && strpbrk( tic.file, "/\\:" ) )
   {
-    w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file", tic.file,
-           ticfile );
+    w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",
+           tic.file, ticfile );
     return TIC_security;
   }
   if( tic.replaces && strpbrk( tic.replaces, "/\\:" ) )
   {
-    w_log( LL_ALERT, "Directory separator found in 'Replace' token: '%s' of %s TIC file",
+    w_log( LL_ALERT,
+           "Directory separator found in 'Replace' token: '%s' of %s TIC file",
            tic.replaces, ticfile );
     return TIC_security;
   }
 
   w_log( '6', "File: %s size: %ld area: %s from: %s orig: %s",
-         tic.file ? tic.file : "", tic.size, tic.area ? tic.area : "", aka2str( tic.from ),
-         tic_origin = aka2str5d( tic.origin ) );
+         tic.file ? tic.file : "", tic.size, tic.area ? tic.area : "",
+         aka2str( tic.from ), tic_origin = aka2str5d( tic.origin ) );
   nfree( tic_origin );
-
   if( tic.to.zone != 0 )
   {
     if( !isOurAka( config, tic.to ) )
@@ -1093,7 +1093,6 @@ int processTic( char *ticfile, e_tossSecurity sec )
   strcat( ticedfile, tic.file );
   adaptcase( ticedfile );
   strcpy( tic.file, ticedfile + j );
-
   /* Receive file? */
   if( !fexist( ticedfile ) )
   {
@@ -1122,7 +1121,6 @@ int processTic( char *ticfile, e_tossSecurity sec )
 
 
   filearea = getFileArea( tic.area );
-
   w_log( LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__,
          filearea ? "" : "not" );
   if( filearea == NULL && from_link->autoFileCreate )
@@ -1183,7 +1181,6 @@ int processTic( char *ticfile, e_tossSecurity sec )
           printf( "NoCRC! dirname = %s, findfile = %s\n", dirname, findfile );
 #endif
           dir = opendir( dirname );
-
           if( dir )
           {
             while( ( file = readdir( dir ) ) != NULL )
@@ -1242,8 +1239,8 @@ int processTic( char *ticfile, e_tossSecurity sec )
       {
         if( stbuf.st_size )
         {                       /* Empty file skipped later */
-          w_log( LL_ERROR, "Wrong CRC for file %s - in tic:%08lx, need:%08lx", tic.file, tic.crc,
-                 crc );
+          w_log( LL_ERROR, "Wrong CRC for file %s - in tic:%08lx, need:%08lx", tic.file,
+                 tic.crc, crc );
           disposeTic( &tic );
 /*
                   return TIC_WrongTIC;
@@ -1278,7 +1275,6 @@ int processTic( char *ticfile, e_tossSecurity sec )
   }
 
   writeAccess = writeCheck( filearea, &tic.from );
-
   switch ( writeAccess )
   {
   case 0:
@@ -1302,10 +1298,8 @@ int processTic( char *ticfile, e_tossSecurity sec )
   }
 
   rc = sendToLinks( 1, filearea, &tic, ticedfile );
-
   if( rc == 0 )
     doSaveTic( ticfile, &tic, filearea );
-
   disposeTic( &tic );
   return ( rc );
 }                               /* processTic() */
@@ -1319,29 +1313,24 @@ void processDir( char *directory, e_tossSecurity sec )
 
   if( directory == NULL )
     return;
-
   dir = opendir( directory );
   if( dir == NULL )
     return;
-
   while( ( file = readdir( dir ) ) != NULL )
   {
 #ifdef DEBUG_HPT
     printf( "testing %s\n", file->d_name );
 #endif
-
     if( patimat( file->d_name, "*.TIC" ) == 1 )
     {
       dummy = ( char * )smalloc( strlen( directory ) + strlen( file->d_name ) + 1 );
       strcpy( dummy, directory );
       strcat( dummy, file->d_name );
-
 #if !defined(__UNIX__)
       if( !hidden( dummy ) )
       {
 #endif
         rc = processTic( dummy, sec );
-
         switch ( rc )
         {
         case TIC_security:     /* pktpwd problem */
@@ -1388,7 +1377,6 @@ void checkTmpDir( void )
   dir = opendir( tmpdir );
   if( dir == NULL )
     return;
-
   while( ( file = readdir( dir ) ) != NULL )
   {
     if( strlen( file->d_name ) != 12 )
@@ -1407,8 +1395,8 @@ void checkTmpDir( void )
         continue;
       /*  createFlo doesn't  support ASO!!! */
       /* if (createFlo(link,cvtFlavour2Prio(link->fileEchoFlavour))==0) { */
-      if( createOutboundFileNameAka( link, link->fileEchoFlavour, FLOFILE, SelectPackAka( link ) )
-          == 0 )
+      if( createOutboundFileNameAka
+          ( link, link->fileEchoFlavour, FLOFILE, SelectPackAka( link ) ) == 0 )
       {
         filearea = getFileArea( tic.area );
         if( filearea != NULL )
@@ -1450,7 +1438,6 @@ void checkTmpDir( void )
             if( !link->noTIC )
               fprintf( flohandle, "^%s\n", newticfile );
             fclose( flohandle );
-
             w_log( '6', "Forwarding save file %s for %s", tic.file, aka2str( link->hisAka ) );
           }
         }                       /* if filearea */
@@ -1503,7 +1490,6 @@ int putMsgInArea( s_area * echo, s_message * msg, int strip, dword forceattr )
 
 
       textWithoutArea = msg->text;
-
       if( ( strip == 1 ) && ( strncmp( msg->text, "AREA:", 5 ) == 0 ) )
       {
         /*  jump over AREA:xxxxx\r */
@@ -1554,21 +1540,18 @@ int putMsgInArea( s_area * echo, s_message * msg, int strip, dword forceattr )
       }
       /*  textStart is a pointer to the first non-kludge line */
       xmsg = createXMSG( config, msg, NULL, forceattr, NULL );
-
       if( MsgWriteMsg( hmsg, 0, &xmsg, ( byte * ) textStart, ( dword )
                        textLength, ( dword ) textLength,
                        ( dword ) strlen( ctrlBuff ), ( byte * ) ctrlBuff ) != 0 )
         w_log( LL_ERROR, "Could not write msg in %s!", echo->fileName );
       else
         rc = 1;                 /*  normal exit */
-
       if( MsgCloseMsg( hmsg ) != 0 )
       {
         w_log( LL_ERROR, "Could not close msg in %s!", echo->fileName );
         rc = 0;
       }
       nfree( ctrlBuff );
-
     }
     else
       w_log( LL_ERROR, "Could not create new msg in %s!", echo->fileName );
@@ -1595,7 +1578,6 @@ int putMsgInBadArea( s_message * msg, hs_addr pktOrigAddr )
   }
   reason = "report to passthrough area";
   tmp = msg->text;
-
   while( ( line = strchr( tmp, '\r' ) ) != NULL )
   {
     if( *( line + 1 ) == '\x01' )
@@ -1608,9 +1590,8 @@ int putMsgInBadArea( s_message * msg, hs_addr pktOrigAddr )
     }
   }
 
-  xstrscat( &textBuff, msg->text, "\rFROM: ", aka2str( pktOrigAddr ), "\rREASON: ", reason, "\r",
-            NULL );
-
+  xstrscat( &textBuff, msg->text, "\rFROM: ", aka2str( pktOrigAddr ), "\rREASON: ",
+            reason, "\r", NULL );
   if( areaName )
     xscatprintf( &textBuff, "AREANAME: %s\r\r", areaName );
   xstrcat( &textBuff, tmp );
@@ -1633,7 +1614,6 @@ void writeMsgToSysop( s_message * msg, char *areaName, char *origin )
                ( config->tearline ) ? config->tearline : "",
                origin ? origin : ( config->origin ) ? config->origin : config->name,
                aka2str( msg->origAddr ) );
-
   msg->textLength = strlen( msg->text );
   if( msg->netMail == 1 )
     writeNetmail( msg, areaName );
@@ -1657,9 +1637,7 @@ void toss(  )
 {
 
   w_log( LL_INFO, "Start tossing..." );
-
   processDir( config->localInbound, secLocalInbound );
   processDir( config->protInbound, secProtInbound );
   processDir( config->inbound, secInbound );
-
 }                               /* toss() */
