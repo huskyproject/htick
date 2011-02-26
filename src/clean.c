@@ -71,11 +71,12 @@ void addFileToTree( char *dir, char *filename )
   if( patimat( filename, "*.TIC" ) == 1 )
   {
     char *ticfile = NULL;
+    int rc;
 
     xstrscat( &ticfile, dir, filename, NULL );
     memset( &tic, 0, sizeof( tic ) );
-    parseTic( ticfile, &tic );
-    if( tic.file )
+    rc = parseTic( ticfile, &tic );
+    if( rc && tic.file )
     {
       tree_add( &fileTree, htick_compareEntries, sstrdup( tic.file ), htick_deleteEntry );
     }
