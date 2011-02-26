@@ -4,8 +4,8 @@ Changes between htick-1.0-stable and htick-1.4-stable
 1. MAJOR feature improvements:
    - configurable announces about received files;
    - purging for file echos with deleting description from files.bbs;
-   - New command line option: "-c config-file" - specify alternate config file
-     (optional);
+   - New command line option: "-c config-file" - specify alternate config
+     file (optional);
    - Change statistics information in log file;
    - Allow unconditional forward subscribe when forwardFileRequestsFile for
      link not defined in config;

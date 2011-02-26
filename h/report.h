@@ -34,7 +34,10 @@
 
 #include "fcommon.h"
 
+/* Save cut-down ticket file into special directory for future reports */
 void doSaveTic4Report(s_ticfile *tic);
+
+/* Make thick report */
 void report();
 
 #endif 

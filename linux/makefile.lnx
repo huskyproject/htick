@@ -1,3 +1,7 @@
+# $Id$
+# Legacy makefile for building on Linux with gcc
+# No support for the Husky build environment
+
 CC      = gcc
 DEBUG   = 0
 

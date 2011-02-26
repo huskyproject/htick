@@ -63,8 +63,8 @@ UINT rCount = 0;
 s_FAreaRepInfo *aList = NULL;
 UINT aCount = 0;
 
-/* char* Tics4del[]; */
-
+/* Save cut-down ticket file into special directory for future reports
+ */
 void doSaveTic4Report( s_ticfile * tic )
 {
   FILE *tichandle;
@@ -120,7 +120,7 @@ void doSaveTic4Report( s_ticfile * tic )
     fprintf( tichandle, "Size %u\r\n", tic->size );
 
   fclose( tichandle );
-}
+} /* doSaveTic4Report() */
 
 static int cmp_reportEntry( const void *a, const void *b )
 {
@@ -136,10 +136,10 @@ static int cmp_reportEntry( const void *a, const void *b )
   else if( stricmp( r1->file, r2->file ) < 0 )
     return -1;
   return 0;
-}
+} /* cmp_reportEntry() */
 
 
-void getReportInfo(  )
+statuc void getReportInfo(  )
 {
   DIR *dir;
   struct dirent *file;
@@ -186,7 +186,7 @@ void getReportInfo(  )
   closedir( dir );
   w_log( LL_DEBUG, "Sorting report information. Number of entries: %d", rCount );
   qsort( ( void * )Report, rCount, sizeof( s_ticfile ), cmp_reportEntry );
-}
+} /* getReportInfo() */
 
 void buildAccessList(  )
 {
@@ -210,7 +210,7 @@ void buildAccessList(  )
     aList[aCount - 1].fCount++;
     aList[aCount - 1].fSize += Report[i].size;
   }
-}
+} /* buildAccessList() */
 
 void parseRepMessAttr(  )
 {
@@ -233,12 +233,12 @@ void parseRepMessAttr(  )
       flag = strtok( NULL, " \t" );
     }
   }
-}
+} /* parseRepMessAttr() */
 
 /* report generation */
 
 
-char *formDescStr( char *desc )
+static char *formDescStr( char *desc )
 {
   char *keepDesc, *newDesc, *tmp, *ch, *buff = NULL;
 
@@ -286,9 +286,9 @@ char *formDescStr( char *desc )
   nfree( keepDesc );
 
   return newDesc;
-}
+} /* formDescStr() */
 
-char *formDesc( char **desc, int count )
+static char *formDesc( char **desc, int count )
 {
   char *buff = NULL, *tmp;
   int i;
@@ -307,9 +307,9 @@ char *formDesc( char **desc, int count )
     nfree( tmp );
   }
   return buff;
-}
+} /* formDesc() */
 
-void freeReportInfo(  )
+static void freeReportInfo(  )
 {
   unsigned i = 0;
 
@@ -326,9 +326,9 @@ void freeReportInfo(  )
   }
   nfree( Report );
   nfree( aList );
-}
+} /* freeReportInfo() */
 
-void MakeDefaultRepDef(  )
+static void MakeDefaultRepDef(  )
 {
   char *annArea;
 
@@ -346,9 +346,9 @@ void MakeDefaultRepDef(  )
     config->ADCount = 1;
     config->AnnDefs[0].annAreaTag = sstrdup( annArea );
   }
-}
+} /* MakeDefaultRepDef() */
 
-s_message *MakeReportMessage( ps_anndef pRepDef )
+static s_message *MakeReportMessage( ps_anndef pRepDef )
 {
   s_message *msg = NULL;
   enum
@@ -391,9 +391,9 @@ s_message *MakeReportMessage( ps_anndef pRepDef )
     xstrcat( &( msg->subjectLine ), pRepDef->annAreaTag + 1 );
   }
   return msg;
-}
+} /* MakeReportMessage() */
 
-void ReportOneFile( s_message * msg, ps_anndef pRepDef, s_ticfile * tic )
+static void ReportOneFile( s_message * msg, ps_anndef pRepDef, s_ticfile * tic )
 {
   char *tmp = NULL;
 
@@ -423,9 +423,9 @@ void ReportOneFile( s_message * msg, ps_anndef pRepDef, s_ticfile * tic )
   if( tmp == NULL || tmp[0] == 0 )
     xstrcat( &( msg->text ), "\r" );
   nfree( tmp );
-}
+} /* ReportOneFile() */
 
-int IsAreaMatched( char *areaname, ps_anndef pRepDef )
+static int IsAreaMatched( char *areaname, ps_anndef pRepDef )
 {
   int nRet = 0;
   UINT i = 0;
@@ -453,9 +453,9 @@ int IsAreaMatched( char *areaname, ps_anndef pRepDef )
     }
   }
   return nRet;
-}
+} /* IsAreaMatched() */
 
-void reportNewFiles(  )
+static void reportNewFiles(  )
 {
   UINT fileCountTotal = 0;
   UINT32 fileSizeTotal = 0;
@@ -536,8 +536,10 @@ void reportNewFiles(  )
     freeMsgBuffers( msg );
     nfree( msg );
   }
-}
+} /* reportNewFiles() */
 
+/* Make thick report
+ */
 void report(  )
 {
   w_log( LL_INFO, "Start report generating..." );
@@ -551,4 +553,4 @@ void report(  )
     freeReportInfo(  );
   }
   w_log( LL_INFO, "End report generating" );
-}
+} /* report() */
