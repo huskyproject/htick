@@ -127,6 +127,8 @@
 #define CRC_RECEIPTREQUEST  0xE912
 
 /* processTic(), sendToLinks() results */
+#define TIC_UnknownError -1
+#define TIC_PointerError -1
 #define TIC_OK         0
 #define TIC_security   1
 #define TIC_NotOpen    2
@@ -137,6 +139,8 @@
 #define TIC_IOError    6
 
 
+/* Write netmail message into areaname or first netmail area (if areaname is NULL pointer)
+ */
 void writeNetmail( s_message * msg, char *areaName )
 {
   HAREA netmail;
@@ -147,12 +151,16 @@ void writeNetmail( s_message * msg, char *areaName )
   XMSG msgHeader;
   s_area *nmarea;
 
-  if( !config->netMailAreas )
-  {
-    w_log( LL_CRIT, "Netmailarea not defined, message dropped!" );
+  if( (msg == NULL) ){
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeNetmail(NULL,areaname). This is bug in program. Please report to developers.", __LINE__);
     return;
   }
-  if( ( nmarea = getNetMailArea( config, areaName ) ) == NULL )
+  if( !config->netMailAreas )
+  {
+    w_log( LL_CRIT, "Netmailarea not defined, message dropped! Please check fidoconfig (run tparser first)." );
+    return;
+  }
+  if( !areaName || !*areaName || (( nmarea = getNetMailArea( config, areaName ) ) == NULL ) )
     nmarea = &( config->netMailAreas[0] );
 
   netmail = MsgOpenArea( ( UCHAR * ) nmarea->fileName, MSGAREA_CRIFNEC, ( word ) nmarea->msgbType );
@@ -194,6 +202,9 @@ void writeNetmail( s_message * msg, char *areaName )
   }                             /* endif */
 }                               /* writeNetmail() */
 
+/* Write (create) TIC-file
+ * Return 0 if error, 1 if success
+ */
 int writeTic( char *ticfile, s_ticfile * tic )
 {
   FILE *tichandle;
@@ -201,18 +212,18 @@ int writeTic( char *ticfile, s_ticfile * tic )
   char *p;
   s_filearea *filearea = NULL;
 
-  if( ticfile )
+
+  if( (ticfile == NULL) || (tic == NULL) )
   {
-    tichandle = fopen( ticfile, "wb" );
-    if( !tichandle )
-    {
-      w_log( LL_ERROR, "Unable to open TIC file %s !!!\n", ticfile );
-      return 0;
-    }
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: writeTic(%s%s%s,%s). This is bug in program. Please report to developers.",
+          __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"", tic?"tic":"NULL");
+    return 0;
   }
-  else
+
+  tichandle = fopen( ticfile, "wb" );
+  if( !tichandle )
   {
-    w_log( LL_ERROR, "ticfile is NULL, internal error!\n" );
+    w_log(LL_ERROR, "Unable to open TIC file \"%s\": %s!!!\n", ticfile, strerror(errno));
     return 0;
   }
 
@@ -255,7 +266,7 @@ int writeTic( char *ticfile, s_ticfile * tic )
     fprintf( tichandle, "Size %u\r\n", tic->size );
   if( tic->date != 0 )
     fprintf( tichandle, "Date %lu\r\n", tic->date );
-  if( tic->crc != 0 )
+  if( tic->crc_is_present || tic->crc != 0 )
     fprintf( tichandle, "Crc %08lX\r\n", tic->crc );
 
   for( i = 0; i < tic->anzpath; i++ )
@@ -271,9 +282,17 @@ int writeTic( char *ticfile, s_ticfile * tic )
   return 1;
 }                               /* writeTic() */
 
+/* Free memory allocated in structure s_ticfile *tic
+ */
 void disposeTic( s_ticfile * tic )
 {
   unsigned int i;
+
+  if( (tic == NULL) )
+  {
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: disposeTic(NULL). This is bug in program. Please report to developers.", __LINE__);
+    return;
+  }
 
   nfree( tic->seenby );
   nfree( tic->file );
@@ -305,6 +324,14 @@ int parseTic( char *ticfile, s_ticfile * tic )
   s_link *ticSourceLink = NULL;
   UINT16 key;
   hs_addr Aka;
+  int rc=1; /* return value, set to 0 if error */
+
+  if( (ticfile == NULL) || (tic == NULL) )
+  {
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: parseTic(%s%s%s,%s). This is bug in program. Please report to developers.",
+          __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"", tic?"tic":"NULL");
+    return 0;
+  }
 
   memset( tic, '\0', sizeof( s_ticfile ) );
   tic->size = -1;
@@ -323,7 +350,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
 # endif
     if( fh < 0 )
     {
-      w_log( LL_ERROR, "Can't open '%s': %s (sopen())", ticfile, strerror( errno ) );
+      w_log( LL_ERROR, "Can't open '%s': sopen() return error \"%s\"", ticfile, strerror( errno ) );
       return 0;
     }
     tichandle = fdopen( fh, "r" );
@@ -336,7 +363,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
     return 0;
   }
 
-  while( ( line = readLine( tichandle ) ) != NULL )
+  while( rc && (( line = readLine( tichandle ) ) != NULL ) )
   {
     line = trimLine( line );
 
@@ -358,7 +385,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
     {
       key = strcrc16( strUpper( token ), 0 );
       /* calculate crc16 of tic                                   */
-      /* w_log('1', "#define CRC_%s 0x%X;",strUpper(token),key);  */
+      w_log(LL_DEBUGz, "#define CRC_%s 0x%X;",strUpper(token),key);
       param = stripLeadingChars( strtok( NULL, "\0" ), "\t" );
       if( !param )
       {
@@ -367,6 +394,11 @@ int parseTic( char *ticfile, s_ticfile * tic )
         case CRC_DESC:
         case CRC_LDESC:
           param = emptyline;
+          break;
+        case CRC_SIZE:
+          w_log(LL_ERR, "Wrong TIC \"%s\": \"Size\" without value!", ticfile);
+          tic->size = -1;
+          rc = 0;
           break;
         case CRC_CREATED:
         case CRC_PATH:
@@ -377,131 +409,162 @@ int parseTic( char *ticfile, s_ticfile * tic )
         case CRC_TO:
         case CRC_FROM:
         case CRC_SEENBY:
-        case CRC_SIZE:
         case CRC_DATE:
           w_log( LL_ERR, "Wrong TIC \"%s\": \"%s\" without value, line skipped!", ticfile, line );
-          continue;
+          break;
         case CRC_AREADESC:
         case CRC_REPLACES:
         case CRC_PW:
         case CRC_MAGIC:
           /* All below tokens is specified in FSC-0087.001 but not recognized in htick: */
-          case CRC_FILENAME:
-          case CRC_RELEASE:
-          case CRC_AUTHOR:
-          case CRC_SOURCE:
-          case CRC_APP:
-          case CRC_VIA:
-          case CRC_PGP:
-          case CRC_RECEIPTREQUEST:
+        case CRC_FILENAME:
+        case CRC_RELEASE:
+        case CRC_AUTHOR:
+        case CRC_SOURCE:
+        case CRC_APP:
+        case CRC_VIA:
+        case CRC_PGP:
+        case CRC_RECEIPTREQUEST:
         default:
-          continue;
-        }
-      }
-      switch ( key )
-      {
-      case CRC_CREATED:
-      case CRC_MAGIC:
-        break;
-      case CRC_FILE:
-        if( strpbrk( param, "\\/" ) )
-        {
-          w_log( LL_ERR,
-                 "Wrong TIC \"%s\", security violated: \"FILE %s\" contain path!", ticfile, param );
-          return 0;
-        }
-        else
-        {
-          tic->file = sstrdup( param );
-        }
-        break;
-      case CRC_AREADESC:
-        tic->areadesc = sstrdup( param );
-        break;
-      case CRC_AREA:
-        tic->area = sstrdup( param );
-        break;
-      case CRC_CRC:
-      {
-        char *p = NULL;
-
-        tic->crc = strtoul( param, &p, 16 );
-        if( p && *p )
-        {
-          w_log( LL_ERR, "Wrong TIC \"%s\": CRC value is \"%s\"!", ticfile, param );
-          return 0;
-        }
-      }
-        w_log( LL_DEBUGT, "CRC stored: %8X", tic->crc );
-        break;
-      case CRC_SIZE:
-        tic->size = atoi( param );
-        if( !tic->size && strcmp( param, "0" ) )
-        {
-          w_log( LL_WARN, "Wrong TIC \"%s\": \"SIZE %s\" ignored!", ticfile, param );
-          tic->size = -1;
-        }
-        w_log( LL_DEBUGT, "SIZE stored: %i", tic->size );
-        break;
-      case CRC_DATE:
-        tic->date = atoi( param );
-        break;
-      case CRC_REPLACES:
-        if( *param == '*' )
-        {
-          w_log( '7', "TIC %s: Illegal value: 'REPLACES %s', ignored", ticfile, param );
           break;
         }
-        else if( strpbrk( param, "\\/" ) )
+      }
+      else
+      {
+        switch ( key )
         {
-          w_log( LL_ERR,
-                 "Wrong TIC \"%s\", security violated: \"REPLACES %s\" is contain path!",
-                 ticfile, param );
-          return 0;
-        }
-        tic->replaces = sstrdup( param );
-        break;
-      case CRC_PW:
-        tic->password = sstrdup( param );
-        break;
-      case CRC_FROM:
-        string2addr( param, &tic->from );
-        ticSourceLink = getLinkFromAddr( config, tic->from );
-        break;
-      case CRC_ORIGIN:
-        string2addr( param, &tic->origin );
-        break;
-      case CRC_TO:
-        string2addr( param, &tic->to );
-        break;
-      case CRC_DESTINATION:
-        if( ticSourceLink && !ticSourceLink->FileFixFSC87Subset )
+        case CRC_CREATED:
+        case CRC_MAGIC:
+          break;
+        case CRC_FILE:
+          if( strpbrk( param, "\\/" ) )
+          {
+            w_log( LL_ERR,
+                   "Wrong TIC \"%s\", security violated: \"FILE %s\" contain path!",
+                   ticfile, param );
+            rc = 0;
+          }
+          else
+          {
+            tic->file = sstrdup( param );
+          }
+          break;
+        case CRC_AREADESC:
+          tic->areadesc = sstrdup( param );
+          break;
+        case CRC_AREA:
+          tic->area = sstrdup( param );
+          break;
+        case CRC_CRC:
+          {
+            char *p = NULL;
+
+            tic->crc = strtoul( param, &p, 16 );
+            if( (p && *p) || (tic->crc > 0xffffffff) )
+            {
+              w_log( LL_ERR, "Wrong TIC \"%s\": CRC value is \"%s\"!", ticfile, param );
+              rc = 0;
+            }
+            else
+              tic->crc_is_present = 1;
+          }
+          w_log( LL_DEBUGT, "CRC stored: %8X", tic->crc );
+          break;
+        case CRC_SIZE:
+          if (param[0] == '-')
+          {
+            w_log(LL_ERR, "Wrong TIC \"%s\": negative size (\"%s\")!", ticfile, param);
+            rc=0;
+            break;
+          }
+          tic->size = atoi( param );
+          if( !tic->size && strcmp( param, "0" ) )
+          {
+            w_log( LL_WARN, "Wrong TIC \"%s\": \"SIZE %s\" ignored!", ticfile, param );
+            tic->size = -1;
+          }
+          w_log( LL_DEBUGT, "SIZE stored: %i", tic->size );
+          break;
+        case CRC_DATE:
+          tic->date = atoi( param );
+          break;
+        case CRC_REPLACES:
+          if( *param == '*' )
+          {
+            w_log( '7', "TIC %s: Illegal value: 'REPLACES %s', ignored", ticfile, param );
+            rc = 0;
+            break;
+          }
+          else if( strpbrk( param, "\\/" ) )
+          {
+            w_log( LL_ERR,
+                   "Wrong TIC \"%s\", security violated: \"REPLACES %s\" is contain path!",
+                   ticfile, param );
+            rc = 0;
+          }
+          tic->replaces = sstrdup( param );
+          break;
+        case CRC_PW:
+          tic->password = sstrdup( param );
+          break;
+        case CRC_FROM:
+          string2addr( param, &tic->from );
+          ticSourceLink = getLinkFromAddr( config, tic->from );
+          break;
+        case CRC_ORIGIN:
+          string2addr( param, &tic->origin );
+          break;
+        case CRC_TO:
           string2addr( param, &tic->to );
-        break;
-      case CRC_DESC:
-        tic->desc = srealloc( tic->desc, ( tic->anzdesc + 1 ) * sizeof( *tic->desc ) );
-        tic->desc[tic->anzdesc] = sstrdup( param );
-        tic->anzdesc++;
-        break;
-      case CRC_LDESC:
-        tic->ldesc = srealloc( tic->ldesc, ( tic->anzldesc + 1 ) * sizeof( *tic->ldesc ) );
-        tic->ldesc[tic->anzldesc] = sstrdup( param );
-        tic->anzldesc++;
-        break;
-      case CRC_SEENBY:
-        string2addr( param, &Aka );
-        seenbyAdd( &tic->seenby, &tic->anzseenby, &Aka );
-        break;
-      case CRC_PATH:
-        tic->path = srealloc( tic->path, ( tic->anzpath + 1 ) * sizeof( *tic->path ) );
-        tic->path[tic->anzpath] = sstrdup( param );
-        tic->anzpath++;
-        break;
-      default:
-        if( ticSourceLink && !ticSourceLink->FileFixFSC87Subset )
-          w_log( '7', "Unknown Keyword \"%s\" (CRC16=%4X) in Tic File", token, key );
-      }                         /* switch */
-    }                           /* endif */
+          if(!tic->to.zone || !tic->to.net){
+            w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfile);
+            rc=0;
+          }
+          break;
+        case CRC_DESTINATION:
+          if(!tic->to.zone)
+          {
+            if( ticSourceLink && !ticSourceLink->FileFixFSC87Subset )
+            {
+              string2addr( param, &tic->to );
+              if(!tic->to.zone || !tic->to.net)
+              {
+                w_log(LL_ERR,"'To' address (%s) is invalid in TIC %s", param, ticfile);
+                rc=0;
+              }
+            }
+          }
+          else
+          {
+            w_log(LL_ERR, "TIC file %s has \"TO\" and \"DESTINATION\" simultaneous. Sysop intervention is need.", ticfile);
+            rc=0;
+          }
+          break;
+        case CRC_DESC:
+          tic->desc = srealloc( tic->desc, ( tic->anzdesc + 1 ) * sizeof( *tic->desc ) );
+          tic->desc[tic->anzdesc] = sstrdup( param );
+          tic->anzdesc++;
+          break;
+        case CRC_LDESC:
+          tic->ldesc = srealloc( tic->ldesc, ( tic->anzldesc + 1 ) * sizeof( *tic->ldesc ) );
+          tic->ldesc[tic->anzldesc] = sstrdup( param );
+          tic->anzldesc++;
+          break;
+        case CRC_SEENBY:
+          string2addr( param, &Aka );
+          seenbyAdd( &tic->seenby, &tic->anzseenby, &Aka );
+          break;
+        case CRC_PATH:
+          tic->path = srealloc( tic->path, ( tic->anzpath + 1 ) * sizeof( *tic->path ) );
+          tic->path[tic->anzpath] = sstrdup( param );
+          tic->anzpath++;
+          break;
+        default:
+          if( ticSourceLink && !ticSourceLink->FileFixFSC87Subset )
+            w_log( '7', "Unknown Keyword \"%s\" (CRC16=%4X) in TIC File %s", token, key, ticfile );
+        }                       /* switch */
+      }                         /* end if( !param ) */
+    }                           /* end if( token ) */
     if( config->MaxTicLineLength )
       nfree( linecut );
     nfree( line );
@@ -517,7 +580,7 @@ int parseTic( char *ticfile, s_ticfile * tic )
     tic->anzdesc = 1;
   }
 
-  return 1;
+  return rc;
 }                               /* parseTic() */
 
 
@@ -618,11 +681,20 @@ int writeCheck( s_filearea * echo, ps_addr aka )
   return 0;
 }                               /* writeCheck() */
 
+/* Save ticket file into filearea-specific directory
+ */
 void doSaveTic( char *ticfile, s_ticfile * tic, s_filearea * filearea )
 {
   char *filename = NULL;
   unsigned int i;
   s_savetic *savetic;
+
+  if( (ticfile == NULL) || (tic == NULL) || (filearea == NULL) )
+  {
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: doSaveTic(%s%s%s,%s,%s). This is bug in program. Please report to developers.",
+          __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"", tic?"tic":"NULL", filearea?"filearea":"NULL");
+    return;
+  }
 
   for( i = 0; i < config->saveTicCount; i++ )
   {
@@ -632,12 +704,14 @@ void doSaveTic( char *ticfile, s_ticfile * tic, s_filearea * filearea )
 
       char *ticFname = GetFilenameFromPathname( ticfile );
 
-      w_log( LL_FILENAME, "Saving Tic-File %s to %s", ticFname, savetic->pathName );
+      w_log( LL_FILENAME, "Saving Tic-File \"%s\" to \"%s\"", ticFname, savetic->pathName );
       xscatprintf( &filename, "%s%s", savetic->pathName, ticFname );
       if( copy_file( ticfile, filename, 1 ) != 0 )
       {                         /* overwrite existing file if not same */
-        w_log( LL_ERROR, "File %s not found or not moveable", ticfile );
-      };
+        w_log( LL_ERROR, "File \"%s\" not found or not moveable", ticfile );
+      }
+      else
+        w_log( LL_CREAT, "File \"%s\" copied into \"%s\"", ticfile, filename );
       if( filearea && !filearea->pass && !filearea->sendorig && savetic->fileAction )
       {
         char *from = NULL, *to = NULL;
@@ -645,15 +719,25 @@ void doSaveTic( char *ticfile, s_ticfile * tic, s_filearea * filearea )
         xstrscat( &from, filearea->pathName, tic->file, NULL );
         xstrscat( &to, savetic->pathName, tic->file, NULL );
         if( savetic->fileAction == 1 )
-          copy_file( from, to, 1 );     /* overwrite existing file if not same */
+        {
+          if( copy_file( from, to, 1 ) )     /* overwrite existing file if not same */
+            w_log( LL_ERROR, "Can't copy file \"%s\" to \"%s\"", from, to );
+          else
+            w_log( LL_CREAT, "File \"%s\" copied into \"%s\"", from, to );
+        }
         if( savetic->fileAction == 2 )
-          link_file( from, to );
+        {
+          if( link_file( from, to ) )
+            w_log( LL_ERROR, "Can't link file \"%s\" to \"%s\"", from, to );
+          else
+            w_log( LL_CREAT, "Link of file \"%s\" created in \"%s\"", from, to );
+        }
         nfree( from );
         nfree( to );
       }
       break;
-    };
-  };
+    }
+  }
   nfree( filename );
   return;
 }                               /* doSaveTic() */
@@ -677,6 +761,12 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
   char *p;
   unsigned int minLinkCount;
 
+  if( (filearea == NULL) || (tic == NULL) || (filename == NULL) )
+  {
+    w_log(LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: sendToLinks(%i,%s,%s,%s%s%s). This is bug in program. Please report to developers.",
+          __LINE__, isToss, filearea?"filearea":"NULL", tic?"tic":"NULL", filename?"\"":"", filename?filename:"NULL", filename?"\"":"");
+    return TIC_PointerError;
+  }
   if( isToss == 1 )
     minLinkCount = 2;           /*  uplink and downlink */
   else
@@ -684,7 +774,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
   if( !fexist( filename ) )
   {
     /* origin file does not exist */
-    w_log( LL_ERROR, "File %s not found", filename );
+    w_log(LL_ERROR,"File \"%s\" not found, nothing to send for links",filename);
     return TIC_NotRecvd;
   }
 
@@ -714,14 +804,13 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
     }
   }
 
-
   strcpy( newticedfile, fileareapath );
   strcat( newticedfile, MakeProperCase( tic->file ) );
   if( !filearea->pass && filearea->noreplace && fexist( newticedfile ) )
   {
-    w_log( LL_ERROR, "File %s already exist in filearea %s. Can't replace it",
+    w_log( LL_ERROR, "File \"%s\" already exist in filearea %s. Can't replace it because filearea definition restricts a replaces",
            tic->file, tic->area );
-    return ( 3 );
+    return ( TIC_WrongTIC );
   }
 
   if( isToss == 1 )
@@ -737,7 +826,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
       }
       else
       {
-        w_log( '6', "Moved %s to %s", filename, newticedfile );
+        w_log( LL_CREAT, "Moved %s to %s", filename, newticedfile );
       }
     }
     else
@@ -751,7 +840,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
       }
       else
       {
-        w_log( '6', "Put %s to %s", filename, newticedfile );
+        w_log( LL_TIC, "Put %s to %s", filename, newticedfile );
       }
       strcpy( newticedfile, config->passFileAreaDir );
       strcat( newticedfile, MakeProperCase( tic->file ) );
@@ -764,7 +853,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
       }
       else
       {
-        w_log( '6', "Moved %s to %s", filename, newticedfile );
+        w_log( LL_CREAT, "Moved %s to %s", filename, newticedfile );
       }
     }
   }
@@ -779,7 +868,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
     }
     else
     {
-      w_log( '6', "Put %s to %s", filename, newticedfile );
+      w_log( LL_CREAT, "Put %s to %s", filename, newticedfile );
     }
     if( filearea->sendorig )
     {
@@ -793,7 +882,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
       }
       else
       {
-        w_log( '6', "Put %s to %s", filename, newticedfile );
+        w_log( LL_CREAT, "Put %s to %s", filename, newticedfile );
       }
     }
   }
@@ -948,7 +1037,7 @@ int sendToLinks( int isToss, s_filearea * filearea, s_ticfile * tic, const char 
 
   if( isToss == 1 )
     nfree( old_seenby );
-  return ( 0 );
+  return ( TIC_OK );
 }                               /* sendToLinks() */
 
 #if !defined(__UNIX__)
@@ -1003,7 +1092,11 @@ int hidden( char *filename )
 }                               /* hidden() */
 #endif
 
-
+/*
+ * Return: 0 if success,
+ * positive integer if error in TIC or file,
+ * negative integer if illegal call.
+ */
 int processTic( char *ticfile, e_tossSecurity sec )
 {
   s_ticfile tic;
@@ -1011,7 +1104,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
   DIR *dir;
   struct dirent *file;
   char ticedfile[256];
-  char dirname[256], *realfile, *findfile, *pos;
+  char dirname[256];
   s_filearea *filearea;
   s_link *from_link;
   unsigned long crc = 0;
@@ -1019,11 +1112,23 @@ int processTic( char *ticfile, e_tossSecurity sec )
   int writeAccess;
   int fileisfound = 0;
   int rc = 0;
-  char *tic_origin;
 
-  w_log( '6', "Processing Tic-File %s", ticfile );
+  w_log( LL_TIC, "Processing Tic-File %s", ticfile );
+  if( (ticfile == NULL) ) {
+    w_log( LL_ERROR, __FILE__ ":%i: Parameter is NULL pointer: processTic(%s,sec). This is bug in program. Please report to developers.",
+           __LINE__, ticfile?"\"":"", ticfile?ticfile:"NULL", ticfile?"\"":"" );
+    return TIC_PointerError;
+  }
+  if( (j=strlen(ticfile)) > sizeof(ticedfile) )
+  {
+    w_log(LL_ERROR, "File name too long: %u. Htick limit is %u characters.", j, sizeof(ticedfile));
+    w_log(LL_TIC, "Ticket file \"%s\" skiped", ticfile);
+    return TIC_UnknownError;
+  }
+
   if( !parseTic( ticfile, &tic ) )
     return TIC_NotOpen;
+
   if( tic.file && strpbrk( tic.file, "/\\:" ) )
   {
     w_log( LL_ALERT, "Directory separator found in 'File' token: '%s' of %s TIC file",
@@ -1038,10 +1143,22 @@ int processTic( char *ticfile, e_tossSecurity sec )
     return TIC_security;
   }
 
-  w_log( '6', "File: %s size: %ld area: %s from: %s orig: %s",
-         tic.file ? tic.file : "", tic.size, tic.area ? tic.area : "",
-         aka2str( tic.from ), tic_origin = aka2str5d( tic.origin ) );
-  nfree( tic_origin );
+  if( tic.crc_is_present )
+  {
+    if( !tic.size && tic.crc )
+    {
+      w_log( LL_ERROR, "Wrong TIC \"%s\": CRC32 of empty file must be zero, but in TIC: SIZE %i, CRC %08X",
+             ticfile, tic.size, tic.crc );
+      return TIC_WrongTIC;
+    }
+    if( !tic.crc && tic.size )
+    {
+      w_log( LL_ERROR, "Wrong TIC \"%s\": CRC32 may be zero only for empty file, but in TIC: SIZE %i, CRC %08X",
+             ticfile, tic.size, tic.crc );
+      return TIC_WrongTIC;
+    }
+  }
+
   if( tic.to.zone != 0 )
   {
     if( !isOurAka( config, tic.to ) )
@@ -1112,7 +1229,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
   from_link = getLinkFromAddr( config, tic.from );
   if( from_link == NULL )
   {
-    w_log( LL_ERROR, "Link for Tic From Adress '%s' not found", aka2str( tic.from ) );
+    w_log( LL_ERROR, "Tic from unknown link \"%s\".", aka2str( tic.from ) );
     disposeTic( &tic );
     return TIC_security;
   }
@@ -1120,46 +1237,25 @@ int processTic( char *ticfile, e_tossSecurity sec )
   if( tic.password && ( ( from_link->ticPwd == NULL ) ||
                         ( stricmp( tic.password, from_link->ticPwd ) != 0 ) ) )
   {
-    w_log( LL_ERROR, "Wrong Password %s from %s", tic.password, aka2str( tic.from ) );
+    w_log( LL_ERROR, "Wrong Password \"%s\" from %s", tic.password, aka2str( tic.from ) );
     disposeTic( &tic );
     return TIC_security;
   }
 
-  strcpy( ticedfile, ticfile );
-  *( strrchr( ticedfile, PATH_DELIM ) + 1 ) = 0;
-  j = strlen( ticedfile );
-  strcat( ticedfile, tic.file );
-  adaptcase( ticedfile );
-  strcpy( tic.file, ticedfile + j );
-  /* Receive file? */
-  if( !fexist( ticedfile ) )
-  {
-    if( from_link->delNotReceivedTIC )
-    {
-      w_log( '6', "File %s from filearea %s not received, remove his TIC", tic.file, tic.area );
-      disposeTic( &tic );
-      return TIC_OK;
-    }
-    else
-    {
-      w_log( '6', "File %s from filearea %s not received, wait", tic.file, tic.area );
-      disposeTic( &tic );
-      return TIC_NotRecvd;
-    }
+  { /* Write a message to log */
+    char *tic_origin = aka2str5d( tic.origin );
+    char *tic_from = aka2str5d( tic.from );
+    char tic_crc[15]="";
+    if( tic.crc_is_present )
+      sprintf( tic_crc, " CRC %08lX,", tic.crc );
+    w_log( LL_TIC, "File \"%s\": area \"%s\", size %ld,%s received from %s, originated from %s",
+           tic.file ? tic.file : "", tic.area ? tic.area : "", tic.size, tic_crc, tic_from, tic_origin );
+    nfree( tic_origin );
+    nfree( tic_from );
   }
-
-#if !defined(__UNIX__)
-  if( hidden( ticedfile ) )
-  {
-    w_log( '6', "File %s from filearea %s not completely received, wait", tic.file, tic.area );
-    disposeTic( &tic );
-    return TIC_NotRecvd;
-  }
-#endif
-
 
   filearea = getFileArea( tic.area );
-  w_log( LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__,
+  w_log( LL_DEBUGU, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__,
          filearea ? "" : "not" );
   if( filearea == NULL && from_link->autoFileCreate )
   {
@@ -1171,7 +1267,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
       recodeToInternalCharset( ( CHAR * ) descr );
     autoCreate( tic.area, descr, &( tic.from ), NULL );
     filearea = getFileArea( tic.area );
-    w_log( LL_DEBUGz, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__,
+    w_log( LL_DEBUGU, __FILE__ ":%u:processTic(): filearea %sfound", __LINE__,
            filearea ? "" : "not" );
     nfree( descr );
   }
@@ -1180,166 +1276,271 @@ int processTic( char *ticfile, e_tossSecurity sec )
   {
     if( from_link->autoFileCreate )
     {
-      w_log( LL_ERROR, "Cannot create File Area %s", tic.area );
+      w_log( LL_ERROR, "Cannot create File Area %s", tic.area?tic.area:"" );
       if( !quiet )
-        fprintf( stderr, "Cannot create File Area %s !\n", tic.area );
+        fprintf( stderr, "Cannot create File Area %s !\n", tic.area?tic.area:"" );
     }
     else
     {
-      w_log( LL_ERROR, "Cannot open File Area %s, autocreate not allowed", tic.area );
+      w_log( LL_ERROR, "Cannot open File Area %s, autocreate not allowed", tic.area?tic.area:"" );
       if( !quiet )
-        fprintf( stderr, "Cannot open File Area %s, autocreate not allowed !\n", tic.area );
+        fprintf( stderr, "Cannot open File Area %s, autocreate not allowed !\n", tic.area?tic.area:"" );
     }
     disposeTic( &tic );
     return TIC_NotOpen;
-  }
-  /* Check CRC Value and reject faulty files depending on noCRC flag */
-  if( !filearea->noCRC && tic.crc )
-  {
-    stat( ticedfile, &stbuf );
-    if( stbuf.st_size && ( ( tic.size < 0 ) || ( stbuf.st_size == tic.size ) ) )
-    {                           /* CRC of empty file is zero */
-      crc = filecrc32( ticedfile );
-    }
-    if( ( tic.crc != crc ) || ( tic.size && ( stbuf.st_size != tic.size ) ) )
-    {
-      strcpy( dirname, ticedfile );
-      pos = strrchr( dirname, PATH_DELIM );
-      if( pos )
-      {
-        *pos = 0;
-        findfile = pos + 1;
-        pos = strrchr( findfile, '.' );
-        if( pos )
-        {
-
-          *( ++pos ) = 0;
-          strcat( findfile, "*" );
-#ifdef DEBUG_HPT
-          printf( "NoCRC! dirname = %s, findfile = %s\n", dirname, findfile );
-#endif
-          dir = opendir( dirname );
-          if( dir )
-          {
-            while( ( file = readdir( dir ) ) != NULL )
-            {
-              if( patimat( file->d_name, findfile ) )
-              {
-                stat( file->d_name, &stbuf );
-                if( ( tic.size == 0 ) || ( stbuf.st_size == tic.size ) )
-                {
-                  crc = filecrc32( file->d_name );
-                  if( crc == tic.crc )
-                  {
-                    fileisfound = 1;
-                    sprintf( dirname + strlen( dirname ), "%c%s", PATH_DELIM, file->d_name );
-                    break;
-                  }
-                }
-
-              }
-            }
-            closedir( dir );
-          }
-        }
-      }
-
-      if( fileisfound )
-      {
-        realfile = smalloc( strlen( dirname ) + 1 );
-        strcpy( realfile, dirname );
-        *( strrchr( dirname, PATH_DELIM ) ) = 0;
-        findfile = makeUniqueDosFileName( dirname, "tmp", config );
-        if( rename( ticedfile, findfile ) != 0 )
-        {
-          w_log( '9', "Can't file %s rename to %s", ticedfile, findfile );
-          nfree( findfile );
-          nfree( realfile );
-          disposeTic( &tic );
-          return TIC_NotRecvd;
-        }
-        if( rename( realfile, ticedfile ) != 0 )
-        {
-          w_log( '9', "Can't file %s rename to %s", realfile, ticedfile );
-          nfree( findfile );
-          nfree( realfile );
-          disposeTic( &tic );
-          return TIC_CantRename;
-        }
-        if( rename( findfile, realfile ) != 0 )
-        {
-          remove( findfile );
-        }
-        nfree( findfile );
-        nfree( realfile );
-      }
-      else
-      {
-        if( stbuf.st_size )
-        {                       /* Empty file skipped later */
-          w_log( LL_ERROR, "Wrong CRC for file %s - in tic:%08lx, need:%08lx", tic.file,
-                 tic.crc, crc );
-          disposeTic( &tic );
-/*
-                  return TIC_WrongTIC;
-*/
-          return TIC_NotRecvd;
-        }
-      }
-    }
-  }
-
-
-  stat( ticedfile, &stbuf );
-/*
-  if( !stbuf.st_size )
-  {
-    w_log( '6', "File %s from filearea %s has zero size, skipped.", tic.file, tic.area );
-    disposeTic( &tic );
-    return TIC_NotRecvd;
-  }
-*/
-  if( tic.size >= 0 )
-  {
-    if( stbuf.st_size != tic.size )
-    {
-      w_log( '6', "File %s from filearea %s has incorrect size - in tic:%lu, real:%lu",
-             tic.file, tic.area, tic.size, stbuf.st_size );
-      disposeTic( &tic );
-      return TIC_NotRecvd;
-    }
-  }
-  else
-  {
-    tic.size = stbuf.st_size;
   }
 
   writeAccess = writeCheck( filearea, &tic.from );
   switch ( writeAccess )
   {
-  case 0:
-    break;
-  case 4:
-    w_log( LL_ERROR, "Link %s not subscribed to File Area %s", aka2str( tic.from ), tic.area );
-    disposeTic( &tic );
-    return TIC_WrongTIC;
-  case 3:
-    w_log( LL_ERROR, "Not import from link %s", aka2str( from_link->hisAka ) );
-    disposeTic( &tic );
-    return TIC_WrongTIC;
-  case 2:
-    w_log( LL_ERROR, "Link %s no access level", aka2str( from_link->hisAka ) );
-    disposeTic( &tic );
-    return TIC_WrongTIC;
-  case 1:
-    w_log( LL_ERROR, "Link %s no access group", aka2str( from_link->hisAka ) );
-    disposeTic( &tic );
-    return TIC_WrongTIC;
+    case 0:
+      break;
+    case 4:
+      w_log( LL_ERROR, "Link %s not subscribed to File Area %s", aka2str( tic.from ), tic.area );
+      disposeTic( &tic );
+      return TIC_WrongTIC;
+    case 3:
+      w_log( LL_ERROR, "Not import from link %s", aka2str( from_link->hisAka ) );
+      disposeTic( &tic );
+      return TIC_WrongTIC;
+    case 2:
+      w_log( LL_ERROR, "Link %s no access level", aka2str( from_link->hisAka ) );
+      disposeTic( &tic );
+      return TIC_WrongTIC;
+    case 1:
+      w_log( LL_ERROR, "Link %s no access group", aka2str( from_link->hisAka ) );
+      disposeTic( &tic );
+      return TIC_WrongTIC;
   }
+
+  /* Extract directory name from ticket pathname (strip file name), construct full name of file,
+  * adopt full pathname into real disk file, update file name in ticket */
+  strcpy( ticedfile, ticfile );
+  {
+    char * found = strrchr( ticedfile, PATH_DELIM );
+    if( found ) found[1] = 0;
+    else ticedfile[0] = 0;
+  }
+  j = strlen( ticedfile );
+  strcat( ticedfile, tic.file );
+  adaptcase( ticedfile );
+  strcpy( tic.file, ticedfile + j );
+
+  if( !fexist(ticedfile) )
+    stbuf.st_mode = 0; /* to indicate empty structure (mode can't be zero in POSIX) */
+  else if( stat(ticedfile,&stbuf) )
+  {
+    w_log(LL_ERR, "Can't check size of file \"%s\": %s. Skip this file and TIC.", ticedfile, strerror(errno));
+    return TIC_NotOpen;
+  }
+
+  /* Check CRC Value and reject faulty files depending on noCRC flag */
+  if( !filearea->noCRC && tic.crc_is_present )
+  {
+    if( stbuf.st_mode && (tic.size<0 || ( stbuf.st_size == tic.size )) )
+    {
+      if( stbuf.st_size ) /* CRC of empty file is zero, don't calculate */
+        crc = filecrc32( ticedfile );
+      fileisfound = ( tic.crc == crc );
+    }
+    if( !fileisfound )
+    {
+      char * pos_file;
+      if( stbuf.st_mode )
+        w_log( LL_TIC, "File \"%s\" with different size (%i) or CRC (%08X), skipped", ticedfile, stbuf.st_size, crc );
+      if( strlen(ticedfile) >= sizeof(dirname) )
+      {
+        w_log( LL_ERR, "Path too long (max %i bytes): \"%s\", skip TIC", sizeof(dirname), ticedfile );
+        disposeTic( &tic );
+        return TIC_NotRecvd;
+      }
+      strcpy( dirname, ticedfile );
+      pos_file = strrchr( dirname, PATH_DELIM ); /* pointer to filename part of "dirname" */
+      if( pos_file )
+      {
+        *pos_file = 0;
+        dir = opendir( dirname );
+        if( dir )
+        {
+          int filename_maxlen = sizeof(dirname)-2-(pos_file-dirname);
+          char * filepattern = sstrdup(pos_file+1); /* The pattern for comparison with a file name */
+
+          { /* Construct file mask: replace suffix (extension in DOS term) or last char with asterisk */
+            char * pos_point = strrchr( filepattern, '.' ); /* pointer to last point char in filename */
+            char * max_pos_point = filepattern+strlen(filepattern)-1; /* pointer to last character in filename */
+            if( pos_point && pos_point<max_pos_point )
+            {
+              pos_point[1] = '*';  /* search files like "file.*" */
+              pos_point[2] = '\0';
+            }
+            else
+            { /* search files like "filenam*", last character can be incremented by mailer */
+              *max_pos_point='*';
+            }
+          }
+
+          *pos_file = PATH_DELIM; /* Restore directory separator character */
+          pos_file++;  /* now pos_file pointed to 1st character of file name in "dirname" */
+          w_log( LL_DEBUGT, "File mask for search in inbound: %s", filepattern );
+
+          while( ( file = readdir( dir ) ) != NULL )
+          {
+            if( patimat( file->d_name, filepattern ) )
+            {
+              if( strlen(file->d_name) > filename_maxlen )
+              {
+                *pos_file = '\0';
+                w_log( LL_ERR, "Path too long (%i bytes, max %i bytes): \"%s%s\", skip file",
+                       (pos_file-dirname)+strlen(file->d_name), sizeof(dirname)-1, dirname, file->d_name );
+              }
+              else
+                strcpy(pos_file, file->d_name); /* now dirname contain full pathname of found file */
+
+              if( stat(dirname,&stbuf) )
+              {
+                w_log( LL_ERR, "Can't check size of file \"%s\": %s. Skip this file.",
+                       dirname, file->d_name, strerror(errno) );
+                stbuf.st_mode = 0; /* to indicate empty structure (mode can't be zero in POSIX) */
+                stbuf.st_size = 0;
+                continue;
+              }
+              else
+              {
+                if( !stbuf.st_size && !tic.size )
+                { /* file empty AND size from TIC is 0 */
+                  /* CRC32 of an empty file is equal to zero and value in TIC checked before */
+                  fileisfound = 1;
+                }
+                else if( ( tic.size < 0 ) || ( stbuf.st_size == tic.size ) )
+                { /* size not specified in TIC OR size from TIC eq filesize, check CRC */
+                  crc = filecrc32( dirname );
+                  fileisfound = ( crc == tic.crc );
+                }
+                else
+                {
+                  w_log( LL_TIC, "File \"%s\" with different size (%i), skipped", dirname, stbuf.st_size);
+                  continue;
+                }
+                if( fileisfound )
+                {
+                  w_log( LL_TIC, "found: \"%s\"", dirname );
+                  break;
+                }
+                w_log( LL_TIC, "File \"%s\" with different CRC (%08X), skipped", dirname, crc );
+              } /* if( stat(file->d_name,&stbuf) ) {} else */
+            } /* if( patimat( file->d_name, pos_file ) ) */
+          } /* while */
+          closedir( dir );
+          nfree(filepattern);
+          if( fileisfound ) /* rename found file to required by ticket */
+          {
+            char * tmpfile;
+            char * foundfile = sstrdup( dirname );
+            const int exist_ticedfile = fexist(ticedfile);
+
+            w_log( LL_TIC, "Found file \"%s\"", dirname );
+            {
+              char * found = strrchr( dirname, PATH_DELIM );
+              if( found ) *found=0;
+            }
+            tmpfile = makeUniqueDosFileName( dirname, "tmp", config );
+            if( exist_ticedfile )
+            {
+                if( rename( ticedfile, tmpfile ) != 0 )
+                {
+                  w_log( LL_ERR, "Can't rename a file \"%s\" to \"%s\"", ticedfile, tmpfile );
+                  nfree( tmpfile );
+                  nfree( foundfile );
+                  disposeTic( &tic );
+                  return TIC_NotRecvd;
+                }
+                else
+                  w_log( LL_CREAT, "File \"%s\" renamed to \"%s\"", ticedfile, tmpfile );
+            }
+            if( rename( foundfile, ticedfile ) != 0 )
+            {
+                w_log( LL_ERR, "Can't rename a file \"%s\" to \"%s\"", foundfile, ticedfile );
+                w_log( LL_ERR, "But file \"%s\" renamed to \"%s\"", ticedfile, tmpfile );
+                nfree( tmpfile );
+                nfree( foundfile );
+                disposeTic( &tic );
+                return TIC_CantRename;
+            }
+            else
+                w_log( LL_CREAT, "File \"%s\" renamed to \"%s\"", foundfile, ticedfile );
+            if( exist_ticedfile )
+            {
+              if( rename( tmpfile, foundfile ) )
+              {
+                w_log( LL_ERR, "Can't rename back: file \"%s\" to \"%s\"", tmpfile, foundfile );
+              }
+              else
+                w_log( LL_CREAT, "File \"%s\" renamed to \"%s\"", tmpfile, foundfile );
+            }
+            nfree( tmpfile );
+            nfree( foundfile );
+          }
+          else
+          {
+            w_log( LL_TIC, "File not found" );
+            disposeTic( &tic );
+            return TIC_NotRecvd;
+          }
+        } /* if( dir ) */
+      } /* if( pos_file ) */
+    } /* if( ( tic.crc != crc ) || ( tic.size>=0 && ( stbuf.st_size != tic.size ) ) ) */
+  } /* if( !filearea->noCRC && tic.crc_is_present ) */
+  else
+  {
+    if( tic.size >= 0 )
+    {
+      if( stbuf.st_size != tic.size )
+      {
+        w_log( LL_TIC, "File %s from filearea %s has incorrect size - in tic:%lu, real:%lu",
+               tic.file, tic.area, tic.size, stbuf.st_size );
+        disposeTic( &tic );
+        return TIC_NotRecvd;
+      }
+      /* FIXME: Place here search of a file in his size (in same inbound as a ticket) */
+      fileisfound = 1;
+    }
+    else
+    {
+      tic.size = stbuf.st_size;
+      fileisfound = 1;
+      w_log( LL_WARNING, "File %s from filearea %s is passed  without check because the size is not present in TIC and the filearea defined with \"noCRC\".", tic.file, tic.area);
+    }
+  }
+
+  if( !fileisfound )
+  {
+    if( from_link->delNotReceivedTIC )
+    {
+      w_log( LL_TIC, "File %s from filearea %s not received, remove his TIC", tic.file, tic.area );
+      disposeTic( &tic );
+      return TIC_OK;
+    }
+    else
+    {
+      w_log( LL_TIC, "File %s from filearea %s not received, wait", tic.file, tic.area );
+      disposeTic( &tic );
+      return TIC_NotRecvd;
+    }
+  }
+
+#if !defined(__UNIX__)
+  if( hidden( ticedfile ) )
+  {
+    w_log( LL_TIC, "File %s from filearea %s not completely received, wait", tic.file, tic.area );
+    disposeTic( &tic );
+    return TIC_NotRecvd;
+  }
+#endif
 
   rc = sendToLinks( 1, filearea, &tic, ticedfile );
   if( rc == 0 )
     doSaveTic( ticfile, &tic, filearea );
+
   disposeTic( &tic );
   return ( rc );
 }                               /* processTic() */
@@ -1358,9 +1559,6 @@ void processDir( char *directory, e_tossSecurity sec )
     return;
   while( ( file = readdir( dir ) ) != NULL )
   {
-#ifdef DEBUG_HPT
-    printf( "testing %s\n", file->d_name );
-#endif
     if( patimat( file->d_name, "*.TIC" ) == 1 )
     {
       dummy = ( char * )smalloc( strlen( directory ) + strlen( file->d_name ) + 1 );
@@ -1412,7 +1610,7 @@ void checkTmpDir( void )
   FILE *flohandle = NULL;
   int error = 0;
 
-  w_log( '6', "Checking tmp dir" );
+  w_log( LL_TIC, "Checking tmp dir" );
   strcpy( tmpdir, config->busyFileDir );
   dir = opendir( tmpdir );
   if( dir == NULL )
