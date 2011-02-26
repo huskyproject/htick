@@ -139,7 +139,7 @@ static int cmp_reportEntry( const void *a, const void *b )
 } /* cmp_reportEntry() */
 
 
-statuc void getReportInfo(  )
+static void getReportInfo(  )
 {
   DIR *dir;
   struct dirent *file;
