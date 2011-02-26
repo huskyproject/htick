@@ -140,7 +140,7 @@ int removeFileMask( char *directory, char *mask )
   struct dirent *file;
   char *removefile = NULL;
   char *descr_file_name = NULL;
-  unsigned int numfiles = 0;
+  int numfiles = 0;
 
   if( directory == NULL )
     return ( 0 );
@@ -159,7 +159,7 @@ int removeFileMask( char *directory, char *mask )
         xstrscat( &removefile, directory, file->d_name, NULL );
         if( removefile )
           remove( removefile );
-        w_log( '6', "Removed file: %s", removefile );
+        w_log( LL_TIC, "Removed file: %s", removefile );
         numfiles++;
         nfree( removefile );
 
@@ -173,7 +173,7 @@ int removeFileMask( char *directory, char *mask )
     closedir( dir );
   }
   return ( numfiles );
-}
+} /* removeFileMask() */
 
 #ifdef _WIN32_WINNT
 # define _WINUSER_
