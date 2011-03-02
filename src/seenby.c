@@ -26,32 +26,33 @@
 #include <stdlib.h>
 #include <string.h>
 #include <fidoconf/fidoconf.h>
-#include <fidoconf/common.h>    
-#include <fcommon.h>   
-#include <global.h>    
+#include <fidoconf/common.h>
+#include <fcommon.h>
+#include <global.h>
 #include "seenby.h"
 
-int seenbyComp ( hs_addr *seenby, int anzseenby, hs_addr Aka)
+int seenbyComp( hs_addr * seenby, int anzseenby, hs_addr Aka )
 {
-    int i;
-    
-    for (i=0; i < anzseenby; i++)
-    {
-        if (addrComp (seenby[i], Aka) == 0) return 0;
-    }    
+  int i;
 
-    return !0;
+  for( i = 0; i < anzseenby; i++ )
+  {
+    if( addrComp( seenby[i], Aka ) == 0 )
+      return 0;
+  }
+
+  return !0;
 }
 
-int seenbyAdd ( hs_addr **seenby, UINT *anzseenby, ps_addr Aka)
+int seenbyAdd( hs_addr ** seenby, UINT * anzseenby, ps_addr Aka )
 {
   ps_addr tmp = *seenby;
-    
-  if( seenbyComp(*seenby,(int)(*anzseenby),*Aka) )/* If Aka don't presents in seen-by list */
+
+  if( seenbyComp( *seenby, ( int )( *anzseenby ), *Aka ) )      /* If Aka don't presents in seen-by list */
   {                             /* then store Aka into list */
-    tmp = srealloc( tmp, (*anzseenby+1)*sizeof(hs_addr) );
-    memcpy(&tmp[*anzseenby],Aka,sizeof(hs_addr));
-    (*anzseenby)++;
+    tmp = srealloc( tmp, ( *anzseenby + 1 ) * sizeof( hs_addr ) );
+    memcpy( &tmp[*anzseenby], Aka, sizeof( hs_addr ) );
+    ( *anzseenby )++;
     *seenby = tmp;
     return 1;
   }
@@ -59,33 +60,33 @@ int seenbyAdd ( hs_addr **seenby, UINT *anzseenby, ps_addr Aka)
     return 0;
 }
 
-static int cmp_Addr(const void *a, const void *b)
+static int cmp_Addr( const void *a, const void *b )
 {
-    const ps_addr r1 = (ps_addr)a;
-    const ps_addr r2 = (ps_addr)b;
-    
-    if             ( r1->zone > r2->zone )
-        return  1;
-    else if        ( r1->zone < r2->zone )
-        return -1;
-    else if        ( r1->net  > r2->net )
-        return  1;
-    else if        ( r1->net  < r2->net )
-        return -1;
-    else if        ( r1->node > r2->node )
-        return  1;
-    else if        ( r1->node < r2->node )
-        return -1;
-    else if        ( r1->point> r2->point )
-        return  1;
-    else if        ( r1->point< r2->point )
-        return -1;
-    return 0;
+  const ps_addr r1 = ( ps_addr ) a;
+  const ps_addr r2 = ( ps_addr ) b;
+
+  if( r1->zone > r2->zone )
+    return 1;
+  else if( r1->zone < r2->zone )
+    return -1;
+  else if( r1->net > r2->net )
+    return 1;
+  else if( r1->net < r2->net )
+    return -1;
+  else if( r1->node > r2->node )
+    return 1;
+  else if( r1->node < r2->node )
+    return -1;
+  else if( r1->point > r2->point )
+    return 1;
+  else if( r1->point < r2->point )
+    return -1;
+  return 0;
 }
 
 
-int seenbySort ( ps_addr seenby, int anzseenby)
+int seenbySort( ps_addr seenby, int anzseenby )
 {
-    qsort( (void*)seenby, anzseenby, sizeof(hs_addr), cmp_Addr ); 
-    return 1;
+  qsort( ( void * )seenby, anzseenby, sizeof( hs_addr ), cmp_Addr );
+  return 1;
 }

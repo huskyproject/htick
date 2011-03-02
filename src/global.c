@@ -34,41 +34,41 @@
 
 #include <global.h>
 
-s_log     *htick_log;
+s_log *htick_log;
 s_fidoconfig *config;
-unsigned char quiet=0;
-char         *cfgFile = NULL;
-s_robot      *robot   = NULL;
+unsigned char quiet = 0;
+char *cfgFile = NULL;
+s_robot *robot = NULL;
 
-char      *versionStr=NULL;
+char *versionStr = NULL;
 
-int       cmToss = 0;
-int       cmScan = 0;
-int       cmHatch = 0;
-int       cmSend = 0;
-int       cmFlist = 0;
-int       cmClean = 0;
-int       cmAfix = 0;
-int       cmRelink = 0;
-int       cmNotifyLink = 0;
+int cmToss = 0;
+int cmScan = 0;
+int cmHatch = 0;
+int cmSend = 0;
+int cmFlist = 0;
+int cmClean = 0;
+int cmAfix = 0;
+int cmRelink = 0;
+int cmNotifyLink = 0;
 
-char      *flistfile = NULL;
-char      *dlistfile = NULL;
+char *flistfile = NULL;
+char *dlistfile = NULL;
 
-s_ticfile*       hatchInfo = NULL;
+s_ticfile *hatchInfo = NULL;
 
 
-char      sendfile[256];
-char      sendarea[256];
-char      sendaddr[256];
+char sendfile[256];
+char sendarea[256];
+char sendaddr[256];
 
-int       cmAnnounce = 0;
-char      announceArea[256];
+int cmAnnounce = 0;
+char announceArea[256];
 
-int       cmAnnNewFileecho = 0;
-char      announcenewfileecho[256];
+int cmAnnNewFileecho = 0;
+char announcenewfileecho[256];
 
-int       lock_fd;
+int lock_fd;
 
-hs_addr   afixAddr = {0};
-char      *afixCmd = NULL;
+hs_addr afixAddr = { 0 };
+char *afixCmd = NULL;
