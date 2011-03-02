@@ -62,7 +62,7 @@ char *versionStr;
 
 typedef enum _descrMacro {DESCRERROR = 0, BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;
 
-int getDescOptions(char *desc, char **filename)
+static descrMacro getDescOptions(char *desc, char **filename)
 {
     byte descOPT = 0;
 
@@ -95,7 +95,7 @@ int getDescOptions(char *desc, char **filename)
     return descOPT;
 }
 
-void expandDescMacros(s_ticfile *tic, char *hatchedFile)
+static void expandDescMacros(s_ticfile *tic, char *hatchedFile)
 {
     char *descr_file_name = NULL;
     char *basename        = NULL;
