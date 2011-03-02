@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 #include <smapi/compiler.h>
 
@@ -380,7 +381,13 @@ int GetDescFormDizFile( char *fileName, s_ticfile * tic )
   /*  unpack file_id.diz (config->fileDescName) */
   for( i = 0; i < config->fDescNameCount; i++ )
   {
-    getcwd( buffer, sizeof(buffer) );
+    if( !getcwd( buffer, sizeof(buffer) ) )
+    {
+      w_log( LL_CRIT, "Can't get current work directory, getcwd() error: %s", strerror(errno) );
+      w_log( LL_CRIT, "Current directory may be changed unexpectedly." );
+      buffer[0] = '\0'; /* man 3 getcwd: "The contents of the array pointed to by buf is undefined on error." */
+    }
+
     fillCmdStatement( cmd, config->unpack[unpacker].call, fileName, config->fileDescNames[i],
                       config->tempInbound );
     w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd );

@@ -351,11 +351,18 @@ int hatch(  )
     char buffer[1024] = "";
 #   endif
 
-    getcwd( buffer, sizeof(buffer) );
-    len = strlen( buffer );
-    if( buffer[len - 1] == PATH_DELIM )
+    if( getcwd( buffer, sizeof(buffer) ) )
     {
-      Strip_Trailing( buffer, PATH_DELIM );
+      len = strlen( buffer );
+      if( buffer[len - 1] == PATH_DELIM )
+      {
+        Strip_Trailing( buffer, PATH_DELIM );
+      }
+    }
+    else
+    {
+      w_log( LL_CRIT, "Can't get current work directory, getcwd() error: %s", strerror(errno) );
+      buffer[0] = '\0'; /* man 3 getcwd: "The contents of the array pointed to by buf is undefined on error." */
     }
     nfree( hatchedFile );
     xscatprintf( &hatchedFile, "%s%c%s", buffer, ( char )PATH_DELIM, hatchInfo->file );
