@@ -77,6 +77,12 @@ int DescTreeDeleteEntry(char *entry) {
 
 int DescTreeCompareEntries(char *p_e1, char *p_e2)
 {
+  if ( !p_e1 || !p_e2 ) {
+    w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: DescTreeCompareEntries(%s,%s). This is serious error in program, please report to developers.",
+          p_e1?"p_e1":"NULL", p_e2?"p_e2":"NULL");
+    return -1;
+  }
+
     FileDescEntry* e1 = (FileDescEntry*)p_e1;
     FileDescEntry* e2 = (FileDescEntry*)p_e2;
     return strcmp(e1->filename,e2->filename);
@@ -90,6 +96,11 @@ int ParseBBSFile(const char* fbbsname)
     int flag = 0, rc = 1;
     FileDescEntry *fdesc = NULL;
 
+    if ( !fbbsname ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: ParseBBSFile(%s). This is serious error in program, please report to developers.",
+            fbbsname?"fbbsname":"NULL");
+      return -1;
+    }
 
     if (DescTree) {
         tree_mung(&DescTree, DescTreeDeleteEntry);
@@ -167,6 +178,13 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
 {
     int i;
     static BigSize bs;
+
+    if ( !f || !filename || !desc ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: putFileInFilelist(%s,%s,size,day,month,year,countdesc,%s). This is serious error in program, please report to developers.",
+            f?"f":"NULL", filename?"filename":"NULL", desc?"desc":"NULL");
+      return;
+    }
+
     memset(&bs,0,sizeof(BigSize));
     IncBigSize(&bs, (ULONG)size);
     fprintf(f,"%-12s",filename);
@@ -206,15 +224,21 @@ void putFileInFilelist(FILE *f, char *filename, off_t size, int day, int month, 
     else {
         /* desc = formatDesc(desc, &countdesc); */
         for (i=0;i<countdesc;i++) {
+          if (desc[i]) {
             if (i == 0) fprintf(f," %s\n",desc[i]);
             else fprintf(f,"                               %s\n",desc[i]);
+          }
+          else {
+            w_log(LL_CRIT, __FILE__ "::putFileInFilelist() Description line %i is NULL. This is serious error in program, please report to developers.", i);
+            break;
+          }
         }
     }
     return;
 }
 
 void printFileArea(char *area_areaName, char *area_pathName, char *area_description, FILE *f, int bbs) {
-    
+
     char *fileareapath=NULL, *fbbsname=NULL, *filename=NULL;
     char *fbbsline;
     husky_DIR *dir;
@@ -230,6 +254,13 @@ void printFileArea(char *area_areaName, char *area_pathName, char *area_descript
     char *token = "";
     int flag = 0;
     static BigSize bs;
+
+    if ( !area_areaName || !area_pathName || !area_description || !f ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: printFileArea(%s,%s,%s,%s). This is serious error in program, please report to developers.",
+            area_areaName?"area_areaName":"NULL", area_pathName?"area_pathName":"NULL", area_description?"area_description":"NULL", f?"f":"NULL");
+      return;
+    }
+
     memset(&bs,0,sizeof(BigSize));
 
     fileareapath = sstrdup(area_pathName);
@@ -373,4 +404,3 @@ void filelist()
     fclose(f);
     if(d) fclose(d);
 }
-

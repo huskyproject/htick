@@ -60,11 +60,17 @@
 
 char *versionStr;
 
-typedef enum _descrMacro {BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;
+typedef enum _descrMacro {DESCRERROR = 0, BBSONELINE = 1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE} descrMacro;
 
 int getDescOptions(char *desc, char **filename)
 {
     byte descOPT = 0;
+
+    if ( !desc || !filename ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: getDescOptions(%s,%s). This is serious error in program, please report to developers.",
+            desc?"desc":"NULL", filename?"filename":"NULL");
+      return DESCRERROR;
+    }
 
     if (stricmp(desc,"@@BBS") == 0)
         descOPT = BBSONELINE;
@@ -86,7 +92,7 @@ int getDescOptions(char *desc, char **filename)
             *filename = sstrdup(basename);
         }
     }
-    return descOPT;       
+    return descOPT;
 }
 
 void expandDescMacros(s_ticfile *tic, char *hatchedFile)
@@ -101,6 +107,12 @@ void expandDescMacros(s_ticfile *tic, char *hatchedFile)
     s_ticfile tmptic;
     char **tmpArray = NULL;
     UINT i;
+
+    if ( !tic || !hatchedFile ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: expandDescMacros(%s,%s). This is serious error in program, please report to developers.",
+            tic?"tic":"NULL", hatchedFile?"hatchedFile":"NULL");
+      return;
+    }
 
     memset(&tmptic,0,sizeof(s_ticfile));    
     if(tic->anzdesc > 0)
@@ -373,6 +385,7 @@ int send(char *filename, char *area, char *addr)
 /* 3 - file not found */
 /* 4 - link not found */
 /* 5 - put on link error */
+/* -1 - invalid parameter */
 {
     s_ticfile tic;
     s_link *link = NULL;
@@ -382,6 +395,12 @@ int send(char *filename, char *area, char *addr)
     struct stat stbuf;
     time_t acttime;
     int rc;
+
+    if ( !filename || !area || !addr ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: send(%s,%s,%s). This is serious error in program, please report to developers.",
+            filename?"filename":"NULL", area?"area":"NULL", addr?"addr":"NULL");
+      return -1;
+    }
 
     w_log( LL_INFO, "Start file send (%s in %s to %s)",filename,area,addr);
     
@@ -481,7 +500,10 @@ int send(char *filename, char *area, char *addr)
     return rc;
 }
 
-
+/* Return values:
+ * 1 if success
+ * 0 if error
+ */
 int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
 {
     int   busy = 0;
@@ -490,6 +512,12 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     FILE *flohandle    = NULL;
     hs_addr *aka;
     char *str_hisAka, *str_Aka;
+
+    if ( !newticedfile || !tic || !downlink ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: PutFileOnLink(%s,%s,%s). This is serious error in program, please report to developers.",
+            newticedfile?"newticedfile":"NULL", tic?"tic":"NULL", downlink?"downlink":"NULL");
+      return 0;
+    }
 
     aka = SelectPackAka(downlink);
     memcpy(&tic->from,downlink->ourAka,sizeof(hs_addr));
@@ -594,4 +622,3 @@ int PutFileOnLink(char *newticedfile, s_ticfile *tic, s_link* downlink)
     nfree(newticfile);
     return 1;
 }
-

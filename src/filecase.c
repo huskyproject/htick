@@ -68,6 +68,12 @@ int isDOSLikeName(char *name)
    int nl,el,ec,uc,lc,f;
    char *p = name;
 
+   if (!name) {
+     w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: isDOSLikeName(%s). This is serious error in program, please report to developers.",
+           name?"name":"NULL");
+     return 0; /* false */
+   }
+
    nl=el=ec=uc=lc=0;
    f=1;
    while (*p) {
@@ -93,6 +99,12 @@ int isDOSLikeName(char *name)
 
 char *MakeProperCase(char *name)
 {
+  if (!name) {
+    w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: MakeProperCase(%s). This is serious error in program, please report to developers.",
+          name?"name":"NULL");
+    return NULL;
+  }
+
 	if(isDOSLikeName(name)) {
 		switch(config->convertShortNames) {
 		case cUpper:
