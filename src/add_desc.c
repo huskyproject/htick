@@ -341,7 +341,12 @@ int GetDescFormDizFile( char *fileName, s_ticfile * tic )
   UINT i, unpacker;
   signed int cmdexit;
   char cmd[256] = "";
-  char buffer[256] = "";
+# ifdef PATH_MAX
+  char buffer[PATH_MAX] = "";
+# else
+  char buffer[1024] = "";
+# endif
+
 
 
   /*  find what unpacker to use */
@@ -375,7 +380,7 @@ int GetDescFormDizFile( char *fileName, s_ticfile * tic )
   /*  unpack file_id.diz (config->fileDescName) */
   for( i = 0; i < config->fDescNameCount; i++ )
   {
-    getcwd( buffer, 256 );
+    getcwd( buffer, sizeof(buffer) );
     fillCmdStatement( cmd, config->unpack[unpacker].call, fileName, config->fileDescNames[i],
                       config->tempInbound );
     w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd );

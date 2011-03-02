@@ -315,7 +315,6 @@ int hatch(  )
   s_filearea *filearea;
   struct stat stbuf;
   char *hatchedFile = NULL;
-  char buffer[256] = "";
 
   w_log( LL_INFO, "Start file hatch..." );
 
@@ -346,8 +345,13 @@ int hatch(  )
   if( stricmp( hatchedFile, hatchInfo->file ) == 0 )    /* hatch from current dir */
   {
     int len = 0;
+#   ifdef PATH_MAX
+    char buffer[PATH_MAX] = "";
+#   else
+    char buffer[1024] = "";
+#   endif
 
-    getcwd( buffer, 256 );
+    getcwd( buffer, sizeof(buffer) );
     len = strlen( buffer );
     if( buffer[len - 1] == PATH_DELIM )
     {
