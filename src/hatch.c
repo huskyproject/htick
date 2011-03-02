@@ -308,7 +308,7 @@ recode:
     disposeTic(&tmptic);
 }
 
-int hatch()
+HATCH_HATCH_RETURN_CODES hatch()
 {
     s_area *filearea;
     struct stat stbuf;
@@ -378,7 +378,7 @@ int hatch()
     return HATCH_OK;
 }
 
-int send(char *filename, char *area, char *addr)
+HATCH_SEND_RETURN_CODES send(char *filename, char *area, char *addr)
 /* 0 - OK */
 /* 1 - Passthrough filearea */
 /* 2 - filearea not found */
@@ -394,27 +394,26 @@ int send(char *filename, char *area, char *addr)
     char timestr[40];
     struct stat stbuf;
     time_t acttime;
-    int rc;
+    HATCH_SEND_RETURN_CODES rc;
 
     if ( !filename || !area || !addr ) {
       w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: send(%s,%s,%s). This is serious error in program, please report to developers.",
             filename?"filename":"NULL", area?"area":"NULL", addr?"addr":"NULL");
-      return -1;
+      return HATCH_SEND_E_INVALID;
     }
 
     w_log( LL_INFO, "Start file send (%s in %s to %s)",filename,area,addr);
     
-    rc = 0;
     filearea=getFileArea(area);
     if (filearea == NULL) {
         if (!quiet) fprintf(stderr,"Error: Filearea not found\n");
-        return 2;
+        return HATCH_SEND_E_FILEAREANOTFOUND;
     }
 
     link = getLink(config, addr);
     if (link == NULL) {
         if (!quiet) fprintf(stderr,"Error: Link not found\n");
-        return 4;
+        return HATCH_SEND_E_LINKNOTFOUND;
     }
     
     memset(&tic,0,sizeof(tic));
@@ -435,7 +434,7 @@ int send(char *filename, char *area, char *addr)
         w_log('6',"File %s, not found",sendfile);
         nfree(sendfile);
         disposeTic(&tic);
-        return 3;
+        return HATCH_SEND_E_FILENOTFOUND;
     }
     
     tic.file = sstrdup(filename);
@@ -453,7 +452,7 @@ int send(char *filename, char *area, char *addr)
                 disposeTic(&tic);
                 nfree(sendfile);
                 nfree(tmpfile);
-                return(2);
+                return HATCH_SEND_E_FILEAREANOTFOUND;
             }
         } else {
             w_log('6',"Copied %s to %s",sendfile,tmpfile);
@@ -490,8 +489,10 @@ int send(char *filename, char *area, char *addr)
     /*  Adding Downlink to Seen-By */
     seenbyAdd(&tic.seenby,&tic.anzseenby,&link->hisAka);
     /*  Forward file to */
-    if (!PutFileOnLink(sendfile, &tic, link))
-        rc=5;
+    if (PutFileOnLink(sendfile, &tic, link))
+      rc = HATCH_SEND_OK;
+    else
+      rc = HATCH_SEND_E_PUT_ON_LINK;
 
     disposeTic(&tic);
     nfree(sendfile);
