@@ -65,7 +65,12 @@ static tree* fileTree = NULL;
 
 int htick_compareEntries(char *p_e1, char *p_e2)
 {
+  if ( p_e1 && p_e2 )
     return stricmp(p_e1,p_e2);
+
+  w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: htick_compareEntries(%s,%s). This is serious error in program, please report to developers.",
+        p_e1?"p_e1":"NULL", p_e2?"p_e2":"NULL");
+  return -1;
 }
 
 int htick_deleteEntry(char *p_e1)
@@ -77,6 +82,12 @@ int htick_deleteEntry(char *p_e1)
 void addFileToTree(char* dir, char *filename)
 {
     s_ticfile tic;
+
+    if (!dir || !filename) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: addFileToTree(%s,%s). This is serious error in program, please report to developers.",
+            dir?"dir":"NULL", filename?"filename":"NULL");
+      return;
+    }
 
     if (patimat(filename, "*.TIC") == 1) {
         char  *ticfile = NULL;
@@ -199,8 +210,9 @@ void purgeFileEchos()
     char           *file;
     struct stat    st;
 
-    time( &tnow );
+    w_log( LL_FUNC, "purgeFileEchos()" );
 
+    time( &tnow );
 
     for (i=0; i<config->fileAreaCount; i++) {
         if(config->fileAreas[i].purge == 0)
@@ -232,6 +244,7 @@ void purgeFileEchos()
         husky_closedir(dir);
     }
 
+    w_log( LL_FUNC, "purgeFileEchos(): end" );
 }
 
 void purgeOldTics()
@@ -245,8 +258,9 @@ void purgeOldTics()
     char           *file;
     struct stat    st;
 
-    time( &tnow );
+    w_log( LL_FUNC, "purgeOldTics()" );
 
+    time( &tnow );
 
     for (i = 0; i< config->saveTicCount; i++)
     {
@@ -280,6 +294,7 @@ void purgeOldTics()
         }
         husky_closedir(dir);
     }
+    w_log( LL_FUNC, "purgeOldTics(): end" );
 }
 
 void Purge(void)
