@@ -89,8 +89,6 @@ void exit_htick( char *logstr, int print )
 
   w_log( LL_FUNC, "exit_htick()" );
   w_log( LL_CRIT, logstr );
-  if( !config->logEchoToScreen && print )
-    fprintf( stderr, "%s\n", logstr );
 
   doneCharsets(  );
   w_log( LL_STOP, "Exit" );

@@ -413,16 +413,14 @@ int send( char *filename, char *area, char *addr )
   filearea = getFileArea( area );
   if( filearea == NULL )
   {
-    if( !quiet )
-      fprintf( stderr, "Error: Filearea not found\n" );
+    w_log( LL_ERR, "Error: Filearea \"%s\" not found in configuration!\n", area );
     return 2;
   }
 
   link = getLink( config, addr );
   if( link == NULL )
   {
-    if( !quiet )
-      fprintf( stderr, "Error: Link not found\n" );
+    w_log( LL_ERR, "Error: Link \"%s\" not found in configuration!\n", addr );
     return 4;
   }
 
@@ -441,9 +439,7 @@ int send( char *filename, char *area, char *addr )
   adaptcase( sendfile );
   if( !fexist( sendfile ) )
   {
-    if( !quiet )
-      fprintf( stderr, "Error: File not found\n" );
-    w_log( '6', "File %s, not found", sendfile );
+    w_log( LL_ERR, "Hatching error: File \"%s\" not found.", sendfile );
     nfree( sendfile );
     disposeTic( &tic );
     return 3;

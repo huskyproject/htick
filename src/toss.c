@@ -1277,14 +1277,10 @@ int processTic( char *ticfile, e_tossSecurity sec )
     if( from_link->autoFileCreate )
     {
       w_log( LL_ERROR, "Cannot create File Area %s", tic.area?tic.area:"" );
-      if( !quiet )
-        fprintf( stderr, "Cannot create File Area %s !\n", tic.area?tic.area:"" );
     }
     else
     {
       w_log( LL_ERROR, "Cannot open File Area %s, autocreate not allowed", tic.area?tic.area:"" );
-      if( !quiet )
-        fprintf( stderr, "Cannot open File Area %s, autocreate not allowed !\n", tic.area?tic.area:"" );
     }
     disposeTic( &tic );
     return TIC_NotOpen;
