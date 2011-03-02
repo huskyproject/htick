@@ -25,6 +25,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <string.h>
+#include <errno.h>
 
 #include <huskylib/compiler.h>
 
@@ -328,6 +329,7 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
 }
 
 /*  Return:
+ * 0 if description is not set
  * 1 if description is set from specified file
  * 3 if error opening file
  * -1 if ivalid parameter
@@ -345,7 +347,7 @@ int GetDescFormFile (char *fileName, s_ticfile *tic)
     }
 
     if ((filehandle=fopen(fileName,"r")) == NULL) {
-        w_log(LL_ERROR,"File %s not found",fileName);
+        w_log(LL_ERROR,"Error at opening file \"%s\": %s", fileName, strerror(errno));
         return 3;
     };
 
@@ -361,7 +363,7 @@ int GetDescFormFile (char *fileName, s_ticfile *tic)
         nfree(line);
     } /* endwhile */
     fclose(filehandle);
-    return 1;
+    return tic->anzldesc?1:0;
 }
 
 /*  Return:
@@ -411,13 +413,16 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     for( i = 0; i < config->fDescNameCount; i++)
     {
         fillCmdStatement(cmd,config->unpack[unpacker].call,fileName,config->fileDescNames[i],config->tempInbound);
-        w_log( '6', "file %s: unpacking with \"%s\"", fileName, cmd);
+        w_log( LL_EXEC, "File %s: unpacking with \"%s\"", fileName, cmd);
         chdir(config->tempInbound);
         if( fc_stristr(config->unpack[unpacker].call, ZIPINTERNAL) )
         {
-            cmdexit = 1;
 #ifdef USE_HPTZIP
             cmdexit = UnPackWithZlib(fileName, config->fileDescNames[i], config->tempInbound);
+#else
+            cmdexit = 0;
+            w_log( LL_ERROR, "\"%s\" don't implemented in this build (disabled at compile time). Please use your unzip program.", ZIPINTERNAL);
+            continue;
 #endif
         }
         else
@@ -434,7 +439,8 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
 
         xscatprintf(&dizfile, "%s%s", config->tempInbound, config->fileDescNames[i]);
 
-        found = GetDescFormFile (dizfile, tic);
+        if (fexist(dizfile))
+          found = GetDescFormFile (dizfile, tic);
 
         if( found == 1 )
         {
