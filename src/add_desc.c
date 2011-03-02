@@ -59,7 +59,11 @@
 #include <toss.h>
 #include <filecase.h>
 
-
+/*  Return:
+ * 0 if success
+ * 1 if error
+ * -1 if ivalid parameter
+ */
 int add_description (char *descr_file_name, char *file_name, char **description, unsigned int count_desc)
 {
     FILE *descr_file;
@@ -67,6 +71,20 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     char *desc_line = NULL;
     char *namefile  = NULL;
     int descOnNewLine  = 0;
+
+    if ( !descr_file_name || !file_name || !description ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: add_description(%s,%s,%s,count_desc). This is serious error in program, please report to developers.",
+            descr_file_name?"descr_file_name":"NULL", file_name?"file_name":"NULL",
+            description?"description":"NULL");
+      return -1;
+    }
+    for (i=0; i<count_desc; i++)
+    {
+      if (!description[i]) {
+        w_log(LL_CRIT, __FILE__ "::add_description(...,description,%i) Array in parameter has NULL element: description[%i]. This is serious error in program, please report to developers.", count_desc, i);
+        return -1;
+      }
+    }
 
     descr_file = fopen (descr_file_name, "a");
     if (descr_file == NULL) return 1;
@@ -116,11 +134,22 @@ int add_description (char *descr_file_name, char *file_name, char **description,
     return 0;
 }
 
+/*  Return:
+ * 0 if success
+ * 1 if error
+ * -1 if ivalid parameter
+ */
 int removeDesc (char *descr_file_name, char *file_name)
 {
     FILE *f1, *f2;
     char *line, *tmp, *token, *descr_file_name_tmp, *LDescString;
     int flag = 0;
+
+    if ( !descr_file_name || !file_name ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: removeDesc(%s,%s). This is serious error in program, please report to developers.",
+            descr_file_name?"descr_file_name":"NULL", file_name?"file_name":"NULL");
+      return -1;
+    }
 
     line = tmp = token = descr_file_name_tmp = LDescString = NULL ;
     f1 = fopen (descr_file_name, "r");
@@ -178,9 +207,20 @@ int removeDesc (char *descr_file_name, char *file_name)
     return 0;
 }
 
+/*  Return:
+ * 0 if success
+ * 1 if error
+ * -1 if ivalid parameter
+ */
 int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
 {
     FILE *ann_file;
+
+    if ( !announcenewfileecho || !c_area || !hisaddr ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: announceNewFileecho(%s,%s,%s). This is serious error in program, please report to developers.",
+            announcenewfileecho?"announcenewfileecho":"NULL", c_area?"c_area":"NULL", hisaddr?"hisaddr":"NULL");
+      return -1;
+    }
 
     if (!fexist(announcenewfileecho)) {
         ann_file = fopen (announcenewfileecho, "w");
@@ -196,12 +236,22 @@ int announceNewFileecho (char *announcenewfileecho, char *c_area, char *hisaddr)
     return 0;
 }
 
+/*  Return:
+ * 0 if success
+ * 1 if error
+ * -1 if ivalid parameter
+ */
 int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
 {
     FILE *filehandle;
     char *line = NULL, *tmp = NULL, *token = NULL;
     char *p = token;
 
+    if ( !descr_file_name || !file_name || !tic ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: GetDescFormBbsFile(%s,%s,%s). This is serious error in program, please report to developers.",
+            descr_file_name?"descr_file_name":"NULL", file_name?"file_name":"NULL", tic?"tic":"NULL");
+      return -1;
+    }
 
     int flag = 0, rc = 1;
 
@@ -277,12 +327,22 @@ int GetDescFormBbsFile (char *descr_file_name, char *file_name, s_ticfile *tic)
     return rc;
 }
 
-
+/*  Return:
+ * 1 if description is set from specified file
+ * 3 if error opening file
+ * -1 if ivalid parameter
+ */
 int GetDescFormFile (char *fileName, s_ticfile *tic)
 {
     FILE *filehandle = NULL;
     UINT i;
     char *line = NULL;
+
+    if ( !fileName || !tic ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: GetDescFormFile(%s,%s). This is serious error in program, please report to developers.",
+            fileName?"fileName":"NULL", tic?"tic":"NULL");
+      return -1;
+    }
 
     if ((filehandle=fopen(fileName,"r")) == NULL) {
         w_log(LL_ERROR,"File %s not found",fileName);
@@ -304,6 +364,13 @@ int GetDescFormFile (char *fileName, s_ticfile *tic)
     return 1;
 }
 
+/*  Return:
+ * 1 if description is set from  description file ("file_id.diz" from archive)
+ * 0 if description not set
+ * -1 if ivalid parameter
+ * 2 if error opening file
+ * 3 if unpacker not found for this file or all diz-files don't unpacked
+ */
 int GetDescFormDizFile (char *fileName, s_ticfile *tic)
 {
     FILE *filehandle = NULL;
@@ -314,6 +381,11 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     char cmd[256]="";
     char buffer[256]="";
 
+    if ( !fileName || !tic ) {
+      w_log(LL_CRIT, __FILE__ ":: Parameter is NULL: GetDescFormFile(%s,%s). This is serious error in program, please report to developers.",
+            fileName?"fileName":"NULL", tic?"tic":"NULL");
+      return -1;
+    }
 
     /*  find what unpacker to use */
     for (i = 0, found = 0; (i < config->unpackCount) && !found; i++) {
@@ -373,4 +445,3 @@ int GetDescFormDizFile (char *fileName, s_ticfile *tic)
     }
     return found;
 }
-

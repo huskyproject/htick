@@ -79,8 +79,11 @@
 void exit_htick(char *logstr, int print) {
 
     w_log(LL_FUNC,"exit_htick()");
-    w_log(LL_CRIT, logstr);
-    if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
+    if (logstr && *logstr)
+    {
+      w_log(LL_CRIT, logstr);
+      if (!config->logEchoToScreen && print) fprintf(stderr, "%s\n", logstr);
+    }
 
     doneCharsets();
     w_log(LL_STOP, "Exit");
@@ -126,7 +129,11 @@ int removeFileMask(char *directory, char *mask)
     char          *descr_file_name = NULL;
     unsigned int  numfiles = 0;
 
-   if (directory == NULL) return(0);
+   if ((directory == NULL) || (mask == NULL)) {
+     w_log(LL_CRIT, "Parameter is NULL: removeFileMask(%s,%s)",
+           directory?"directory":"NULL", mask?"mask":"NULL");
+     return(0);
+   }
 
    dir = husky_opendir(directory);
    if (dir != NULL) {
@@ -315,6 +322,11 @@ void IncBigSize(BigSize* bs, ULONG inc)
 {
     UINT b,kb,mb,res;            
 
+    if (!bs) {
+      w_log(LL_CRIT, __FILE__ "::IncBigSize(): 1st parameter is NULL");
+      return;
+    }
+
     b   = inc%1024;
     inc = inc/1024;
     kb  = inc%1024;
@@ -339,6 +351,12 @@ void IncBigSize(BigSize* bs, ULONG inc)
 
 void IncBigSize2(BigSize* bs, BigSize* inc)
 {
+    if (!bs || !inc) {
+      w_log(LL_CRIT, __FILE__ "::IncBigSize2(): Parameter is NULL: IncBigSize2(%s,%s",
+            bs?"bs":"NULL", inc?"inc":"NULL");
+      return;
+    }
+
     bs->b += inc->b;
     if( bs->b >= 1024)
     {
@@ -359,6 +377,11 @@ char* PrintBigSize(BigSize* bs)
     static char out[50];
     *out = '\0';
 
+    if (!bs) {
+      w_log(LL_CRIT, __FILE__ "::PrintBigSize(): parameter is NULL");
+      return out;
+    }
+
     if( bs->mb > 9) {
         sprintf(out,"%d.%02dM", bs->mb, (int)(bs->kb/10.24));
 /*
@@ -370,4 +393,3 @@ char* PrintBigSize(BigSize* bs)
     }
     return out;
 }
-
