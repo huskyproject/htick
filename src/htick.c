@@ -229,6 +229,7 @@ int processCommandLine( int argc, char **argv )
     if( !strcmp( argv[i], "-c" ) && ++i < argc )
     {
       cfgfile = argv[i];
+      processConfig( );
       continue;
     }
     if( 0 == stricmp( argv[i], "toss" ) )
@@ -346,12 +347,15 @@ void processConfig(  )
 
   setvar( "module", "htick" );
   SetAppModule( M_HTICK );
-  config = readConfig( cfgfile );
-  if( NULL == config )
+  if( !config )
   {
-    fprintf( stderr, "Config file not found\n" );
-    exit( 1 );
-  };
+    config = readConfig( cfgfile );
+    if( !config )
+    {
+      fprintf( stderr, "Config file not found\n" );
+      exit( 1 );
+    }
+  }
 
 
   /* open Logfile */
@@ -446,10 +450,10 @@ int main( int argc, char **argv )
 
   versionStr = GenVersionStr( "HTick", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date );
 
-
+  config = NULL;
   if( processCommandLine( argc, argv ) == 0 )
     exit( 1 );
-  processConfig(  );
+  if( !config ) processConfig(  );
 
   if( !( config->netMailAreas ) )
     w_log( LL_CRIT, "Netmailarea not defined, filefix not allowed!" );
