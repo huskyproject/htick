@@ -283,6 +283,7 @@ int GetDescFormBbsFile( char *descr_file_name, char *file_name, s_ticfile * tic 
   FILE *filehandle;
   char *line = NULL, *tmp = NULL, *token = NULL;
   char *p = token;
+  int flag = 0, rc = 1;
 
   if( !descr_file_name || !file_name || !tic )
   {
@@ -293,8 +294,6 @@ int GetDescFormBbsFile( char *descr_file_name, char *file_name, s_ticfile * tic 
            tic ? "tic" : "NULL" );
     return -1;
   }
-
-  int flag = 0, rc = 1;
 
   filehandle = fopen( descr_file_name, "r+b" );
   if( filehandle == NULL )
