@@ -79,6 +79,9 @@ int DescTreeDeleteEntry( char *entry )
 
 int DescTreeCompareEntries( char *p_e1, char *p_e2 )
 {
+  FileDescEntry *e1 = ( FileDescEntry * ) p_e1;
+  FileDescEntry *e2 = ( FileDescEntry * ) p_e2;
+
   if( !p_e1 || !p_e2 )
   {
     w_log( LL_CRIT,
@@ -87,9 +90,6 @@ int DescTreeCompareEntries( char *p_e1, char *p_e2 )
            p_e1 ? "p_e1" : "NULL", p_e2 ? "p_e2" : "NULL" );
     return -1;
   }
-
-  FileDescEntry *e1 = ( FileDescEntry * ) p_e1;
-  FileDescEntry *e2 = ( FileDescEntry * ) p_e2;
 
   return strcmp( e1->filename, e2->filename );
 }
