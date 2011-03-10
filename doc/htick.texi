@@ -719,10 +719,11 @@ Set of names separated by space on which FileFix will respond
 
 This statement cannot be repeated.
 
-@node Link Keywords, fileEchoFlavour, FileFixNames, Configuration Reference
+@node Link Keywords, TicPwd, FileFixNames, Configuration Reference
 @section Link Keywords
 
 @menu
+* TicPwd::                  Password for ticket files
 * fileEchoFlavour::         This statement sets the flavour which outgoing
                             files in fileechos for this link get.
 * fileAreaDefaults::        Set defaults for filearea definitions that follow.
@@ -750,7 +751,19 @@ This statement cannot be repeated.
 * FileFixEchoLimit::        Area subscribe limit.
 @end menu
 
-@node fileEchoFlavour, fileAreaDefaults, Link Keywords, Link Keywords
+@node TicPwd, fileEchoFlavour, Link Keywords, Link Keywords
+@subsection TicPwd
+@findex TicPwd
+@table @asis
+@item Syntax:
+@code{TicPwd [<string>]}
+@item Example:
+@code{TicPwd MySeCrET}
+@end table
+
+For full description look @ref{ticpwd, ticpwd in the Fidoconfig manual, , fidoconfig, Fidoconfig manual}
+
+@node fileEchoFlavour, fileAreaDefaults, TicPwd, Link Keywords
 @subsection fileEchoFlavour
 @findex fileEchoFlavour
 @table @asis
