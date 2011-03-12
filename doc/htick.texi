@@ -39,6 +39,10 @@
 This document describes @value{HTICK} @value{VERSION}, a Fidonet Fileecho
 Processor for OS/2, Windows, BeOS and Unix clones.
 
+Because @value{HTICK} is a part of the @code{HUSKY} fidonet software project,
+it uses the @code{fidoconfig} library and many configuration statements
+described in a @ref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @menu
 * Overview::                    What is @value{HTICK}?
 * Installation::                Installation. @emph{Read this!}
@@ -93,12 +97,13 @@ We suppose that you already has compiled binaries. If not - read "Download"
 or "Compile the Source Code" chapters.
 
 @enumerate
-@item Read FIDOCONFIG documentation about location of config files
-@item Edit config files for your purposes
+@item Read FIDOCONFIG documentation about location of config files and the
+statements of fidoconfig.
+@item Create and edit config files for your purposes.
 @item Run @code{tparser} from FIDOCONFIG package to test your config
 (read about @code{PublicGroup} or @code{AccessGrp} if you want to use
-groups for @code{FileEchoAreas})
-@item It is simply, isn't it? Enjoy! :-)
+groups for @code{FileEchoAreas}).
+@item It is simply, isn't it? Enjoy! :-).
 @end enumerate
 
 @menu
@@ -300,7 +305,8 @@ list of files' which should be included into filelist paths.
 @chapter @value{HTICK} @value{VERSION} Configuration Reference
 
 @value{HTICK} is based on FIDOCONFIG library, so read documentation of
-FIDOCONFIG about location of config file and keywords ideology.
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords, @xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
 
 @menu
 * Keywords::               This chapter describes keywords
@@ -342,6 +348,10 @@ FIDOCONFIG about location of config file and keywords ideology.
 * AutoFileCreateFlag::   Create flag when filearea has been autocreated.
 * FileFixNames::         Set of names on which FileFix will respond.
 @end menu
+
+@value{HTICK} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords, @xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
 
 @node FileAreaBaseDir, PassFileAreaDir, Keywords, Keywords
 @subsection FileAreaBaseDir
@@ -744,10 +754,11 @@ Set of names separated by space on which FileFix will respond
 
 This statement cannot be repeated.
 
-@node Link Keywords, fileEchoFlavour, FileFixNames, Configuration Reference
+@node Link Keywords, TicPwd, FileFixNames, Configuration Reference
 @section Link Keywords
 
 @menu
+* TicPwd::                  Password for ticket files
 * fileEchoFlavour::         This statement sets the flavour which outgoing
                             files in fileechos for this link get.
 * fileAreaDefaults::        Set defaults for filearea definitions that follow.
@@ -775,7 +786,23 @@ This statement cannot be repeated.
 * FileFixEchoLimit::        Area subscribe limit.
 @end menu
 
-@node fileEchoFlavour, fileAreaDefaults, Link Keywords, Link Keywords
+@value{HTICK} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords, @xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
+@node TicPwd, fileEchoFlavour, Link Keywords, Link Keywords
+@subsection TicPwd
+@findex TicPwd
+@table @asis
+@item Syntax:
+@code{TicPwd [<string>]}
+@item Example:
+@code{TicPwd MySeCrET}
+@end table
+
+For full description look @ref{ticpwd, ticpwd in the Fidoconfig manual, , fidoconfig, Fidoconfig manual}
+
+@node fileEchoFlavour, fileAreaDefaults, TicPwd, Link Keywords
 @subsection fileEchoFlavour
 @findex fileEchoFlavour
 @table @asis
@@ -1035,6 +1062,10 @@ This statement can only be repeated for different links.
 * FileArea::                     definition of FileArea.
 @end menu
 
+@value{HTICK} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords, @xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @node FileArea, Announce System, FileArea Definition, FileArea Definition
 @subsection FileArea
 @findex FileArea
@@ -1145,7 +1176,6 @@ To post announcements run @code{htick announce}.
 You may turn announcements off: just remove @code{AnnounceSpool}
 definition from config.
 
-
 @menu
 * AnnounceSpool::         Directory for accumulating report information.
 * AnnAreaTag::            Name of area or file where annoucement will be placed.
@@ -1168,6 +1198,11 @@ definition from config.
 * Announcements example:: Example for understanding announcements (from real
                           config).
 @end menu
+
+@value{HTICK} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords, @xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 
 @node AnnounceSpool, AnnAreaTag, Announce System, Announce System
 @subsection AnnounceSpool
@@ -1418,6 +1453,11 @@ List of keywords used in many husky programs. For details see fidoconfig manual.
 
 
 @node Keyword Index, , Common husky keywords, Top
+
+@value{HTICK} is based on FIDOCONFIG library, so read documentation of
+FIDOCONFIG about location of config file, keywords ideology and about
+majority of the keywords, @xref{Top, Fidoconfig Manual, , fidoconfig, Fidoconfig manual}.
+
 @appendix Configuration File Keyword Index
 @printindex fn
 
