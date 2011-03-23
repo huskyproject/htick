@@ -4,6 +4,8 @@
 @c $Id$
 @c adopted from hpt.texi, written by Tema Zelikin 2:5097/31
 @setfilename htick.info
+@documentlanguage ru
+@documentencoding KOI8-R
 @set HTICK HTICK
 @set VERSION 1.9
 @settitle @value{HTICK} @value{VERSION} - Husky Ticker
