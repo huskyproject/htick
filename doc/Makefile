@@ -19,34 +19,37 @@ endif
 all: html info dvi
 
 ifdef HTMLDIR
-html: htick.html
+html: htick.html htick.rus.html
 else
 html:
 	@echo
 endif
 
 ifdef DVIDIR
-dvi: htick.dvi
+dvi: htick.dvi htick.rus.dvi
 else
 dvi:
 	@echo
 endif
 
 ifdef INFODIR
-info: htick.info
+info: htick.info htick.rus.info
 else
 info:
 	@echo
 endif
 
 htick.html: htick.texi
-	export LC_ALL=C; makeinfo --html --no-split htick.texi
+	export LC_ALL=C; makeinfo --html --no-split $<
+
+htick.rus.html: htick.rus.texi
+	export LC_ALL=C; makeinfo --html --no-split $<
 
 htick.dvi: htick.texi
-	texi2dvi htick.texi
+	texi2dvi $<
 
 htick.info: htick.texi
-	makeinfo --no-split htick.texi
+	makeinfo --no-split $<
 
 clean:
 	-$(RM) $(RMOPT) htick.aux
@@ -70,7 +73,7 @@ install: info html dvi
 	@echo .
 ifdef INFODIR
 	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(INFODIR)
-	$(INSTALL) $(IMOPT) htick.info $(DESTDIR)$(INFODIR)
+	$(INSTALL) $(IMOPT) htick.info htick.rus.info $(DESTDIR)$(INFODIR)
 	-install-info --info-dir=$(DESTDIR)$(INFODIR)  $(DESTDIR)$(INFODIR)$(DIRSEP)htick.info
 endif
 ifdef HTMLDIR
@@ -79,7 +82,7 @@ ifdef HTMLDIR
 endif
 ifdef DVIDIR
 	-$(MKDIR) $(MKDIROPT) $(DESTDIR)$(DVIDIR)
-	$(INSTALL) $(IMOPT) htick.dvi $(DESTDIR)$(DVIDIR)
+	$(INSTALL) $(IMOPT) htick.dvi htick.rus.dvi $(DESTDIR)$(DVIDIR)
 endif
 
 uninstall:
