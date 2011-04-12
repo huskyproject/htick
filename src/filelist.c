@@ -212,8 +212,8 @@ void printFileArea( char *area_areaName, char *area_pathName, char *area_descrip
   int flag = 0;
 
   fileareapath = sstrdup( area_pathName );
-  strLower( fileareapath );
-  _createDirectoryTree( fileareapath );
+  adaptcase( fileareapath );
+//  _createDirectoryTree( fileareapath );
   xstrscat( &fbbsname, fileareapath, "files.bbs", NULL );
   adaptcase( fbbsname );
 
