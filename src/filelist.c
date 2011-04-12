@@ -324,8 +324,7 @@ void printFileArea( char *area_areaName, char *area_pathName, char *area_descrip
   memset( &bs, 0, sizeof( BigSize ) );
 
   fileareapath = sstrdup( area_pathName );
-  strLower( fileareapath );
-  _createDirectoryTree( fileareapath );
+  adaptcase( fileareapath );
   xstrscat( &fbbsname, fileareapath, config->fileDescription, NULL );
   adaptcase( fbbsname );
 
