@@ -1903,8 +1903,8 @@ void toss(  )
 
   w_log( LL_INFO, "Start tossing..." );
 
-  processDir( config->localInbound, secLocalInbound );
-  processDir( config->protInbound, secProtInbound );
-  processDir( config->inbound, secInbound );
+  if (config->localInbound && config->localInbound[0] ) processDir( config->localInbound, secLocalInbound );
+  if (config->protInbound && config->protInbound[0] ) processDir( config->protInbound, secProtInbound );
+  if (config->inbound && config->inbound[0] ) processDir( config->inbound, secInbound );
 
 }
