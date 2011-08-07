@@ -662,7 +662,7 @@ This statement cannot be repeated.
 @item Syntax:
 @code{fileDescription <name>}
 @item Example:
-@code{fileDescription descriopt.ion}
+@code{fileDescription descript.ion}
 @end table
 
 Name of file to hold file descriptions, by default files.bbs
