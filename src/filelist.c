@@ -311,13 +311,13 @@ void printFileArea( char *area_areaName, char *area_pathName, char *area_descrip
   int flag = 0;
   static BigSize bs;
 
-  if( !area_areaName || !area_pathName || !area_description || !f )
+  if( !area_areaName || !area_pathName || !f )
   {
     w_log( LL_CRIT,
            __FILE__
            ":: Parameter is NULL: printFileArea(%s,%s,%s,%s). This is serious error in program, please report to developers.",
            area_areaName ? "area_areaName" : "NULL", area_pathName ? "area_pathName" : "NULL",
-           area_description ? "area_description" : "NULL", f ? "f" : "NULL" );
+           "area_description", f ? "f" : "NULL" );
     return;
   }
 
