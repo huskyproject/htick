@@ -1245,11 +1245,14 @@ int processTic( char *ticfile, e_tossSecurity sec )
   { /* Write a message to log */
     char *tic_origin = aka2str5d( tic.origin );
     char *tic_from = aka2str5d( tic.from );
-    char tic_crc[15]="";
+    char tic_crc[16]="";  /* 6 chars for ", CRC ", 8 chars for CRC32 hex value, 1 char for "X" */
+    char tic_size[28]=""; /* 7 chars for ", size ", 20 chars for decimal size value up to 64-bit, 1 char for "," */
     if( tic.crc_is_present )
-      sprintf( tic_crc, " CRC %08lX,", tic.crc );
-    w_log( LL_TIC, "File \"%s\": area \"%s\", size %ld,%s received from %s, originated from %s",
-           tic.file ? tic.file : "", tic.area ? tic.area : "", tic.size, tic_crc, tic_from, tic_origin );
+      sprintf( tic_crc, ", CRC %08lX", tic.crc );
+    if( tic_size >= 0 )
+      sprintf( tic_size, ", size %lu", (unsigned long)tic.size );
+    w_log( LL_TIC, "File \"%s\": area \"%s\"%s%s, received from %s, originated from %s",
+           tic.file ? tic.file : "", tic.area ? tic.area : "", tic_size, tic_crc, tic_from, tic_origin );
     nfree( tic_origin );
     nfree( tic_from );
   }
@@ -1533,6 +1536,7 @@ int processTic( char *ticfile, e_tossSecurity sec )
   }
 #endif
 
+  if( tic.size < 0 ) tic.size = stbuf.st_size;
   rc = sendToLinks( 1, filearea, &tic, ticedfile );
   if( rc == 0 )
     doSaveTic( ticfile, &tic, filearea );
