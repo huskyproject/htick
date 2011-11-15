@@ -15,7 +15,11 @@ ifeq ($(DEBUG), 1)
 else
   CFLAGS  = -c -I../h -I../.. -I../../huskylib -I../../smapi -I../../fidoconf -I../../areafix -Wall -O3 -s -DUNIX
 endif
-LFLAGS  = -L../../huskylib/make -L../../smapi/make -L../../fidoconf/make -L../../areafix/make
+
+#LFLAGS  = -L../../huskylib/make -L../../smapi/make -L../../fidoconf/make -L../../areafix/make
+#LIBS    =  -lsmapilnx -lareafixlnx -lfidoconfiglnx
+# Order of libraries are mandatory!
+LIBS= ../../smapi/make/libsmapilnx.a ../../areafix/make/libareafixlnx.a ../../fidoconf/make/libfidoconfiglnx.a ../../huskylib/make/libhuskylnx.a
 
 all: $(OBJS) \
      htick
@@ -24,7 +28,7 @@ all: $(OBJS) \
 	$(CC) $(CFLAGS) $(SRC_DIR)$*.c
 
 htick: $(OBJS)
-	$(CC) $(LFLAGS) -o htick $(OBJS) -lfidoconfiglnx -lsmapilnx
+	$(CC) $(LFLAGS) -o htick $(OBJS) $(LIBS)
 
 clean:
 	-rm -f *.o
