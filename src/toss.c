@@ -554,6 +554,7 @@ enum parseTic_result parseTic( char *ticfile, s_ticfile * tic )
           w_log( LL_TIC, "TIC %s: Illegal value: 'REPLACES %s', ignored", ticfile, param );
           break;
         }
+        tic->replaces = sstrdup( param );
         break;
       case CRC_PW:
         tic->password = sstrdup( param );
