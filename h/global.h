@@ -37,6 +37,7 @@
 
 struct ticfiletype {
                 char *file;         /*  Name of the file affected by Tic */
+                char *altfile;      /*  alternative filename for duplicates */
                 char *area;         /*  Name of File Area */
                 char *areadesc;     /*  Description of File Area */
                 char **desc;        /*  Short Description of file */

@@ -90,6 +90,7 @@ void doSaveTic4Report( s_ticfile * tic )
   }
 
   fprintf( tichandle, "File %s\r\n", tic->file );
+  if (tic->altfile != NULL) fprintf(tichandle,"AltFile %s\r\n",tic->altfile);
   fprintf( tichandle, "Area %s\r\n", tic->area );
 
   if( tic->anzldesc > 0 )
@@ -167,6 +168,7 @@ static void getReportInfo(  )
       Report[rCount].from = tmptic.from;
       Report[rCount].area = sstrdup( tmptic.area );
       Report[rCount].file = sstrdup( tmptic.file );
+      Report[rCount].altfile = sstrdup(tmptic.altfile);
       Report[rCount].anzdesc = tmptic.anzdesc;
       Report[rCount].desc = scalloc( sizeof( char * ), tmptic.anzdesc );
       for( i = 0; i < tmptic.anzdesc; i++ )
@@ -403,16 +405,19 @@ static s_message *MakeReportMessage( ps_anndef pRepDef )
 static void ReportOneFile( s_message * msg, ps_anndef pRepDef, s_ticfile * tic )
 {
   char *tmp = NULL;
+  char *name;
   static BigSize bs;
 
   memset( &bs, 0, sizeof( BigSize ) );
   IncBigSize( &bs, ( ULONG ) tic->size );
 
   tic->anzpath = 1;             /* mark tic file as deleted */
-  if( strlen( tic->file ) > 12 )
-    xscatprintf( &( msg->text ), " %s\r% 23s ", tic->file, PrintBigSize( &bs ) );
+  if (tic->altfile != NULL) name = tic->altfile;
+  else name = tic->file;
+  if(strlen(name) > 12)
+    xscatprintf(&(msg->text)," %s\r% 23s ", name, PrintBigSize(&bs));
   else
-    xscatprintf( &( msg->text ), " %-12s % 9s ", tic->file, PrintBigSize( &bs ) );
+    xscatprintf(&(msg->text)," %-12s % 9s ", name, PrintBigSize(&bs));
 
   if( tic->anzldesc > 0 )
   {
@@ -430,6 +435,10 @@ static void ReportOneFile( s_message * msg, ps_anndef pRepDef, s_ticfile * tic )
   if( pRepDef->annfrfrom && tic->from.zone != 0 )
   {
     xscatprintf( &( msg->text ), "%sFrom: %s\r", print_ch( 24, ' ' ), aka2str( tic->from ) );
+  }
+  if (tic->altfile != NULL)
+  {
+    xscatprintf(&(msg->text), "%sTIC: %s\r", print_ch(24, ' '), tic->file);
   }
   if( tmp == NULL || tmp[0] == 0 )
     xstrcat( &( msg->text ), "\r" );

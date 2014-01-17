@@ -96,10 +96,11 @@
 
 char *versionStr;
 
-/* tic keywords calculated crc */
+/* tic keywords calculated crc (CCITT-16, polynom 0x1021) */
 
 #define CRC_CREATED      0xACDA /*0x4EC6 */
 #define CRC_FILE         0x9AF9 /*0x1A66 */
+#define CRC_ALTFILE      0x02B3 /* "ALTFILE" */
 #define CRC_AREADESC     0xD824 /*0xB621 */
 #define CRC_DESC         0x717B /*0xECBD */
 #define CRC_AREA         0x825A /*0x825A */
@@ -291,6 +292,7 @@ void disposeTic( s_ticfile * tic )
   }
   nfree( tic->seenby );
   nfree( tic->file );
+  nfree(tic->altfile);
   nfree( tic->area );
   nfree( tic->areadesc );
   nfree( tic->replaces );
@@ -518,6 +520,9 @@ enum parseTic_result parseTic( char *ticfile, s_ticfile * tic )
       case CRC_FILE:
         tic->file = sstrdup( param );
         break;
+      case CRC_ALTFILE:
+        tic->altfile = sstrdup(param);  /* just for reports */
+        break;
       case CRC_AREADESC:
         tic->areadesc = sstrdup( param );
         break;
@@ -694,6 +699,92 @@ void doSaveTic( char *ticfile, s_ticfile * tic, s_area * filearea )
   return;
 }                               /* doSaveTic */
 
+
+/*
+ *  create alternative filename for ticed file
+ *  - add counter 01 up to 99
+ *
+ *  requires:
+ *  - path of destination directory
+ *  - name of ticed file
+ *
+ *  returns:
+ *  - string pointer (allocated buffer) on success
+ *  - NULL on any problem
+ */
+
+char *altFilename(char *path, char *name)
+{
+  char              *altName = NULL;         /* return value */
+  char              *tempName = NULL;        /* temporary name */
+  char              *tempFilepath = NULL;    /* temporary filepath */
+  char              *modStr;
+  char              *remStr = NULL;
+  unsigned int      n = 1;
+  size_t            size;
+
+  /* sanity checks */
+  if ((path == NULL) || (name == NULL)) return altName;
+
+  /* allocate buffers */
+  size = strlen(name) + 4;         /* + dot + 2 digits + \0 */
+  tempName = smalloc(size);
+  size += strlen(path);
+  tempFilepath = smalloc(size);
+
+
+  /* prepare temp. name */
+  strcpy(tempName, name);
+  modStr = strchr(tempName, '.');         /* find first dot */
+  if (modStr == NULL)              /* no dot found */
+  {
+    /* find end of string */
+    modStr = tempName;
+    while (modStr[0] != 0) modStr++;
+
+    modStr[0] = '.';               /* add dot */
+  }
+  else                             /* dot found */
+  {
+    /* get pointer to remaining part in original string */
+    remStr = strchr(name, '.');
+  }
+  modStr++;                        /* skip dot */
+  modStr[0] = 0;                   /* end string */
+
+  if (isDOSLikeName(name))         /* DOS filename */
+  {
+    if (remStr)                    /* more chars follow */
+    {
+      remStr++;                    /* skip dot */
+      modStr[0] = remStr[0];       /* copy first char behind dot */
+      modStr++;                    /* and skip it */
+      remStr = NULL;               /* don't care about the remaining chars */
+    }
+  }
+
+  /* check alternative names */
+  while (n < 99)
+  {
+    /* complete temp. filename */
+    sprintf(modStr, "%.2d", n);              /* add counter */
+    if (remStr) strcat(modStr, remStr);      /* add remaining part */
+
+    strcpy(tempFilepath, path);              /* build full filepath */
+    strcat(tempFilepath, tempName);    
+
+    if (!fexist(tempFilepath)) break;        /* unused filename */
+    else n++;                                /* try next one */
+  }
+
+  if (n <= 99) altName = tempName;           /* found alternative */
+  else nfree(tempName);                      /* found none */
+  nfree(tempFilepath);
+
+  return altName;
+}
+
+
 /* Send a file "filename" to all subscribers of fileecho.
  * Return: 0 if success, positive integer if error, negative integer if illegal call
  */
@@ -770,16 +861,35 @@ int sendToLinks( int isToss, s_area * filearea, s_ticfile * tic, const char *fil
   strcpy( newticedfile, fileareapath );
   strcat( newticedfile, MakeProperCase( tic->file ) );
 
-  if( filearea->msgbType != MSGTYPE_PASSTHROUGH && filearea->noreplace && fexist( newticedfile ) )
+  /* check for duplicate in filearea */
+  if (filearea->msgbType != MSGTYPE_PASSTHROUGH && fexist(newticedfile))
   {
-    w_log( LL_ERROR, "File %s already exist in filearea %s. Can't replace it", tic->file,
-           tic->area );
-    return ( TIC_NotOpen );
+    if (filearea->rename)             /* rename new file */
+    {
+      comm = altFilename(&fileareapath[0], tic->file);
+      if (comm != NULL)     /* found alternative name */
+      {
+        strcpy(newticedfile, fileareapath);
+        strcat(newticedfile, comm);
+        tic->altfile = comm;
+        w_log('6',"Created alternative name %s for file %s.", comm, tic->file);
+      }
+      else                  /* namespace exceeded or error */
+      {
+        w_log(LL_ERROR,"Couldn't create alternative name for file %s in filearea %s.", tic->file, tic->area);
+        return(TIC_NotOpen);
+      }
+    }
+    else if (filearea->noreplace)     /* don't overwrite old file */
+    {
+      w_log(LL_ERROR,"File %s already exist in filearea %s. Can't replace it", tic->file, tic->area);
+      return(TIC_NotOpen);
+    }
   }
 
   if( isToss == 1 )
   {
-    if( !filearea->sendorig )
+    if (!filearea->sendorig && tic->altfile == NULL)
     {
       /* overwrite existing file if not same */
       if( move_file( filename, newticedfile, 1 ) != 0 )
@@ -833,7 +943,7 @@ int sendToLinks( int isToss, s_area * filearea, s_ticfile * tic, const char *fil
     {
       w_log( LL_CREAT, "Put %s to %s", filename, newticedfile );
     }
-    if( filearea->sendorig )
+    if (filearea->sendorig || tic->altfile)
     {
       strcpy( newticedfile, config->passFileAreaDir );
       strcat( newticedfile, MakeProperCase( tic->file ) );
@@ -861,11 +971,13 @@ int sendToLinks( int isToss, s_area * filearea, s_ticfile * tic, const char *fil
     strcpy( descr_file_name, filearea->fileName );
     strcat( descr_file_name, config->fileDescription );
     adaptcase( descr_file_name );
-    removeDesc( descr_file_name, tic->file );
+    if (tic->altfile) comm = tic->altfile;    /* use alternative name */
+    else comm = tic->file;                    /* use original name */
+    removeDesc( descr_file_name, comm );
     if( tic->anzldesc > 0 )
-      add_description( descr_file_name, tic->file, tic->ldesc, tic->anzldesc );
+      add_description( descr_file_name, comm, tic->ldesc, tic->anzldesc );
     else
-      add_description( descr_file_name, tic->file, tic->desc, tic->anzdesc );
+      add_description( descr_file_name, comm, tic->desc, tic->anzdesc );
   }
 
   if( filearea->downlinkCount >= minLinkCount )
