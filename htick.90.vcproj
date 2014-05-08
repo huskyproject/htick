@@ -19,8 +19,8 @@
 	<Configurations>
 		<Configuration
 			Name="Release|Win32"
-			OutputDirectory=".\..\nd_r\bin"
-			IntermediateDirectory=".\..\nd_r\obj\htick"
+			OutputDirectory="..\nd_r\bin"
+			IntermediateDirectory="..\nd_r\obj\$(ProjectName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -49,8 +49,8 @@
 				InlineFunctionExpansion="2"
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
-				AdditionalIncludeDirectories="..;.\h;..\fidoconf;..\huskylib;..\smapi;..\areafix"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_MAKE_DLL;_WIN32_WINNT=0x0500"
+				AdditionalIncludeDirectories=".\h;..\fidoconf;..\huskylib;..\smapi;..\areafix"
+				PreprocessorDefinitions="NDEBUG;__NT__;WIN32;_CONSOLE;_MAKE_DLL;_WIN32_WINNT=0x0500"
 				StringPooling="true"
 				MinimalRebuild="true"
 				RuntimeLibrary="2"
@@ -59,7 +59,7 @@
 				DefaultCharIsUnsigned="true"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=""
-				AssemblerListingLocation=".\..\nd_r\obj\htick/"
+				AssemblerListingLocation=""
 				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="0"
 				WarningLevel="0"
@@ -122,7 +122,7 @@
 		<Configuration
 			Name="Debug|Win32"
 			OutputDirectory=".\..\nd_d\bin"
-			IntermediateDirectory=".\..\nd_d\obj\htick"
+			IntermediateDirectory="..\..\nd_d\obj\$(ProjectName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
@@ -147,8 +147,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..;.\h;..\fidoconf;..\huskylib;..\smapi;..\areafix"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_MAKE_DLL;_WIN32_WINNT=0x0400"
+				AdditionalIncludeDirectories=".\h;..\fidoconf;..\huskylib;..\smapi;..\areafix"
+				PreprocessorDefinitions="_DEBUG;__NT__;WIN32;_CONSOLE;_MAKE_DLL;_WIN32_WINNT=0x0500"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				SmallerTypeCheck="true"
@@ -156,8 +156,8 @@
 				DefaultCharIsUnsigned="true"
 				UsePrecompiledHeader="0"
 				PrecompiledHeaderFile=".\..\nd_d\obj\htick/htick.pch"
-				AssemblerListingLocation=".\..\nd_d\obj\htick/"
-				ProgramDataBaseFileName="$(IntDir)\vc80.pdb"
+				AssemblerListingLocation=""
+				ProgramDataBaseFileName="$(IntDir)\vc90.pdb"
 				BrowseInformation="1"
 				WarningLevel="4"
 				SuppressStartupBanner="true"
@@ -483,6 +483,10 @@
 			>
 			<File
 				RelativePath=".\h\add_desc.h"
+				>
+			</File>
+			<File
+				RelativePath="..\areafix\areafix\afglobal.h"
 				>
 			</File>
 			<File
