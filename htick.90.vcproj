@@ -121,8 +121,8 @@
 		</Configuration>
 		<Configuration
 			Name="Debug|Win32"
-			OutputDirectory=".\..\nd_d\bin"
-			IntermediateDirectory="..\..\nd_d\obj\$(ProjectName)"
+			OutputDirectory="..\nd_d\bin"
+			IntermediateDirectory="..\nd_d\obj\$(ProjectName)"
 			ConfigurationType="1"
 			UseOfMFC="0"
 			ATLMinimizesCRunTimeLibraryUsage="false"
