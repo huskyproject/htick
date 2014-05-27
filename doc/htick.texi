@@ -1139,10 +1139,35 @@ if fileareadefaults set to @code{-nodiz}.
 if fileareadefaults set to @code{-pause}.
 
 @item -noreplace
-Don't replace exisiting files in this filearea.
+Don't replace existing files in this filearea.
 
 @item -replace
-Replace exisiting files in this filearea if fileareadefaults set to @code{-noreplace}.
+Replace existing files in this filearea if fileareadefaults set to @code{-noreplace}.
+
+@item -norename
+Don't rename new file if name already exists in filearea (default, if not overwritten
+in @code{fileareadefaults}).
+
+@item -rename
+Rename new file if name already exists in filearea. The file will be renamed only in
+the storage directory, not for further distribution to other nodes.
+
+Renaming scheme:
+@itemize
+@item
+@format
+long filename
+file.more.ext -> file.<number>.more.ext
+e.g. long-name.tar.gz -> long-name.01.tar.gz
+@end format
+@item
+@format
+DOS style filename
+file.ext -> file.<1st char of ext><number>
+e.g. file.zip -> file.z01
+@end format
+@item <number> is  01 - 99
+@end itemize
 
 @item -p <integer>
 Purge after n days. Setting to 0 to disables purging (this is default value).
