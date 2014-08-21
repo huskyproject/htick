@@ -9,7 +9,8 @@ Group: Applications/FTN
 Summary: HTick - the Husky Project fileecho ticker
 URL: http://husky.sf.net
 License: GPL
-Requires: fidoconf >= 1.9, smapi >= 2.5, areafix >= 1.9
+Requires: fidoconf >= 1.9
+BuildRequires: fidoconf-devel >= 1.9, smapi >= 2.5, areafix >= 1.9
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
