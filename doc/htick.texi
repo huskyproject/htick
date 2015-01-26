@@ -770,7 +770,6 @@ This statement cannot be repeated.
 * autoFileCreate::          Allow or deny autocreating fileechos received from
                             this link.
 * AutoFileCreateFile::      Specifies the file new filearea will be placed into.
-* AutoFileCreateDefaults::  Specifies the new filearea defaults.
 * AutoFileCreateSubdirs::   Whether to autocreate areas like /fils/gfd.app.edit
                             (off) or /files/gfd/app/edit (on).
 * delNotReceivedTIC::       If file not received then remove TIC.
@@ -877,7 +876,7 @@ Allow or deny autocreating fileechos received from this link.
 
 This statement can only be repeated for different links.
 
-@node AutoFileCreateFile, AutoFileCreateDefaults, autoFileCreate, Link Keywords
+@node AutoFileCreateFile, AutoFileCreateSubdirs, autoFileCreate, Link Keywords
 @subsection AutoFileCreateFile
 @findex AutoFileCreateFile
 @table @asis
@@ -891,22 +890,7 @@ Specifies the file new filearea definitions will be placed into
 
 This statement can only be repeated for different links.
 
-@node AutoFileCreateDefaults, AutoFileCreateSubdirs, AutoFileCreateFile, Link Keywords
-@subsection AutoFileCreateDefaults
-@findex AutoFileCreateDefaults
-@table @asis
-@item Syntax:
-@code{AutoFileCreateDefaults <string>}
-@item Example:
-@code{AutoFileCreateDefaults -lw 100 -g Z}
-@end table
-
-Specifies the new filearea defaults. Please don't set any paths here, use
-LinkFileBaseDir for these purposes. @xref{LinkFileBaseDir}.
-
-This statement can only be repeated for different links.
-
-@node AutoFileCreateSubdirs, delNotReceivedTIC, AutoFileCreateDefaults, Link Keywords
+@node AutoFileCreateSubdirs, delNotReceivedTIC, AutoFileCreateFile, Link Keywords
 @subsection AutoFileCreateSubdirs
 @findex AutoFileCreateSubdirs
 @table @asis
