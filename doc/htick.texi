@@ -821,16 +821,18 @@ This statement can only be repeated for different links.
 @findex fileAreaDefaults
 @table @asis
 @item Syntax:
-@code{fileAreaDefaults <options> [links]}
+@code{fileAreaDefaults [<options> [links]]}
 @item Example:
 @code{fileAreaDefaults -lw 100 -g Z 2:5097/31.1}
 @end table
 
-Set defaults for filearea definitions that follow. All options are possible,
-except areatag and path. 
-Settings in the filearea definition override @code{fileAreaDefaults}
-See also @xref{echoAreaDefaults,,,hpt}. Defaults are switched off
-with empty @code{fileAreaDefaults}.
+Set default options for filearea definitions that follow. All options are
+possible except areatag and path. Settings in a filearea definition override
+the ones in @code{fileAreaDefaults}. A @code{fileAreaDefaults} setting is 
+valid until a next @code{fileAreaDefaults}. Defaults are switched off with 
+empty @code{fileAreaDefaults}.
+
+See also @ref{EchoAreaDefaults,,,fidoconfig}.
 
 This statement can only be repeated for different links.
 
