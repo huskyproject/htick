@@ -12,9 +12,9 @@
 @titlepage
 @title @value{HTICK} @value{VERSION} manual
 @subtitle Husky Ticker
-@author Georgi Fofanov @@ 2:5050/29, fg@fg.udm.ru
-@author Nestyurkin Nikolay @@ 2:5020/3600, 3600@mail.ru
-@author Max Chernogor @@ 2:464/108, mche@ua.fm
+@author Georgi Fofanov @@ 2:5050/29, fg@@fg.udm.ru
+@author Nestyurkin Nikolay @@ 2:5020/3600, 3600@@mail.ru
+@author Max Chernogor @@ 2:464/108, mche@@ua.fm
 @page
 @c{empty page to get the page numbering right}
 @end titlepage
@@ -129,8 +129,7 @@
 @item /usr/src/packages/
 @item -> smapi/
 @item -> fidoconfig/
-@item -> htick/
-@item
+@item -> htick/@*
 @end table
 
 3. Скомпилируйте и установите пакеты smapi и fidoconf. Для компилирования
