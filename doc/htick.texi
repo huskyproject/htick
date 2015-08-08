@@ -13,14 +13,12 @@
 @titlepage
 @title @value{HTICK} @value{VERSION} manual
 @subtitle Husky Ticker
-@author Georgi Fofanov @@ 2:5050/29, fg@fg.udm.ru
-@author Nestyurkin Nikolay @@ 2:5020/3600, 3600@mail.ru
-@author Max Chernogor @@ 2:464/108, mche@ua.fm
+@author Georgi Fofanov @@ 2:5050/29, fg@@fg.udm.ru
+@author Nestyurkin Nikolay @@ 2:5020/3600, 3600@@mail.ru
+@author Max Chernogor @@ 2:464/108, mche@@ua.fm
 @page
 @c{empty page to get the page numbering right}
 @end titlepage
-
-@contents
 
 @ifinfo
 @dircategory Fidonet Software
@@ -135,8 +133,7 @@ groups for @code{FileEchoAreas}).
 @item /usr/src/packages/
 @item -> smapi/
 @item -> fidoconfig/
-@item -> htick/
-@item
+@item -> htick/@*
 @end table
 
 3. Compile and install smapi and fidoconf packages. Use "Makefile" for
@@ -249,80 +246,57 @@ To get help about the command line syntax use @value{HTICK} without any argument
 
 @table @asis
 @item Syntax:
-@code{htick [options] <command>}
-@item where @code{<command>} is one of:
+@command{htick [options] <command>}
+@item where @code{<command>} is:
 @table @asis
-@item @code{toss [annfecho <file>]}
-Reading *.tic and tossing files. Optionally announce new fileechos in text file.
-@item @code{toss -b}
-Toss bad tics.
-@item @code{scan}
-Scan netmail area for mails to filefix and process filefix commands
-contained inside the mails
-@item @code{ffix <FTN address> <command>}
-Process filefix command @code{<command>} for @code{<FTN address>} from command line
-@item @code{ffix! <FTN address> <command>}
-Do the same job as 'ffix' and additionally notify the link of the processed
-filefix command as in example:@*
-@code{htick ffix! 2:464/910 -910.TEST}@*
-This command removes file echo link @code{2:464/910} from @code{910.TEST}
-fileecho and produces a message to @code{2:464/910} with body "@code{-910.TEST}"
-@item @code{relink <pattern> <addr>}
-In order to refresh subscription send to filefix at address @code{<addr>}
-commands to subscribe for fileechos with names matching @code{<pattern>}.
-@item @code{relink -f <file> <addr>}
-In order to refresh subscription send to filefix at address @code{<addr>}
-commands to subscribe for fileechos with names contained in @code{<file>}.
-@item @code{resubscribe <pattern> <fromaddr> <toaddr>}
-Move subscription of fileareas matching @code{<pattern>} from link with
-address @code{<fromaddr>} to another link with address @code{<toaddr>}
-@item @code{resubscribe -f <file> <fromaddr> <toaddr>}
-Move subscription of fileareas listed in @code{<file>} from link with
-address @code{<fromaddr>} to another link with address @code{<toaddr>}
-@item @code{clean}
-Clean passthrough directory (remove sent files) and remove old files in fileechos
-@item @code{announce}
+@item toss
+Reading *.tic and tossing files
+@item scan
+@itemx ffix
+Scanning Netmail area for mails to filefix and process filefix command
+@item ffix <FTN address> <filefix command>
+Process filefix command @code{command} from command line
+@item ffix! <FTN address> <filefix command>
+Do the same job as 'ffix' and send subscride/unsubscribe letter to link
+that was manualy subscribed/unsubscribed by filefix command like:
+htick ffix! 2:464/910 -910.TEST
+This command removes file echo link 2:464/910 from 910.TEST and produces letter
+to 2:464/910 with body "-910.TEST"
+@item clean
+Clean passthrough dir (remove sent files) and remove old files in fileechos
+@item announce
 Announce new files as defined in Ann* config statements
-(@xref{Announce System}.)
-@item @code{hatch <file> <area> [replace [<filemask>]] [desc <desc> [<ldesc>]]}
-Hatch @code{<file>} into @code{<area>} optionally using description for the file;
-if @code{replace} is present in the command then add a replace field to TIC;
-if @code{<filemask>} is not present in the command then put @code{<file>} in the field.@*
-A short (one line) description @code{<desc>} and a long description
-@code{<ldesc>} may be put to TIC.@*
-One may use the following as @code{<desc>}:
+(See @xref{Announce System}.)
+@item hatch <file> <area> [replace [<filemask>]] [desc [<desc>] [<ldesc>]]
+Hatch file into Area using Description for file; if "replace" exists then
+fill replace field in TIC; if <filemask> doesn't exist then put <file> in field.
+Desc's parameters may be:
 @table @asis
-@item @code{@@@@BBS}
-to use first line from files.bbs
-@item @code{@@@@DIZ}
-to use first line from the contained file_id.diz
-@item @code{@@@@<file>}
-to use first line from <file>
 @item @code{@@BBS}
 to load description from files.bbs
 @item @code{@@DIZ}
-to load description from the contained file_id.diz
+to load description from the contained File_Id.Diz
 @item @code{@@<file>}
 to load description from <file>
+@item @code{@@@@BBS}
+to use first line from Files.Bbs
+@item @code{@@@@DIZ}
+to use first line from the contained File_Id.Diz
+@item @code{@@@@<file>}
+to use first line from <file>
 @end table
-and the last three items may be used as @code{<ldesc>}.
-@item @code{send <file> <filearea> <address>}
-Send @code{<file>} from @code{<filearea>} to the @code{<address>} with accompanying .tic
-@item @code{filelist <file> [<dirlist>]}
+
+@item send <file> <filearea> <address>
+Send file from filearea to address
+@item filelist <file> [<dirlist>]
 Generate filelist containing all files in base.
+
 @itemize @bullet
 @item @code{<file>}
 filename to write output to.
 @item @code{<dirlist>}
-filename to which only list of fileecho directories is written.
+list of files' which should be included into filelist paths.
 @end itemize
-@end table
-@item and where options are:
-@table @asis
-@item @code{-q}
-Quiet mode (display only urgent messages to console)
-@item @code{-c <config-file>}
-Specify an alternative configuration file
 @end table
 @end table
 
@@ -846,18 +820,16 @@ This statement can only be repeated for different links.
 @findex fileAreaDefaults
 @table @asis
 @item Syntax:
-@code{fileAreaDefaults [<options> [links]]}
+@code{fileAreaDefaults <options> [links]}
 @item Example:
 @code{fileAreaDefaults -lw 100 -g Z 2:5097/31.1}
 @end table
 
-Set default options for filearea definitions that follow. All options are
-possible except areatag and path. Settings in a filearea definition override
-the ones in @code{fileAreaDefaults}. A @code{fileAreaDefaults} setting is 
-valid until a next @code{fileAreaDefaults}. Defaults are switched off with 
-empty @code{fileAreaDefaults}.
-
-See also @ref{EchoAreaDefaults,,,fidoconfig}.
+Set defaults for filearea definitions that follow. All options are possible,
+except areatag and path. 
+Settings in the filearea definition override @code{fileAreaDefaults}
+See also @xref{echoAreaDefaults,,,hpt}. Defaults are switched off
+with empty @code{fileAreaDefaults}.
 
 This statement can only be repeated for different links.
 
