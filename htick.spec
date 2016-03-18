@@ -1,4 +1,4 @@
-%define reldate 20150817
+%define reldate 20160318
 %define reltype C
 # may be one of: C (current), R (release), S (stable)
 
@@ -9,8 +9,7 @@ Group: Applications/FTN
 Summary: HTick - the Husky Project fileecho ticker
 URL: http://husky.sf.net
 License: GPL
-Requires: fidoconf >= 1.9
-BuildRequires: fidoconf-devel >= 1.9, smapi >= 2.5, areafix >= 1.9
+BuildRequires: fidoconf >= 1.9, smapi >= 2.5, areafix >= 1.9
 Source: %{name}.tar.gz
 BuildRoot: %{_tmppath}/%{name}-%{version}-root
 
@@ -21,6 +20,7 @@ HTick is the FTN fileecho ticker from the Husky Project.
 %setup -q -n %{name}
 
 %build
+sed -i -re 's,OPTLFLAGS=-s,OPTLFLAGS=-s -static,g' huskymak.cfg
 make
 
 %install
