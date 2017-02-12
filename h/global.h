@@ -35,36 +35,37 @@
 #include <fidoconf/fidoconf.h>
 #include <huskylib/log.h>
 
-struct ticfiletype {
-                char *file;         /*  Name of the file affected by Tic */
-                char *altfile;      /*  alternative filename for duplicates */
-                char *area;         /*  Name of File Area */
-                char *areadesc;     /*  Description of File Area */
-                char **desc;        /*  Short Description of file */
-                unsigned int anzdesc;        /*  Number of Desc Lines */
-                char *replaces;     /*  Replaces File */
-                int size;           /*  Size of file */
-                unsigned long crc;  /*  CRC of File */
-                int crc_is_present; /*  If CRC is present in file, for tic w/o CRC */
-                unsigned long date; /*  Date */
-                hs_addr from;        /*  From Addr */
-                hs_addr to;          /*  To Addr */
-                hs_addr origin;      /*  Origin */
-                char *password;     /*  Password */
-                char **ldesc;       /*  Array of Pointer to Strings with ldescs */
-                unsigned int anzldesc;       /*  Number of Ldesc Lines */
-                hs_addr *seenby;     /*  Array of Pointer to Seenbys */
-                unsigned int anzseenby;      /*  Number of seenbys */
-                char **path;        /*  Array of Pointer to Strings with Path */
-                unsigned int anzpath;        /*  Numer of Path lines */
-                };
+struct ticfiletype
+{
+    char *file;             /*  Name of the file affected by Tic */
+    char *altfile;          /*  alternative filename for duplicates */
+    char *area;             /*  Name of File Area */
+    char *areadesc;         /*  Description of File Area */
+    char **desc;            /*  Short Description of file */
+    unsigned int anzdesc;   /*  Number of Desc Lines */
+    char *replaces;         /*  Replaces File */
+    int size;               /*  Size of file */
+    unsigned long crc;      /*  CRC of File */
+    int crc_is_present;     /*  If CRC is present in file, for tic w/o CRC */
+    unsigned long date;     /*  Date */
+    hs_addr from;           /*  From Addr */
+    hs_addr to;             /*  To Addr */
+    hs_addr origin;         /*  Origin */
+    char *password;         /*  Password */
+    char **ldesc;           /*  Array of Pointer to Strings with ldescs */
+    unsigned int anzldesc;  /*  Number of Ldesc Lines */
+    hs_addr *seenby;        /*  Array of Pointer to Seenbys */
+    unsigned int anzseenby; /*  Number of seenbys */
+    char **path;            /*  Array of Pointer to Strings with Path */
+    unsigned int anzpath;   /*  Numer of Path lines */
+};
 
 typedef struct ticfiletype s_ticfile;
 
 
 extern s_log     *htick_log;
 extern s_fidoconfig *config;
-extern unsigned char quiet;	/* Quiet mode */
+extern unsigned char quiet; /* Quiet mode */
 extern char         *cfgFile;
 extern s_robot      *robot;
 
@@ -99,6 +100,10 @@ extern int  lock_fd;
 
 extern hs_addr afixAddr;
 extern char *afixCmd;
+extern hs_addr relinkFromAddr;
+extern hs_addr relinkToAddr;
+extern char *relinkPattern;
+extern char *resubscribePatternFile;
 
 
 #endif

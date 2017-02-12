@@ -75,6 +75,7 @@
 
 /* areafix library */
 #include <areafix/areafix.h>
+#include <areafix/afglobal.h>
 
 /* htick */
 #include <htick.h>
@@ -86,10 +87,6 @@
 #include <filelist.h>
 #include <htickafix.h>
 #include "report.h"
-
-hs_addr relinkFromAddr;
-hs_addr relinkToAddr;
-char *relinkPattern;
 
 int processHatchParams( int i, int argc, char **argv )
 {
@@ -191,9 +188,10 @@ void start_help( void )
           " relink <pattern> <addr> Refresh subscription for fileareas matching pattern\n"
           " relink -f [file] <addr> Refresh subscription for fileareas listed in the file\n"
           " resubscribe <pattern> <fromaddr> <toaddr> - move subscription of areas\n"
-          "                         matching pattern from one link to another\n"
+          "                         matching the pattern from one link to another\n"
           " resubscribe -f [file] <fromaddr> <toaddr> - move subscription of areas\n"
-          "                         listed in the file from one link to another\n"
+          "                         matching area patterns listed in this file with one\n"
+          "                         pattern on a line from one link to another\n"
           " clean                   Clean passthrough dir and old files in fileechos\n"
           " announce                Announce new files\n"
           " send <file> <filearea> <address> Send file from filearea to address\n"
@@ -215,16 +213,15 @@ void start_help( void )
           "                             <dirlist> - list of paths to files from filelist\n" );
 }
 
-int processCommandLine( int argc, char **argv )
+e_exitCode processCommandLine( int argc, char **argv )
 {
   int i = 0;
-  int rc = 1;
-
+  e_exitCode rc = ex_OK;
 
   if( argc == 1 )
   {
     start_help(  );
-    return 0;
+    return ex_Help;
   }
 
   while( i < argc - 1 )
@@ -233,12 +230,12 @@ int processCommandLine( int argc, char **argv )
     if( !strcmp( argv[i], "-h" ) )
     {
       start_help(  );
-      return 0;
+      return ex_Help;
     }
     if( !strcmp( argv[i], "-v" ) )
     {
       printf( "%s", versionStr );
-      return 0;
+      return ex_Help;
     }
     if( !strcmp( argv[i], "-q" ) )
     {
@@ -251,7 +248,10 @@ int processCommandLine( int argc, char **argv )
       if( argv[i] != NULL )
         xstrcat( &cfgFile, argv[i] );
       else
-        printf( "parameter missing after \"%s\"!\n", argv[i - 1] );
+	  {
+        fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i - 1]);
+		rc = ex_Error;
+	  }
       continue;
     }
     if( stricmp( argv[i], "toss" ) == 0 )
@@ -289,7 +289,10 @@ int processCommandLine( int argc, char **argv )
           xstrcat( &afixCmd, argv[i] );
         }
         else
-          printf( "parameter missing after \"%s\"!\n", argv[i] );
+		{
+          fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i]);
+		  rc = ex_Error;
+		}
       }
       cmAfix = 1;
       continue;
@@ -306,7 +309,10 @@ int processCommandLine( int argc, char **argv )
           xstrcat( &afixCmd, argv[i] );
         }
         else
-          printf( "parameter missing after \"%s\"!\n", argv[i] );
+		{
+          fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i]);
+		  rc = ex_Error;
+		}
       }
       cmNotifyLink = 1;
       cmAfix = 1;
@@ -322,39 +328,84 @@ int processCommandLine( int argc, char **argv )
         {
           i++;
           parseFtnAddrZS( argv[i], &relinkFromAddr );
-          cmRelink = 1;
+          cmRelink = modeRelink;
         }
         else
-          printf( "address missing after \"%s\"!\n", argv[i] );
+		{
+          fprintf(stderr, "Address missing after \"%s\"!\n", argv[i]);
+		  rc = ex_Error;
+		}
       }
       else
-        printf( "pattern missing after \"%s\"!\n", argv[i] );
+	  {
+        fprintf(stderr, "Pattern missing after \"%s\"!\n", argv[i]);
+		rc = ex_Error;
+	  }
       continue;
     }
     else if( stricmp( argv[i], "resubscribe" ) == 0 )
     {
-      if( i < argc - 1 )
+      if (i < argc-1)
       {
         i++;
-        xstrcat( &relinkPattern, argv[i] );
-        if( i < argc - 1 )
+        if (stricmp(argv[i], "-f") == 0)
         {
-          i++;
-          parseFtnAddrZS( argv[i], &relinkFromAddr );
-          if( i < argc - 1 )
+          if (i < argc-1)
           {
             i++;
-            parseFtnAddrZS( argv[i], &relinkToAddr );
-            cmRelink = 2;
+            if (fexist(argv[i]))
+            {
+              if (fsize(argv[i]) == 0)
+			  {
+                fprintf(stderr, "File \"%s\" is empty\n", argv[i]);
+				rc = ex_Error;
+              }
+              xstrcat(&resubscribePatternFile, argv[i]);
+              cmRelink = modeResubsribeWithFile;
+            }
+            else
+            {
+              fprintf(stderr, "File \"%s\" does not exist\n", argv[i]);
+			  rc = ex_Error;
+            }
           }
           else
-            printf( "address missing after \"%s\"!\n", argv[i] );
+          {
+            fprintf(stderr, "Path missing after -f\n");
+			rc = ex_Error;
+          }
         }
         else
-          printf( "address missing after \"%s\"!\n", argv[i] );
+        {
+          xstrcat(&relinkPattern, argv[i]);
+          cmRelink = modeResubsribeWithPattern;
+        }
+        if (i < argc-1)
+        {
+          i++;
+          parseFtnAddrZS(argv[i], &relinkFromAddr);
+          if (i < argc-1)
+          {
+            i++;
+            parseFtnAddrZS(argv[i], &relinkToAddr);
+          }
+          else
+          {
+            fprintf(stderr, "Address missing after \"%s\"!\n", argv[i]);
+            rc = ex_Error;
+          }
+        }
+        else
+        {
+          fprintf(stderr, "Address missing after \"%s\"!\n", argv[i]);
+          rc = ex_Error;
+        }
       }
       else
-        printf( "pattern missing after \"%s\"!\n", argv[i] );
+      {
+        fprintf(stderr, "Pattern missing after \"%s\"!\n", argv[i]);
+        rc = ex_Error;
+      }
     }
     else if( stricmp( argv[i], "send" ) == 0 )
     {
@@ -395,7 +446,8 @@ int processCommandLine( int argc, char **argv )
       }
       else
       {
-        fprintf( stderr, "Insufficient number of arguments\n" );
+        fprintf(stderr, "Insufficient number of arguments\n");
+		rc = ex_Error;
       }
       continue;
     }
@@ -406,11 +458,11 @@ int processCommandLine( int argc, char **argv )
     }
     else
     {
-      fprintf( stderr, "Unrecognized Commandline Option %s!\n", argv[i] );
-      rc = 0;
+      fprintf(stderr, "Unrecognized command line option %s!\n", argv[i]);
+      rc = ex_Error;
     }
 
-  }                             /* endwhile */
+  } /* endwhile */
   return rc;
 }
 
@@ -517,12 +569,15 @@ int main( int argc, char **argv )
 {
   struct _minf m;
   int rc = 0;
+  e_exitCode res;
 
   versionStr = GenVersionStr( "htick", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date );
 
-
-  if( processCommandLine( argc, argv ) == 0 )
-    exit( 1 );
+  res = processCommandLine( argc, argv );
+  if( res == ex_Error )
+    return EX_USAGE;
+  else if( res == ex_Help )
+    return EX_OK;
   processConfig(  );
 
   if( !( config->netMailAreas ) )
@@ -565,11 +620,68 @@ int main( int argc, char **argv )
     ffix( afixAddr, afixCmd );
   if( cmAnnounce && config->announceSpool != NULL )
     report(  );
-  if( cmRelink == 1 )
-    relink( 0, relinkPattern, relinkFromAddr, relinkToAddr );
-  else if( cmRelink == 2 )
-    relink( 1, relinkPattern, relinkFromAddr, relinkToAddr );
-  nfree( relinkPattern );
+
+  if (cmRelink != modeNone)
+  {
+    int ret;
+    FILE *f;
+    char *line, *fromCmd = NULL, *toCmd = NULL, *toPrint = NULL;
+    unsigned int count = 0;
+    
+    w_log(LL_START, "%s has started", cmRelink == modeRelink ? "Relinking" : "Resubscribing");
+    if (cmRelink != modeResubsribeWithFile)
+    {
+      /* modeRelink or modeResubsribeWithPattern */
+      ret = relink(cmRelink, relinkPattern, relinkFromAddr, relinkToAddr, &fromCmd, &toCmd, &count);
+      nfree(relinkPattern);
+      if (ret)
+        return 1;
+    }
+    else
+    {
+      /* modeResubsribeWithFile */
+      f = fopen(resubscribePatternFile, "r");
+      if (f == NULL)
+      {
+        fprintf(stderr, "Cannot open file \"%s\"!\n", resubscribePatternFile);
+        nfree(resubscribePatternFile);
+        return 1;
+      }
+      else
+      {
+        while ((line = readLine(f)) != NULL)
+        {
+          xstrcat(&relinkPattern, line);
+          ret = relink(cmRelink, relinkPattern, relinkFromAddr, relinkToAddr, &fromCmd, &toCmd, &count);
+          nfree(relinkPattern);
+          if (ret)
+          {
+            nfree(resubscribePatternFile);
+            return 1;
+          }
+        }
+        nfree(resubscribePatternFile);
+      }
+    }
+    if (fromCmd)
+    {
+      if (cmRelink == modeRelink)
+        sendRelinkMsg(cmRelink, relinkFromAddr, fromCmd, smodeSubscribe);
+      else
+        sendRelinkMsg(cmRelink, relinkFromAddr, fromCmd, smodeUnsubscribe);
+      nfree(fromCmd);
+    }
+    if (toCmd)
+    {
+      sendRelinkMsg(cmRelink, relinkToAddr, toCmd, smodeSubscribe);
+      nfree(toCmd);
+    }
+    xscatprintf(&toPrint, "%i ", count);
+    count == 1 ? xscatprintf(&toPrint, "%s has been ", af_robot->strA) : xscatprintf(&toPrint, "%ses have been", af_robot->strA);
+    w_log(LL_AREAFIX, "%s %s", toPrint, cmRelink == modeRelink ? "relinked" : "resubscribed");
+    nfree(toPrint);
+  }
+
   nfree( afixCmd );
   nfree( flistfile );
   nfree( dlistfile );

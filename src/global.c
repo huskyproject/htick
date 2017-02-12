@@ -32,6 +32,8 @@
 
 #include <string.h>
 
+#include <fidoconf/fidoconf.h>
+#include <areafix/areafix.h>
 #include <global.h>
 
 s_log *htick_log;
@@ -49,8 +51,8 @@ int cmSend = 0;
 int cmFlist = 0;
 int cmClean = 0;
 int cmAfix = 0;
-int cmRelink = 0;
 int cmNotifyLink = 0;
+e_relinkType cmRelink = modeNone;
 
 char *flistfile = NULL;
 char *dlistfile = NULL;
@@ -72,3 +74,7 @@ int lock_fd;
 
 hs_addr afixAddr = { 0 };
 char *afixCmd = NULL;
+hs_addr relinkFromAddr = {0,0,0,0};
+hs_addr relinkToAddr = {0,0,0,0};
+char *relinkPattern = NULL;
+char *resubscribePatternFile = NULL;
