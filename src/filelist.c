@@ -40,6 +40,8 @@
 #include <fidoconf/common.h>
 #include <fidoconf/afixcmd.h>
 
+#include <areafix/areafix.h>
+
 #include "add_desc.h"
 #include "global.h"
 #include "fcommon.h"

@@ -49,6 +49,8 @@
 #include <huskylib/recode.h>
 #include <huskylib/crc.h>
 
+#include <areafix/areafix.h>
+
 /*  htick  */
 #include <filecase.h>
 #include <seenby.h>

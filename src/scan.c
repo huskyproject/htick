@@ -42,6 +42,7 @@
 #include <huskylib/xstr.h>
 #include <huskylib/recode.h>
 #include <huskylib/log.h>
+#include <areafix/areafix.h>
 
 #include <fcommon.h>
 #include <scan.h>

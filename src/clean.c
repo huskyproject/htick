@@ -54,6 +54,7 @@
 #include <fidoconf/common.h>
 #include <huskylib/dirlayer.h>
 #include <huskylib/tree.h>
+#include <areafix/areafix.h>
 
 #include "toss.h"
 #include "htick.h"

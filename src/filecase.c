@@ -47,6 +47,8 @@
 /* fidoconf */
 #include <fidoconf/common.h>
 
+#include <areafix/areafix.h>
+
 /* htick */
 #include <global.h>
 #include <filecase.h>

@@ -64,6 +64,8 @@
 #include <fidoconf/fidoconf.h>
 #include <fidoconf/common.h>
 
+#include <areafix/areafix.h>
+
 #include <fcommon.h>
 #include <global.h>
 #include <toss.h>
