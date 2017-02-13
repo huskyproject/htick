@@ -20,7 +20,7 @@ HTick is the FTN fileecho ticker from the Husky Project.
 %setup -q -n %{name}
 
 %build
-sed -i -re 's,OPTLFLAGS=-s,OPTLFLAGS=-s -static,g' huskymak.cfg
+#sed -i -re 's,OPTLFLAGS=-s,OPTLFLAGS=-s -static,g' huskymak.cfg
 make
 
 %install
