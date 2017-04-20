@@ -2,10 +2,13 @@
 #
 # h-tick log analyzer
 #   by Dmitry Pankov (2:5022/81)
-#
+# 
 # Based on
 #   hptlogstat.pl by Yuriy Daybov (2:5029/42)
 #   dmstat.pl by Eugene Barbashin (2:5030/920)
+#
+# Updated for htick 1.9.0-cur
+#   by Alexander Kruglikov (2:5053/58)
 #
 # Usage:
 #   Set $logname to point to your H-Tick logfile. Then call the script:
@@ -27,7 +30,7 @@ my $totals = 0;
 my $totalq = 0;
 
 #$logname = "c:\\fido\\logs\\htick.log";
-$logname = "/fido/log/htick.log";
+$logname = "/home/fido/htick.log";
 
 # this hash is used, when converting verbose months to numeral (Jan = 0)
 @months{qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)} = (0..11);
@@ -70,7 +73,7 @@ while (<LOG>) {
 #    }
 # ######################################
     if ($from) {
-        if (/size: (\d+) area: (\S+) from: (\S+)/) {
+        if (/size: (\d+), area: (\S+), from: (\S+),/) {
             $totals += $1;
             $totalq++;
             $cur_size = $1;
@@ -103,7 +106,7 @@ print   "+==============================================+==========+",
         "==============+";
 printf "\n|%16c%-29s | %8s | %12s |\n", 32, "Fileecho area", "Files", "Bytes";
 print   "+==============================================+==========+",
-        "==============+";
+        "==============+\n";
 
 foreach (sort (keys %areaq)) {
 #  printf "º %-44s ³ %8s ³ %12s º\n", $_, $areaq{$_}, $areas{$_};
