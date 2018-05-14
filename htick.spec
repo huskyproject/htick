@@ -4,7 +4,7 @@
 
 Name: htick
 Version: 1.9.%{reldate}%{reltype}
-Release: 1
+Release: 2%{?dist}
 Group: Applications/FTN
 Summary: HTick - the Husky Project fileecho ticker
 URL: http://husky.sf.net
@@ -32,4 +32,5 @@ rm -rf %{buildroot}
 
 %files
 %defattr(-,root,root)
-%{_prefix}/*
+%{_bindir}/*
+%{_mandir}/man1/*
