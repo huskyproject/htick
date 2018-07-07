@@ -23,6 +23,17 @@ Unix:
 	$ make
 	$ make install
 
+2.1. Compile with cmake:
+
+  $ mkdir build
+  $ cd build
+  $ cmake .. -DCFGDIR=/path/to/config/dir
+  $ cmake --build .
+  $ make install
+
+  make distrib rpm,deb,tgz:
+    cpack -G RPM, cpack -G DEB, cpack -G TGZ
+
 You're ready. If you have a working fidoconfig, you can now use htick under
 unix.
 
