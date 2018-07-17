@@ -64,7 +64,7 @@ message("Build type        : ${CMAKE_CONFIGURATION_TYPES}")
 message("-------------------------")
 
 ADD_EXECUTABLE(htick src/add_desc.c  src/clean.c  src/fcommon.c  src/filecase.c  src/filelist.c  src/global.c  src/hatch.c  src/htickafix.c  src/htick.c  src/report.c  src/scan.c  src/seenby.c  src/toss.c)
-target_link_libraries(htick ${areafix_LIB ${fidoconfig_LIB} ${smapi_LIB}} ${husky_LIB})
+target_link_libraries(htick ${areafix_LIB} ${fidoconfig_LIB} ${smapi_LIB} ${husky_LIB})
 
 if (hptzip_LIB)
   ADD_DEFINITIONS(-DUSE_HPTZIP=1 -DNOUNCRYPT -DNOCRYPT)
