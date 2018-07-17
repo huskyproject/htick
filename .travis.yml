@@ -69,14 +69,14 @@ script:
   - cmake .. ${CF} -DCPACK_DEBIAN_PACKAGE_MAINTAINER=travis-ci
   - cmake --build .
   - cpack
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G RPM; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G DEB; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.rpm; do mv $file
-  $(basename $file .rpm).${ARCH}.rpm; done; fi
-- if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.deb; do mv $file
-  $(basename $file .deb).${ARCH}.deb; done; fi
-- for file in *.tar.gz; do mv $file $(basename $file .tar.gz).${ARCH}.tar.gz;
-  done
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G RPM; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then cpack -G DEB; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.rpm; do mv $file
+    $(basename $file .rpm).${ARCH}.rpm; done; fi
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then for file in *.deb; do mv $file
+    $(basename $file .deb).${ARCH}.deb; done; fi
+  - for file in *.tar.gz; do mv $file $(basename $file .tar.gz).${ARCH}.tar.gz;
+    done
 deploy:
   provider: releases
   api_key: $GITHUB_OAUTH_TOKEN
