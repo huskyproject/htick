@@ -86,7 +86,7 @@ endif(hptzip_LIB)
   )
 if (NOT MSVC)
   set(CPACK_GENERATOR ${CPACK_GENERATOR} TGZ)
-else
+else()
   set(CPACK_GENERATOR ${CPACK_GENERATOR} 7Z)
 endif (NOT MSVC)
 
