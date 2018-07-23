@@ -85,6 +85,22 @@ endif(hptzip_LIB)
     LIBRARY DESTINATION lib
   )
 if (NOT MSVC)
+  include(GNUInstallDirs)
+  install(FILES "man/htick.1" DESTINATION "${CMAKE_INSTALL_MANDIR}/man1")
+  find_program(MAKEINFO NAMES makeinfo DOC "makeinfo tool")
+  if (MAKEINFO)
+    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/htick.html
+      COMMAND makeinfo --force --html --no-split -o ${PROJECT_BINARY_DIR}/htick.html ${CMAKE_CURRENT_SOURCE_DIR}/doc/htick.texi
+      COMMENT "Creating documentation from doc/hpt.texi"
+    )
+    add_custom_command(OUTPUT ${PROJECT_BINARY_DIR}/htick.rus.html
+      COMMAND makeinfo --force --html --no-split -o ${PROJECT_BINARY_DIR}/htick.rus.html ${CMAKE_CURRENT_SOURCE_DIR}/doc/htick.rus.texi
+      COMMENT "Creating documentation from doc/hpt.rus.texi"
+    )
+    add_custom_target(docs DEPENDS ${PROJECT_BINARY_DIR}/htick.html ${PROJECT_BINARY_DIR}/htick.rus.html)
+    install(FILES ${PROJECT_BINARY_DIR}/htick.html ${PROJECT_BINARY_DIR}/htick.rus.html DESTINATION ${CMAKE_INSTALL_DOCDIR})
+    add_dependencies(htick docs)
+  endif()
   set(CPACK_GENERATOR ${CPACK_GENERATOR} TGZ)
 else()
   set(CPACK_GENERATOR ${CPACK_GENERATOR} 7Z)
