@@ -118,7 +118,7 @@ groups for @code{FileEchoAreas}).
 @section Download the Source Code & Binary Files
 
 @table @asis
-@item Main page (releases, source code, latest beta versions) - @url{http://husky.sf.net/htick.html}
+@item Main page (releases, source code, latest beta versions) - @url{https://github.com/huskyproject/htick}
 @item Direct link to 'stable' branch sources: @url{http://husky.sf.net/cvs2/stable/}
 @item Direct link to 'current' (development) branch sources: @url{http://husky.sf.net/cvs2/current/}
 @end table
