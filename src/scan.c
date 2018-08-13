@@ -138,8 +138,8 @@ void scanNMArea( s_area * afixarea )
   {
 
     highMsg = MsgGetHighMsg( netmail );
-    w_log( '1', "Scanning %s", afixarea->areaName );
-
+    w_log( '1', "Scanning %lu messages of %s", highMsg, afixarea->areaName);    
+    
     /*  scan all Messages for filefix */
     for( i = 1; i <= highMsg; i++ )
     {
