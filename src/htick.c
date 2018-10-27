@@ -143,7 +143,10 @@ int processHatchParams( int i, int argc, char **argv )
 
       hatchInfo->replaces = sstrdup( basename );
     }
-    i++;
+    if(i < argc - 1)
+    {
+        i++;
+    }
   }
   if( stricmp( argv[i], "desc" ) != 0 )
     return 1;
