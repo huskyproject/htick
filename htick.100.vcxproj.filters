@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{8014c18e-12ad-4557-82b3-06c9840b871c}</UniqueIdentifier>
+      <Extensions>cpp;c;cxx;rc;def;r;odl;idl;hpj;bat</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{02fb8184-a190-46e4-b6ea-e1baf28bbd8d}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="src\add_desc.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\clean.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\fcommon.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\filecase.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\filelist.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\global.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\hatch.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\htick.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\htickafix.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\report.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\scan.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\seenby.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\toss.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="h\add_desc.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\areafix\areafix\afglobal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\areafix.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\fcommon.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\filecase.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\filelist.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\global.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\hatch.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\htick.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\report.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\scan.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\seenby.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\toss.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="h\version.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
