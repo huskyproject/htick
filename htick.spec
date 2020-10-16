@@ -10,7 +10,7 @@
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
-# dynamic libraries from other subprojects of Husky project
+# dynamic libraries from other subprojects of the Husky project
 %if %_vendor == "alt"
     %def_with static
     %global  __arch_install_post %nil
@@ -58,10 +58,10 @@ Summary: HTick - the Husky Project fileecho ticker
 URL: https://github.com/huskyproject/%main_name/archive/v%ver_major.%ver_minor.%reldate.tar.gz
 License: GPL
 %if %{with static}
-BuildRequires: huskylib-static >= 1.9, huskylib-devel >= 1.9
-BuildRequires: smapi-static >= 2.5, smapi-devel >= 1.9
-BuildRequires: fidoconf-static >= 1.9, fidoconf-devel >= 1.9
-BuildRequires: areafix-static >= 1.9, areafix-devel >= 1.9
+BuildRequires: huskylib-static >= 1.9, huskylib-static-devel >= 1.9
+BuildRequires: smapi-static >= 2.5, smapi-static-devel >= 1.9
+BuildRequires: fidoconf-static >= 1.9, fidoconf-static-devel >= 1.9
+BuildRequires: areafix-static >= 1.9, areafix-static-devel >= 1.9
 %else
 BuildRequires: huskylib >= 1.9, huskylib-devel >= 1.9
 BuildRequires: smapi >= 2.5, smapi-devel >= 1.9
