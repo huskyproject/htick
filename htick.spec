@@ -1,11 +1,11 @@
-%define ver_major 1
-%define ver_minor 9
-%define reldate 20201009
-%define reltype C
+%global ver_major 1
+%global ver_minor 9
+%global reldate 20201016
+%global reltype C
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%define relnum 3
+%global relnum 3
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
@@ -16,22 +16,22 @@
 %bcond_with debug
 
 # for generic build; will override for some distributions
-%define vendor_prefix %nil
-%define vendor_suffix %nil
-%define pkg_group Applications/FTN
+%global vendor_prefix %nil
+%global vendor_suffix %nil
+%global pkg_group Applications/FTN
 
 # for CentOS, Fedora and RHEL
 %if %_vendor == "redhat"
-%define vendor_suffix %dist
+%global vendor_suffix %dist
 %endif
 
 # for ALT Linux
 %if %_vendor == "alt"
-%define vendor_prefix %_vendor
-%define pkg_group Networking/FTN
+%global vendor_prefix %_vendor
+%global pkg_group Networking/FTN
 %endif
 
-%define main_name htick
+%global main_name htick
 %if %{with static}
 Name: %main_name-static
 %else
