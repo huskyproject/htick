@@ -46,6 +46,7 @@
 
 #include <fcommon.h>
 #include <scan.h>
+#include "version.h"
 #include <global.h>
 #include <htickafix.h>
 #include <toss.h>

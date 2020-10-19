@@ -42,6 +42,7 @@
 #include <areafix/areafix.h>    /* for print_ch() */
 
 #include "toss.h"
+#include "version.h"
 #include "global.h"
 #include "report.h"
 

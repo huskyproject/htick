@@ -56,6 +56,7 @@
 #include <seenby.h>
 #include <add_desc.h>
 #include <hatch.h>
+#include "version.h"
 #include <global.h>
 #include <fcommon.h>
 #include <toss.h>

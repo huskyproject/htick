@@ -50,6 +50,7 @@
 #include <areafix/areafix.h>
 
 /* htick */
+#include "version.h"
 #include <global.h>
 #include <filecase.h>
 

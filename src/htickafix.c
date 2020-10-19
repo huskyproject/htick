@@ -65,6 +65,7 @@
 
 /* htick */
 #include <fcommon.h>
+#include "version.h"
 #include <global.h>
 #include <toss.h>
 #include <htickafix.h>
