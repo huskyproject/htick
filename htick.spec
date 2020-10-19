@@ -57,6 +57,7 @@ Group: %pkg_group
 Summary: HTick - the Husky Project fileecho ticker
 URL: https://github.com/huskyproject/%main_name/archive/v%ver_major.%ver_minor.%reldate.tar.gz
 License: LGPLv2
+BuildRequires: gcc
 %if %{with static}
 BuildRequires: huskylib-static >= 1.9, huskylib-static-devel >= 1.9
 BuildRequires: smapi-static >= 2.5, smapi-static-devel >= 1.9
