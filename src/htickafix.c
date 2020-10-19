@@ -71,7 +71,6 @@
 #include <hatch.h>
 #include <scan.h>
 #include <add_desc.h>
-extern char *versionStr;
 
 #define AREA_ACCESS_OK        0
 #define AREA_ACCESS_NOGROUP   1

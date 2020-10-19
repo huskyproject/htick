@@ -95,8 +95,6 @@
 #include "hatch.h"
 #include "report.h"
 
-char *versionStr;
-
 /* tic keywords calculated crc (CCITT-16, polynom 0x1021) */
 
 #define CRC_CREATED      0xACDA /*0x4EC6 */

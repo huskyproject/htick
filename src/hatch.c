@@ -60,8 +60,6 @@
 #include <fcommon.h>
 #include <toss.h>
 
-char *versionStr;
-
 typedef enum _descrMacro
 { DESCRERROR = 0, BBSONELINE =
       1, BBSMLTLINE, DIZONELINE, DIZMLTLINE, FILONELINE, FILMLTLINE } descrMacro;

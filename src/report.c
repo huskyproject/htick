@@ -45,8 +45,6 @@
 #include "global.h"
 #include "report.h"
 
-char *versionStr;
-
 typedef struct
 {
   s_area *farea;

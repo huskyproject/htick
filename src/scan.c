@@ -50,8 +50,6 @@
 #include <htickafix.h>
 #include <toss.h>
 
-char *versionStr;
-
 void convertMsgHeader( XMSG xmsg, s_message * msg )
 {
   /*  convert header */
