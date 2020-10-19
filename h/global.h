@@ -88,7 +88,7 @@ extern e_relinkType cmRelink;
 extern char      *flistfile;
 extern char      *dlistfile;
 
-s_ticfile*       hatchInfo;
+extern s_ticfile * hatchInfo;
 
 extern char      sendfile[256];
 extern char      sendarea[256];
