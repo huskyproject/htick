@@ -80,6 +80,7 @@
 /* htick */
 #include <htick.h>
 #include <global.h>
+#include "../cvsdate.h"
 #include "version.h"
 #include <toss.h>
 #include <scan.h>

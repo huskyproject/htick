@@ -32,8 +32,6 @@
 #ifndef VERSION_H
 #define VERSION_H
 
-#include "cvsdate.h"
-
 /* basic version number */
 #define VER_MAJOR 1
 #define VER_MINOR 9
