@@ -6,14 +6,13 @@
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%global relnum 3
+%global relnum 4
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
 # dynamic libraries from other subprojects of the Husky project
 %if %_vendor == "alt"
     %def_with static
-    %global  __arch_install_post %nil
 %else
     %bcond_without static
 %endif
@@ -92,7 +91,6 @@ HTick is an FTN fileecho ticker from the Husky Project
         %make_build DYNLIBS=1
     %endif
 %endif
-echo Install-name1:%_rpmdir/%_arch/%name-%version-%release.%_arch.rpm > /dev/null
 
 %if %{with debug}
     %global __os_install_post %nil
