@@ -1,92 +1,220 @@
-.TH HTICK 1 "Husky Tick v1.1.0" "09 July 2002" "Husky - Portable Fido Software"
+.TH HTICK 1 "Husky Tick v1.9.0" "2020-11-04" "Husky - Portable Fido Software"
 .SH NAME
 htick \- Husky File-Ticker
 .SH SYNOPSIS
-.B htick [-q] [-c config-file] <command>
+.B htick [-h] [-v] [-q] [-c config-file] [<command>...]
+.SH "DESCRIPTION"
+.PP
+Htick is a part of Husky Fidonet software package. It handles thematic subscriptions to
+files. Each such subscription forms a file area also known as a file echo. Every file
+sent from a file echo to a subscribed sysop is accompanied with a ticket file with the
+filename extension .tic containing technical information which allows correct handling
+of the received file.
 .SH "OPTIONS"
 .B -h
-Print program name, version and usage information to screen and exit.
+- Print program name, version and usage information to screen and exit.
+.TP
 .B -v
-Print program name and version to screen and exit.
+- Print program name and version to screen and exit.
+.TP
 .B -q
-Quiet mode: don't print any messages to screen
+- Quiet mode: don't print any messages to screen
+.TP
 .B -c config-file
-Specify alternate config file
-.SH "DESCRIPTION"
-.SS "Tossen"
-.B htick
-reads *.tic Files in your Protected Inbound. According to the Information
-/fBhtick/fR gets out of that *.tic Files it will process the received archives
-and sort them into the filebase.
-.SS "FileFix"
-.B htick
-has a builtin FileFix. A FileFix helps your users to maintain their area-subscriptions
-without your interaction.
-.SS "Hatch"
-.B htick
-could send files to FileEchos. This is called "to /fIhatch/fR" a File.
-.SS "FileListe"
-.B htick
-makes a complete Filelist of your Filebase.
-.SS "Announce"
-.B htick
-could tell you and your neigbours which files arrived. It could announce to
-a specified echo or in a file (so you could process this file with some
-scripts....)
-.sp 2
-This manual page was written for the Debian GNU/Linux distribution
-because the original program does not have a manual page.
-.SH OPTIONS
-.SS "Main Commands"
-.B toss
-Reading *.tic and tossing files.
-.br
-.B scan
-Scanning Netmail area for mails to filefix.
-.br
-.B hatch <file> <area> [<description>]
-Hatch File <file> in in Area <area> with optional description.
-.br
-.B filelist <file> [<dirlist>]
-Generate filelist which includes all files in Filebase.
-<dirlist> - list of paths to files from filelist.
-.br
-.B send <file> <filearea> <address>
-Send file from filearea to address.
-.br
-.B clean
+- Specify an alternative config file
+.SS "COMMANDS"
+You may place several commands one after another with one exclusion: htick will
+not execute any other command after \fBhatch\fP.
+.IP \fBtoss\fP
+Read a *.tic file and move the file to which it refers to the directory of the
+file echo specified in the .tic file. After that the .tic is deleted.
+.IP
+If some errors preventing tossing are found during parsing the .tic, the .tic is
+renamed and tossing is not executed. If the .tic contains wrong password, it is
+renamed to .sec. If there is some error during reading the .tic, it is renamed
+to .acs. If the .tic has wrong format i.e. does not conform to specification,
+it is renamed to .bad. And if the .tic is not to us, it is renamed to .ntu.
+.IP "\fBtoss -b\fP"
+Try to toss ticket files with file extensions .sec, .acs, .bad and .ntu.
+It is assumed that you have already fixed the errors that led to the renaming
+of the files.
+.IP "\fBscan\fP"
+Scan the first netmail area for mails to filefix. If at least one such mail is
+found, the filefix commands contained in the mail are executed. See also the 
+\(dq\&FILEFIX COMMANDS\(dq\& section.
+.IP "\fBffix <address> <filefix command>\fP"
+Send the \fB<filefix command>\fP to our filefix from the name of \fB<address>\fP.
+Our filefix will send a reply to the \fB<filefix command>\fP to the \fB<address>\fP.
+All filefix commands are listed below in the \(dq\&FILEFIX COMMANDS\(dq\& section.
+.IP "\fBffix! <addr> <filefix command>\fP"
+Send the \fB<filefix command>\fP to our filefix from the name of \fB<address>\fP
+and also send the same command to the link's filefix. Our filefix will send a
+reply to the \fB<filefix command>\fP to the \fB<address>\fP. All filefix commands
+are listed below in the \(dq\&FILEFIX COMMANDS\(dq\& section.
+.IP "\fBrelink <pattern> <address>\fP"
+Refresh subscription for the areas matching the pattern. Htick sends to the
+filefix at the \fB<address>\fP a list of subscription commands for all file
+areas matching the \fB<pattern>\fP for which we are already subscribed and
+which are not paused.
+.IP "\fBresubscribe <pattern> <from-address> <to-address>\fP"
+Move subscription for the areas matching the pattern from one link to another.
+.IP "\fBresubscribe -f <file> <from-address> <to-address>\fP"
+Move subscription from one link to another of the areas matching the area
+patterns listed in this file with one pattern on a line.
+.IP "\fBclean\fP"
 Clean passthrough dir and old files in fileechos.
-.SS "Optional Commands"
-.B announce <area>
-Announce new files in area (toss and hatch).
-.br
-.B annfecho <file>
-Announce new fileecho in text file.
-.br
-.B replace [<filemask>]
-Hatch file into Area, using Description for file, if exist "replace",
-then fill replace field in TIC; if not exist <filemask>, then put <file>
-in field.
+.IP
+Every .tic file refers to some filename of a file we have received from a file
+echo. "htick \fBclean\fP" collects all such filenames to which .tic files in the directories
+defined by \fIbusyFileDir\fR and \fIticOutbound\fR refer and then checks every not .tic
+file in \fIpassFileAreaDir\fR if it is a member of the collection. All files not
+refered by any .tic are deleted.
+.IP
+A file echo declaration may have \fI-p <number of days>\fR option, which says
+that the files in the file echo older than the <number of days> should be
+purged. So the \fBclean\fP command deletes such files.
+.IP
+If \fISaveTic\fR statements are defined and contain \fI<DaysToKeepTics>\fR, the .tic
+files older than \fI<DaysToKeepTics>\fR are purged.
+.IP "\fBannounce\fP"
+Announce new files. For announcing to work you have to define \fIAnnounceSpool\fR in
+htick config. Announces are made to the echo defined in \fIReportTo\fR. If \fIReportTo\fR
+is not defined, then announces are sent to the first netmail area.
+.IP "\fBannfecho <file>\fP"
+Announce new file echos in the text file so you may process the file with a script.
+.IP "\fBsend <file> <filearea> <address>\fP"
+Send the file from the filearea to the address. It will be sent together with
+a freshly generated .tic so for the system at the <address> it will look as a
+regular file from the file echo.
+.IP "\fBhatch <file> <area> [replace [<filemask>]] [desc <desc> [<ldesc>]]\fP"
+Send the file to the file area together with a generated ticket file (with .tic
+filename extension). The \fBhatch\fP command should be the last one if several
+commands are used in one htick run, that is no other command is executed after
+the \fBhatch\fP.
+.IP
+.RS 7
+.IP \fB<file>\fP
+- the file to send (the parameter is mandatory);
+.IP \fB<area>\fP
+- the file area to which we want to send the file (the parameter is
+mandatory). All the rest parameters are optional;
+.IP "\fBreplace [<filemask>]\fP"
+- this option is used to replace file(s) sent to the same file echo earlier.
+\fB<filemask>\fP is the mask of the files that at subscriber systems will be
+replaced by the file we send now. If the \fB<filemask>\fP is omitted, then the
+filename coinsiding with the filename we send will be replaced at subscriber
+systems;
+.IP "\fBdesc <desc> [<ldesc>]\fP"
+- this option specifies the description of the sent file, \fB<desc>\fP is a short
+one-line description, and \fB<ldesc>\fP is a multi-line description;
+.IP
+You may use a string in single or double quotes as \fB<desc>\fP. You may also use the
+following macros:
+.RS 7
+.IP "\fB@@BBS\fP"
+- to substitute the first line from the \fIfiles.bbs\fR as \fB<desc>\fP;
+.IP "\fB@@DIZ\fP"
+- to substitute the first line from the \fIfile_id.diz\fR as \fB<desc>\fP;
+.IP "\fB@@<file>\fP"
+- to substitute the first line from the \fB<file>\fP as \fB<desc>\fP;
+.RE
+.IP
+You may use the following macros as \fB<ldesc>\fP:
+.RS 7
+.IP "\fB@BBS\fP"
+- to substitute the whole \fIfiles.bbs\fR file as \fB<ldesc>\fP;
+.IP "\fB@DIZ\fP"
+- to substitute the whole \fIfile_id.diz\fR file as \fB<ldesc>\fP;
+.IP "\fB@<file>\fP"
+- to substitute the whole \fB<file>\fP as \fB<ldesc>\fP.
+.RE
+There are some recommendations for hatching files to a file echo. It is better
+to add a file with the name \fIfile_id.diz\fR containing a short description of
+what you send. The lines in the file should not be longer than 45 characters
+and the number of lines is preferably no more than 10. Please put the file(s)
+you send together with \fIfile_id.diz\fR in a zip archive. The archive filename
+MUST be in 8.3 format. Good manners suggest that you use \fBdesc <desk>\fP
+at sending. You may also add \fB<ldesc>\fP if you wish. If you want to resend
+the archive you have already sent earlier, please do not forget to use \fBreplace [<filemask>]\fP.
+.RE
+.IP "\fBfilelist <file> [<dirlist>]\fP"
+Generate a file list and write it to the \fB<file>\fR. The file list includes
+all files of all not hidden file echos and files of your BBS. A file echo is hidden
+if its declaration contains \fB-hide\fP option. For every file echo or BBS file
+area the file list contains 3 items. The first one is file area name and
+description. The second one is a list of files in which for every file the
+following is specified: filename, file size, file date, file description. The
+third item is total number of files in the file area and their total size. And
+at the end we see the total number of files in all file areas and their total
+size. \fB<dirlist>\fR is a file to which a directory list of all file areas is
+written.
+.RE
+.SH "FILEFIX COMMANDS"
+Filefix is a robot supported by htick that allows handling subscription to
+file areas at an uplink system for a node or at the boss node for a point.
+In order to send a command to the filefix, the sysop writes a message to it,
+specifying the filefix password in the subject line, and the filefix commands
+in the body of the message, one command per line. One should put \fBFilefix\fP
+as an addressee name and the uplink (boss node) Fidonet address as its address.
+The \fBFilefix\fP name is case insensitive. Filefix commands received by our
+system from downlinks and points are handled by htick when it runs \fBhtick scan\fP.
+.PP
+Another option of using filefix commands is \fBhtick ffix <address> <filefix command>\fP.
+It allows us to run a filefix command from the name of the system with Fidonet address
+\fB<address>\fP. In this case, the sysop with the address \fB<address>\fP will receive
+the filefix response.
 
-.SH "RETURN VALUE"
-.B 0
-Success.
-.SH ERRORS
-.B 1
-Error.
-.SH FILES
-.br
-.nf
-.\" set tabstop to longest possible filename, plus a wee bit
-.ta \w'/fido/etc/config   'u
-\fI/fido/etc/config\fR  Default Fidoconfig.
-.SH NOTES
-All Husky-Software is written by various developers. For detailed information
-about the Husky-Team take a look at
-http://husky.sourceforge.net/team.html.
-.sp 1
-Not all features are implemented yet, you are welcome to implement them :)
-.SH AUTHOR
-This manual page was written by Joerg Jaspert (JJ) <joerg@goliathbbs.dnsalias.net>,
-for the Debian GNU/Linux system (but may be used by others).
-
+.IP "\fB%list\fP"
+- send me the list of available file areas.
+.IP "\fB%help\fP"
+- send me the list of filefix commands.
+.IP "\fB%unlinked\fP"
+- send me the list of not linked file areas.
+.IP "\fB%linked\fP"
+- send me the list of linked file areas.
+.IP "\fB%query\fP"
+- the same as \fB%linked\fP
+.IP "\fB%avail\fP"
+- send me the list of file areas available at your uplinks.
+.IP "\fB%pause\fP"
+- temporarily stop sending me files from file echos. Information
+about the subscription is not lost.
+.IP "\fB%resume\fP"
+- resume sending me files from file echos stopped previously by the \fB%pause\fP
+command.
+.IP "\fB%resend <file> <file area>\fP"
+- send me the \fB<file>\fP from \fB<file area>\fP.
+.IP "\fB+<file area mask>\fP"
+- subscribe me to the file areas matched by the \fB<file area mask>\fP.
+.IP "\fB<file area mask>\fP"
+- the same as \fB+<file area mask>\fP.
+.IP "\fB-<file area mask>\fP"
+- unsubscribe me from the file areas matched by the \fB<file area mask>\fP.
+.SH "EXIT STATUS"
+Htick returns 0 in case of success, 1 if help was printed and 2 in case of an error.
+.SH "EXAMPLES"
+.PP
+Send the file HCL70401.zip to \fIhusky\fR file echo accompanied by one-line
+description from \fIfile_id.diz\fR.
+.RS 4
+.PP
+htick hatch HCL70401.zip husky desc @@DIZ
+.RE
+.PP
+Send the file HCL70401.zip to \fIhusky\fR file echo accompanied by both one-line
+description from \fIfile_id.diz\fR and multi-line description from there.
+.RS 4
+.PP
+htick hatch HCL70401.zip husky desc @@DIZ @DIZ
+.PP
+.RE
+Send the file HCL70405.zip to \fIhusky\fR file echo replacing the file
+HCL70401.zip accompanied by both one-line description from \fIfile_id.diz\fR
+and multi-line description from there.
+.RS 4
+.PP
+htick hatch HCL70405.zip husky replace HCL70401.zip desc @@DIZ @DIZ
+.PP
+.RE
+.SH "SEE ALSO"
+info fidoconf, info htick
