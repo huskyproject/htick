@@ -97,13 +97,14 @@ extern char      announceArea[256];
 extern char      announcenewfileecho[256];
 
 extern int  lock_fd;
+extern int  silent_mode;
 
-extern hs_addr afixAddr;
-extern char *afixCmd;
-extern hs_addr relinkFromAddr;
-extern hs_addr relinkToAddr;
-extern char *relinkPattern;
-extern char *resubscribePatternFile;
+extern hs_addr  afixAddr;
+extern char     *afixCmd;
+extern hs_addr  relinkFromAddr;
+extern hs_addr  relinkToAddr;
+extern char     *relinkPattern;
+extern char     *resubscribePatternFile;
 
 
 #endif

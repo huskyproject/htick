@@ -647,7 +647,7 @@ int init_htickafix( void )
   af_app = &theApp;
   af_versionStr = versionStr;
   af_quiet = quiet;
-  af_silent_mode = 0;           /*silent_mode; */
+  af_silent_mode = silent_mode;
   af_report_changes = 0;        /*report_changes; */
   af_send_notify = cmNotifyLink;
   af_pause = FILEAREA;

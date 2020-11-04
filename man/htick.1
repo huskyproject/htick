@@ -42,15 +42,18 @@ of the files.
 Scan the first netmail area for mails to filefix. If at least one such mail is
 found, the filefix commands contained in the mail are executed. See also the 
 \(dq\&FILEFIX COMMANDS\(dq\& section.
-.IP "\fBffix <address> <filefix command>\fP"
+.IP "\fBffix [-f] [-s] <address> <filefix command>\fP"
 Send the \fB<filefix command>\fP to our filefix from the name of \fB<address>\fP.
 Our filefix will send a reply to the \fB<filefix command>\fP to the \fB<address>\fP.
 All filefix commands are listed below in the \(dq\&FILEFIX COMMANDS\(dq\& section.
+.RS 7
+.IP \fB-f\fP
+- also send the same command to the link's filefix
+.IP \fB-s\fP
+- do not send reply from our filefix to the link
+.RE
 .IP "\fBffix! <addr> <filefix command>\fP"
-Send the \fB<filefix command>\fP to our filefix from the name of \fB<address>\fP
-and also send the same command to the link's filefix. Our filefix will send a
-reply to the \fB<filefix command>\fP to the \fB<address>\fP. All filefix commands
-are listed below in the \(dq\&FILEFIX COMMANDS\(dq\& section.
+The same as \fBffix -f <addr> <command>\fP
 .IP "\fBrelink <pattern> <address>\fP"
 Refresh subscription for the areas matching the pattern. Htick sends to the
 filefix at the \fB<address>\fP a list of subscription commands for all file

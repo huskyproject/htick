@@ -178,24 +178,27 @@ int processHatchParams( int i, int argc, char **argv )
 void start_help( void )
 {
   printf( "%s\n", versionStr );
-  printf( "\nUsage: htick [options] <command>\n"
+  printf( "\nUsage: htick [options] [command]\n"
           "Options: -q              Quiet mode (display only urgent messages to console)\n"
+          "         -v              Print program name and version to screen and exit\n"
+          "         -h              Print program usage information to screen and exit\n"
           "         -c <conf-file>  Specify an alternative configuration file\n"
           "Commands:\n"
           " toss [annfecho <file>]  Do tossing. [Announce new fileechos in text file]\n"
           " toss -b                 Toss bad tics\n"
           " scan                    Scan netmail area for mails to filefix and process\n"
           "                         filefix commands contained inside the mails\n"
-          " ffix <addr> <command>   Process filefix command for address from command line\n"
-          " ffix! <addr> <command>  The same as 'ffix' and notify the link of the \n"
-          "                         processed filefix command\n"
-          " relink <pattern> <addr> Refresh subscription for fileareas matching pattern\n"
-          " relink -f [file] <addr> Refresh subscription for fileareas listed in the file\n"
-          " resubscribe <pattern> <fromaddr> <toaddr> - move subscription of areas\n"
-          "                         matching the pattern from one link to another\n"
-          " resubscribe -f [file] <fromaddr> <toaddr> - move subscription of areas\n"
-          "                         matching area patterns listed in this file with one\n"
-          "                         pattern on a line from one link to another\n"
+          " ffix [-f] [-s] <addr> <command> - Send command to our filefix from the name\n"
+          "                         of <addr>\n"
+          "                         -f - also send the same command to the link's filefix\n"
+          "                         -s - do not send reply from our filefix to the link\n"
+          " ffix! <addr> <command>  The same as 'ffix -f <addr> <command>'\n"
+          " relink <pattern> <addr> Refresh subscription for areas matching the pattern\n"
+          " resubscribe <pattern> <fromaddr> <toaddr> - move subscription from one link\n"
+          "                         to another for the areas matching the pattern\n"
+          " resubscribe -f file <fromaddr> <toaddr> - move subscription from one link\n"
+          "                         to another of the areas matching the area patterns\n"
+          "                         listed in this file with one pattern on a line\n"
           " clean                   Clean passthrough dir and old files in fileechos\n"
           " announce                Announce new files\n"
           " send <file> <filearea> <address> Send file from filearea to address\n"
@@ -238,7 +241,7 @@ e_exitCode processCommandLine( int argc, char **argv )
     }
     if( !strcmp( argv[i], "-v" ) )
     {
-      printf( "%s", versionStr );
+      printf( "%s\n", versionStr );
       return ex_Help;
     }
     if( !strcmp( argv[i], "-q" ) )
@@ -252,10 +255,10 @@ e_exitCode processCommandLine( int argc, char **argv )
       if( argv[i] != NULL )
         xstrcat( &cfgFile, argv[i] );
       else
-	  {
+      {
         fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i - 1]);
-		rc = ex_Error;
-	  }
+        rc = ex_Error;
+      }
       continue;
     }
     if( stricmp( argv[i], "toss" ) == 0 )
@@ -283,6 +286,19 @@ e_exitCode processCommandLine( int argc, char **argv )
     }
     else if( stricmp( argv[i], "ffix" ) == 0 )
     {
+      while ( i+1 < argc && *(argv[i+1]) == '-' )
+      {
+          i++;
+          if (stricmp(argv[i], "-f") == 0)
+              cmNotifyLink = 1;
+          else if (stricmp(argv[i], "-s") == 0)
+              silent_mode = 1;
+          else
+          {
+              fprintf(stderr, "Unknown afix option \"%s\"!\n", argv[i]);
+              rc = ex_Error;
+          }
+      }
       if( i < argc - 1 )
       {
         i++;
@@ -293,10 +309,10 @@ e_exitCode processCommandLine( int argc, char **argv )
           xstrcat( &afixCmd, argv[i] );
         }
         else
-		{
+        {
           fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i]);
-		  rc = ex_Error;
-		}
+          rc = ex_Error;
+        }
       }
       cmAfix = 1;
       continue;
@@ -313,10 +329,10 @@ e_exitCode processCommandLine( int argc, char **argv )
           xstrcat( &afixCmd, argv[i] );
         }
         else
-		{
+        {
           fprintf(stderr, "Parameter missing after \"%s\"!\n", argv[i]);
-		  rc = ex_Error;
-		}
+          rc = ex_Error;
+        }
       }
       cmNotifyLink = 1;
       cmAfix = 1;
@@ -335,16 +351,16 @@ e_exitCode processCommandLine( int argc, char **argv )
           cmRelink = modeRelink;
         }
         else
-		{
+        {
           fprintf(stderr, "Address missing after \"%s\"!\n", argv[i]);
-		  rc = ex_Error;
-		}
+          rc = ex_Error;
+        }
       }
       else
-	  {
+      {
         fprintf(stderr, "Pattern missing after \"%s\"!\n", argv[i]);
-		rc = ex_Error;
-	  }
+        rc = ex_Error;
+      }
       continue;
     }
     else if( stricmp( argv[i], "resubscribe" ) == 0 )
@@ -360,9 +376,9 @@ e_exitCode processCommandLine( int argc, char **argv )
             if (fexist(argv[i]))
             {
               if (fsize(argv[i]) == 0)
-			  {
+              {
                 fprintf(stderr, "File \"%s\" is empty\n", argv[i]);
-				rc = ex_Error;
+                rc = ex_Error;
               }
               xstrcat(&resubscribePatternFile, argv[i]);
               cmRelink = modeResubsribeWithFile;
@@ -370,13 +386,13 @@ e_exitCode processCommandLine( int argc, char **argv )
             else
             {
               fprintf(stderr, "File \"%s\" does not exist\n", argv[i]);
-			  rc = ex_Error;
+              rc = ex_Error;
             }
           }
           else
           {
             fprintf(stderr, "Path missing after -f\n");
-			rc = ex_Error;
+            rc = ex_Error;
           }
         }
         else
@@ -451,7 +467,7 @@ e_exitCode processCommandLine( int argc, char **argv )
       else
       {
         fprintf(stderr, "Insufficient number of arguments\n");
-		rc = ex_Error;
+        rc = ex_Error;
       }
       continue;
     }
@@ -631,7 +647,7 @@ int main( int argc, char **argv )
     FILE *f;
     char *line, *fromCmd = NULL, *toCmd = NULL, *toPrint = NULL;
     unsigned int count = 0;
-    
+
     w_log(LL_START, "%s has started", cmRelink == modeRelink ? "Relinking" : "Resubscribing");
     if (cmRelink != modeResubsribeWithFile)
     {
