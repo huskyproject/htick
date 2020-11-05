@@ -39,8 +39,9 @@ Try to toss ticket files with file extensions .sec, .acs, .bad and .ntu.
 It is assumed that you have already fixed the errors that led to the renaming
 of the files.
 .IP "\fBscan\fP"
-Scan the first netmail area for mails to filefix. If at least one such mail is
-found, the filefix commands contained in the mail are executed. See also the 
+Scan the \fIRobotsArea\fR for mails to filefix, or first netmail area if \fIRobotsArea\fR
+is not defined. If at least one such mail is found, the filefix commands
+contained in the mail are executed. See also the 
 \(dq\&FILEFIX COMMANDS\(dq\& section.
 .IP "\fBffix [-f] [-s] <address> <filefix command>\fP"
 Send the \fB<filefix command>\fP to our filefix from the name of \fB<address>\fP.
