@@ -28,7 +28,7 @@ _SRC_DIR= ../src/
 H_DIR   = ../h/
 
 # Header files
-HEADERS = $(H)add_desc.h $(H)htickafix.h $(H)cvsdate.h $(H)fcommon.h \
+HEADERS = $(H)add_desc.h $(H)htickafix.h ../cvsdate.h $(H)fcommon.h \
           $(H)filecase.h $(H)filelist.h $(H)global.h $(H)hatch.h $(H)htick.h \
           $(H)report.h $(H)scan.h $(H)seenby.h $(H)toss.h $(H)version.h
 
