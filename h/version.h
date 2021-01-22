@@ -11,7 +11,7 @@
  *
  * Vienna, Austria, Europe
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -31,13 +31,12 @@
 
 #ifndef VERSION_H
 #define VERSION_H
-
 /* basic version number */
 #define VER_MAJOR 1
 #define VER_MINOR 9
 #define VER_PATCH 0
 #define VER_BRANCH BRANCH_CURRENT
 
-extern char      *versionStr;
+extern char * versionStr;
 
 #endif

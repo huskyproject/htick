@@ -20,7 +20,7 @@
  * WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  * General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with HPT; see the file COPYING.  If not, write to the Free
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
@@ -34,114 +34,128 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-
 /*  compiler.h */
 #include <huskylib/compiler.h>
 
 #ifdef HAS_UNISTD_H
 # include <unistd.h>
 #endif
-
 /* smapi */
-
 /* fidoconf */
 #include <fidoconf/common.h>
 
 #include <areafix/areafix.h>
-
 /* htick */
 #include "version.h"
 #include <global.h>
 #include <filecase.h>
 
-static int dosallowin83( int c )
+static int dosallowin83(int c)
 {
-  static char dos_allow[] = "!@#$%^&()~`'-_{}.";
+    static char dos_allow[] = "!@#$%^&()~`'-_{}.";
 
-  if( ( c >= 'a' && c <= 'z' ) ||
-      ( c >= 'A' && c <= 'Z' ) || ( c >= '0' && c <= '9' ) || strchr( dos_allow, c ) )
-    return 1;
-  return 0;
+    if((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') ||
+       strchr(dos_allow, c))
+    {
+        return 1;
+    }
+
+    return 0;
 }
 
-
-int isDOSLikeName( char *name )
+int isDOSLikeName(char * name)
 {
-  int nl, el, ec, uc, lc, f;
-  char *p = name;
+    int nl, el, ec, uc, lc, f;
+    char * p = name;
 
-  if( !name )
-  {
-    w_log( LL_CRIT,
-           __FILE__
-           ":: Parameter is NULL: isDOSLikeName(%s). This is serious error in program, please report to developers.",
-           name ? "name" : "NULL" );
-    return 0;                   /* false */
-  }
-
-  nl = el = ec = uc = lc = 0;
-  f = 1;
-  while( *p )
-  {
-    if( !dosallowin83( *p ) )
+    if(!name)
     {
-      f = 0;
-      break;
+        w_log(LL_CRIT,
+              __FILE__ ":: Parameter is NULL: isDOSLikeName(%s). This is serious error in program, please report to developers.",
+              name ? "name" : "NULL");
+        return 0;               /* false */
     }
-    if( '.' == *p )
-      ec++;
+
+    nl = el = ec = uc = lc = 0;
+    f  = 1;
+
+    while(*p)
+    {
+        if(!dosallowin83(*p))
+        {
+            f = 0;
+            break;
+        }
+
+        if('.' == *p)
+        {
+            ec++;
+        }
+        else
+        {
+            if(!ec)
+            {
+                nl++;
+            }
+            else
+            {
+                el++;
+            }
+
+            if(isalpha(*p))
+            {
+                if(isupper(*p))
+                {
+                    uc++;
+                }
+                else
+                {
+                    lc++;
+                }
+            }
+        }
+
+        p++;
+    }
+    return f && ec < 2 && el < 4 && nl < 9 && (!lc || !uc);
+} /* isDOSLikeName */
+
+char * MakeProperCase(char * name)
+{
+    if(!name)
+    {
+        w_log(LL_CRIT,
+              __FILE__ ":: Parameter is NULL: MakeProperCase(%s). This is serious error in program, please report to developers.",
+              name ? "name" : "NULL");
+        return NULL;
+    }
+
+    if(isDOSLikeName(name))
+    {
+        switch(config->convertShortNames)
+        {
+            case cUpper:
+                return strUpper(name);
+
+            case cLower:
+                return strLower(name);
+
+            default:
+                return name;
+        }
+    }
     else
     {
-      if( !ec )
-        nl++;
-      else
-        el++;
-      if( isalpha( *p ) )
-      {
-        if( isupper( *p ) )
-          uc++;
-        else
-          lc++;
-      }
-    }
-    p++;
-  }
-  return ( f && ec < 2 && el < 4 && nl < 9 && ( !lc || !uc ) );
-}
+        switch(config->convertLongNames)
+        {
+            case cUpper:
+                return strUpper(name);
 
-char *MakeProperCase( char *name )
-{
-  if( !name )
-  {
-    w_log( LL_CRIT,
-           __FILE__
-           ":: Parameter is NULL: MakeProperCase(%s). This is serious error in program, please report to developers.",
-           name ? "name" : "NULL" );
-    return NULL;
-  }
+            case cLower:
+                return strLower(name);
 
-  if( isDOSLikeName( name ) )
-  {
-    switch ( config->convertShortNames )
-    {
-    case cUpper:
-      return strUpper( name );
-    case cLower:
-      return strLower( name );
-    default:
-      return name;
+            default:
+                return name;
+        }
     }
-  }
-  else
-  {
-    switch ( config->convertLongNames )
-    {
-    case cUpper:
-      return strUpper( name );
-    case cLower:
-      return strLower( name );
-    default:
-      return name;
-    }
-  }
-}
+} /* MakeProperCase */

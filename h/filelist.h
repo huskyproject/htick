@@ -5,7 +5,7 @@
 #include <huskylib/compiler.h>
 
 #include <fidoconf/fidoconf.h>
-#if defined(__TURBOC__) && defined(__DOS__)
+#if defined (__TURBOC__) && defined (__DOS__)
 typedef unsigned long off_t;
 #endif
 

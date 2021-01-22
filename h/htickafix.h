@@ -11,7 +11,7 @@
  *
  * Vienna, Austria, Europe
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -36,21 +36,21 @@
 
 #define FFERROR 255
 
-int   processFileFix(s_message *msg);
-void  ffix(hs_addr addr, char *cmd);
+int processFileFix(s_message * msg);
+void ffix(hs_addr addr, char * cmd);
 int init_htickafix(void);
 
 /* these two functions are to be removed from htick after merging filefix and */
 /* areafix */
+int e_readCheck(s_fidoconfig * config, s_area * echo, s_link * link);
 
-int e_readCheck(s_fidoconfig *config, s_area *echo, s_link *link);
 /*  '\x0000' access o'k */
 /*  '\x0001' no access group */
 /*  '\x0002' no access level */
 /*  '\x0003' no access export */
 /*  '\x0004' not linked */
+int e_writeCheck(s_fidoconfig * config, s_area * echo, s_link * link);
 
-int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link);
 /*  '\x0000' access o'k */
 /*  '\x0001' no access group */
 /*  '\x0002' no access level */
@@ -58,4 +58,4 @@ int e_writeCheck(s_fidoconfig *config, s_area *echo, s_link *link);
 /*  '\x0004' not linked */
 
 
-#endif
+#endif // ifndef _HTICKAFIX_H

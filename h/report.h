@@ -2,16 +2,16 @@
 /******************************************************************************
  * HTICK --- FTN Ticker / Request Processor
  ******************************************************************************
- * report.h : htick reporting 
+ * report.h : htick reporting
  *
  * Copyright (C) 2002 by
  *
  * Max Chernogor
  *
- * Fido:      2:464/108@fidonet 
- * Internet:  <mihz@mail.ru>,<mihz@ua.fm> 
+ * Fido:      2:464/108@fidonet
+ * Internet:  <mihz@mail.ru>,<mihz@ua.fm>
  *
- * This file is part of HTICK 
+ * This file is part of HTICK
  *
  * This is free software; you can redistribute it and/or modify it
  * under the terms of the GNU General Public License as published
@@ -30,17 +30,16 @@
  *****************************************************************************
  * $Id$
  */
-#ifndef	_REPORT_FLAG_
-#define	_REPORT_FLAG_
+#ifndef _REPORT_FLAG_
+#define _REPORT_FLAG_
 
 #include "fcommon.h"
-
 /* Save cut-down ticket file into special directory for future reports
  */
-void doSaveTic4Report(s_ticfile *tic);
+void doSaveTic4Report(s_ticfile * tic);
 
 /* Make thick report
  */
 void report();
 
-#endif 
+#endif

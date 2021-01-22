@@ -36,46 +36,45 @@
 #include <areafix/areafix.h>
 #include <global.h>
 
-s_log *htick_log;
-s_fidoconfig *config;
-unsigned char quiet = 0;
-char *cfgFile = NULL;
-s_robot *robot = NULL;
-
-char *versionStr = NULL;
-
-int cmToss = 0;
-int cmScan = 0;
-int cmHatch = 0;
-int cmSend = 0;
-int cmFlist = 0;
-int cmClean = 0;
-int cmAfix = 0;
-int cmNotifyLink = 0;
+s_log * htick_log;
+s_fidoconfig * config;
+unsigned char quiet   = 0;
+char * cfgFile        = NULL;
+s_robot * robot       = NULL;
+char * versionStr     = NULL;
+int cmToss            = 0;
+int cmScan            = 0;
+int cmHatch           = 0;
+int cmSend            = 0;
+int cmFlist           = 0;
+int cmClean           = 0;
+int cmAfix            = 0;
+int cmNotifyLink      = 0;
 e_relinkType cmRelink = modeNone;
-
-char *flistfile = NULL;
-char *dlistfile = NULL;
-
-s_ticfile *hatchInfo = NULL;
-
-
+char * flistfile      = NULL;
+char * dlistfile      = NULL;
+s_ticfile * hatchInfo = NULL;
 char sendfile[256];
 char sendarea[256];
 char sendaddr[256];
-
 int cmAnnounce = 0;
 char announceArea[256];
-
 int cmAnnNewFileecho = 0;
 char announcenewfileecho[256];
-
 int lock_fd;
-int silent_mode = 0;
-
-hs_addr afixAddr = { 0 };
-char *afixCmd = NULL;
-hs_addr relinkFromAddr = {0,0,0,0};
-hs_addr relinkToAddr = {0,0,0,0};
-char *relinkPattern = NULL;
-char *resubscribePatternFile = NULL;
+int silent_mode  = 0;
+hs_addr afixAddr =
+{
+    0
+};
+char * afixCmd         = NULL;
+hs_addr relinkFromAddr =
+{
+    0, 0, 0, 0
+};
+hs_addr relinkToAddr =
+{
+    0, 0, 0, 0
+};
+char * relinkPattern          = NULL;
+char * resubscribePatternFile = NULL;

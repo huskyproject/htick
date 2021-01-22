@@ -37,74 +37,64 @@
 
 struct ticfiletype
 {
-    char *file;             /*  Name of the file affected by Tic */
-    char *altfile;          /*  alternative filename for duplicates */
-    char *area;             /*  Name of File Area */
-    char *areadesc;         /*  Description of File Area */
-    char **desc;            /*  Short Description of file */
-    unsigned int anzdesc;   /*  Number of Desc Lines */
-    char *replaces;         /*  Replaces File */
-    int size;               /*  Size of file */
-    unsigned long crc;      /*  CRC of File */
-    int crc_is_present;     /*  If CRC is present in file, for tic w/o CRC */
-    unsigned long date;     /*  Date */
-    hs_addr from;           /*  From Addr */
-    hs_addr to;             /*  To Addr */
-    hs_addr origin;         /*  Origin */
-    char *password;         /*  Password */
-    char **ldesc;           /*  Array of Pointer to Strings with ldescs */
-    unsigned int anzldesc;  /*  Number of Ldesc Lines */
-    hs_addr *seenby;        /*  Array of Pointer to Seenbys */
-    unsigned int anzseenby; /*  Number of seenbys */
-    char **path;            /*  Array of Pointer to Strings with Path */
-    unsigned int anzpath;   /*  Numer of Path lines */
+    char *        file;           /*  Name of the file affected by Tic */
+    char *        altfile;        /*  alternative filename for duplicates */
+    char *        area;           /*  Name of File Area */
+    char *        areadesc;       /*  Description of File Area */
+    char **       desc;           /*  Short Description of file */
+    unsigned int  anzdesc;  /*  Number of Desc Lines */
+    char *        replaces;       /*  Replaces File */
+    int           size;           /*  Size of file */
+    unsigned long crc;            /*  CRC of File */
+    int           crc_is_present; /*  If CRC is present in file, for tic w/o CRC */
+    unsigned long date;           /*  Date */
+    hs_addr       from;           /*  From Addr */
+    hs_addr       to;             /*  To Addr */
+    hs_addr       origin;         /*  Origin */
+    char *        password;       /*  Password */
+    char **       ldesc;          /*  Array of Pointer to Strings with ldescs */
+    unsigned int  anzldesc; /*  Number of Ldesc Lines */
+    hs_addr *     seenby;         /*  Array of Pointer to Seenbys */
+    unsigned int  anzseenby; /*  Number of seenbys */
+    char **       path;           /*  Array of Pointer to Strings with Path */
+    unsigned int  anzpath;  /*  Numer of Path lines */
 };
 
 typedef struct ticfiletype s_ticfile;
-
-
-extern s_log     *htick_log;
-extern s_fidoconfig *config;
+extern s_log * htick_log;
+extern s_fidoconfig * config;
 extern unsigned char quiet; /* Quiet mode */
-extern char         *cfgFile;
-extern s_robot      *robot;
-
+extern char * cfgFile;
+extern s_robot * robot;
 /*  variables for config statements */
-
 /*  variables for commandline statements */
-
-extern int       cmToss;
-extern int       cmScan;
-extern int       cmHatch;
-extern int       cmSend;
-extern int       cmFlist;
-extern int       cmAnnounce;
-extern int       cmAnnNewFileecho;
-extern int       cmClean;
-extern int       cmAfix;
-extern int       cmNotifyLink;
+extern int cmToss;
+extern int cmScan;
+extern int cmHatch;
+extern int cmSend;
+extern int cmFlist;
+extern int cmAnnounce;
+extern int cmAnnNewFileecho;
+extern int cmClean;
+extern int cmAfix;
+extern int cmNotifyLink;
 extern e_relinkType cmRelink;
-
-extern char      *flistfile;
-extern char      *dlistfile;
-
+extern char * flistfile;
+extern char * dlistfile;
 extern s_ticfile * hatchInfo;
-
-extern char      sendfile[256];
-extern char      sendarea[256];
-extern char      sendaddr[256];
-extern char      announceArea[256];
-extern char      announcenewfileecho[256];
-
-extern int  lock_fd;
-extern int  silent_mode;
-
-extern hs_addr  afixAddr;
-extern char     *afixCmd;
-extern hs_addr  relinkFromAddr;
-extern hs_addr  relinkToAddr;
-extern char     *relinkPattern;
-extern char     *resubscribePatternFile;
+extern char sendfile[256];
+extern char sendarea[256];
+extern char sendaddr[256];
+extern char announceArea[256];
+extern char announcenewfileecho[256];
+extern int lock_fd;
+extern int silent_mode;
+extern hs_addr afixAddr;
+extern char * afixCmd;
+extern hs_addr relinkFromAddr;
+extern hs_addr relinkToAddr;
+extern char * relinkPattern;
+extern char * resubscribePatternFile;
 
 
-#endif
+#endif // ifndef GLOBAL_H

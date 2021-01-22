@@ -4,8 +4,8 @@
 
 #include "fcommon.h"
 
-int isDOSLikeName(char *name);
-char *MakeProperCase(char *name);
+int isDOSLikeName(char * name);
+char * MakeProperCase(char * name);
 
 
 #endif

@@ -11,7 +11,7 @@
  *
  * Vienna, Austria, Europe
  *
- * This file is part of HTICK, which is based on HPT by Matthias Tichy, 
+ * This file is part of HTICK, which is based on HPT by Matthias Tichy,
  * 2:2432/605.14 2:2433/1245, mtt@tichy.de
  *
  * HTICK is free software; you can redistribute it and/or modify it
@@ -32,10 +32,10 @@
 #ifndef HTICK_H
 #define HTICK_H
 
-#define LogFileName	"htick.log"
+#define LogFileName "htick.log"
 
-typedef enum exitCode { ex_OK, ex_Help, ex_Error } e_exitCode;
-e_exitCode processCommandLine(int argc, char **argv);
+typedef enum exitCode {ex_OK, ex_Help, ex_Error} e_exitCode;
+e_exitCode processCommandLine(int argc, char ** argv);
 void processConfig(void);
 void Purge(void);
 
