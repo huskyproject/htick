@@ -6,19 +6,19 @@
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%global relnum 5
+%global relnum 6
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
 # dynamic libraries from other subprojects of the Husky project
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %def_with static
 %else
     %bcond_without static
 %endif
 
 # if you use 'rpmbuild --with debug' then debug binary is produced
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %def_without debug
 %else
     %bcond_with debug
@@ -32,12 +32,12 @@
 %global pkg_group Applications/Communications
 
 # for CentOS, Fedora and RHEL
-%if %_vendor == "redhat"
+%if "%_vendor" == "redhat"
     %global vendor_suffix %dist
 %endif
 
 # for ALT Linux
-%if %_vendor == "alt"
+%if "%_vendor" == "alt"
     %global vendor_prefix %_vendor
     %global pkg_group Networking/FTN
 %endif
@@ -50,7 +50,7 @@ Name: %main_name
 %endif
 Version: %ver_major.%ver_minor.%reldate%reltype
 Release: %{vendor_prefix}%relnum%{vendor_suffix}
-%if %_vendor != "redhat"
+%if "%_vendor" != "redhat"
 Group: %pkg_group
 %endif
 Summary: HTick - the Husky Project fileecho ticker
