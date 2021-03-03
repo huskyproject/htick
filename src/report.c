@@ -123,12 +123,12 @@ void doSaveTic4Report(s_ticfile * tic)
 
     if(tic->origin.zone != 0)
     {
-        fprintf(tichandle, "Origin %s\r\n", aka2str(tic->origin));
+        fprintf(tichandle, "Origin %s\r\n", aka2str(&tic->origin));
     }
 
     if(tic->from.zone != 0)
     {
-        fprintf(tichandle, "From %s\r\n", aka2str(tic->from));
+        fprintf(tichandle, "From %s\r\n", aka2str(&tic->from));
     }
 
     if(tic->size != 0)
@@ -506,12 +506,12 @@ static void ReportOneFile(s_message * msg, ps_anndef pRepDef, s_ticfile * tic)
 
     if(pRepDef->annforigin && tic->origin.zone != 0)
     {
-        xscatprintf(&(msg->text), "%sOrig: %s\r", print_ch(24, ' '), aka2str(tic->origin));
+        xscatprintf(&(msg->text), "%sOrig: %s\r", print_ch(24, ' '), aka2str(&tic->origin));
     }
 
     if(pRepDef->annfrfrom && tic->from.zone != 0)
     {
-        xscatprintf(&(msg->text), "%sFrom: %s\r", print_ch(24, ' '), aka2str(tic->from));
+        xscatprintf(&(msg->text), "%sFrom: %s\r", print_ch(24, ' '), aka2str(&tic->from));
     }
 
     if(tic->altfile != NULL)

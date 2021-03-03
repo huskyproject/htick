@@ -247,14 +247,14 @@ char * resend(s_link * link, s_message * msg, char * cmd)
         }
         else
         {
-            rc = send(filename, filearea, aka2str(link->hisAka));
+            rc = send(filename, filearea, aka2str(&link->hisAka));
         }
 
         switch(rc)
         {
             case 0:
                 xscatprintf(&report, "Send %s from %s for %s\r", filename, filearea,
-                            aka2str(link->hisAka));
+                            aka2str(&link->hisAka));
                 break;
 
             case 1:
@@ -481,11 +481,11 @@ int processFileFix(s_message * msg)
 
     if(link)
     {
-        w_log(LL_AREAFIX, "FileFix: request from %s", aka2str(link->hisAka));
+        w_log(LL_AREAFIX, "FileFix: request from %s", aka2str(&link->hisAka));
     }
     else
     {
-        w_log(LL_ERR, "FileFix: No such link in config: %s!", aka2str(msg->origAddr));
+        w_log(LL_ERR, "FileFix: No such link in config: %s!", aka2str(&msg->origAddr));
     }
 
     /*  this is for me? */
@@ -499,7 +499,7 @@ int processFileFix(s_message * msg)
     {
         w_log(LL_AREAFIX,
               "Destination address (%s) of the message belongs to set of our addresses but differs from ourAka setting for link",
-              aka2str(msg->destAddr));
+              aka2str(&msg->destAddr));
         return 2;
     }
 
@@ -645,7 +645,7 @@ int processFileFix(s_message * msg)
         }
         RetMsg(msg, link, report, "security violation");
         /* free(report); */
-        w_log('8', "FileFix: security violation from %s", aka2str(link->hisAka));
+        w_log('8', "FileFix: security violation from %s", aka2str(&link->hisAka));
         free(tmplink);
         return 0;
     }
@@ -662,7 +662,7 @@ int processFileFix(s_message * msg)
         RetMsg(msg, link, report, "Filefix reply: node change request");
     }
 
-    w_log('8', "FileFix: successfully done for %s", aka2str(link->hisAka));
+    w_log('8', "FileFix: successfully done for %s", aka2str(&link->hisAka));
     /*  send msg to the links (forward requests to areafix) */
     sendAreafixMessages();
     return 1;
@@ -693,7 +693,7 @@ void ffix(hs_addr addr, char * cmd)
         }
         else
         {
-            w_log(LL_ERR, "FileFix: no such link in config: %s!", aka2str(addr));
+            w_log(LL_ERR, "FileFix: no such link in config: %s!", aka2str(&addr));
         }
     }
     else
@@ -784,7 +784,7 @@ void afReportAutoCreate(char * c_area, char * descr, hs_addr pktOrigAddr, ps_add
 
     if(cmAnnNewFileecho)
     {
-        announceNewFileecho(announcenewfileecho, c_area, aka2str(pktOrigAddr));
+        announceNewFileecho(announcenewfileecho, c_area, aka2str(&pktOrigAddr));
     }
 } /* afReportAutoCreate */
 

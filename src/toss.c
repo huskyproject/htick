@@ -270,17 +270,17 @@ int writeTic(char * ticfile, s_ticfile * tic)
 
     if(tic->from.zone != 0)
     {
-        fprintf(tichandle, "From %s\r\n", aka2str(tic->from));
+        fprintf(tichandle, "From %s\r\n", aka2str(&tic->from));
     }
 
     if(tic->to.zone != 0)
     {
-        fprintf(tichandle, "To %s\r\n", aka2str(tic->to));
+        fprintf(tichandle, "To %s\r\n", aka2str(&tic->to));
     }
 
     if(tic->origin.zone != 0)
     {
-        fprintf(tichandle, "Origin %s\r\n", aka2str(tic->origin));
+        fprintf(tichandle, "Origin %s\r\n", aka2str(&tic->origin));
     }
 
     if(tic->size >= 0)
@@ -306,7 +306,7 @@ int writeTic(char * ticfile, s_ticfile * tic)
 
     for(i = 0; i < tic->anzseenby; i++)
     {
-        fprintf(tichandle, "Seenby %s\r\n", aka2str(tic->seenby[i]));
+        fprintf(tichandle, "Seenby %s\r\n", aka2str(&tic->seenby[i]));
     }
 
     if(tic->password)
@@ -427,7 +427,7 @@ static int checkTic(const char * ticfilename, const s_ticfile * tic)
     }
     else if(!tic->to.zone || !tic->to.net)
     {
-        w_log(LL_ERR, "'To' address (%s) is illegal in TIC \"%s\"", aka2str(tic->to), ticfilename);
+        w_log(LL_ERR, "'To' address (%s) is illegal in TIC \"%s\"", aka2str(&tic->to), ticfilename);
         nRet++;
     }
 
@@ -1195,7 +1195,7 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
 
         tic->path = srealloc(tic->path, (tic->anzpath + 1) * sizeof(*tic->path));
         tic->path[tic->anzpath] = NULL;
-        xscatprintf(&tic->path[tic->anzpath], "%s %lu %s UTC %s", aka2str(*filearea->useAka),
+        xscatprintf(&tic->path[tic->anzpath], "%s %lu %s UTC %s", aka2str(filearea->useAka),
                     (unsigned long)time(NULL), timestr, versionStr);
         tic->anzpath++;
     }
@@ -1301,32 +1301,32 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
                     break;
 
                 case 5:
-                    w_log(LL_FROUTE, "Link %s is paused", aka2str(downlink->hisAka));
+                    w_log(LL_FROUTE, "Link %s is paused", aka2str(&downlink->hisAka));
                     break;
 
                 case 4:
                     w_log(LL_FROUTE,
                           "Link %s is not subscribed to File Area %s",
-                          aka2str(old_from),
+                          aka2str(&old_from),
                           tic->area);
                     break;
 
                 case 3:
                     w_log(LL_FROUTE, "No export (or write only) to link %s",
-                          aka2str(downlink->hisAka));
+                          aka2str(&downlink->hisAka));
                     break;
 
                 case 2:
                     w_log(LL_FROUTE,
                           "Link's %s level provides no access",
-                          aka2str(downlink->hisAka));
+                          aka2str(&downlink->hisAka));
                     break;
 
                 case 1:
                     w_log(LL_FROUTE,
                           "The group the area %s belongs to is neither in PublicGroup nor in link's %s AccessGrp",
                           filearea->areaName,
-                          aka2str(downlink->hisAka));
+                          aka2str(&downlink->hisAka));
                     break;
             }
 
@@ -1335,7 +1335,7 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
                 if(isToss == 1 && seenbyComp(old_seenby, old_anzseenby, downlink->hisAka) == 0)
                 {
                     w_log(LL_FROUTE, "File %s was already seen by %s", tic->file,
-                          aka2str(downlink->hisAka));
+                          aka2str(&downlink->hisAka));
                 }
                 else
                 {
@@ -1542,7 +1542,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
               "File \"%s\": size: not specified, area: %s, from: %s, orig: %s",
               tic.file,
               tic.area,
-              aka2str(tic.from),
+              aka2str(&tic.from),
               tic_origin = aka2str5d(tic.origin));
     }
     else
@@ -1552,7 +1552,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
               tic.file,
               tic.size,
               tic.area,
-              aka2str(tic.from),
+              aka2str(&tic.from),
               tic_origin = aka2str5d(tic.origin));
     }
 
@@ -1577,7 +1577,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
                           "Forward TIC \"%s\" (and file \"%s\") to %s",
                           ticfile,
                           tic.file,
-                          aka2str(tic.to));
+                          aka2str(&tic.to));
                     busy = 0;
 
                     if(createOutboundFileNameAka(to_link, to_link->fileEchoFlavour, FLOFILE,
@@ -1622,7 +1622,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
             }
 
             /* not to us and no forward */
-            w_log(LL_SECURITY, "Tic File addressed to %s, not to us", aka2str(tic.to));
+            w_log(LL_SECURITY, "Tic File addressed to %s, not to us", aka2str(&tic.to));
             disposeTic(&tic);
             return TIC_NotForUs;
         }
@@ -1633,7 +1633,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
 
     if(from_link == NULL)
     {
-        w_log(LL_SECURITY, "Tic from unknown link \"%s\".", aka2str(tic.from));
+        w_log(LL_SECURITY, "Tic from unknown link \"%s\".", aka2str(&tic.from));
         disposeTic(&tic);
         return TIC_Security;
     }
@@ -1641,7 +1641,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
     if(tic.password &&
        ((from_link->ticPwd == NULL) || (stricmp(tic.password, from_link->ticPwd) != 0)))
     {
-        w_log(LL_SECURITY, "Wrong Password \"%s\" from \"%s\"", tic.password, aka2str(tic.from));
+        w_log(LL_SECURITY, "Wrong Password \"%s\" from \"%s\"", tic.password, aka2str(&tic.from));
         disposeTic(&tic);
         return TIC_Security;
     }
@@ -1964,19 +1964,19 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
         case 4:
             w_log(LL_SECURITY,
                   "Link %s not subscribed to File Area %s",
-                  aka2str(tic.from),
+                  aka2str(&tic.from),
                   tic.area);
             disposeTic(&tic);
             return TIC_WrongTIC;
 
         case 3:
             w_log(LL_SECURITY, "No import (or read only) from link %s",
-                  aka2str(from_link->hisAka));
+                  aka2str(&from_link->hisAka));
             disposeTic(&tic);
             return TIC_WrongTIC;
 
         case 2:
-            w_log(LL_SECURITY, "Link's %s level provides no access", aka2str(from_link->hisAka));
+            w_log(LL_SECURITY, "Link's %s level provides no access", aka2str(&from_link->hisAka));
             disposeTic(&tic);
             return TIC_WrongTIC;
 
@@ -1984,7 +1984,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
             w_log(LL_SECURITY,
                   "The group the area %s belongs to is neither in PublicGroup nor in link's %s AccessGrp",
                   filearea->areaName,
-                  aka2str(from_link->hisAka));
+                  aka2str(&from_link->hisAka));
             disposeTic(&tic);
             return TIC_WrongTIC;
     }
@@ -2229,7 +2229,7 @@ void checkTmpDir(void)
 
                         fclose(flohandle);
                         w_log(LL_TIC, "Forwarding save file \"%s\" for %s", tic.file,
-                              aka2str(link->hisAka));
+                              aka2str(&link->hisAka));
                     }
                 }               /* if filearea */
             }                   /* if createFlo */
@@ -2440,7 +2440,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
     xstrscat(&textBuff,
              msg->text,
              "\rFROM: ",
-             aka2str(pktOrigAddr),
+             aka2str(&pktOrigAddr),
              "\rREASON: ",
              reason,
              "\r",
@@ -2486,7 +2486,7 @@ void writeMsgToSysop(s_message * msg, char * areaName, char * origin)
                 " \r--- %s\r * Origin: %s (%s)\r",
                 (config->tearline) ? config->tearline : "",
                 origin ? origin : (config->origin) ? config->origin : config->name,
-                aka2str(msg->origAddr));
+                aka2str(&msg->origAddr));
     msg->textLength = strlen(msg->text);
 
     if(msg->netMail == 1)

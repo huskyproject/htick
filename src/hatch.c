@@ -567,7 +567,7 @@ HATCH_SEND_RETURN_CODES send(char * filename, char * area, char * addr)
 
     tic.path = srealloc(tic.path, (tic.anzpath + 1) * sizeof(*tic.path));
     tic.path[tic.anzpath] = NULL;
-    xscatprintf(&tic.path[tic.anzpath], "%s %lu %s UTC %s", aka2str(*filearea->useAka),
+    xscatprintf(&tic.path[tic.anzpath], "%s %lu %s UTC %s", aka2str(filearea->useAka),
                 (unsigned long)time(NULL), timestr, versionStr);
     tic.anzpath++;
     /*  Adding Downlink to Seen-By */
