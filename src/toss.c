@@ -1288,9 +1288,9 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
     {
         s_link * downlink = filearea->downlinks[i]->link;
 
-        if(addrComp(old_from,
-                    downlink->hisAka) != 0 &&
-           addrComp(old_to, downlink->hisAka) != 0 && addrComp(tic->origin, downlink->hisAka) != 0)
+        if(addrComp(&old_from, &(downlink->hisAka)) != 0 &&
+           addrComp(&old_to, &(downlink->hisAka)) != 0 &&
+           addrComp(&(tic->origin), &(downlink->hisAka)) != 0)
         {
             /* Forward file to */
             readAccess = e_readCheck(config, filearea, downlink);

@@ -235,7 +235,7 @@ char * resend(s_link * link, s_message * msg, char * cmd)
 
         for(i = 0; i < area->downlinkCount; i++)
         {
-            if(addrComp(msg->origAddr, area->downlinks[i]->link->hisAka) == 0)
+            if(addrComp(&(msg->origAddr), &(area->downlinks[i]->link->hisAka)) == 0)
             {
                 rc = 0;
             }
@@ -491,7 +491,7 @@ int processFileFix(s_message * msg)
     /*  this is for me? */
     if(link != NULL)
     {
-        notforme = addrComp(msg->destAddr, *link->ourAka);
+        notforme = addrComp(&(msg->destAddr), link->ourAka);
     }
 
     /*  ignore msg for other link (maybe this is transit...) */

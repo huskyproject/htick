@@ -38,7 +38,7 @@ int seenbyComp(hs_addr * seenby, int anzseenby, hs_addr Aka)
 
     for(i = 0; i < anzseenby; i++)
     {
-        if(addrComp(seenby[i], Aka) == 0)
+        if(addrComp(&seenby[i], &Aka) == 0)
         {
             return 0;
         }
