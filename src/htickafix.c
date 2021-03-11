@@ -646,7 +646,7 @@ int processFileFix(s_message * msg)
         RetMsg(msg, link, report, "security violation");
         /* free(report); */
         w_log('8', "FileFix: security violation from %s", aka2str(&link->hisAka));
-        free(tmplink);
+        nfree(tmplink);
         return 0;
     }
 

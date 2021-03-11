@@ -84,7 +84,7 @@ void convertMsgText(HMSG SQmsg, s_message * msg, hs_addr ourAka)
     ctrlBuff = (unsigned char *)smalloc(ctrlLen + 1);
     MsgReadMsg(SQmsg, NULL, 0, 0, NULL, ctrlLen, ctrlBuff);
     kludgeLines = (char *)CvtCtrlToKludge(ctrlBuff);
-    free(ctrlBuff);
+    nfree(ctrlBuff);
     /*  make text */
     msg->textLength = MsgGetTextLen(SQmsg);
     time(&tm);
@@ -121,7 +121,7 @@ void convertMsgText(HMSG SQmsg, s_message * msg, hs_addr ourAka)
         recodeToInternalCharset((char *)msg->text);
     }
 
-    free(kludgeLines);
+    nfree(kludgeLines);
 } /* convertMsgText */
 
 void scanNMArea(s_area * afixarea)

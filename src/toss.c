@@ -176,7 +176,7 @@ void writeNetmail(s_message * msg, char * areaName)
                         len,
                         strlen(ctrlBuf) + 1,
                         (UCHAR *)ctrlBuf);
-            free(ctrlBuf);
+            nfree(ctrlBuf);
             MsgCloseMsg(msgHandle);
             w_log(LL_POSTING,
                   "Wrote Netmail to: %u:%u/%u.%u",
@@ -1440,7 +1440,7 @@ int hidden(char * filename)
     }
     *q = '\0';
     DosQueryPathInfo((PSZ)backslashified, 1, &fstat3, sizeof(fstat3));
-    free(backslashified);
+    nfree(backslashified);
     return fstat3.attrFile & FILE_HIDDEN;
 
 # else  /* if (defined (__TURBOC__) && !defined (__OS2__)) || defined (__DJGPP__) */
