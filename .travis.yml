@@ -1,9 +1,5 @@
 language: c
 
-branches:
-  only:
-    - master
-    - /^htick-.*/
 matrix:
   fast_finish: true
   include:
