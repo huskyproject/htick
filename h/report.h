@@ -40,6 +40,6 @@ void doSaveTic4Report(s_ticfile * tic);
 
 /* Make thick report
  */
-void report();
+void report(void);
 
 #endif
