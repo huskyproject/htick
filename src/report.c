@@ -640,7 +640,7 @@ static void reportNewFiles()
                 {
                     *cp = '\n';
                 }
-                fprintf(rp, msg->text); /* Automatic translate "\n" to "\015\012" */
+                fprintf(rp, "%s", msg->text); /* Automatic translate "\n" to "\015\012" */
                 w_log(LL_FLAG, "Created report file: %s", msg->subjectLine);
                 fclose(rp);
             }

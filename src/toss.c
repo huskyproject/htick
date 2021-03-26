@@ -119,12 +119,12 @@ void writeNetmail(s_message * msg, char * areaName)
     HAREA netmail;
     HMSG msgHandle;
     UINT len = msg->textLength;
-    char * bodyStart;           /* msg-body without kludgelines start */
+    byte * bodyStart;           /* msg-body without kludgelines start */
     char * ctrlBuf;             /* Kludgelines */
     XMSG msgHeader;
     s_area * nmarea;
 
-    if((msg == NULL))
+    if(msg == NULL)
     {
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: writeNetmail(NULL,areaname). This is a bug, please report it to developers.",
@@ -164,14 +164,14 @@ void writeNetmail(s_message * msg, char * areaName)
             {
                 byte * bb;      /* Prevent GCC warning "dereferencing type-punned pointer will
                                    break strict-aliasing rules" */
-                ctrlBuf   = (char *)CopyToControlBuf(msg->text, &bb, &len);
+                ctrlBuf   = (char *)CopyToControlBuf((byte *)msg->text, &bb, &len);
                 bodyStart = bb;
             }
             /* write message */
             MsgWriteMsg(msgHandle,
                         0,
                         &msgHeader,
-                        (UCHAR *)bodyStart,
+                        bodyStart,
                         len,
                         len,
                         strlen(ctrlBuf) + 1,
@@ -324,7 +324,7 @@ void disposeTic(s_ticfile * tic)
 {
     unsigned int i;
 
-    if((tic == NULL))
+    if(tic == NULL)
     {
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: disposeTic(NULL). This is a bug, please report it to developers.",
@@ -1223,7 +1223,7 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
 
             if((seenbyComp(tic->seenby, tic->anzseenby,
                            downlink->hisAka)) && (e_readCheck(config, filearea, downlink) == 0)) /*
-                                                                                                    
+
                                                                                                     if
                                                                                                     link
                                                                                                     is
@@ -1234,7 +1234,7 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
                                                                                                     &
                                                                                                     */
                                                                                                  /*
-                                                                                                    
+
                                                                                                     if
                                                                                                     link
                                                                                                     can
@@ -1245,7 +1245,7 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
                                                                                                     filearea
                                                                                                     */
                                                                                                  /*
-                                                                                                    
+
                                                                                                     Adding
                                                                                                     Downlink
                                                                                                     to
@@ -1477,7 +1477,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
 
     w_log(LL_TIC, "Processing Tic-File %s", ticfile);
 
-    if((ticfile == NULL))
+    if(ticfile == NULL)
     {
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: processTic(%s,sec). This is a bug, please report it to developers.",
@@ -1503,6 +1503,9 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
 
         case parseTic_bad:
             return TIC_WrongTIC;
+
+        case parseTic_success:
+            break;
     }
     {
         int r = checkTic(ticfile, &tic);
@@ -2008,7 +2011,7 @@ void processDir(char * directory, e_tossSecurity sec)
     char * dummy = NULL;
     int rc;
 
-    if((directory == NULL))
+    if(directory == NULL)
     {
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: processDir(%s%s%s,sec). This is a bug, please report it to developers.",
@@ -2253,7 +2256,8 @@ void checkTmpDir(void)
  */
 int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 {
-    char * ctrlBuff, * textStart, * textWithoutArea;
+    char * ctrlBuff, * textWithoutArea;
+    byte * textStart;
     UINT textLength = (UINT)msg->textLength;
     HAREA harea     = NULL;
     HMSG hmsg;
@@ -2355,7 +2359,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
             {
                 byte * bb;      /* Prevent GCC warning "dereferencing type-punned pointer will
                                    break strict-aliasing rules" */
-                ctrlBuff  = (char *)CopyToControlBuf(textWithoutArea, &bb, &textLength);
+                ctrlBuff  = (char *)CopyToControlBuf((byte *)textWithoutArea, &bb, &textLength);
                 textStart = bb;
             }
             /*  textStart is a pointer to the first non-kludge line */
@@ -2403,7 +2407,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
 {
     char * tmp = NULL, * line = NULL, * textBuff = NULL, * areaName = NULL, * reason = NULL;
 
-    if((msg == NULL))
+    if(msg == NULL)
     {
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: putMsgInBadArea(NULL,pktOrigAddr). This is a bug, please report it to developers.",
@@ -2474,7 +2478,7 @@ void writeMsgToSysop(s_message * msg, char * areaName, char * origin)
 {
     s_area * echo;
 
-    if((msg == NULL))
+    if(msg == NULL)
     {
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: writeMsgToSysop(NULL,...). This is a bug, please report it to developers.",
