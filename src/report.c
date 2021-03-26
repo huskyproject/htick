@@ -39,7 +39,7 @@
 #include <huskylib/recode.h>
 #include <fidoconf/afixcmd.h>
 #include <huskylib/dirlayer.h>
-#include <areafix/areafix.h>    /* for print_ch() */
+#include <areafix/areafix.h>    /* for repeat_char() */
 
 #include "toss.h"
 #include "version.h"
@@ -302,14 +302,14 @@ static char * formDescStr(char * desc)
         {
             newDesc = (char *)srealloc(newDesc, strlen(newDesc) + 55);
             strncat(newDesc, ch, 54);
-            xstrscat(&newDesc, "\r", print_ch(24, ' '), NULL);
+            xstrscat(&newDesc, "\r", repeat_char(24, ' '), NULL);
             ch += 54;
         }
         else
         {
             if(buff && strlen(buff) + strlen(ch) > 54)
             {
-                xstrscat(&newDesc, buff, "\r", print_ch(24, ' '), NULL);
+                xstrscat(&newDesc, buff, "\r", repeat_char(24, ' '), NULL);
                 nfree(buff);
             }
             else
@@ -345,7 +345,7 @@ static char * formDesc(char ** desc, int count)
         }
         else
         {
-            xstrscat(&buff, print_ch(24, ' '), tmp, "\r", NULL);
+            xstrscat(&buff, repeat_char(24, ' '), tmp, "\r", NULL);
         }
 
         nfree(tmp);
@@ -506,17 +506,17 @@ static void ReportOneFile(s_message * msg, ps_anndef pRepDef, s_ticfile * tic)
 
     if(pRepDef->annforigin && tic->origin.zone != 0)
     {
-        xscatprintf(&(msg->text), "%sOrig: %s\r", print_ch(24, ' '), aka2str(&tic->origin));
+        xscatprintf(&(msg->text), "%sOrig: %s\r", repeat_char(24, ' '), aka2str(&tic->origin));
     }
 
     if(pRepDef->annfrfrom && tic->from.zone != 0)
     {
-        xscatprintf(&(msg->text), "%sFrom: %s\r", print_ch(24, ' '), aka2str(&tic->from));
+        xscatprintf(&(msg->text), "%sFrom: %s\r", repeat_char(24, ' '), aka2str(&tic->from));
     }
 
     if(tic->altfile != NULL)
     {
-        xscatprintf(&(msg->text), "%sTIC: %s\r", print_ch(24, ' '), tic->file);
+        xscatprintf(&(msg->text), "%sTIC: %s\r", repeat_char(24, ' '), tic->file);
     }
 
     if(tmp == NULL || tmp[0] == 0)
@@ -597,7 +597,7 @@ static void reportNewFiles()
                 xscatprintf(&(msg->text), " : %s", aList[j].farea->description);
             }
 
-            xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '-'));
+            xscatprintf(&(msg->text), "\r %s\r", repeat_char(77, '-'));
 
             for(ii = aList[j].begin; ii < aList[j].begin + aList[j].fCount; ii++)
             {
@@ -605,7 +605,7 @@ static void reportNewFiles()
             }
             memset(&bs, 0, sizeof(BigSize));
             IncBigSize(&bs, (ULONG)aList[j].fSize);
-            xscatprintf(&(msg->text), " %s\r", print_ch(77, '-'));
+            xscatprintf(&(msg->text), " %s\r", repeat_char(77, '-'));
             xscatprintf(&(msg->text),
                         " %s bytes in %u file(s)\r",
                         PrintBigSize(&bs),
@@ -619,7 +619,7 @@ static void reportNewFiles()
             continue;
         }
 
-        xscatprintf(&(msg->text), "\r %s\r", print_ch(77, '='));
+        xscatprintf(&(msg->text), "\r %s\r", repeat_char(77, '='));
         xscatprintf(&(msg->text),
                     ">Total %s bytes in %u file(s)\r\r",
                     PrintBigSize(&fileSizeTotal),

@@ -48,7 +48,7 @@
 #include <huskylib/recode.h>
 #include <huskylib/xstr.h>
 #include <huskylib/dirlayer.h>
-#include <areafix/areafix.h>    /* for print_ch() */
+#include <areafix/areafix.h>    /* for repeat_char() */
 
 #ifdef USE_HPTZIP
 # include <hptzip/hptzip.h>
@@ -155,7 +155,7 @@ int add_description(char * descr_file_name,
                 config->fileDescPos = 1;
             }
 
-            fprintf(descr_file, "%s%s%s\n", print_ch(config->fileDescPos - 1, ' '),
+            fprintf(descr_file, "%s%s%s\n", repeat_char(config->fileDescPos - 1, ' '),
                     (config->fileLDescString == NULL) ? " " : config->fileLDescString, desc_line);
         }
 
