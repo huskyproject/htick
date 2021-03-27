@@ -118,7 +118,7 @@ void writeNetmail(s_message * msg, char * areaName)
 {
     HAREA netmail;
     HMSG msgHandle;
-    UINT len = msg->textLength;
+    size_t len = msg->textLength;
     byte * bodyStart;           /* msg-body without kludgelines start */
     char * ctrlBuf;             /* Kludgelines */
     XMSG msgHeader;
@@ -172,8 +172,8 @@ void writeNetmail(s_message * msg, char * areaName)
                         0,
                         &msgHeader,
                         bodyStart,
-                        len,
-                        len,
+                        (dword)len,
+                        (dword)len,
                         strlen(ctrlBuf) + 1,
                         (UCHAR *)ctrlBuf);
             nfree(ctrlBuf);
@@ -2258,7 +2258,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 {
     char * ctrlBuff, * textWithoutArea;
     byte * textStart;
-    UINT textLength = (UINT)msg->textLength;
+    size_t textLength = (size_t)msg->textLength;
     HAREA harea     = NULL;
     HMSG hmsg;
     XMSG xmsg;
