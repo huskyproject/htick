@@ -2059,21 +2059,21 @@ void processDir(char * directory, e_tossSecurity sec)
                 switch(rc)
                 {
                     case TIC_Security: /* pktpwd problem */
-                        changeFileSuffix(dummy, "sec", 1);
+                        changeFileSuffix(dummy, "sec", RENAME_FILE);
                         break;
 
                     case TIC_NotOpen: /* could not open file */
                     case TIC_CantRename:
                     case TIC_IOError:
-                        changeFileSuffix(dummy, "acs", 1);
+                        changeFileSuffix(dummy, "acs", RENAME_FILE);
                         break;
 
                     case TIC_WrongTIC: /* not/wrong pkt */
-                        changeFileSuffix(dummy, "bad", 1);
+                        changeFileSuffix(dummy, "bad", RENAME_FILE);
                         break;
 
                     case TIC_NotForUs: /* not to us */
-                        changeFileSuffix(dummy, "ntu", 1);
+                        changeFileSuffix(dummy, "ntu", RENAME_FILE);
                         break;
 
                     case TIC_NotRecvd: /* file not recieved */
