@@ -249,13 +249,13 @@ e_exitCode processCommandLine(int argc, char ** argv)
 
         if(stricmp(argv[i], "toss") == 0)
         {
-            cmToss = 1;
+            cmToss = tossRegular;
 
             if(i < argc - 1)
             {
                 if(stricmp(argv[i + 1], "-b") == 0)
                 {
-                    cmToss = 2;
+                    cmToss = tossBad;
                     i++;
                 }
             }
@@ -661,7 +661,7 @@ int main(int argc, char ** argv)
         scan();
     }
 
-    if(cmToss)
+    if(cmToss != noToss)
     {
         toss();
     }

@@ -501,14 +501,14 @@ enum parseTic_result parseTic(char * ticfile, s_ticfile * tic)
     }
 
     memset(tic, '\0', sizeof(s_ticfile));
-    tic->size = -1;             /* For check existing a token "size" in TIC file */
+    tic->size = -1;  /* To check later the existing token "size" field in TIC file */
 
 #ifndef HAS_sopen
     tichandle = fopen(ticfile, "r");
 #else
     {
         int fh = 0;
-        /* insure that ticfile won't be removed while parsing */
+        /* ensure that ticfile won't be removed while parsing */
 # if defined (__UNIX__) || defined (__DJGPP__)
         fh = sopen(ticfile, O_RDWR | O_BINARY, SH_DENYNO, S_IWRITE | S_IREAD);
 # else
@@ -2035,15 +2035,11 @@ void processDir(char * directory, e_tossSecurity sec)
         printf("testing %s\n", file);
 #endif
 
-        if(((cmToss == 1) &&
-            (patimat(file,
-                     "*.TIC") == 1)) ||
-           ((cmToss == 2) &&
-            ((patimat(file,
-                      "*.BAD") == 1) ||
-             (patimat(file,
-                      "*.SEC") == 1) ||
-             (patimat(file, "*.ACS") == 1) || (patimat(file, "*.NTU") == 1))))
+        if(((cmToss == tossRegular) && (patimat(file, "*.TIC") == 1)) ||
+           ((cmToss == tossBad) && ((patimat(file, "*.BAD") == 1) ||
+                                    (patimat(file, "*.SEC") == 1) ||
+                                    (patimat(file, "*.ACS") == 1) ||
+                                    (patimat(file, "*.NTU") == 1))))
         {
             xstrscat(&dummy, directory, file, NULL);
 
@@ -2054,26 +2050,26 @@ void processDir(char * directory, e_tossSecurity sec)
 #endif
             rc = processTic(dummy, sec);
 
-            if(cmToss == 1)
+            if(cmToss == tossRegular)
             {
                 switch(rc)
                 {
-                    case TIC_Security: /* pktpwd problem */
-                        changeFileSuffix(dummy, "sec", RENAME_FILE);
+                    case TIC_Security: /* ticpwd problem */
+                        changeFileSuffix(config, dummy, "sec", RENAME_FILE);
                         break;
 
                     case TIC_NotOpen: /* could not open file */
                     case TIC_CantRename:
                     case TIC_IOError:
-                        changeFileSuffix(dummy, "acs", RENAME_FILE);
+                        changeFileSuffix(config, dummy, "acs", RENAME_FILE);
                         break;
 
-                    case TIC_WrongTIC: /* not/wrong pkt */
-                        changeFileSuffix(dummy, "bad", RENAME_FILE);
+                    case TIC_WrongTIC: /* not/wrong tic */
+                        changeFileSuffix(config, dummy, "bad", RENAME_FILE);
                         break;
 
                     case TIC_NotForUs: /* not to us */
-                        changeFileSuffix(dummy, "ntu", RENAME_FILE);
+                        changeFileSuffix(config, dummy, "ntu", RENAME_FILE);
                         break;
 
                     case TIC_NotRecvd: /* file not recieved */

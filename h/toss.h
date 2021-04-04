@@ -34,8 +34,10 @@
 #include "global.h"
 
 enum tossSecurity {secLocalInbound, secProtInbound, secInbound};
-
 typedef enum tossSecurity e_tossSecurity;
+
+typedef enum tossMode {noToss, tossRegular, tossBad} e_tossMode;
+
 enum TIC_state
 {
     TIC_UnknownError = -1,               /* No action */
@@ -49,15 +51,15 @@ enum TIC_state
                                     */
     TIC_IOError                  /* No action */
 };
-
 typedef enum TIC_state e_TIC_state;
+
 enum parseTic_result
 {
     parseTic_error = 0, parseTic_success = 1, parseTic_bad = 2 /* bad data in TIC (may be
                                                                   invalid TIC) */
 };
-
 typedef enum parseTic_result e_parseTic_result;
+
 /* Append tearline and origin lines into message text and create message into
  * specified area.
  * If areaName is NULL pointer or not exist: netmail will placed into first

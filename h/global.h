@@ -68,7 +68,7 @@ extern char * cfgFile;
 extern s_robot * robot;
 /*  variables for config statements */
 /*  variables for commandline statements */
-extern int cmToss;
+extern enum tossMode cmToss;
 extern int cmScan;
 extern int cmHatch;
 extern int cmSend;

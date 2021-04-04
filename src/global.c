@@ -34,6 +34,7 @@
 
 #include <fidoconf/fidoconf.h>
 #include <areafix/areafix.h>
+#include <toss.h>
 #include <global.h>
 
 s_log * htick_log;
@@ -42,7 +43,7 @@ unsigned char quiet   = 0;
 char * cfgFile        = NULL;
 s_robot * robot       = NULL;
 char * versionStr     = NULL;
-int cmToss            = 0;
+e_tossMode cmToss     = noToss;
 int cmScan            = 0;
 int cmHatch           = 0;
 int cmSend            = 0;

@@ -56,8 +56,8 @@
 
 
 #include <add_desc.h>
-#include <global.h>
 #include <toss.h>
+#include <global.h>
 #include <filecase.h>
 /*  Return:
  * 0 if success
