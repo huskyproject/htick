@@ -361,7 +361,8 @@ void printFileArea(char * area_areaName,
     struct tm * locTime;
     unsigned int totalnumber = 0;
     char ** removeFiles = NULL;
-    unsigned int removeCount = 0, i, Len;
+    unsigned int removeCount = 0, i;
+    size_t Len;
     FILE * fbbs;
     char * token = "";
     int flag = 0;

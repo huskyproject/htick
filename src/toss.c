@@ -174,7 +174,7 @@ void writeNetmail(s_message * msg, char * areaName)
                         bodyStart,
                         (dword)len,
                         (dword)len,
-                        strlen(ctrlBuf) + 1,
+                        (dword)strlen(ctrlBuf) + 1,
                         (UCHAR *)ctrlBuf);
             nfree(ctrlBuf);
             MsgCloseMsg(msgHandle);
@@ -1221,45 +1221,17 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
         {
             s_link * downlink = filearea->downlinks[i]->link;
 
-            if((seenbyComp(tic->seenby, tic->anzseenby,
-                           downlink->hisAka)) && (e_readCheck(config, filearea, downlink) == 0)) /*
-
-                                                                                                    if
-                                                                                                    link
-                                                                                                    is
-                                                                                                    not
-                                                                                                    in
-                                                                                                    seen-by
-                                                                                                    list
-                                                                                                    &
-                                                                                                    */
-                                                                                                 /*
-
-                                                                                                    if
-                                                                                                    link
-                                                                                                    can
-                                                                                                    receive
-                                                                                                    files
-                                                                                                    from
-                                                                                                    the
-                                                                                                    filearea
-                                                                                                    */
-                                                                                                 /*
-
-                                                                                                    Adding
-                                                                                                    Downlink
-                                                                                                    to
-                                                                                                    Seen-By
-                                                                                                    */
-                                                                                                 /*
-                                                                                                  *
-                                                                                                  *tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(hs_addr));
-                                                                                                  *
-                                                                                                  *memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(hs_addr));
-                                                                                                  *
-                                                                                                  *tic->anzseenby++;
-                                                                                                  */
+            if((seenbyComp(tic->seenby, tic->anzseenby, downlink->hisAka)) &&
+               (readCheck(filearea, downlink) == 0))
             {
+                /* if link is not in seen-by list & */
+                /* if link can receive files from the filearea */
+                /* Adding Downlink to Seen-By */
+                /*
+                 * tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(hs_addr));
+                 * memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(hs_addr));
+                 * tic->anzseenby++;
+                 */
                 seenbyAdd(&tic->seenby, &tic->anzseenby, &downlink->hisAka);
             }
         }
@@ -1293,7 +1265,7 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
            addrComp(&(tic->origin), &(downlink->hisAka)) != 0)
         {
             /* Forward file to */
-            readAccess = e_readCheck(config, filearea, downlink);
+            readAccess = readCheck(filearea, downlink);
 
             switch(readAccess)
             {
@@ -2122,7 +2094,7 @@ void checkTmpDir(void)
 
     while((file = husky_readdir(dir)) != NULL)
     {
-        int file_length = strlen(file);
+        size_t file_length = strlen(file);
 
         if(file_length != 12)
         {
@@ -2455,7 +2427,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
     nfree(areaName);
     nfree(msg->text);
     msg->text       = textBuff;
-    msg->textLength = strlen(msg->text);
+    msg->textLength = (hINT32)strlen(msg->text);
 
     if(putMsgInArea(&(config->badArea), msg, 0, 0))
     {
@@ -2487,7 +2459,7 @@ void writeMsgToSysop(s_message * msg, char * areaName, char * origin)
                 (config->tearline) ? config->tearline : "",
                 origin ? origin : (config->origin) ? config->origin : config->name,
                 aka2str(&msg->origAddr));
-    msg->textLength = strlen(msg->text);
+    msg->textLength = (hINT32)strlen(msg->text);
 
     if(msg->netMail == 1)
     {

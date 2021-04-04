@@ -274,23 +274,23 @@ int removeDesc(char * descr_file_name, char * file_name)
  * 1 if error
  * -1 if ivalid parameter
  */
-int announceNewFileecho(char * announcenewfileecho, char * c_area, char * hisaddr)
+int announceNewFileecho(char * annNewFileecho, char * c_area, char * hisaddr)
 {
     FILE * ann_file;
 
-    if(!announcenewfileecho || !c_area || !hisaddr)
+    if(!annNewFileecho || !c_area || !hisaddr)
     {
         w_log(LL_CRIT,
-              __FILE__ ":: Parameter is NULL: announceNewFileecho(%s,%s,%s). This is serious error in program, please report to developers.",
-              announcenewfileecho ? "announcenewfileecho" : "NULL",
+              __FILE__ ":: Parameter is NULL: annNewFileecho(%s,%s,%s). This is serious error in program, please report to developers.",
+              annNewFileecho ? "annNewFileecho" : "NULL",
               c_area ? "c_area" : "NULL",
               hisaddr ? "hisaddr" : "NULL");
         return -1;
     }
 
-    if(!fexist(announcenewfileecho))
+    if(!fexist(annNewFileecho))
     {
-        ann_file = fopen(announcenewfileecho, "w");
+        ann_file = fopen(annNewFileecho, "w");
 
         if(ann_file == NULL)
         {
@@ -303,7 +303,7 @@ int announceNewFileecho(char * announcenewfileecho, char * c_area, char * hisadd
     }
     else
     {
-        ann_file = fopen(announcenewfileecho, "a");
+        ann_file = fopen(annNewFileecho, "a");
 
         if(ann_file == NULL)
         {

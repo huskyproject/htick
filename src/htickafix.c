@@ -112,7 +112,7 @@ int checkAccessAndOptGrps(s_area * echo, s_link * link, int imp_exp)
     return AREA_ACCESS_OK;
 } /* checkAccessAndOptGrps */
 
-int e_readCheck(s_fidoconfig * config, s_area * echo, s_link * link)
+int readCheck(s_area * echo, s_link * link)
 {
     unsigned i, rc = AREA_ACCESS_OK;
     unsigned Pause = echo->areaType;
@@ -153,13 +153,13 @@ int e_readCheck(s_fidoconfig * config, s_area * echo, s_link * link)
     }
 
     return rc;
-} /* e_readCheck */
+} /* readCheck */
 
-int e_writeCheck(s_fidoconfig * config, s_area * echo, s_link * link)
+int e_writeCheck(s_fidoconfig * myconfig, s_area * echo, s_link * link)
 {
     unsigned int i = 0, rc = AREA_ACCESS_OK;
 
-    if(echo->downlinkCount == 0 && isOurAka(config, link->hisAka))
+    if(echo->downlinkCount == 0 && isOurAka(myconfig, link->hisAka))
     {
         /* always OK for nolinks (need for hpucode's tics) */
         /* FIXME: Is it really safe and only way? */
@@ -171,7 +171,7 @@ int e_writeCheck(s_fidoconfig * config, s_area * echo, s_link * link)
 
     /* Link is not subscribed => refuse to import */
     /* OurAka is a special case for access check of ourselves */
-    if(i == echo->downlinkCount && !isOurAka(config, link->hisAka))
+    if(i == echo->downlinkCount && !isOurAka(myconfig, link->hisAka))
     {
         return AREA_ACCESS_NOTLINKED;
     }
@@ -392,7 +392,6 @@ int filefix_tellcmd(char * cmd)
         default:
             return ADD;
     } /* switch */
-    return 0;
 } /* filefix_tellcmd */
 
 char * filefix_processcmd(s_link * link, s_message * msg, char * line, int cmd)

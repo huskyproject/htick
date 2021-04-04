@@ -269,7 +269,7 @@ int link_file(const char * from, const char * to)
     /*  validate and sanitize supplied link path and use the result */
     /*  the full path MUST be Unicode for BackupWrite */
     /*   */
-    MultiByteToWideChar(CP_ACP, 0, to, strlen(to) + 1, wto, sizeof(wto) / sizeof(wto[0]));
+    MultiByteToWideChar(CP_ACP, 0, to, (int)strlen(to) + 1, wto, sizeof(wto) / sizeof(wto[0]));
     cbPathLen = GetFullPathNameW(wto, MAX_PATH, FileLink, &FilePart);
 
     if(cbPathLen == 0)
@@ -295,7 +295,7 @@ int link_file(const char * from, const char * to)
     /*   */
     /*  compute length of variable size WIN32_STREAM_ID */
     /*   */
-    StreamHeaderSize = (LPBYTE)&StreamId.cStreamName - (LPBYTE)&StreamId +
+    StreamHeaderSize = (DWORD)((LPBYTE)&StreamId.cStreamName - (LPBYTE)&StreamId) +
                        StreamId.dwStreamNameSize;
     bSuccess = BackupWrite(hFileSource, (LPBYTE)&StreamId,      /*  buffer to write */
                            StreamHeaderSize,       /*  number of bytes to write */
@@ -335,9 +335,9 @@ int link_file(const char * from, const char * to)
 #elif defined (_UNISTD_H) && !defined (__OS2__)
 
     rc = (link(from, to) == 0);
+    return rc;
 
 #endif /* if   _WIN32_WINNT >= 0x0500 */
-    return rc;
 } /* link_file */
 
 void IncBigSize(BigSize * bs, ULONG inc)

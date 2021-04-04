@@ -386,7 +386,7 @@ HATCH_HATCH_RETURN_CODES hatch()
 
     if(stricmp(hatchedFile, hatchInfo->file) == 0)      /* hatch from current dir */
     {
-        int len = 0;
+        size_t len = 0;
         getcwd(buffer, 256);
         len = strlen(buffer);
 
@@ -443,7 +443,7 @@ HATCH_SEND_RETURN_CODES send(char * filename, char * area, char * addr)
     s_ticfile tic;
     s_link * link = NULL;
     s_area * filearea;
-    char * sendfile = NULL, * descr_file_name = NULL, * tmpfile = NULL;
+    char * fileToSend = NULL, * descr_file_name = NULL, * tmpfile = NULL;
     char timestr[40];
     struct stat stbuf;
     time_t acttime;
@@ -488,29 +488,29 @@ HATCH_SEND_RETURN_CODES send(char * filename, char * area, char * addr)
 
     if(filearea->msgbType == MSGTYPE_PASSTHROUGH)
     {
-        sendfile = sstrdup(config->passFileAreaDir);
+        fileToSend = sstrdup(config->passFileAreaDir);
     }
     else
     {
-        sendfile = sstrdup(filearea->fileName);
+        fileToSend = sstrdup(filearea->fileName);
     }
 
-    strLower(sendfile);
-    _createDirectoryTree(sendfile);
-    xstrcat(&sendfile, filename);
+    strLower(fileToSend);
+    _createDirectoryTree(fileToSend);
+    xstrcat(&fileToSend, filename);
 
-    /*  Exist file? */
-    adaptcase(sendfile);
+    /* Does file exist? */
+    adaptcase(fileToSend);
 
-    if(!fexist(sendfile))
+    if(!fexist(fileToSend))
     {
         if(!quiet)
         {
             fprintf(stderr, "Error: File not found\n");
         }
 
-        w_log('6', "File %s, not found", sendfile);
-        nfree(sendfile);
+        w_log('6', "File %s, not found", fileToSend);
+        nfree(fileToSend);
         disposeTic(&tic);
         return HATCH_SEND_E_FILENOTFOUND;
     }
@@ -522,36 +522,36 @@ HATCH_SEND_RETURN_CODES send(char * filename, char * area, char * addr)
         xstrscat(&tmpfile, config->passFileAreaDir, tic.file, NULL);
         adaptcase(tmpfile);
 
-        if(copy_file(sendfile, tmpfile, 1) != 0) /* overwrite existing file if not same */
+        if(copy_file(fileToSend, tmpfile, 1) != 0) /* overwrite existing file if not the same */
         {
-            adaptcase(sendfile);
+            adaptcase(fileToSend);
 
-            if(copy_file(sendfile, tmpfile, 1) == 0) /* overwrite existing file if not same */
+            if(copy_file(fileToSend, tmpfile, 1) == 0) /* overwrite existing file if not the same */
             {
-                w_log('6', "Copied %s to %s", sendfile, tmpfile);
+                w_log('6', "Copied %s to %s", fileToSend, tmpfile);
             }
             else
             {
-                w_log('9', "File %s not found or not copyable", sendfile);
+                w_log('9', "File %s not found or cannot be copied", fileToSend);
                 disposeTic(&tic);
-                nfree(sendfile);
+                nfree(fileToSend);
                 nfree(tmpfile);
                 return HATCH_SEND_E_FILEAREANOTFOUND;
             }
         }
         else
         {
-            w_log('6', "Copied %s to %s", sendfile, tmpfile);
-            strcpy(sendfile, tmpfile);
+            w_log('6', "Copied %s to %s", fileToSend, tmpfile);
+            strcpy(fileToSend, tmpfile);
         }
     }
 
     tic.area = sstrdup(area);
-    stat(sendfile, &stbuf);
+    stat(fileToSend, &stbuf);
     tic.size   = stbuf.st_size;
     tic.origin = tic.from = *filearea->useAka;
     /*  Adding crc */
-    tic.crc = filecrc32(sendfile);
+    tic.crc = filecrc32(fileToSend);
     xstrscat(&descr_file_name, filearea->fileName, config->fileDescription, NULL);
     adaptcase(descr_file_name);
     GetDescFormBbsFile(descr_file_name, tic.file, &tic);
@@ -574,7 +574,7 @@ HATCH_SEND_RETURN_CODES send(char * filename, char * area, char * addr)
     seenbyAdd(&tic.seenby, &tic.anzseenby, &link->hisAka);
 
     /*  Forward file to */
-    if(PutFileOnLink(sendfile, &tic, link))
+    if(PutFileOnLink(fileToSend, &tic, link))
     {
         rc = HATCH_SEND_OK;
     }
@@ -584,7 +584,7 @@ HATCH_SEND_RETURN_CODES send(char * filename, char * area, char * addr)
     }
 
     disposeTic(&tic);
-    nfree(sendfile);
+    nfree(fileToSend);
     nfree(tmpfile);
     nfree(descr_file_name);
     return rc;

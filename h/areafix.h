@@ -52,22 +52,4 @@ int processFileFix(s_message * msg);
 void ffix(hs_addr addr, char * cmd);
 int autoCreate(char * c_area, char * descr, ps_addr pktOrigAddr, ps_addr dwLink);
 
-/* these two functions are to be removed from htick after merging filefix and */
-/* areafix */
-int e_readCheck(s_fidoconfig * config, s_area * echo, s_link * link);
-
-/*  '\x0000' access o'k */
-/*  '\x0001' no access group */
-/*  '\x0002' no access level */
-/*  '\x0003' no access export */
-/*  '\x0004' not linked */
-int e_writeCheck(s_fidoconfig * config, s_area * echo, s_link * link);
-
-/*  '\x0000' access o'k */
-/*  '\x0001' no access group */
-/*  '\x0002' no access level */
-/*  '\x0003' no access import */
-/*  '\x0004' not linked */
-
-
 #endif // ifndef _AREAFIX_H

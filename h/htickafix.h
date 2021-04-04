@@ -42,7 +42,7 @@ int init_htickafix(void);
 
 /* these two functions are to be removed from htick after merging filefix and */
 /* areafix */
-int e_readCheck(s_fidoconfig * config, s_area * echo, s_link * link);
+int readCheck(s_area * echo, s_link * link);
 
 /*  '\x0000' access o'k */
 /*  '\x0001' no access group */
