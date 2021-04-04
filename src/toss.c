@@ -615,7 +615,7 @@ enum parseTic_result parseTic(char * ticfile, s_ticfile * tic)
                     }
                     else
                     {
-                        tic->size = tic->size = atoi(param);
+                        tic->size = atoi(param);
 
                         if((!tic->size) && (!strcmp(param, "0")))
                         {

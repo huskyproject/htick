@@ -342,7 +342,7 @@ int link_file(const char * from, const char * to)
 
 void IncBigSize(BigSize * bs, ULONG inc)
 {
-    UINT b, kb, mb, res;
+    UINT b, kb, mb;
 
     if(!bs)
     {
@@ -356,7 +356,8 @@ void IncBigSize(BigSize * bs, ULONG inc)
     mb  = inc / 1024;
 
     /* check result: res = inc */
-    res    = 1024 * 1024 * mb + 1024 * kb + b;
+    /* not used
+    res    = 1024 * 1024 * mb + 1024 * kb + b; */
     bs->b += b;
 
     if(bs->b >= 1024)
