@@ -2222,7 +2222,7 @@ void checkTmpDir(void)
 /*
  * Return: 0 if error, 1 if success
  */
-int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
+bool putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 {
     char * ctrlBuff, * textWithoutArea;
     byte * textStart;
@@ -2231,7 +2231,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
     HMSG hmsg;
     XMSG xmsg;
     char /**slash,*/ * p, * q, * tiny;
-    int rc = 0;
+    bool rc = false;
 
     if((echo == NULL) || (msg == NULL))
     {
@@ -2242,7 +2242,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
               msg ? "msg" : "NULL",
               strip,
               (unsigned)forceattr);
-        return 0;
+        return rc;
     }
 
     if(echo->msgbType == MSGTYPE_PASSTHROUGH)
@@ -2340,13 +2340,13 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
             }
             else
             {
-                rc = 1;         /*  normal exit */
+                rc = true;         /*  normal exit */
             }
 
             if(MsgCloseMsg(hmsg) != 0)
             {
                 w_log(LL_ERROR, "Could not close msg in %s!", echo->fileName);
-                rc = 0;
+                rc = false;
             }
 
             nfree(ctrlBuff);
@@ -2371,7 +2371,7 @@ int putMsgInArea(s_area * echo, s_message * msg, int strip, dword forceattr)
 /*
  * Return: o if error, 1 of success
  */
-int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
+bool putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
 {
     char * tmp = NULL, * line = NULL, * textBuff = NULL, * areaName = NULL, * reason = NULL;
 
@@ -2380,7 +2380,7 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
         w_log(LL_ERROR,
               __FILE__ ":%i: Parameter is a NULL pointer: putMsgInBadArea(NULL,pktOrigAddr). This is a bug, please report it to developers.",
               __LINE__);
-        return 0;
+        return false;
     }
 
     /*  get real name area */
@@ -2431,10 +2431,10 @@ int putMsgInBadArea(s_message * msg, hs_addr pktOrigAddr)
 
     if(putMsgInArea(&(config->badArea), msg, 0, 0))
     {
-        return 1;
+        return true;
     }
 
-    return 0;
+    return false;
 } /* putMsgInBadArea */
 
 /* Append tearline and origin lines into message text and create message in the
