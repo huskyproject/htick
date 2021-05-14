@@ -18,6 +18,8 @@
 #   "st_htick.pl 7" - create 7-day statistics for all the areas
 #   "st_htick.pl 1" - statistics for last day
 
+use strict;
+use warnings;
 use Time::Local;
 
 my %areaq;
@@ -30,113 +32,100 @@ my $totals = 0;
 my $totalq = 0;
 
 #$logname = "c:\\fido\\logs\\htick.log";
-$logname = "/home/fido/htick.log";
+my $logname = "/home/fido/log/htick.log";
 
 # this hash is used, when converting verbose months to numeral (Jan = 0)
+my %months;
 @months{qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec)} = (0..11);
+
 # working with command line arguments
-if ($#ARGV > 1) {
+if($#ARGV > 1)
+{
     print("Wrong command line arguments number\n");
     exit;
 }
-foreach (@ARGV) {
-    if(/^\d{1,4}$/ && !$period) { $period = $_ }
+my $period;
+foreach (@ARGV)
+{
+    if(/^\d{1,4}$/ && !$period)
+    {
+        $period = $_ 
+    }
 }
-$date = time() - (24 * 60 * 60 * ($period - 1)) if $period;
 
-open(LOG, "<$logname") || die "can't open $logname: $!";
-while (<LOG>) {
-    if (/-{10}\s+\w+\s(.*),/) {
+my $date = time() - (24 * 60 * 60 * ($period - 1)) if $period;
+
+my ($last, $from, );
+open(LOG, "<", "$logname") or die "can't open $logname: $!";
+while(<LOG>)
+{
+    if(/-{10}\s+\w+\s(.*),/)
+    {
         $last = $1;
-        if (!$from) {
-            $found = date_to_period($1);
+        if(!$from)
+        {
+            my $found = date_to_unixtime($1);
             $date ||= $found;
             $from = $1 if ($found >= $date);
         }
         next;
     }
-## log format changed ##################
-#    if ($from) {
-#        if (/Size: (\d+)/) {
-#            $totals += $1;
-#            $totalq++;
-#            $cur_size = $1;
-#        };
-#        if (/Area: (\S+)/) {
-#            $areaq{"\U$1"}++;
-#            $areas{"\U$1"} += $cur_size;
-#        };
-#        if (/From: (\S+)/) {
-#            $linkq{$1}++;
-#            $links{$1} += $cur_size;
-#        }
-#    }
-# ######################################
-    if ($from) {
-        if (/size: (\d+), area: (\S+), from: (\S+),/) {
-            $totals += $1;
+
+    if($from)
+    {
+        if(/size: (\d+|not specified), area: (\S+), from: (\S+),/)
+        {
+            $totals += $1 eq "not specified" ? 0 : $1;
             $totalq++;
-            $cur_size = $1;
+            $cur_size = $1 eq "not specified" ? 0 : $1;
             $areaq{"\U$2"}++;
             $areas{"\U$2"} += $cur_size;
             $linkq{$3}++;
             $links{$3} += $cur_size;
         }
     }
-
 }
 close LOG || die "Can't close $logname: $!";;
 
 # error checking
-unless(%areas) {
+unless(%areas)
+{
     print "No files in areas or wrong period of days!\n";
     exit;
 }
-$period ||= int ((date_to_period($last) - $date) /24 /60 /60 + 1);
+
+$period ||= int ((date_to_unixtime($last) - $date) /24 /60 /60 + 1);
 
 # results
 print "\n\n> Fileecho traffic from $from to $last\n\n";
-#print "ษออออออออออออออออออออออออออออออออออออออออออออออัออออออออออั".
-#       "ออออออออออออออป";
-#printf "\nบ%16c%-29s ณ %8s ณ %12s บ\n", 32, "Fileecho area", "Files", "Bytes";
-#print "วฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤล".
-#       "ฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ\n";
 
 print   "+==============================================+==========+",
-        "==============+";
-printf "\n|%16c%-29s | %8s | %12s |\n", 32, "Fileecho area", "Files", "Bytes";
+        "===============+";
+printf "\n|%16c%-29s | %8s | %13s |\n", 32, "Fileecho area", "Files", "Bytes";
 print   "+==============================================+==========+",
-        "==============+\n";
+        "===============+\n";
 
-foreach (sort (keys %areaq)) {
-#  printf "บ %-44s ณ %8s ณ %12s บ\n", $_, $areaq{$_}, $areas{$_};
-  printf "| %-44s | %8s | %12s |\n", $_, $areaq{$_}, $areas{$_};
+foreach (sort (keys %areaq))
+{
+  printf "| %-44s | %8s | %13s |\n", $_, $areaq{$_},
+         $areas{$_} == 0 ? "not specified" : $areas{$_};
 }
 
-#print "ศออออออออออออออออออออออออออออออออออออออออออออออฯออออออออออฯ".
-#       "ออออออออออออออผ\n";
-#print "ษออออออออออออออออออออออออออออออออออออออออออออออัออออออออออั".
-#       "ออออออออออออออป";
-#printf "\nบ%14c%-31s ณ %8s ณ %12s บ\n", 32,
-#        "Fileecho uplinks", "Files", "Bytes";
-#print "วฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤฤลฤฤฤฤฤฤฤฤฤฤล".
-#       "ฤฤฤฤฤฤฤฤฤฤฤฤฤฤถ\n";
-
 print   "+==============================================+==========+",
-        "==============+";
-printf "\n|%14c%-31s | %8s | %12s |\n", 32, "Fileecho area", "Files", "Bytes";
+        "===============+";
+printf "\n|%14c%-31s | %8s | %13s |\n", 32, "Fileecho uplinks", "Files",
+       "Bytes";
 print   "+==============================================+==========+",
-        "==============+\n";
+        "===============+\n";
 
 
-foreach (sort (keys %linkq)) {
-#  printf "บ %-44s ณ %8s ณ %12s บ\n", $_, $linkq{$_}, $links{$_};
-  printf "| %-44s | %8s | %12s |\n", $_, $linkq{$_}, $links{$_};
+foreach (sort (keys %linkq))
+{
+  printf "| %-44s | %8s | %13s |\n", $_, $linkq{$_},
+         $links{$_} == 0 ? "not specified" : $links{$_};
 }
-#print "ศออออออออออออออออออออออออออออออออออออออออออออออฯออออออออออฯ".
-#"ออออออออออออออผ\n";
 print   "+==============================================+==========+",
-        "==============+\n";
+        "===============+\n";
 
 {
   my $totala = keys(%areaq);
@@ -146,9 +135,10 @@ print   "+==============================================+==========+",
   print " from $totala fileecho(s) from $totall link(s)\n";
 }
 
-# converting verbose date to epoch seconds
-sub date_to_period {
-    $_[0] =~ /(\d\d)\s(\w\w\w)\s(\d\d)/i;
-    ($day, $month, $year) = ($1, $2, $3);
+# convert date in the format "04 May 2021" to unix time in seconds
+sub date_to_unixtime
+{
+    $_[0] =~ /(\d{2})\s(\w{3})\s(\d{4})/;
+    my ($day, $month, $year) = ($1, $2, $3);
     timelocal("59", "59", "23", $day, $months{$month}, $year);
 }
