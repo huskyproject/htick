@@ -1460,6 +1460,7 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
 {
     s_ticfile tic;
     size_t j;
+    long filesize;
     FILE * flohandle;
     husky_DIR * dir;
     char * file;
@@ -1539,27 +1540,42 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
         return TIC_Security;
     }
 
-    if(tic.size < 0)
-    {
-        w_log(LL_TIC,
-              "File \"%s\": size: not specified, area: %s, from: %s, orig: %s",
-              tic.file,
-              tic.area,
-              aka2str(&tic.from),
-              tic_origin = aka2str5d(tic.origin));
-    }
-    else
-    {
-        w_log(LL_TIC,
-              "File \"%s\": size: %ld, area: %s, from: %s, orig: %s",
-              tic.file,
-              tic.size,
-              tic.area,
-              aka2str(&tic.from),
-              tic_origin = aka2str5d(tic.origin));
-    }
+    /* Extract directory name from ticket pathname (strip file name),
+     * construct full name of file, adapt case of the full pathname,
+     * update file name in ticket */
+    strcpy(tickedfile, ticfile);
+    *(strrchr(tickedfile, PATH_DELIM) + 1) = 0;
+    j = strlen(tickedfile);
+    strcat(tickedfile, tic.file);
+    adaptcase(tickedfile);
+    strcpy(tic.file, tickedfile + j);
 
-    nfree(tic_origin);
+    filesize = fsize(tickedfile);
+    if(filesize > 0)
+    {
+        if(tic.size < 0)
+        {
+            w_log(LL_TIC,
+                  "File \"%s\": size: %ld, area: %s, from: %s, orig: %s",
+                  tic.file,
+                  filesize,
+                  tic.area,
+                  aka2str(&tic.from),
+                  tic_origin = aka2str5d(tic.origin));
+        }
+        else
+        {
+            w_log(LL_TIC,
+                  "File \"%s\": size: %ld, area: %s, from: %s, orig: %s",
+                  tic.file,
+                  tic.size,
+                  tic.area,
+                  aka2str(&tic.from),
+                  tic_origin = aka2str5d(tic.origin));
+        }
+
+        nfree(tic_origin);
+    }
 
     if(tic.to.zone != 0)
     {
@@ -1648,16 +1664,6 @@ enum TIC_state processTic(char * ticfile, e_tossSecurity sec)
         disposeTic(&tic);
         return TIC_Security;
     }
-
-    /* Extract directory name from ticket pathname (strip file name), construct full name of
-       file,
-     * adopt full pathname into real disk file, update file name in ticket */
-    strcpy(tickedfile, ticfile);
-    *(strrchr(tickedfile, PATH_DELIM) + 1) = 0;
-    j = strlen(tickedfile);
-    strcat(tickedfile, tic.file);
-    adaptcase(tickedfile);
-    strcpy(tic.file, tickedfile + j);
 
     /* Receive file? */
     if(!fexist(tickedfile))
