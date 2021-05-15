@@ -1221,45 +1221,12 @@ int sendToLinks(int isToss, s_area * filearea, s_ticfile * tic, const char * fil
         {
             s_link * downlink = filearea->downlinks[i]->link;
 
+            /* if link is not in seen-by list and
+             * can receive files from the filearea */
             if((seenbyComp(tic->seenby, tic->anzseenby,
-                           downlink->hisAka)) && (e_readCheck(config, filearea, downlink) == 0)) /*
-
-                                                                                                    if
-                                                                                                    link
-                                                                                                    is
-                                                                                                    not
-                                                                                                    in
-                                                                                                    seen-by
-                                                                                                    list
-                                                                                                    &
-                                                                                                    */
-                                                                                                 /*
-
-                                                                                                    if
-                                                                                                    link
-                                                                                                    can
-                                                                                                    receive
-                                                                                                    files
-                                                                                                    from
-                                                                                                    the
-                                                                                                    filearea
-                                                                                                    */
-                                                                                                 /*
-
-                                                                                                    Adding
-                                                                                                    Downlink
-                                                                                                    to
-                                                                                                    Seen-By
-                                                                                                    */
-                                                                                                 /*
-                                                                                                  *
-                                                                                                  *tic->seenby=srealloc(tic->seenby,(tic->anzseenby+1)*sizeof(hs_addr));
-                                                                                                  *
-                                                                                                  *memcpy(&tic->seenby[tic->anzseenby],&downlink->hisAka,sizeof(hs_addr));
-                                                                                                  *
-                                                                                                  *tic->anzseenby++;
-                                                                                                  */
+                           downlink->hisAka)) && (e_readCheck(config, filearea, downlink) == 0)) 
             {
+                /* Adding downlink to Seen-By */
                 seenbyAdd(&tic->seenby, &tic->anzseenby, &downlink->hisAka);
             }
         }
