@@ -575,7 +575,7 @@ int GetDescFormDizFile(char * fileName, s_ticfile * tic)
                          fileName,
                          config->fileDescNames[i],
                          config->tempInbound);
-        w_log(LL_EXEC, "File %s: unpacking with \"%s\"", fileName, cmd);
+        w_log(LL_BUNDLE, "File %s: unpacking with \"%s\"", fileName, cmd);
         chdir(config->tempInbound);
 
         if(fc_stristr(config->unpack[unpacker].call, ZIPINTERNAL))
