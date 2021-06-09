@@ -5,22 +5,19 @@ ifeq ($(DEBIAN), 1)
 # Every Debian-Source-Package has one included.
 include /usr/share/husky/huskymak.cfg
 else ifdef RPM_BUILD_ROOT
-# RPM build requires all files to be in one branch directory
+# RPM build requires all files to be in the source directory
 include huskymak.cfg
 else
 include ../huskymak.cfg
 endif
 
-OBJS    = htick$(_OBJ) global$(_OBJ) toss$(_OBJ) fcommon$(_OBJ) \
-          scan$(_OBJ) htickafix$(_OBJ) add_desc$(_OBJ) seenby$(_OBJ) \
-	  hatch$(_OBJ) filelist$(_OBJ) filecase$(_OBJ) report$(_OBJ) clean$(_OBJ)
-MAN1PAGE = man/htick.1
+OBJS     = htick$(_OBJ) global$(_OBJ) toss$(_OBJ) fcommon$(_OBJ) \
+           scan$(_OBJ) htickafix$(_OBJ) add_desc$(_OBJ) seenby$(_OBJ) \
+           hatch$(_OBJ) filelist$(_OBJ) filecase$(_OBJ) report$(_OBJ) \
+           clean$(_OBJ)
+MAN1PAGE = htick.1.gz
 MAN1DIR  = $(MANDIR)$(DIRSEP)man1
-SRC_DIR = src/
-
-ifndef ECHO
-ECHO	= echo
-endif
+SRC_DIR  = src/
 
 ifeq ($(DEBUG), 1)
   CFLAGS = $(DEBCFLAGS) -Ih -I$(INCDIR) $(WARNFLAGS)
@@ -43,13 +40,33 @@ endif
 
 CDEFS=-D$(OSTYPE) $(ADDCDEFS)
 
-all: $(OBJS) htick$(EXE)
+.PHONY: all
+
+all: $(OBJS) htick$(EXE) htick.1.gz
+
+htick.1.gz: man/htick.1
+	gzip -c man/htick.1 > htick.1.gz
+
+htick$(EXE): $(OBJS)
+	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS) $(LIBS)
 
 %$(_OBJ): $(SRC_DIR)%.c
 	$(CC) $(CFLAGS) $(CDEFS) $(SRC_DIR)$*.c
 
-htick$(EXE): $(OBJS)
-	$(CC) $(LFLAGS) -o htick$(EXE) $(OBJS) $(LIBS)
+gen-doc:
+	-(cd doc; $(MAKE) all)
+
+clean-doc:
+	-(cd doc; $(MAKE) clean)
+
+distclean-doc:
+	-(cd doc; $(MAKE) distclean)
+
+install-doc:
+	-(cd doc; $(MAKE) install)
+
+uninstall-doc:
+	-(cd doc; $(MAKE) uninstall)
 
 clean:
 	-$(RM) $(RMOPT) *$(_OBJ)
@@ -64,7 +81,6 @@ install: htick$(EXE)
 	$(MKDIR) $(MKDIROPT) $(DESTDIR)$(BINDIR) $(DESTDIR)$(MAN1DIR)
 	$(INSTALL) $(IBOPT) htick$(EXE) $(DESTDIR)$(BINDIR)
 	$(INSTALL) $(IMOPT) $(MAN1PAGE) $(DESTDIR)$(MAN1DIR)
-	$(ECHO) 'To install documentation run `make install` in doc/ directory'
 
 uninstall:
 	$(RM) $(RMOPT) $(DESTDIR)$(BINDIR)$(DIRSEP)htick$(EXE)

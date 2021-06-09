@@ -30,9 +30,6 @@
 @end ifinfo
 
 @iftex
-@parindent=0pt
-@end iftex
-@iftex
 @afourpaper
 @end iftex
 

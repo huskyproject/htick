@@ -1,12 +1,12 @@
 %global ver_major 1
 %global ver_minor 9
 %global ver_patch 0
-%global reldate 20210515
+%global reldate 20210609
 %global reltype C
 # may be one of: C (current), R (release), S (stable)
 
 # release number for Release: header
-%global relnum 6
+%global relnum 1
 
 # on default static application binary is built but using
 # 'rpmbuild --without static' produces an application binary that uses
@@ -17,11 +17,19 @@
     %bcond_without static
 %endif
 
-# if you use 'rpmbuild --with debug' then debug binary is produced
+# if you use 'rpmbuild --with debug', then debug binary is produced
 %if "%_vendor" == "alt"
     %def_without debug
 %else
     %bcond_with debug
+%endif
+
+# if you use 'rpmbuild --with doc', then htick-doc package is produced
+# with htick.info, htick.html, htick.txt, htick.pdf
+%if "%_vendor" == "alt"
+    %def_without doc
+%else
+    %bcond_with doc
 %endif
 
 %global debug_package %nil
@@ -74,21 +82,55 @@ Source: %main_name-%ver_major.%ver_minor.%reldate.tar.gz
 %description
 HTick is an FTN fileecho ticker from the Husky Project
 
+
+%if %{with doc}
+%package doc
+BuildArch: noarch
+%if "%_vendor" != "redhat"
+Group: %pkg_group
+%endif
+Summary: Documentation for %main_name
+%if "%_vendor" == "redhat"
+BuildRequires: texinfo texinfo-tex
+%else
+BuildRequires: texinfo texi2html texi2dvi
+%endif
+Provides: %main_name-doc = %version-%release
+%description doc
+%summary
+%endif
+
 %prep
 %setup -q -n %main_name-%ver_major.%ver_minor.%reldate
 
 %build
-%if %{with static}
-    %if %{with debug}
-        %make_build DEBUG=1
+%if %{with doc}
+    %if %{with static}
+        %if %{with debug}
+            %make_build DEBUG=1 all gen-doc
+        %else
+            %make_build all gen-doc
+        %endif
     %else
-        %make_build
+        %if %{with debug}
+            %make_build DYNLIBS=1 DEBUG=1 all gen-doc
+        %else
+            %make_build DYNLIBS=1 all gen-doc
+        %endif
     %endif
 %else
-    %if %{with debug}
-        %make_build DYNLIBS=1 DEBUG=1
+    %if %{with static}
+        %if %{with debug}
+            %make_build DEBUG=1 all
+        %else
+            %make_build all
+        %endif
     %else
-        %make_build DYNLIBS=1
+        %if %{with debug}
+            %make_build DYNLIBS=1 DEBUG=1 all
+        %else
+            %make_build DYNLIBS=1 all
+        %endif
     %endif
 %endif
 
@@ -98,17 +140,33 @@ HTick is an FTN fileecho ticker from the Husky Project
 
 %install
 umask 022
-%if %{with static}
-    %if %{with debug}
-        %make_install DEBUG=1
+%if %{with doc}
+    %if %{with static}
+        %if %{with debug}
+            %make_install DEBUG=1 install-doc
+        %else
+            %make_install install-doc
+        %endif
     %else
-        %make_install
+        %if %{with debug}
+            %make_install DYNLIBS=1 DEBUG=1 install-doc
+        %else
+            %make_install DYNLIBS=1 install-doc
+        %endif
     %endif
 %else
-    %if %{with debug}
-        %make_install DYNLIBS=1 DEBUG=1
+    %if %{with static}
+        %if %{with debug}
+            %make_install DEBUG=1
+        %else
+            %make_install
+        %endif
     %else
-        %make_install DYNLIBS=1
+        %if %{with debug}
+            %make_install DYNLIBS=1 DEBUG=1
+        %else
+            %make_install DYNLIBS=1
+        %endif
     %endif
 %endif
 chmod -R a+rX,u+w,go-w %buildroot
@@ -117,3 +175,11 @@ chmod -R a+rX,u+w,go-w %buildroot
 %defattr(-,root,root)
 %_bindir/*
 %_mandir/man1/*
+
+%if %{with doc}
+%files doc
+%_infodir/*.info.gz
+%_docdir/husky/*.html
+%_docdir/husky/*.txt
+%_docdir/husky/*.pdf
+%endif
