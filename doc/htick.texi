@@ -25,7 +25,7 @@
 @ifinfo
 @dircategory Fidonet Software
 @direntry
-* HTICK: (htick).               HTICK is fidonet fileecho processor
+* HTICK: (htick).               HTICK is a Fidonet file echo processor
 @end direntry
 @end ifinfo
 
