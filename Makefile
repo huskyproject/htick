@@ -146,6 +146,7 @@ endif
 
 
 # Depend
+ifeq ($(MAKECMDGOALS),depend)
 htick_depend: $(htick_DEPS) ;
 
 # Build a dependency makefile for every source file
@@ -157,6 +158,7 @@ $(htick_DEPS): $(htick_DEPDIR)%$(_DEP): $(htick_SRCDIR)%.c | $(htick_DEPDIR)
 
 $(htick_DEPDIR): | $(htick_BUILDDIR) do_not_run_depend_as_root
 	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
+endif
 
 $(htick_BUILDDIR):
 	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
