@@ -29,13 +29,13 @@
  * Software Foundation, 675 Mass Ave, Cambridge, MA 02139, USA.
  *****************************************************************************/
 
-#ifndef VERSION_H
-#define VERSION_H
+#ifndef HTICK_VERSION_H
+#define HTICK_VERSION_H
 /* basic version number */
-#define VER_MAJOR 1
-#define VER_MINOR 9
-#define VER_PATCH 0
-#define VER_BRANCH BRANCH_CURRENT
+#define htick_VER_MAJOR  1
+#define htick_VER_MINOR  9
+#define htick_VER_PATCH  0
+#define htick_VER_BRANCH BRANCH_CURRENT
 
 extern char * versionStr;
 

@@ -613,7 +613,8 @@ int main(int argc, char ** argv)
     int rc = 0;
     e_exitCode res;
 
-    versionStr = GenVersionStr("htick", VER_MAJOR, VER_MINOR, VER_PATCH, VER_BRANCH, cvs_date);
+    versionStr = GenVersionStr("htick", htick_VER_MAJOR, htick_VER_MINOR,
+                               htick_VER_PATCH, htick_VER_BRANCH, cvs_date);
     res        = processCommandLine(argc, argv);
 
     if(res == ex_Error)

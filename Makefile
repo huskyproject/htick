@@ -6,9 +6,9 @@
 #
 
 # Version
-htick_g1:=$(GREP) -Po 'define\s+VER_MAJOR\s+\K\d+'
-htick_g2:=$(GREP) -Po 'define\s+VER_MINOR\s+\K\d+'
-htick_g3:=$(GREP) -Po 'define\s+VER_PATCH\s+\K\d+'
+htick_g1:=$(GREP) -Po 'define\s+htick_VER_MAJOR\s+\K\d+'
+htick_g2:=$(GREP) -Po 'define\s+htick_VER_MINOR\s+\K\d+'
+htick_g3:=$(GREP) -Po 'define\s+htick_VER_PATCH\s+\K\d+'
 htick_g4:=$(GREP) -Po 'char\s+cvs_date\[\]\s*=\s*"\K\d+-\d+-\d+'
 htick_VERMAJOR := $(shell $(htick_g1) $(htick_ROOTDIR)$(htick_H_DIR)version.h)
 htick_VERMINOR := $(shell $(htick_g2) $(htick_ROOTDIR)$(htick_H_DIR)version.h)
