@@ -5,18 +5,6 @@
 # Requires: husky enviroment
 #
 
-# Version
-htick_g1:=$(GREP) -Po 'define\s+htick_VER_MAJOR\s+\K\d+'
-htick_g2:=$(GREP) -Po 'define\s+htick_VER_MINOR\s+\K\d+'
-htick_g3:=$(GREP) -Po 'define\s+htick_VER_PATCH\s+\K\d+'
-htick_g4:=$(GREP) -Po 'char\s+cvs_date\[\]\s*=\s*"\K\d+-\d+-\d+'
-htick_VERMAJOR := $(shell $(htick_g1) $(htick_ROOTDIR)$(htick_H_DIR)version.h)
-htick_VERMINOR := $(shell $(htick_g2) $(htick_ROOTDIR)$(htick_H_DIR)version.h)
-htick_VERPATCH := $(shell $(htick_g3) $(htick_ROOTDIR)$(htick_H_DIR)version.h)
-htick_cvsdate  := $(shell $(htick_g4) $(htick_ROOTDIR)cvsdate.h)
-htick_reldate  := $(subst -,,$(htick_cvsdate))
-htick_VER      := $(htick_VERMAJOR).$(htick_VERMINOR).$(htick_reldate)
-
 htick_LIBS := $(areafix_TARGET_BLD) $(fidoconf_TARGET_BLD) \
               $(smapi_TARGET_BLD) $(huskylib_TARGET_BLD)
 
@@ -53,12 +41,12 @@ ifdef MAN1DIR
 endif
 
 
-.PHONY: htick_all htick_install htick_uninstall htick_clean htick_distclean \
+.PHONY: htick_build htick_install htick_uninstall htick_clean htick_distclean \
         htick_depend htick_doc htick_doc_install htick_doc_uninstall \
         htick_doc_clean htick_doc_distclean htick_rmdir_DEP htick_rm_DEPS \
         htick_clean_OBJ htick_main_distclean
 
-htick_all: $(htick_TARGET_BLD) $(htick_MAN1BLD) htick_doc
+htick_build: $(htick_TARGET_BLD) $(htick_MAN1BLD) htick_doc
 
 ifneq ($(MAKECMDGOALS), depend)
     include $(htick_DOCDIR)Makefile
