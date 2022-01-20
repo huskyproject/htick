@@ -557,6 +557,7 @@ enum parseTic_result parseTic(char * ticfile, s_ticfile * tic)
             key = strcrc16(strUpper(token), 0);
             /* calculate crc16 of tic                                   */
             w_log(LL_DEBUGz, "#define CRC_%-12s 0x%X;", strUpper(token), key);
+            /* Get the rest of the line */
             param = stripLeadingChars(strtok(NULL, "\0"), "\t");
 
             if(!param)
@@ -581,6 +582,8 @@ enum parseTic_result parseTic(char * ticfile, s_ticfile * tic)
 
             switch(key)
             {
+                int result;
+
                 case CRC_CREATED:
                 case CRC_MAGIC:
                     break;
@@ -661,7 +664,20 @@ enum parseTic_result parseTic(char * ticfile, s_ticfile * tic)
                     break;
 
                 case CRC_TO:
-                    parseFtnAddrZS(param, &tic->to);
+                    result = parseFtnAddrZS(param, &tic->to);
+
+                    if(result & FTNADDR_ERROR)
+                    {
+                        /* Check if the line has format
+                           "To FirstName LastName, zone:net/node".
+                           If yes, skip everything up to the comma */
+                        char * comma = strchr(param, ',');
+                        if(comma++)
+                        {
+                            param = stripLeadingChars(comma, " \t");
+                            parseFtnAddrZS(param, &tic->to);
+                        }
+                    }
 
                     if(!tic->to.zone || !tic->to.net)
                     {
