@@ -57,8 +57,11 @@ $(htick_BUILDDIR)htick.html: $(htick_TEXI)
 $(htick_BUILDDIR)htick.txt: $(htick_TEXI)
 	-LC_ALL=C $(MAKEINFO) $(MIPTEXT) $(MINOSPLIT) "$<" $(MIOUT) "$@"
 
-$(htick_BUILDDIR)htick.dvi: $(htick_TEXI)
-	-$(TEXI2DVI) "$<"
+$(htick_BUILDDIR)htick.dvi: $(htick_DOCDIR_BLD)htick.dvi
+	$(LN) $(LNHOPT) "$<" $(htick_BUILDDIR)
+
+$(htick_DOCDIR_BLD)htick.dvi: $(htick_TEXI)
+	-cd $(htick_DOCDIR_BLD); $(TEXI2DVI) ../../../"$<"
 
 $(htick_BUILDDIR)htick.pdf: $(htick_DOCDIR_BLD)htick.pdf
 	$(LN) $(LNHOPT) "$<" $(htick_BUILDDIR)
@@ -150,6 +153,7 @@ htick_clean_DOC:
 	-$(RM) $(RMOPT) $(htick_DOCDIR_BLD)htick.cps
 	-$(RM) $(RMOPT) $(htick_DOCDIR_BLD)*.log
 	-$(RM) $(RMOPT) $(htick_DOCDIR_BLD)htick.texi
+	-$(RM) $(RMOPT) $(htick_DOCDIR_BLD)htick.dvi
 	-$(RM) $(RMOPT) $(htick_DOCDIR_BLD)htick.pdf
 
 # Distclean
