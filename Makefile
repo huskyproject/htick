@@ -141,7 +141,7 @@ htick_depend: $(htick_DEPS) ;
 $(htick_DEPS): $(htick_DEPDIR)%$(_DEP): $(htick_SRCDIR)%.c | $(htick_DEPDIR)
 	@set -e; rm -f $@; \
 	$(CC) -MM $(htick_CFLAGS) $(htick_CDEFS) $< > $@.$$$$; \
-	sed 's,\($*\)$(_OBJ)[ :]*,$(htick_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
+	sed 's,\($*\)$(__OBJ)[ :]*,$(htick_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
 	rm -f $@.$$$$
 
 $(htick_DEPDIR): | $(htick_BUILDDIR) do_not_run_depend_as_root
