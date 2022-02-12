@@ -8,7 +8,6 @@
 htick_LIBS := $(areafix_TARGET_BLD) $(fidoconf_TARGET_BLD) \
               $(smapi_TARGET_BLD) $(huskylib_TARGET_BLD)
 
-htick_CFLAGS = $(CFLAGS)
 htick_CDEFS := $(CDEFS) -I$(areafix_ROOTDIR) \
                         -I$(fidoconf_ROOTDIR) \
                         -I$(smapi_ROOTDIR) \
@@ -25,10 +24,6 @@ ifneq ($(USE_HPTZIP), 0)
     htick_CFLAGS += -DUSE_HPTZIP
     htick_CDEFS  += -I$(hptzip_ROOTDIR)
 endif
-
-htick_SRC  = $(wildcard $(htick_SRCDIR)*.c)
-htick_OBJS = $(addprefix $(htick_OBJDIR),$(notdir $(htick_SRC:.c=$(_OBJ))))
-htick_DEPS = $(addprefix $(htick_DEPDIR),$(notdir $(htick_SRC:.c=$(_DEP))))
 
 htick_TARGET     = htick$(_EXE)
 htick_TARGET_BLD = $(htick_BUILDDIR)$(htick_TARGET)
@@ -50,20 +45,20 @@ htick_build: $(htick_TARGET_BLD) $(htick_MAN1BLD) htick_doc
 
 ifneq ($(MAKECMDGOALS), depend)
     include $(htick_DOCDIR)Makefile
-ifneq ($(MAKECMDGOALS), distclean)
-ifneq ($(MAKECMDGOALS), uninstall)
-    include $(htick_DEPS)
-endif
-endif
+    ifneq ($(MAKECMDGOALS), distclean)
+        ifneq ($(MAKECMDGOALS), uninstall)
+            include $(htick_DEPS)
+        endif
+    endif
 endif
 
 
 # Build application
-$(htick_TARGET_BLD): $(htick_OBJS) $(htick_LIBS) | do_not_run_make_as_root
+$(htick_TARGET_BLD): $(htick_ALL_OBJS) $(htick_LIBS) | do_not_run_make_as_root
 	$(CC) $(LFLAGS) $(EXENAMEFLAG) $@ $^ $(htick_LIBZ)
 
 # Compile .c files
-$(htick_OBJS): $(htick_OBJDIR)%$(_OBJ): $(htick_SRCDIR)%.c | $(htick_OBJDIR)
+$(htick_ALL_OBJS): $(htick_OBJDIR)%$(_OBJ): $(htick_SRCDIR)%.c | $(htick_OBJDIR)
 	$(CC) $(htick_CFLAGS) $(htick_CDEFS) -o $(htick_OBJDIR)$*$(_OBJ) $(htick_SRCDIR)$*.c
 
 $(htick_OBJDIR): | $(htick_BUILDDIR) do_not_run_make_as_root
@@ -131,22 +126,3 @@ htick_uninstall: htick_doc_uninstall
 ifdef MAN1DIR
 	-$(RM) $(RMOPT) $(htick_MAN1DST)
 endif
-
-
-# Depend
-ifeq ($(MAKECMDGOALS),depend)
-htick_depend: $(htick_DEPS) ;
-
-# Build a dependency makefile for every source file
-$(htick_DEPS): $(htick_DEPDIR)%$(_DEP): $(htick_SRCDIR)%.c | $(htick_DEPDIR)
-	@set -e; rm -f $@; \
-	$(CC) -MM $(htick_CFLAGS) $(htick_CDEFS) $< > $@.$$$$; \
-	sed 's,\($*\)$(__OBJ)[ :]*,$(htick_OBJDIR)\1$(_OBJ) $@ : ,g' < $@.$$$$ > $@; \
-	rm -f $@.$$$$
-
-$(htick_DEPDIR): | $(htick_BUILDDIR) do_not_run_depend_as_root
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
-endif
-
-$(htick_BUILDDIR):
-	[ -d $@ ] || $(MKDIR) $(MKDIROPT) $@
