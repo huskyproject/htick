@@ -5,8 +5,8 @@ PassFileAreaDir		/var/spool/ftn/passthrough
 
 FileFixHelp		/etc/husky/filefix.hlp
 FileFixKillRequests
-FileFixReportsAttr      loc pvt npd k/s  # kill filefix reports
-#FileFixReportsAttr      loc pvt npd dir  # send filefix reports directly
+FileFixReportsAttr      loc pvt k/s  # kill filefix reports
+#FileFixReportsAttr      loc pvt dir  # send filefix reports directly
 
 
 if "[module]"=="htick"

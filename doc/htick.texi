@@ -654,10 +654,9 @@ Valid attributes are:
 @item dir
 @item imm
 @item cfm
-@item npd
 @end table
 
-Default is "pvt loc k/s npd".
+Default is "pvt loc k/s".
 
 This statement cannot be repeated.
 
