@@ -13,7 +13,7 @@ else
 endif
 
 ifdef INFODIR
-    htick_info: $(htick_BUILDDIR)htick.info.gz
+    htick_info: $(htick_BUILDDIR)htick.info$(_COMPR)
 else
     htick_info: ;
 endif
@@ -45,8 +45,10 @@ endif
 htick_DOCDIR_BLD=$(htick_BUILDDIR)doc$(DIRSEP)
 htick_TEXI=$(htick_DOCDIR_BLD)htick.texi
 
-$(htick_BUILDDIR)htick.info.gz: $(htick_BUILDDIR)htick.info
-	gzip -c $? > $@
+ifdef COMPRESS
+$(htick_BUILDDIR)htick.info$(_COMPR): $(htick_BUILDDIR)htick.info
+	$(COMPRESS) -c $< > $@
+endif
 
 $(htick_BUILDDIR)htick.info: $(htick_TEXI)
 	-$(MAKEINFO) $(MINOSPLIT) "$<" $(MIOUT) "$@"
@@ -178,7 +180,7 @@ endif
 ifdef INFODIR
 # See "all_info_uninstall" in the root Makefile
     htick_info_uninstall: all_info_uninstall
-		$(RM) $(RMOPT) $(INFODIR_DST)htick.info.gz
+		$(RM) $(RMOPT) $(INFODIR_DST)htick.info$(_COMPR)
 else
     htick_info_uninstall: ;
 endif

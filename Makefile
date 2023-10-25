@@ -31,8 +31,8 @@ htick_TARGET_DST = $(BINDIR_DST)$(htick_TARGET)
 
 ifdef MAN1DIR
     htick_MAN1PAGES := htick.1
-    htick_MAN1BLD := $(htick_BUILDDIR)$(htick_MAN1PAGES).gz
-    htick_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(htick_MAN1PAGES).gz
+    htick_MAN1BLD := $(htick_BUILDDIR)$(htick_MAN1PAGES)$(_COMPR)
+    htick_MAN1DST := $(DESTDIR)$(MAN1DIR)$(DIRSEP)$(htick_MAN1PAGES)$(_COMPR)
 endif
 
 
@@ -69,7 +69,12 @@ $(htick_OBJDIR): | $(htick_BUILDDIR) do_not_run_make_as_root
 ifdef MAN1DIR
     $(htick_MAN1BLD): $(htick_MANDIR)$(htick_MAN1PAGES)
 	@[ $$($(ID) $(IDOPT)) -eq 0 ] && echo "DO NOT run \`make\` from root" && exit 1 || true
-	gzip -c $< > $@
+    ifdef COMPRESS
+		$(COMPRESS) -c $< > $@
+    else
+		$(CP) $(CPOPT) $< $@
+    endif
+
 else
     $(htick_MAN1BLD): ;
 endif
